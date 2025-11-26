@@ -169,30 +169,49 @@ export default function ConsentementApp() {
         </AnimatePresence>
       </div>
 
-      {/* Footer */}
+      {/* Footer - Navigation démo */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="px-6 py-4 text-center text-xs safe-area-bottom"
+        className="px-4 py-3 safe-area-bottom"
         style={{
-          color: theme.colors.textMuted,
           background: theme.colors.bgCard,
           borderTop: `1px solid ${theme.colors.divider}`,
         }}
       >
-        {isAdult ? (
-          <>
-            🔒 Données chiffrées •{' '}
-            <button
-              onClick={resetAllData}
-              className="underline cursor-pointer hover:opacity-70 transition-opacity"
-            >
-              Supprimer mes données
-            </button>
-          </>
-        ) : (
-          <>Démo éducative — Aucune donnée collectée</>
-        )}
+        {/* Navigation rapide démo */}
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <button
+            onClick={() => navigateTo('welcome')}
+            className="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          >
+            Accueil
+          </button>
+          <button
+            onClick={() => handleAgeSelect(false)}
+            className="px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+          >
+            Mode Ado
+          </button>
+          <button
+            onClick={() => {
+              handleAgeSelect(true);
+              handleAuth('Demo');
+            }}
+            className="px-3 py-1.5 text-xs rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+          >
+            Mode Adulte
+          </button>
+          <button
+            onClick={resetAllData}
+            className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+          >
+            Reset
+          </button>
+        </div>
+        <p className="text-center text-xs" style={{ color: theme.colors.textMuted }}>
+          🎭 Mode démo — Navigation libre
+        </p>
       </motion.div>
     </div>
   );

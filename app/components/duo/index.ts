@@ -1,3 +1,4 @@
+export { DuoNavBar } from './DuoNavBar';
 export { DuoBumpStep } from './DuoBumpStep';
 export { DuoConnectedStep } from './DuoConnectedStep';
 export { DuoPactStep } from './DuoPactStep';

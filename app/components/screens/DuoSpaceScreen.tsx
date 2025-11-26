@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Button, Card, QRCode } from '../ui';
 import {
+  DuoNavBar,
   DuoBumpStep,
   DuoConnectedStep,
   DuoPactStep,
@@ -170,12 +171,29 @@ export function DuoSpaceScreen({
     setGeneratedCode('');
   };
 
+  // Navigation directe (démo)
+  const handleGoToStep = useCallback((step: DuoStep) => {
+    // S'assurer qu'on a un profil partenaire pour les étapes qui en ont besoin
+    if (!partnerProfile && ['connected', 'pact', 'filling', 'waiting', 'ready', 'reveal', 'summary'].includes(step)) {
+      setPartnerProfile(generatePartnerProfile());
+    }
+    setDuoStep(step);
+  }, [partnerProfile]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-full"
+      className="min-h-full flex flex-col"
     >
+      {/* Barre de navigation démo */}
+      <DuoNavBar
+        currentStep={duoStep}
+        onBack={onBack}
+        onReset={handleReset}
+        onGoToStep={handleGoToStep}
+      />
+
       <AnimatePresence mode="wait">
         {/* Étape: Choix initial - Bump ou QR */}
         {duoStep === 'choice' && (
