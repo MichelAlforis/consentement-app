@@ -132,7 +132,6 @@ Ces écrans s'affichent avant que l'utilisateur choisisse son thème — les cou
 | Fichier | Problème principal | Priorité |
 |---------|--------------------|----------|
 | `HomeMinorScreen.tsx` | `text-gray-800/500`, `bg-white/80` | Basse (thème youth fixe) |
-| `DiceGameScreen.tsx` | Cartes de sélection `bg-white border-amber-200` | Basse (jeu interactif) |
 
 ---
 
@@ -208,6 +207,53 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
 | `DuoWaitingStep` | Attribut `style` en double sur `motion.div` | Fusionner toutes les props CSS dans un seul objet `style` |
 | `DuoBumpStep` | `Button` n'accepte pas la prop `style` | Remplacer `!text-gray-400` par `className="opacity-50"` |
 | `DuoSpaceScreen` | `Card` n'accepte pas la prop `style` | Supprimer le style override — `Card variant="elevated"` se thématise lui-même |
+
+---
+
+## Passe 5 — Jeux + typographie (2026-04-22)
+
+### Typographie
+
+**`app/layout.tsx`**
+- Ajout de `Inter` via `next/font/google` (téléchargée au build, zéro dépendance npm)
+- Remplace la pile système `font-sans` (ui-sans-serif, system-ui…)
+- Appliquée via `inter.className` sur `<body>` — s'applique à toute l'app
+
+### Refactorisés
+
+**`app/components/screens/DiceGameScreen.tsx`** — ~25 occurrences corrigées
+- Supprimé : `text-gray-800/700/500/400`, `bg-white` (cartes Solo/À deux), `bg-gray-50/100` (fonds activité, écran rideau)
+- Remplacé par :
+  - Titres/textes : `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
+  - Fonds cartes : `colors.bgCard`
+  - Fonds activité + rideau : `colors.bgSecondary`
+- Conservé :
+  - `border-amber-200` / `border-orange-200` sur les cartes Solo/À deux (identité dé)
+  - `bg-amber-100/50` + `text-amber-500/600` sur l'icône header et les icônes modes (identité)
+  - `bg-amber-500` / `bg-orange-500` sur les badges 1/2 du vote (identité)
+  - `border-red-200 bg-red-50 text-red-*` et `border-green-200 bg-green-50 text-green-*` sur boutons Non/Oui (sémantique consentement)
+  - Boîte bleue anonymat `bg-blue-50 border-blue-100 text-blue-700` (info sémantique)
+  - Gradients catégories (identité visuelle jeu)
+
+**`app/components/screens/CardGameScreen.tsx`** — ~25 occurrences corrigées
+- Supprimé : `text-gray-900/400`, `bg-gray-50` (container réglages), `bg-white border-gray-200` (toggle, bouton retour), `#fff`/`#9ca3af`/`#f3f4f6`/`#e5e7eb`/`#fafafa` hardcodés dans les ternaires
+- Remplacé par :
+  - Titres/labels : `colors.textPrimary`, `colors.textMuted`
+  - Container réglages : `colors.bgSecondary`
+  - Toggle Séance/Libre container : `colors.bgCard` + `border: colors.border`
+  - États inactifs (Solo/Séance/Taille/Aléatoire) : `colors.bgCard`, `colors.border`, `colors.textMuted`
+  - Progress dot inactif : `colors.border`
+  - Carte face (recto) : `colors.bgCard` + `border: colors.border`
+  - Texte carte face : `colors.textPrimary`
+  - Boutons "Changer de paquet" / "Continuer en mode libre" : `colors.bgCard` + `colors.border` + `colors.textSecondary`
+- Conservé :
+  - Violet `#8b5cf6`/`#7c3aed` sur tous les états actifs (identité jeu Cartes à tirer)
+  - Anneau sélection deck `0 0 0 3px #8b5cf6` (identité)
+  - Badge PREMIUM gradient violet-fuchsia (identité)
+  - Progress dots actifs gradient violet (identité)
+  - `border-rose-*`/`bg-rose-*` bouton favoris activé (sémantique favori)
+  - Gradient vert bouton "Terminer la séance" (sémantique succès)
+  - Boîte insight fin de séance `bg-violet-50 border-violet-100 text-violet-700` (identité jeu)
 
 ---
 

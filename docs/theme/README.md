@@ -24,6 +24,7 @@ Le thème `youth` est appliqué automatiquement quand l'utilisateur sélectionne
 
 ```
 app/
+├── layout.tsx                       # Inter (next/font/google) — typographie globale
 ├── types/theme.ts                  # ThemeColors, ThemeEffects, Theme, 5 définitions
 ├── context/ThemeContext.tsx         # ThemeProvider + useTheme() hook
 ├── hooks/useAppState.ts             # État thème (themeMode, selectTheme, localStorage)
@@ -56,6 +57,8 @@ app/
         ├── QuizConsentementScreen.tsx # useTheme()
         ├── LoiConsentementScreen.tsx  # useTheme()
         ├── PornoVsRealiteScreen.tsx   # useTheme()
+        ├── DiceGameScreen.tsx       # useTheme() — textes/fonds ; identité amber conservée
+        ├── CardGameScreen.tsx       # useTheme() — textes/fonds ; identité violet conservée
         └── ThemeSelectScreen.tsx    # Previews animées pour thèmes premium
 ```
 
