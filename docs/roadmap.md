@@ -177,6 +177,18 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ---
 
+## Stratégie stores & app adulte
+
+→ Voir [`docs/strategy/stores-et-app-adulte.md`](strategy/stores-et-app-adulte.md) pour l'analyse complète.
+
+**Résumé :**
+- App principale : 12+ ou 17+ — mineurs + adultes, contenu éducatif + jeux soft
+- App adulte séparée : 17+ — même codebase, build Capacitor distinct, `explicitMode: true` par défaut
+- Contenu explicite = OK stores **si ton éducatif** (position du juriste co-fondateur = atout, pas obstacle)
+- Vérification âge renforcée requise pour l'app adulte avant lancement (⚖️ juriste)
+
+---
+
 ## V3 — Backend requis (post V2)
 
 | Fonctionnalité | Dépendances | Priorité |
@@ -187,6 +199,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Paiement abonnement premium | RevenueCat (StoreKit + Google Play) | Haute |
 | Prise de RDV réelle (sexologues) | Calendrier API, Stripe | Haute |
 | Historique consentements archivés | Base de données + chiffrement | Haute |
+| **Compte unifié cross-apps** (principale + adulte) | Supabase même `user_id` | Haute |
 | Scénarios guidés (Jeu 4) | — | Moyenne |
 | Contenu influenceurs (vidéos, articles) | CMS (Sanity / Strapi) | Moyenne |
 | Vérification d'âge robuste | Veriff / Yoti | Élevée ⚖️ |
@@ -197,6 +210,8 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ## Contenus à rédiger par le co-fondateur juriste ✍️
 
+**Position juriste** : langage explicite, termes exacts définis — pas d'euphémismes. Voir [`docs/strategy/stores-et-app-adulte.md`](strategy/stores-et-app-adulte.md).
+
 | Contenu | Pour quel bloc | Statut |
 |---|---|---|
 | "Ce que dit la loi" — enrichissement (âges légaux, jurisprudences) | Bloc E | 🔲 À rédiger |
@@ -205,6 +220,8 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Cadre légal BDSM + double consentement horodaté | Bloc D | 🔲 À rédiger |
 | Âge légal du consentement par pays (pour i18n V2) | Bloc A | 🔲 À rédiger |
 | Mentions légales & politique de confidentialité (RGPD mineurs) | Global | 🔲 À rédiger |
+| **Activités explicites app adulte** — dé + cartes + oie | App adulte | 🔲 À rédiger |
+| **Vérification âge app adulte** — cadre légal requis | App adulte ⚖️ | 🔲 Consulter juriste |
 
 ---
 
