@@ -140,7 +140,7 @@ function AppShell() {
         );
 
       case 'settings':
-        return <SettingsScreen isPremium={isPremium} onNavigate={navigateTo} />;
+        return <SettingsScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={navigateTo} />;
 
       case 'personal-space':
         return (

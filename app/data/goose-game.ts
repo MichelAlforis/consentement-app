@@ -180,19 +180,16 @@ export function pickNoRepeat<T extends { id: string }>(
 export function getBoardActivitiesForFace(
   face: 1 | 2 | 3 | 4 | 5 | 6,
   isAdult: boolean,
+  isExplicit = false,
 ): DiePractice[] {
-  const fromDie = diePractices.filter(p => {
-    if (p.face !== face) return false;
+  const allow = (p: DiePractice) => {
     if (p.ageGate === 'all') return true;
     if (p.ageGate === 'adult' && isAdult) return true;
+    if (p.ageGate === 'explicit' && isAdult && isExplicit) return true;
     return false;
-  });
-  const fromBoard = EXTRA_BOARD_ACTIVITIES.filter(p => {
-    if (p.face !== face) return false;
-    if (p.ageGate === 'all') return true;
-    if (p.ageGate === 'adult' && isAdult) return true;
-    return false;
-  });
+  };
+  const fromDie = diePractices.filter(p => p.face === face && allow(p));
+  const fromBoard = EXTRA_BOARD_ACTIVITIES.filter(p => p.face === face && allow(p));
   const combined = [...fromDie, ...fromBoard];
   return combined.length > 0 ? combined : diePractices.filter(p => p.face === face && p.ageGate === 'all');
 }

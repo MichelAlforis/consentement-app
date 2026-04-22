@@ -24,7 +24,7 @@ export interface LoiPoint {
   important?: boolean;
 }
 
-export type AgeGate = 'all' | 'adult' | 'premium';
+export type AgeGate = 'all' | 'adult' | 'explicit' | 'premium';
 
 export const DICE_CATEGORIES: Record<number, {
   name: string;
@@ -273,6 +273,30 @@ export const diePractices: DiePractice[] = [
   { id: 'c4', face: 6, ageGate: 'all',   text: "Laissez l'autre décider d'une chose qu'on fait ensemble ce soir — sans négocier, sans refuser." },
   { id: 'c5', face: 6, ageGate: 'adult', text: "Dites à l'autre exactement ce que vous aimez dans la façon dont il/elle vous touche." },
   { id: 'c6', face: 6, ageGate: 'adult', text: "Faites à l'autre un massage de 5 minutes, en silence. Juste donner, sans rien attendre." },
+
+  // Mode Explicite — Face 1 🎭
+  { id: 'ox1', face: 1, ageGate: 'explicit', text: "Dites à l'autre exactement ce que vous voulez lui faire ce soir — chaque geste, chaque endroit, sans métaphore ni euphémisme." },
+  { id: 'ox2', face: 1, ageGate: 'explicit', text: "Décrivez comment vous aimeriez lui faire une fellation ou un cunnilingus — le rythme, la douceur, où vos mains iraient." },
+
+  // Mode Explicite — Face 2 💬
+  { id: 'px1', face: 2, ageGate: 'explicit', text: "Parlez d'une position sexuelle que vous n'avez jamais essayée mais que vous voulez vraiment — décrivez-la précisément à l'autre." },
+  { id: 'px2', face: 2, ageGate: 'explicit', text: "Racontez le moment de sexe le plus intense que vous ayez vécu — où, comment, ce qui vous a fait jouir." },
+
+  // Mode Explicite — Face 3 🤔
+  { id: 'ex1', face: 3, ageGate: 'explicit', text: "Et si vous passiez la nuit à explorer le corps de l'autre avec la bouche — par où vous commenceriez, où vous iriez ?" },
+  { id: 'ex2', face: 3, ageGate: 'explicit', text: "Et si vous vous faisiez du sexe oral mutuellement ce soir — comment ça se passerait, dans quel ordre, combien de temps ?" },
+
+  // Mode Explicite — Face 4 🎯
+  { id: 'dfx1', face: 4, ageGate: 'explicit', text: "Choisissez une position sexuelle et expliquez à l'autre comment vous voulez la faire — chaque détail compte." },
+  { id: 'dfx2', face: 4, ageGate: 'explicit', text: "Guidez l'autre avec des mots précis pour qu'il/elle vous touche exactement là et comme vous voulez — sans utiliser vos mains." },
+
+  // Mode Explicite — Face 5 ✨
+  { id: 'vx1', face: 5, ageGate: 'explicit', text: "Quel acte sexuel vous procure le plus de plaisir — soyez précis·e sur le comment et le pourquoi, aucun détail interdit." },
+  { id: 'vx2', face: 5, ageGate: 'explicit', text: "Y a-t-il un acte sexuel que vous voulez vraiment — une pénétration, du sexe oral, quelque chose de spécifique — que vous n'avez jamais osé demander ?" },
+
+  // Mode Explicite — Face 6 ❤️
+  { id: 'cx1', face: 6, ageGate: 'explicit', text: "Montrez à l'autre comment vous aimez être embrassé·e sur tout le corps — guidez-le/la de la tête aux pieds, prenez tout votre temps." },
+  { id: 'cx2', face: 6, ageGate: 'explicit', text: "Faites une fellation ou un cunnilingus à l'autre en vous concentrant uniquement sur son plaisir — prenez tout le temps qu'il faut." },
 ];
 
 export interface CardData {
@@ -378,6 +402,30 @@ export const cardData: CardData[] = [
   { id: 'cf12', deck: 6, ageGate: 'adult', text: "Faites à l'autre un massage de 5 minutes, en silence. Juste donner, sans rien attendre." },
   { id: 'cf13', deck: 6, ageGate: 'adult', text: "Montrez à l'autre comment vous aimez être touché·e — guidez doucement sa main." },
   { id: 'cf14', deck: 6, ageGate: 'adult', text: "Dites à l'autre ce qui vous rend le plus à l'aise dans l'intimité, et ce dont vous avez besoin pour vous sentir bien." },
+
+  // Mode Explicite — Deck 1 🎭
+  { id: 'cax1', deck: 1, ageGate: 'explicit', text: "Dites à l'autre exactement ce que vous voulez lui faire ce soir — chaque geste, chaque endroit, sans métaphore ni euphémisme." },
+  { id: 'cax2', deck: 1, ageGate: 'explicit', text: "Décrivez comment vous aimeriez lui faire une fellation ou un cunnilingus — le rythme, la douceur, où vos mains iraient." },
+
+  // Mode Explicite — Deck 2 💬
+  { id: 'cbx1', deck: 2, ageGate: 'explicit', text: "Parlez d'une position sexuelle que vous n'avez jamais essayée mais que vous voulez vraiment — décrivez-la précisément à l'autre." },
+  { id: 'cbx2', deck: 2, ageGate: 'explicit', text: "Racontez le moment de sexe le plus intense que vous ayez vécu — où, comment, ce qui vous a fait jouir." },
+
+  // Mode Explicite — Deck 3 🤔
+  { id: 'ccx1', deck: 3, ageGate: 'explicit', text: "Et si vous passiez la nuit à explorer le corps de l'autre avec la bouche — par où commenceriez-vous, où iriez-vous ?" },
+  { id: 'ccx2', deck: 3, ageGate: 'explicit', text: "Et si vous vous faisiez du sexe oral mutuellement ce soir — comment ça se passerait, dans quel ordre ?" },
+
+  // Mode Explicite — Deck 4 🎯
+  { id: 'cdx1', deck: 4, ageGate: 'explicit', text: "Choisissez une position sexuelle et expliquez à l'autre comment vous voulez la faire — chaque détail compte." },
+  { id: 'cdx2', deck: 4, ageGate: 'explicit', text: "Guidez l'autre avec des mots précis pour qu'il/elle vous touche exactement là et comme vous voulez — sans utiliser vos mains." },
+
+  // Mode Explicite — Deck 5 ✨
+  { id: 'cex1', deck: 5, ageGate: 'explicit', text: "Quel acte sexuel vous procure le plus de plaisir — soyez précis·e sur le comment et le pourquoi, aucun détail interdit." },
+  { id: 'cex2', deck: 5, ageGate: 'explicit', text: "Y a-t-il un acte sexuel spécifique — une pénétration, du sexe oral, autre chose — que vous voulez vraiment mais n'avez jamais osé demander ?" },
+
+  // Mode Explicite — Deck 6 ❤️
+  { id: 'cfx1', deck: 6, ageGate: 'explicit', text: "Montrez à l'autre comment vous aimez être touché·e sur tout le corps — guidez-le/la doucement, prenez tout votre temps." },
+  { id: 'cfx2', deck: 6, ageGate: 'explicit', text: "Faites une fellation ou un cunnilingus à l'autre en vous concentrant uniquement sur son plaisir — prenez tout le temps qu'il faut." },
 ];
 
 export const loiPoints: LoiPoint[] = [

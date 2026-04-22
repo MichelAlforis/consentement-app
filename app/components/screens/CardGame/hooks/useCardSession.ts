@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { cardData, DICE_CATEGORIES, CardData } from '../../../../data';
+import { useSettingsStore } from '../../../../stores/settingsStore';
 
 export type CardStep = 'pick' | 'playing' | 'end';
 export type DeckId = 1 | 2 | 3 | 4 | 5 | 6 | 'random';
@@ -58,14 +59,17 @@ export function useCardSession(isAdult: boolean): CardSession {
   const [sessionDecks, setSessionDecks] = useState<number[]>([]);
   const [favorites, setFavorites] = useState<string[]>(loadFavs);
   const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const explicitMode = useSettingsStore((s) => s.explicitMode);
 
   const clearTimers = () => { animTimers.current.forEach(clearTimeout); animTimers.current = []; };
   useEffect(() => () => clearTimers(), []);
 
   const available = useMemo(() => cardData.filter((c) => {
     if (c.ageGate === 'all') return true;
-    return c.ageGate === 'adult' && isAdult;
-  }), [isAdult]);
+    if (c.ageGate === 'adult') return isAdult;
+    if (c.ageGate === 'explicit') return isAdult && explicitMode;
+    return false;
+  }), [isAdult, explicitMode]);
 
   const pickCard = useCallback((count: number, drawn: string[], mode: SessionMode): CardData => {
     const excluded = new Set(drawn);

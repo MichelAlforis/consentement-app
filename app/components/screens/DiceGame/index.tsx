@@ -10,6 +10,7 @@ import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
 import type { DiceConfig, DiceItem } from '../../../game-engine/dice/types';
 import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
+import { useSettingsStore } from '../../../stores/settingsStore';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -33,6 +34,7 @@ interface DiceGameScreenProps {
 export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const explicitMode = useSettingsStore((s) => s.explicitMode);
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
   const [p1Answer, setP1Answer] = useState<DuoAnswer>(null);
@@ -42,9 +44,10 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const available = useMemo(() => diePractices.filter((p) => {
     if (p.ageGate === 'all') return true;
     if (p.ageGate === 'adult') return isAdult;
+    if (p.ageGate === 'explicit') return isAdult && explicitMode;
     if (p.ageGate === 'premium') return isAdult && isPremium;
     return false;
-  }), [isAdult, isPremium]);
+  }), [isAdult, isPremium, explicitMode]);
 
   const diceItems = useMemo<DiceItem[]>(
     () => available.map((p) => ({ id: p.id, faceId: p.face, text: p.text })),

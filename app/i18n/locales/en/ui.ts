@@ -52,6 +52,18 @@ export const ui = {
       title: 'Premium active',
       desc: 'All content unlocked, ad-free',
     },
+    explicit: {
+      title: 'Explicit Mode',
+      desc: 'Unlock sexually explicit content',
+      activeDesc: 'Explicit content enabled',
+      on: 'Enabled',
+      modal: {
+        title: 'Explicit content',
+        body: 'This mode unlocks sexually explicit content — oral sex, penetration, sexual acts described without ambiguity.\n\nFor consenting adults only. Make sure you are in an appropriate environment.',
+        confirm: 'Enable explicit mode',
+        cancel: 'Cancel',
+      },
+    },
   },
 
   themeSelect: {

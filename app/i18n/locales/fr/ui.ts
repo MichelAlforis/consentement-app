@@ -52,6 +52,18 @@ export const ui = {
       title: 'Premium actif',
       desc: 'Tous les contenus débloqués, sans publicité',
     },
+    explicit: {
+      title: 'Mode Explicite',
+      desc: 'Débloquer le contenu sexuellement explicite',
+      activeDesc: 'Contenu explicite activé',
+      on: 'Activé',
+      modal: {
+        title: 'Contenu explicite',
+        body: 'Ce mode débloque des contenus sexuellement explicites — fellation, cunnilingus, actes sexuels décrits sans ambiguité.\n\nRéservé aux adultes consentants. Assurez-vous d\'être dans un environnement approprié.',
+        confirm: 'Activer le mode explicite',
+        cancel: 'Annuler',
+      },
+    },
   },
 
   themeSelect: {

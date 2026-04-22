@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from '../types';
+import { ThemeMode } from '../types/theme';
 import { useNavigationStore } from './navigationStore';
 
 interface AuthStore {
@@ -10,7 +11,7 @@ interface AuthStore {
   isAdult: boolean | null;
   userName: string;
   isHydrated: boolean;
-  handleAgeSelect: (adult: boolean, selectTheme: (mode: string) => void) => void;
+  handleAgeSelect: (adult: boolean, selectTheme: (mode: ThemeMode) => void) => void;
   handleAuth: (name: string) => void;
   _setHydrated: () => void;
 }

@@ -1,15 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Palette, LifeBuoy, Crown, ChevronRight, CheckCircle2, Globe } from 'lucide-react';
+import { Palette, LifeBuoy, Crown, ChevronRight, CheckCircle2, Globe, Flame } from 'lucide-react';
 import { Screen } from '../../types';
 import { Language } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useLanguage } from '../../context/LanguageContext';
+import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 
 interface SettingsScreenProps {
   isPremium: boolean;
+  isAdult: boolean;
   onNavigate: (screen: Screen) => void;
 }
 
@@ -87,7 +89,7 @@ function LanguagePicker() {
   );
 }
 
-export function SettingsScreen({ isPremium, onNavigate }: SettingsScreenProps) {
+export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScreenProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -133,6 +135,17 @@ export function SettingsScreen({ isPremium, onNavigate }: SettingsScreenProps) {
             : <ChevronRight size={16} style={{ color: colors.textMuted }} />
         }
       />
+
+      {isAdult && (
+        <SettingsRow
+          icon={<Flame size={20} style={{ color: '#ef4444' }} />}
+          title={t('settings.explicit.title')}
+          desc={t('settings.explicit.desc')}
+          delay={0.3}
+          accent="#ef4444"
+          right={<ExplicitModeToggle pillOnly />}
+        />
+      )}
     </motion.div>
   );
 }

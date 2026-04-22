@@ -12,8 +12,10 @@ import { usePawnAnimation } from './usePawnAnimation';
 import { useConfetti } from './useConfetti';
 import { Player, Phase, TurnStep } from '../types';
 import { useHaptics } from '../../../../game-engine/shared/useHaptics';
+import { useSettingsStore } from '../../../../stores/settingsStore';
 
 export function useGooseGame({ isAdult }: { isAdult: boolean }) {
+  const explicitMode = useSettingsStore((s) => s.explicitMode);
   // ── Phase ──────────────────────────────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>('intro');
 
@@ -73,7 +75,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
       case 'normal':
       case 'depart': {
         const face = (square.face ?? 1) as 1 | 2 | 3 | 4 | 5 | 6;
-        const acts = getBoardActivitiesForFace(face, isAdult);
+        const acts = getBoardActivitiesForFace(face, isAdult, explicitMode);
         setActivity(pickNoRepeat(acts, usedActivityIds.current).text);
         setStep('normal');
         vibrate(60);
@@ -96,7 +98,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
         vibrate([60, 40, 60, 40, 60]);
         return;
       case 'complicite': {
-        const douceurActs = getBoardActivitiesForFace(6, isAdult);
+        const douceurActs = getBoardActivitiesForFace(6, isAdult, explicitMode);
         setActivity(pickNoRepeat(douceurActs, usedActivityIds.current).text);
         setStep('complicite');
         triggerConfetti();

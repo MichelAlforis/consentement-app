@@ -52,6 +52,18 @@ export const ui = {
       title: 'Premium activo',
       desc: 'Todo el contenido desbloqueado, sin publicidad',
     },
+    explicit: {
+      title: 'Modo Explícito',
+      desc: 'Desbloquear contenido sexualmente explícito',
+      activeDesc: 'Contenido explícito activado',
+      on: 'Activado',
+      modal: {
+        title: 'Contenido explícito',
+        body: 'Este modo desbloquea contenido sexualmente explícito — sexo oral, penetración, actos sexuales descritos sin ambigüedad.\n\nSolo para adultos con consentimiento. Asegúrate de estar en un entorno apropiado.',
+        confirm: 'Activar modo explícito',
+        cancel: 'Cancelar',
+      },
+    },
   },
 
   themeSelect: {

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Film, Scale, HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, ChevronRight, Heart } from 'lucide-react';
+import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { MenuCard } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -179,6 +180,10 @@ function AdultHome({ userName, onNavigate }: { userName: string; onNavigate: (sc
         <MenuCard icon={<Users size={26} className="text-white" />} title={t('homeAdult.menu.duo.title')} description={t('homeAdult.menu.duo.desc')} onClick={() => onNavigate('duo-space')} variant="secondary" delay={2} />
         <MenuCard icon={<Gamepad2 size={26} className="text-white" />} title={t('homeAdult.menu.games.title')} description={t('homeAdult.menu.games.desc')} onClick={() => onNavigate('jeux')} variant="amber" delay={3} />
         <MenuCard icon={<BookOpen size={26} style={{ color: colors.accent }} />} title={t('homeAdult.menu.resources.title')} description={t('homeAdult.menu.resources.desc')} onClick={() => onNavigate('learn')} delay={4} />
+      </div>
+
+      <div className="mt-4">
+        <ExplicitModeToggle delay={0.45} />
       </div>
 
       <HomeFooter privacyText={t('homeAdult.privacy')} onSettings={() => onNavigate('settings')} />

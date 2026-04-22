@@ -7,3 +7,4 @@ export { QRCode } from './QRCode';
 export { ErrorBoundary } from './ErrorBoundary';
 export { Toast } from './Toast';
 export { AdBanner } from './AdBanner';
+export { ExplicitModeToggle } from './ExplicitModeToggle';
