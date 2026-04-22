@@ -124,6 +124,11 @@ export function useAppState() {
     setCurrentScreen('home-adult');
   }, []);
 
+  const deactivatePremium = useCallback(() => {
+    setIsPremium(false);
+    setStoredValue(STORAGE_KEYS.isPremium, false);
+  }, []);
+
   const changeLanguage = useCallback((lang: Language) => {
     setLanguage(lang);
     setStoredValue(STORAGE_KEYS.language, lang);
@@ -277,6 +282,7 @@ export function useAppState() {
     getCommonGround,
     resetAllData,
     activatePremium,
+    deactivatePremium,
     changeLanguage,
   };
 }

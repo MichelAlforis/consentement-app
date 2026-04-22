@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Users, BookOpen, Lock, Heart, Gamepad2 } from 'lucide-react';
-import { MenuCard, Card } from '../ui';
+import { User, Users, BookOpen, Lock, Gamepad2, Heart } from 'lucide-react';
+import { MenuCard } from '../ui';
 import { Screen } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface HomeAdultScreenProps {
   userName: string;
@@ -11,6 +12,8 @@ interface HomeAdultScreenProps {
 }
 
 export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) {
+  const { colors } = useTheme();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -18,28 +21,28 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
       className="p-5"
     >
       {/* Welcome Card */}
-      <Card
-        variant="default"
-        padding="lg"
-        className="mb-6 !bg-gradient-to-br !from-rose-50/80 !to-pink-50/80 !border-pink-100"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-3xl p-5 mb-6 flex items-start gap-3"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-start gap-3"
+        <div
+          className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
+          style={{ background: colors.accentGradient }}
         >
-          <Heart size={24} className="text-pink-500 mt-0.5 shrink-0" fill="#ec4899" />
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
-              Bonjour {userName}
-            </h2>
-            <p className="text-sm text-gray-600">
-              Explore ton profil de confort ou connecte-toi avec ton/ta partenaire.
-            </p>
-          </div>
-        </motion.div>
-      </Card>
+          <Heart size={18} className="text-white" fill="white" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold mb-1" style={{ color: colors.textPrimary }}>
+            Bonjour {userName}
+          </h2>
+          <p className="text-sm" style={{ color: colors.textSecondary }}>
+            Explore ton profil de confort ou connecte-toi avec ton/ta partenaire.
+          </p>
+        </div>
+      </motion.div>
 
       {/* Main Actions */}
       <div className="space-y-3">
@@ -48,7 +51,7 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
           title="Mon Espace"
           description="Explorer mes zones de confort"
           onClick={() => onNavigate('personal-space')}
-          variant="pink"
+          variant="accent"
           delay={1}
         />
 
@@ -57,7 +60,7 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
           title="Notre Espace"
           description="Dialoguer avec mon/ma partenaire"
           onClick={() => onNavigate('duo-space')}
-          variant="purple"
+          variant="secondary"
           delay={2}
         />
 
@@ -71,7 +74,7 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
         />
 
         <MenuCard
-          icon={<BookOpen size={26} className="text-pink-600" />}
+          icon={<BookOpen size={26} style={{ color: colors.accent }} />}
           title="Ressources"
           description="Guides et informations"
           onClick={() => onNavigate('learn')}
@@ -84,10 +87,11 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="mt-8 p-4 rounded-2xl bg-gray-50 border border-gray-100 text-center flex items-center justify-center gap-2"
+        className="mt-8 p-4 rounded-2xl flex items-center justify-center gap-2"
+        style={{ background: colors.bgSecondary, border: `1px solid ${colors.divider}` }}
       >
-        <Lock size={14} className="text-gray-400" />
-        <p className="text-xs text-gray-400">
+        <Lock size={14} style={{ color: colors.textMuted }} />
+        <p className="text-xs" style={{ color: colors.textMuted }}>
           Tes données sont chiffrées et tu peux les supprimer à tout moment.
         </p>
       </motion.div>

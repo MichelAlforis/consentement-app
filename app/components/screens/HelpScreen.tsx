@@ -106,7 +106,7 @@ export function HelpScreen() {
         transition={{ delay: 0.6 }}
         className="mt-4"
       >
-        <Card variant="gradient-amber" padding="lg">
+        <Card variant="warning" padding="lg">
           <p className="font-semibold text-gray-800 flex items-center gap-2">
             <AlertTriangle size={18} className="text-amber-600" />
             En cas d'urgence

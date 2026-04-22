@@ -1,13 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Dices, CreditCard, ScrollText, Lock, Gamepad2 } from 'lucide-react';
+import { Dices, CreditCard, ScrollText, Lock, Gamepad2, Layers } from 'lucide-react';
 import { Screen } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface GamesHubScreenProps {
   onNavigate: (screen: Screen) => void;
   isPremium: boolean;
   isAdult: boolean;
+  onGoPremium: () => void;
 }
 
 interface GameCardProps {
@@ -62,7 +64,8 @@ function GameCard({ icon, title, desc, tag, tagColor, locked, delay, onClick, gr
   );
 }
 
-export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScreenProps) {
+export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: GamesHubScreenProps) {
+  const { colors } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -79,8 +82,8 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScree
           <Gamepad2 size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Jeux</h2>
-          <p className="text-sm text-gray-500">Explorer, découvrir, dialoguer.</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Jeux</h2>
+          <p className="text-sm" style={{ color: colors.textSecondary }}>Explorer, découvrir, dialoguer.</p>
         </div>
       </motion.div>
 
@@ -97,7 +100,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScree
       </motion.div>
 
       {/* Jeu gratuit */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+      <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>
         Gratuit
       </p>
 
@@ -105,7 +108,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScree
         <GameCard
           icon={<Dices size={28} className="text-white" />}
           title="Le Dé du Consentement"
-          desc={isAdult ? 'Solo ou à deux — 15 pratiques, 3 niveaux' : 'Solo ou à deux — niveau découverte'}
+          desc={isAdult ? 'Solo ou à deux — 6 catégories, 3 niveaux' : 'Solo ou à deux — niveau découverte'}
           tag="Gratuit"
           tagColor="#16a34a"
           delay={0.2}
@@ -115,21 +118,32 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScree
       </div>
 
       {/* Jeux premium */}
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+      <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>
         Premium
       </p>
 
       <div className="space-y-3">
         <GameCard
-          icon={<CreditCard size={28} className="text-white" />}
-          title="Cartes à tirer"
-          desc="À deux — questions d'exploration mutuelle et découverte"
-          tag="Bientôt"
+          icon={<Layers size={28} className="text-white" />}
+          title="Jeu de l'Oie"
+          desc="À deux · 24 cases · plateau narratif avec le dé du consentement"
+          tag="Premium"
           tagColor="#7c3aed"
           locked={!isPremium}
           delay={0.3}
+          gradient="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
+          onClick={() => isPremium ? onNavigate('jeu-oie') : onGoPremium()}
+        />
+        <GameCard
+          icon={<CreditCard size={28} className="text-white" />}
+          title="Cartes à tirer"
+          desc={isAdult ? '84 cartes — 6 paquets, solo ou à deux' : '60 cartes — 6 paquets, solo ou à deux'}
+          tag="Premium"
+          tagColor="#7c3aed"
+          locked={!isPremium}
+          delay={0.4}
           gradient="linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)"
-          onClick={() => {}}
+          onClick={() => isPremium ? onNavigate('jeu-cartes') : onGoPremium()}
         />
         <GameCard
           icon={<ScrollText size={28} className="text-white" />}
@@ -138,9 +152,9 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult }: GamesHubScree
           tag="Bientôt"
           tagColor="#0369a1"
           locked={!isPremium}
-          delay={0.4}
+          delay={0.5}
           gradient="linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)"
-          onClick={() => {}}
+          onClick={() => !isPremium && onGoPremium()}
         />
       </div>
     </motion.div>

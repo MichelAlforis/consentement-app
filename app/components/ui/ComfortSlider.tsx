@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { comfortLevels } from '../../data';
+import { useTheme } from '../../context/ThemeContext';
 
 interface ComfortSliderProps {
   value: number;
@@ -10,6 +11,7 @@ interface ComfortSliderProps {
 }
 
 export function ComfortSlider({ value = 0, onChange, disabled = false }: ComfortSliderProps) {
+  const { colors } = useTheme();
   const currentLevel = comfortLevels[value] || comfortLevels[0];
 
   return (
@@ -27,8 +29,8 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
               ${disabled ? 'cursor-default' : 'cursor-pointer active:brightness-90'}
             `}
             style={{
-              backgroundColor: value >= idx ? level.color : '#f3f4f6',
-              opacity: value >= idx ? 1 : 0.4,
+              backgroundColor: value >= idx ? level.color : colors.bgSecondary,
+              opacity: value >= idx ? 1 : 0.5,
             }}
           >
             {value === idx && (
@@ -41,7 +43,6 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
               </motion.span>
             )}
 
-            {/* Shine effect */}
             {value >= idx && (
               <motion.div
                 initial={{ x: '-100%' }}
@@ -54,16 +55,10 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
         ))}
       </div>
 
-      <motion.div
-        layout
-        className="flex justify-end mt-2"
-      >
+      <motion.div layout className="flex justify-end mt-2">
         <span
           className="text-xs font-medium px-2 py-1 rounded-full"
-          style={{
-            color: currentLevel.color,
-            backgroundColor: `${currentLevel.color}15`
-          }}
+          style={{ color: currentLevel.color, backgroundColor: `${currentLevel.color}15` }}
         >
           {currentLevel.label}
         </span>

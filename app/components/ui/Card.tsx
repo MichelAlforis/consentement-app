@@ -2,24 +2,16 @@
 
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface CardProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: 'default' | 'elevated' | 'gradient-pink' | 'gradient-purple' | 'gradient-green' | 'gradient-amber';
+  variant?: 'default' | 'elevated' | 'accent' | 'secondary' | 'success' | 'warning';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   className?: string;
   delay?: number;
 }
-
-const variantStyles = {
-  default: 'bg-white/80 backdrop-blur border border-gray-100',
-  elevated: 'bg-white shadow-xl shadow-gray-200/50 border border-gray-100',
-  'gradient-pink': 'bg-gradient-to-br from-pink-400 to-rose-500 border-none text-white',
-  'gradient-purple': 'bg-gradient-to-br from-violet-400 to-purple-600 border-none text-white',
-  'gradient-green': 'bg-gradient-to-br from-emerald-50 to-green-100 border border-green-200/50',
-  'gradient-amber': 'bg-gradient-to-br from-amber-50 to-orange-100 border border-amber-200/50',
-};
 
 const paddingStyles = {
   none: '',
@@ -36,6 +28,25 @@ export function Card({
   className = '',
   delay = 0,
 }: CardProps) {
+  const { colors } = useTheme();
+
+  const getStyle = () => {
+    switch (variant) {
+      case 'elevated':
+        return { background: colors.bgCard, border: `1px solid ${colors.border}`, boxShadow: `0 8px 32px rgba(0,0,0,0.08)` };
+      case 'accent':
+        return { background: colors.accentGradient };
+      case 'secondary':
+        return { background: colors.secondaryGradient };
+      case 'success':
+        return { background: `${colors.success}18`, border: `1px solid ${colors.success}30` };
+      case 'warning':
+        return { background: `${colors.warning}18`, border: `1px solid ${colors.warning}30` };
+      default:
+        return { background: colors.bgCard, border: `1px solid ${colors.border}` };
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,8 +55,8 @@ export function Card({
       whileHover={onClick ? { scale: 1.02, y: -2 } : undefined}
       whileTap={onClick ? { scale: 0.98 } : undefined}
       onClick={onClick}
+      style={getStyle()}
       className={`
-        ${variantStyles[variant]}
         ${paddingStyles[padding]}
         rounded-3xl
         ${onClick ? 'cursor-pointer active:brightness-95' : ''}

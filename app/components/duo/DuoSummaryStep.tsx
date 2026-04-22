@@ -149,7 +149,7 @@ export function DuoSummaryStep({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card variant="gradient-amber" padding="lg" className="mb-4">
+        <Card variant="warning" padding="lg" className="mb-4">
           <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <ShieldAlert size={20} className="text-amber-600" />
             Vos mots d'alerte

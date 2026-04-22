@@ -79,7 +79,7 @@ export function LearnScreen() {
         transition={{ delay: 0.6 }}
         className="mt-6"
       >
-        <Card variant="gradient-green" padding="lg" className="text-center">
+        <Card variant="success" padding="lg" className="text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Lightbulb size={20} className="text-emerald-600" />
             <p className="font-semibold text-gray-800">

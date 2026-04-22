@@ -14,3 +14,6 @@ export { QuizConsentementScreen } from './QuizConsentementScreen';
 export { AccompagnementMineurScreen } from './AccompagnementMineurScreen';
 export { GamesHubScreen } from './GamesHubScreen';
 export { DiceGameScreen } from './DiceGameScreen';
+export { GooseGameScreen } from './GooseGameScreen';
+export { CardGameScreen } from './CardGameScreen';
+export { PremiumScreen } from './PremiumScreen';

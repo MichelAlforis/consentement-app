@@ -20,8 +20,11 @@ export type Screen =
   // Jeux
   | 'jeux'
   | 'jeu-des'
+  | 'jeu-oie'
+  | 'jeu-cartes'
   // Premium
-  | 'premium';
+  | 'premium'
+  | 'theme-select';
 
 export type Language = 'fr' | 'en' | 'es';
 

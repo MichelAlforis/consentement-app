@@ -3,48 +3,16 @@
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface MenuCardProps {
   icon: ReactNode;
   title: string;
   description: string;
   onClick: () => void;
-  variant?: 'default' | 'pink' | 'purple' | 'green' | 'amber';
+  variant?: 'default' | 'accent' | 'secondary' | 'green' | 'amber';
   delay?: number;
 }
-
-const variantStyles = {
-  default: {
-    bg: 'bg-white/80 backdrop-blur border border-gray-100',
-    iconBg: 'bg-gradient-to-br from-rose-50 to-pink-100',
-    title: 'text-gray-800',
-    desc: 'text-gray-500',
-  },
-  pink: {
-    bg: 'bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg shadow-pink-300/40',
-    iconBg: 'bg-white/20 backdrop-blur',
-    title: 'text-white',
-    desc: 'text-white/80',
-  },
-  purple: {
-    bg: 'bg-gradient-to-br from-violet-400 to-purple-600 shadow-lg shadow-purple-300/40',
-    iconBg: 'bg-white/20 backdrop-blur',
-    title: 'text-white',
-    desc: 'text-white/80',
-  },
-  green: {
-    bg: 'bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-300/40',
-    iconBg: 'bg-white/20 backdrop-blur',
-    title: 'text-white',
-    desc: 'text-white/80',
-  },
-  amber: {
-    bg: 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-300/40',
-    iconBg: 'bg-white/20 backdrop-blur',
-    title: 'text-white',
-    desc: 'text-white/80',
-  },
-};
 
 export function MenuCard({
   icon,
@@ -54,56 +22,76 @@ export function MenuCard({
   variant = 'default',
   delay = 0,
 }: MenuCardProps) {
-  const styles = variantStyles[variant];
+  const { colors } = useTheme();
+
+  const getCardStyle = () => {
+    switch (variant) {
+      case 'accent':
+        return {
+          background: colors.accentGradient,
+          boxShadow: `0 8px 24px ${colors.accentShadow}`,
+        };
+      case 'secondary':
+        return {
+          background: colors.secondaryGradient,
+          boxShadow: `0 8px 24px rgba(0,0,0,0.15)`,
+        };
+      case 'green':
+        return {
+          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+          boxShadow: '0 8px 24px rgba(16,185,129,0.3)',
+        };
+      case 'amber':
+        return {
+          background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
+          boxShadow: '0 8px 24px rgba(245,158,11,0.3)',
+        };
+      default:
+        return {
+          background: colors.bgCard,
+          border: `1px solid ${colors.border}`,
+          boxShadow: 'none',
+        };
+    }
+  };
+
+  const isColored = variant !== 'default';
 
   return (
     <motion.button
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{
-        delay: delay * 0.1,
-        duration: 0.5,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }}
+      transition={{ delay: delay * 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`
-        ${styles.bg}
-        w-full rounded-3xl p-5 text-left
-        flex items-center gap-4
-        transition-all duration-300
-        active:brightness-95
-      `}
+      style={getCardStyle()}
+      className="w-full rounded-3xl p-5 text-left flex items-center gap-4 transition-all duration-300 active:brightness-95"
     >
-      <motion.div
-        className={`
-          ${styles.iconBg}
-          w-14 h-14 rounded-2xl flex items-center justify-center
-          shadow-inner
-        `}
-        whileHover={{ rotate: [0, -5, 5, 0] }}
-        transition={{ duration: 0.5 }}
+      <div
+        className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0"
+        style={{ background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient }}
       >
         {icon}
-      </motion.div>
+      </div>
 
       <div className="flex-1 min-w-0">
-        <h3 className={`font-semibold text-base ${styles.title}`}>
+        <h3
+          className="font-semibold text-base"
+          style={{ color: isColored ? '#ffffff' : colors.textPrimary }}
+        >
           {title}
         </h3>
-        <p className={`text-sm mt-0.5 ${styles.desc}`}>
+        <p
+          className="text-sm mt-0.5"
+          style={{ color: isColored ? 'rgba(255,255,255,0.82)' : colors.textSecondary }}
+        >
           {description}
         </p>
       </div>
 
-      {variant === 'default' && (
-        <motion.div
-          className="text-gray-300"
-          whileHover={{ x: 4 }}
-        >
-          <ChevronRight size={24} />
-        </motion.div>
+      {!isColored && (
+        <ChevronRight size={24} style={{ color: colors.textMuted }} />
       )}
     </motion.button>
   );

@@ -275,6 +275,111 @@ export const diePractices: DiePractice[] = [
   { id: 'c6', face: 6, ageGate: 'adult', text: "Faites à l'autre un massage de 5 minutes, en silence. Juste donner, sans rien attendre." },
 ];
 
+export interface CardData {
+  id: string;
+  deck: 1 | 2 | 3 | 4 | 5 | 6;
+  text: string;
+  ageGate: AgeGate;
+}
+
+export const cardData: CardData[] = [
+  // Deck 1 — 🎭 Osez
+  { id: 'ca1',  deck: 1, ageGate: 'all',   text: "Regardez-vous dans les yeux en silence pendant 30 secondes. Premier qui rigole a perdu." },
+  { id: 'ca2',  deck: 1, ageGate: 'all',   text: "Faites-vous un compliment inattendu — pas sur l'apparence, sur quelque chose de rarement remarqué." },
+  { id: 'ca3',  deck: 1, ageGate: 'all',   text: "Inventez un geste secret que vous serez les seuls à connaître. Utilisez-le avant la fin de la soirée." },
+  { id: 'ca4',  deck: 1, ageGate: 'all',   text: "Échangez un objet que vous avez sur vous et expliquez en 30 secondes pourquoi il vous tient à cœur." },
+  { id: 'ca5',  deck: 1, ageGate: 'all',   text: "Dites à l'autre une chose que vous n'auriez jamais pensé lui dire ce soir." },
+  { id: 'ca6',  deck: 1, ageGate: 'all',   text: "Faites rire l'autre en moins de 20 secondes — sans le toucher." },
+  { id: 'ca7',  deck: 1, ageGate: 'all',   text: "Montrez à l'autre une photo sur votre téléphone qui raconte quelque chose sur vous." },
+  { id: 'ca8',  deck: 1, ageGate: 'all',   text: "Imitez la gestuelle ou la voix de l'autre. Il doit deviner qui vous imitez." },
+  { id: 'ca9',  deck: 1, ageGate: 'all',   text: "Faites quelque chose de gentil pour l'autre en moins d'une minute — de façon créative." },
+  { id: 'ca10', deck: 1, ageGate: 'all',   text: "Posez votre main sur l'épaule de l'autre pendant qu'il parle. Restez là, juste présent·e." },
+  { id: 'ca11', deck: 1, ageGate: 'adult', text: "Décrivez à voix haute ce que vous aimeriez faire ensemble ce soir — sans filtre, sans honte." },
+  { id: 'ca12', deck: 1, ageGate: 'adult', text: "Envoyez un message à l'autre décrivant exactement ce dont vous avez envie. Maintenant. Sans effacer." },
+  { id: 'ca13', deck: 1, ageGate: 'adult', text: "Dites à l'autre ce que vous trouvez le plus attirant chez lui/elle — de façon très précise." },
+  { id: 'ca14', deck: 1, ageGate: 'adult', text: "Chuchotez à l'autre quelque chose que vous n'avez jamais osé dire à voix normale." },
+
+  // Deck 2 — 💬 Parlez
+  { id: 'cb1',  deck: 2, ageGate: 'all',   text: "Quelle est la chose que l'autre fait inconsciemment qui vous rend toujours heureux·se ?" },
+  { id: 'cb2',  deck: 2, ageGate: 'all',   text: "Racontez un souvenir où vous vous êtes senti·e pleinement accepté·e par l'autre." },
+  { id: 'cb3',  deck: 2, ageGate: 'all',   text: "Si vous deviez décrire votre relation avec une météo — il fait quel temps ?" },
+  { id: 'cb4',  deck: 2, ageGate: 'all',   text: "Qu'est-ce que vous n'osez pas demander à l'autre depuis longtemps ?" },
+  { id: 'cb5',  deck: 2, ageGate: 'all',   text: "Quelle est la chose que vous voudriez que l'autre comprenne mieux de vous ?" },
+  { id: 'cb6',  deck: 2, ageGate: 'all',   text: "Décrivez l'autre en 3 adjectifs qu'il ou elle ne se donnerait probablement jamais." },
+  { id: 'cb7',  deck: 2, ageGate: 'all',   text: "À quel moment avez-vous réalisé que vous pouviez vraiment faire confiance à l'autre ?" },
+  { id: 'cb8',  deck: 2, ageGate: 'all',   text: "Qu'est-ce qui vous a surpris chez l'autre depuis le début de votre relation ?" },
+  { id: 'cb9',  deck: 2, ageGate: 'all',   text: "Quelle est la chose la plus importante que l'autre vous ait apprise sur vous-même ?" },
+  { id: 'cb10', deck: 2, ageGate: 'all',   text: "Dites une chose que vous gardez généralement pour vous, mais que vous pouvez dire ce soir." },
+  { id: 'cb11', deck: 2, ageGate: 'adult', text: "Qu'est-ce qui vous attire en ce moment — quelque chose que vous n'avez jamais vraiment dit ?" },
+  { id: 'cb12', deck: 2, ageGate: 'adult', text: "Y a-t-il quelque chose dans l'intimité qui vous plaît, mais dont vous avez un peu honte d'aimer ?" },
+  { id: 'cb13', deck: 2, ageGate: 'adult', text: "Décrivez votre fantasme du moment en détail. L'autre écoute sans interrompre ni juger." },
+  { id: 'cb14', deck: 2, ageGate: 'adult', text: "Qu'aimeriez-vous que l'autre fasse plus souvent, sans avoir à le demander ?" },
+
+  // Deck 3 — 🤔 Et si…
+  { id: 'cc1',  deck: 3, ageGate: 'all',   text: "Et si vous pouviez avoir un super-pouvoir de couple — ce serait lequel ?" },
+  { id: 'cc2',  deck: 3, ageGate: 'all',   text: "Et si vous partiez demain pour 3 mois en voyage — vous iriez où exactement ?" },
+  { id: 'cc3',  deck: 3, ageGate: 'all',   text: "Et si vous pouviez remonter le temps jusqu'à votre première rencontre — vous changeriez quoi ?" },
+  { id: 'cc4',  deck: 3, ageGate: 'all',   text: "Et si vous deviez choisir un film qui décrit parfaitement votre relation — ce serait lequel ?" },
+  { id: 'cc5',  deck: 3, ageGate: 'all',   text: "Et si vous passiez une journée parfaite ensemble — elle ressemblerait à quoi exactement ?" },
+  { id: 'cc6',  deck: 3, ageGate: 'all',   text: "Et si on vous interviewait dans 20 ans sur votre relation — qu'est-ce qu'on dirait ?" },
+  { id: 'cc7',  deck: 3, ageGate: 'all',   text: "Et si vous pouviez vivre n'importe où dans le monde — vous choisiriez quoi ?" },
+  { id: 'cc8',  deck: 3, ageGate: 'all',   text: "Et si vous deviez créer une règle entre vous deux que vous n'avez jamais formalisée — ce serait laquelle ?" },
+  { id: 'cc9',  deck: 3, ageGate: 'all',   text: "Et si vous deviez décrire l'autre à quelqu'un qui ne l'a jamais rencontré — vous diriez quoi ?" },
+  { id: 'cc10', deck: 3, ageGate: 'all',   text: "Et si vous pouviez changer une chose dans la façon dont vous communiquez — ce serait quoi ?" },
+  { id: 'cc11', deck: 3, ageGate: 'adult', text: "Et si vous pouviez rejouer votre première nuit ensemble — vous changeriez quoi ?" },
+  { id: 'cc12', deck: 3, ageGate: 'adult', text: "Et si vous pouviez essayer quelque chose de nouveau ce soir — vous choisiriez quoi ?" },
+  { id: 'cc13', deck: 3, ageGate: 'adult', text: "Et si vous n'aviez aucune inhibition pendant une nuit — qu'est-ce que vous feriez ?" },
+  { id: 'cc14', deck: 3, ageGate: 'adult', text: "Et si vous pouviez exprimer un désir secret sans aucun jugement de l'autre — ce serait lequel ?" },
+
+  // Deck 4 — 🎯 Défi
+  { id: 'cd1',  deck: 4, ageGate: 'all',   text: "Inventez un surnom ridicule pour l'autre. Il/elle doit l'accepter ou en proposer un encore pire." },
+  { id: 'cd2',  deck: 4, ageGate: 'all',   text: "Dessinez le portrait de l'autre en moins de 60 secondes — montrez le résultat sans rougir." },
+  { id: 'cd3',  deck: 4, ageGate: 'all',   text: "Mimez une scène d'un film culte. L'autre doit deviner lequel en moins de 5 essais." },
+  { id: 'cd4',  deck: 4, ageGate: 'all',   text: "Prenez le selfie le plus bizarre et le plus laid possible ensemble." },
+  { id: 'cd5',  deck: 4, ageGate: 'all',   text: "Chantez les premières secondes d'une chanson. L'autre doit la reconnaître." },
+  { id: 'cd6',  deck: 4, ageGate: 'all',   text: "Dites 5 choses que vous avez en commun en moins de 30 secondes." },
+  { id: 'cd7',  deck: 4, ageGate: 'all',   text: "Inventez une signature de salutation unique que vous utiliserez chaque matin." },
+  { id: 'cd8',  deck: 4, ageGate: 'all',   text: "Racontez comment vous vous êtes rencontré·e·s comme si c'était une scène de film hollywoodien." },
+  { id: 'cd9',  deck: 4, ageGate: 'all',   text: "En 60 secondes, expliquez à l'autre pourquoi vous l'aimez — sans utiliser le mot 'parce que'." },
+  { id: 'cd10', deck: 4, ageGate: 'all',   text: "Inventez une danse à deux, maintenant. Nommez-la. Répétez-la 2 fois." },
+  { id: 'cd11', deck: 4, ageGate: 'adult', text: "Écrivez un mini-scénario à deux — une phrase chacun à tour de rôle. Le plus torride gagne." },
+  { id: 'cd12', deck: 4, ageGate: 'adult', text: "Décrivez l'autre de façon sensuelle en 3 métaphores poétiques. Le plus lyrique gagne." },
+  { id: 'cd13', deck: 4, ageGate: 'adult', text: "Inventez un code secret pour communiquer un désir sans le dire à voix haute." },
+  { id: 'cd14', deck: 4, ageGate: 'adult', text: "Décrivez la chose la plus mémorable que vous avez faite ensemble — de façon cinématographique, en 60 secondes." },
+
+  // Deck 5 — ✨ Vérité
+  { id: 'ce1',  deck: 5, ageGate: 'all',   text: "Qu'est-ce qui vous fait dire 'non' immédiatement, sans hésiter ?" },
+  { id: 'ce2',  deck: 5, ageGate: 'all',   text: "Y a-t-il quelque chose que vous aimeriez que l'autre fasse différemment ? Dites-le maintenant." },
+  { id: 'ce3',  deck: 5, ageGate: 'all',   text: "Qu'est-ce que vous n'avez jamais osé demander à l'autre ?" },
+  { id: 'ce4',  deck: 5, ageGate: 'all',   text: "Quel est votre plus grand besoin dans cette relation — celui que vous exprimez rarement ?" },
+  { id: 'ce5',  deck: 5, ageGate: 'all',   text: "Y a-t-il quelque chose qui vous a blessé·e récemment, que vous n'avez pas dit ?" },
+  { id: 'ce6',  deck: 5, ageGate: 'all',   text: "De quoi avez-vous besoin pour vous sentir vraiment en sécurité avec l'autre ?" },
+  { id: 'ce7',  deck: 5, ageGate: 'all',   text: "Quelle est la chose qui vous rend le plus vulnérable dans une relation ?" },
+  { id: 'ce8',  deck: 5, ageGate: 'all',   text: "Vous sentez-vous libre de dire 'non' à l'autre ? Qu'est-ce qui vous en empêche parfois ?" },
+  { id: 'ce9',  deck: 5, ageGate: 'all',   text: "Qu'est-ce qui compte vraiment pour vous — une chose que l'autre devrait toujours respecter ?" },
+  { id: 'ce10', deck: 5, ageGate: 'all',   text: "Est-ce qu'il y a quelque chose dont vous avez besoin et que l'autre ne sait peut-être pas ?" },
+  { id: 'ce11', deck: 5, ageGate: 'adult', text: "Qu'est-ce que vous aimeriez essayer — quelque chose que vous n'avez jamais osé demander ?" },
+  { id: 'ce12', deck: 5, ageGate: 'adult', text: "Y a-t-il quelque chose dans votre vie intime que vous aimeriez changer — soyez honnête." },
+  { id: 'ce13', deck: 5, ageGate: 'adult', text: "Quelle est votre limite absolue — quelque chose que vous ne feriez jamais, même si on vous le demandait ?" },
+  { id: 'ce14', deck: 5, ageGate: 'adult', text: "Vous sentez-vous vraiment libre d'exprimer vos désirs avec l'autre ? Qu'est-ce qui vous retient ?" },
+
+  // Deck 6 — ❤️ Douceur
+  { id: 'cf1',  deck: 6, ageGate: 'all',   text: "Prenez-vous dans les bras pendant 60 secondes. En silence. Chronométrez." },
+  { id: 'cf2',  deck: 6, ageGate: 'all',   text: "Dites 3 choses que vous adorez chez l'autre — sans répéter quelque chose de déjà dit ce soir." },
+  { id: 'cf3',  deck: 6, ageGate: 'all',   text: "Tenez-vous la main, fermez les yeux tous les deux. Restez comme ça 30 secondes." },
+  { id: 'cf4',  deck: 6, ageGate: 'all',   text: "Laissez l'autre décider d'une chose à faire ensemble ce soir — sans négocier, sans refuser." },
+  { id: 'cf5',  deck: 6, ageGate: 'all',   text: "Regardez l'autre dans les yeux et dites-lui une chose que vous êtes content·e d'avoir dans votre vie." },
+  { id: 'cf6',  deck: 6, ageGate: 'all',   text: "Posez votre tête sur l'épaule de l'autre pendant une minute complète." },
+  { id: 'cf7',  deck: 6, ageGate: 'all',   text: "Écrivez à l'autre un message avec ce que vous auriez voulu lui dire il y a longtemps." },
+  { id: 'cf8',  deck: 6, ageGate: 'all',   text: "Inventez un signe doux entre vous — quelque chose à utiliser quand les mots manquent." },
+  { id: 'cf9',  deck: 6, ageGate: 'all',   text: "Dites à l'autre en quoi il ou elle vous a aidé·e à grandir depuis que vous vous connaissez." },
+  { id: 'cf10', deck: 6, ageGate: 'all',   text: "Restez en silence avec l'autre pendant 2 minutes complètes. Juste être là, ensemble." },
+  { id: 'cf11', deck: 6, ageGate: 'adult', text: "Dites à l'autre exactement ce que vous aimez dans la façon dont il ou elle vous touche." },
+  { id: 'cf12', deck: 6, ageGate: 'adult', text: "Faites à l'autre un massage de 5 minutes, en silence. Juste donner, sans rien attendre." },
+  { id: 'cf13', deck: 6, ageGate: 'adult', text: "Montrez à l'autre comment vous aimez être touché·e — guidez doucement sa main." },
+  { id: 'cf14', deck: 6, ageGate: 'adult', text: "Dites à l'autre ce qui vous rend le plus à l'aise dans l'intimité, et ce dont vous avez besoin pour vous sentir bien." },
+];
+
 export const loiPoints: LoiPoint[] = [
   {
     id: 'l1',

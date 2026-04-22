@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppState } from './hooks/useAppState';
 import { Header } from './components/ui';
+import { ThemeProvider } from './context/ThemeContext';
 import {
   ThemeSelectScreen,
   WelcomeScreen,
@@ -20,6 +21,9 @@ import {
   AccompagnementMineurScreen,
   GamesHubScreen,
   DiceGameScreen,
+  GooseGameScreen,
+  CardGameScreen,
+  PremiumScreen,
 } from './components/screens';
 
 export default function ConsentementApp() {
@@ -49,10 +53,12 @@ export default function ConsentementApp() {
     setShowComparison,
     getCommonGround,
     resetAllData,
+    activatePremium,
+    deactivatePremium,
   } = useAppState();
 
   if (!themeMode || !theme) {
-    return <ThemeSelectScreen onSelectTheme={selectTheme} isPremium={isPremium} />;
+    return <ThemeSelectScreen onSelectTheme={selectTheme} isPremium={isPremium} onGoPremium={() => { selectTheme('warm'); navigateTo('premium'); }} />;
   }
 
   const renderScreen = () => {
@@ -122,10 +128,26 @@ export default function ConsentementApp() {
         return <AccompagnementMineurScreen onNavigate={navigateTo} />;
 
       case 'jeux':
-        return <GamesHubScreen onNavigate={navigateTo} isPremium={isPremium} isAdult={isAdult ?? false} />;
+        return <GamesHubScreen onNavigate={navigateTo} isPremium={isPremium} isAdult={isAdult ?? false} onGoPremium={() => navigateTo('premium')} />;
 
       case 'jeu-des':
         return <DiceGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+
+      case 'jeu-oie':
+        return <GooseGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+
+      case 'jeu-cartes':
+        return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+
+      case 'theme-select':
+        return <ThemeSelectScreen
+          onSelectTheme={(mode) => { selectTheme(mode); navigateTo(isAdult ? 'home-adult' : 'home-minor'); }}
+          isPremium={isPremium}
+          onGoPremium={() => navigateTo('premium')}
+        />;
+
+      case 'premium':
+        return <PremiumScreen onActivate={() => { activatePremium(); navigateTo('theme-select'); }} onBack={goBack} />;
 
       default:
         return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
@@ -156,6 +178,10 @@ export default function ConsentementApp() {
         return 'Jeux';
       case 'jeu-des':
         return 'Le Dé du Consentement';
+      case 'jeu-oie':
+        return "Jeu de l'Oie";
+      case 'jeu-cartes':
+        return 'Cartes à tirer';
       default:
         return isAdult ? 'Mon Espace' : 'Espace Éducatif';
     }
@@ -173,6 +199,7 @@ export default function ConsentementApp() {
   };
 
   return (
+    <ThemeProvider theme={theme}>
     <div
       className="min-h-dvh flex flex-col"
       style={{ background: theme.colors.bgGradient }}
@@ -239,6 +266,16 @@ export default function ConsentementApp() {
             Mode Adulte
           </button>
           <button
+            onClick={() => isPremium ? deactivatePremium() : navigateTo('premium')}
+            className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
+              isPremium
+                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            }`}
+          >
+            {isPremium ? '★ Premium ON' : 'Premium'}
+          </button>
+          <button
             onClick={resetAllData}
             className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
           >
@@ -250,5 +287,6 @@ export default function ConsentementApp() {
         </p>
       </motion.div>
     </div>
+    </ThemeProvider>
   );
 }

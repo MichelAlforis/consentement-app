@@ -7,6 +7,7 @@ import { ThemeMode, themes } from '../../types/theme';
 interface ThemeSelectScreenProps {
   onSelectTheme: (theme: ThemeMode) => void;
   isPremium?: boolean;
+  onGoPremium?: () => void;
 }
 
 const freeThemes: ThemeMode[] = ['warm', 'calm'];
@@ -28,7 +29,7 @@ const themeGradients: Record<ThemeMode, string> = {
   'youth':       'linear-gradient(135deg, #f0f7ff 0%, #e8f0ff 100%)',
 };
 
-export function ThemeSelectScreen({ onSelectTheme, isPremium = false }: ThemeSelectScreenProps) {
+export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremium }: ThemeSelectScreenProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -120,7 +121,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false }: ThemeSel
               transition={{ delay: 0.6 + i * 0.1 }}
               whileHover={{ scale: locked ? 1 : 1.02, y: locked ? 0 : -3 }}
               whileTap={{ scale: locked ? 1 : 0.98 }}
-              onClick={() => !locked && onSelectTheme(mode)}
+              onClick={() => locked ? onGoPremium?.() : onSelectTheme(mode)}
               className="relative overflow-hidden rounded-3xl p-5 text-left w-full"
               style={{
                 background: themeGradients[mode],

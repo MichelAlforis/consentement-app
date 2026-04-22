@@ -458,7 +458,7 @@ export function DuoSpaceScreen({
                     </div>
                   </Card>
 
-                  <Card variant="gradient-amber" padding="sm" className="mb-4">
+                  <Card variant="warning" padding="sm" className="mb-4">
                     <div className="flex items-center gap-3">
                       <Loader2 size={18} className="text-amber-600 animate-spin" />
                       <p className="text-sm text-gray-700">En attente...</p>
