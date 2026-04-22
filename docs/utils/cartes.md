@@ -1,184 +1,132 @@
-# Rendu des cartes — État actuel → 2026
+# Rendu des cartes — État actuel (2026-04-22)
 
 **Fichiers clés :**
-- `app/game-engine/cards/CardRenderer.tsx` — rendu configurable (moteur générique)
-- `app/game-engine/cards/useCardEngine.ts` — logique de pioche, favoris, historique
-- `app/components/screens/CardGameScreen.tsx` — écran de jeu existant (ne pas modifier)
+- `app/components/screens/CardGame/PlayingCard.tsx` — composant carte avec tilt, foil, swipe, DeckStack
+- `app/components/screens/CardGame/hooks/useNormalizedPointer.ts` — tracking pointeur normalisé
+- `app/components/screens/CardGame/hooks/useCardSession.ts` — logique de session (pioche, favoris, séance)
+- `app/components/screens/CardGame/index.tsx` — écran de jeu (pick / playing / end)
+
+> **Note :** `app/game-engine/cards/CardRenderer.tsx` et `useCardEngine.ts` existent mais sont des composants génériques non utilisés par le jeu de cartes actuel.
 
 ---
 
-## État actuel
+## État actuel (Niveau 1 ✅)
 
-### Ce qui tourne
+### Structure du composant `PlayingCard`
 
-**Structure de la carte**
 ```
-conteneur drag (motion.div, drag="x")
-  └── perspective wrapper (600px)
-        └── flip container (preserve-3d, rotateY animé)
-              ├── Dos (backfaceVisibility: hidden)
-              │     gradient backGradient + emoji + label + hints
-              └── Face (backfaceVisibility: hidden, rotateY(180deg))
-                    gradient + emoji + texte + indicateur de profondeur (3 dots)
+div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative)
+  ├── DeckStack (motion.div × 2, position: absolute, z-index: -1/-2)
+  └── motion.div.drag (drag="x", x, rotate: dragRotate, opacity: dragOpacity)
+        └── div.perspective (perspective: 1200px — isolé des transforms 2D du drag)
+              └── motion.div.tilt (rotateX, rotateY ±12° depuis pointeur, preserve-3d)
+                    └── motion.div.flip (rotateY 0→180, preserve-3d)
+                          ├── div.dos (backfaceVisibility: hidden)
+                          └── div.face (rotateY(180deg), backfaceVisibility: hidden)
+                                └── motion.div.foil (mix-blend-mode: color-dodge)
 ```
 
-**DeckStack — pile fantôme**
-- 2 à 3 `<div>` absolus derrière la carte active
-- Chaque couche : `translateY(depth × 5px)` + `scale(1 - depth × 0.03)` + opacité décroissante
-- Nombre de couches limité à `Math.min(remaining, 3)` — la pile se vide visuellement
+**Décision clé :** `perspective` est sur un wrapper à l'intérieur du drag wrapper — ainsi le translate/rotate du swipe reste en 2D plat, sans distorsion perspective pendant l'exit.
 
-**Swipe horizontal**
+### DeckStack — pile fantôme
+
+- 2 couches `motion.div` absolues derrière la carte active (`Math.min(remaining, 2)`)
+- Au repos : couche i → `translateY(depth × 5px)`, `scale(1 - depth × 0.03)`, `opacity: 1 - depth × 0.2`
+- Pendant `isAnimating` (draw en cours) : couches montent à mi-hauteur (`y: depth × 2.5px`, `scale(1 - depth × 0.015)`) via spring `stiffness: 280, damping: 22`
+- `deckRemaining` calculé dans `index.tsx` : `seanceSize - cardCount` (mode séance) ou `3` fixe (mode libre)
+
+### Swipe horizontal pour piocher
+
 - `drag="x"`, `dragConstraints={{ left: 0, right: 0 }}`, `dragElastic: 0.2`
-- Seuil de déclenchement : `|offset.x| > 90` ou `|velocity.x| > 350`
-- Animation de sortie : `translateX(±500px)` + `rotate(±18deg)` + `opacity: 0` en 280ms
-- Snap spring si seuil non atteint : `stiffness: 300, damping: 25`
-- `dragOpacity` + `dragRotate` via `useTransform` — feedback visuel pendant le drag
+- Seuil : `|offset.x| > 90` ou `|velocity.x| > 350`
+- Exit : `translateX(±500px)` + `rotate(±18deg)` + `opacity: 0` en 280ms (`ease: 'easeIn'`)
+- Snap si seuil non atteint : spring `stiffness: 300, damping: 25`
+- `dragRotate` + `dragOpacity` via `useTransform` — feedback pendant le drag sans re-render
+- Garde `isExiting` local pour bloquer un double swipe pendant l'animation de sortie
 
-**Flip dos→face**
-- Déclenché au tap si `!isRevealed`
+### Flip dos→face
+
 - `rotateY: 0 → 180`, durée 520ms, ease `[0.22, 0.61, 0.36, 1]`
-- Reset automatique via `useEffect([card?.id])` quand une nouvelle carte est tirée
+- Auto-reveal géré par `useCardSession` (350ms après `startPlaying`, immédiat après `drawNewCard`)
+- Reset via `useEffect([card.id])` : `dragX.set(0)` + `controls.set({ rotate: 0, opacity: 1 })`
+- `WebkitBackfaceVisibility: 'hidden'` sur chaque face (fix iOS Safari)
 
-**iOS Safari fix**
-- `WebkitBackfaceVisibility: 'hidden'` sur chaque face en plus du standard — évite le bug où les deux faces sont visibles simultanément
+### Tilt parallax
 
-### Limitations actuelles
-
-| Problème | Impact |
-|----------|--------|
-| Le dos et la face ont le même éclairage plat | Pas de relief — c'est un rectangle sur un écran |
-| Le flip est unidirectionnel (toujours rotateY) | Pas de dimension physique — une vraie carte peut tourner dans n'importe quel axe |
-| Pas de réponse à la position du doigt/capteur | La carte ne "suit" pas la lumière |
-| La pile ne s'anime pas quand on pioche | Le retrait d'une carte de la pile est invisible |
-| Le fond de la face (gradient) est identique à la catégorie | La face et le dos peuvent se confondre visuellement |
-
----
-
-## Vers 2026
-
-### Niveau 1 — Tilt parallax + foil holographique (zéro nouvelle dép, 2–3 jours)
-
-C'est le changement avec le ROI le plus élevé. Une carte **collector** en 2026.
-
-**Parallax tilt**
-
-La carte s'incline en 3D selon la position du doigt (touch) ou de la souris (desktop).
+- `useNormalizedPointer(cardRef)` : écoute `pointermove` sur la carte, retourne deux `MotionValue<number>` (-1 → +1)
+- Throttlé via `requestAnimationFrame` (annulé/relancé à chaque move)
+- Reset à 0 sur `pointerleave` (retour à plat naturel)
+- Transforms appliquées sur le tilt wrapper (enfant du drag wrapper, parent du flip) :
 
 ```tsx
-// Tracking de position normalisée (-1 → +1) sur la surface de la carte
-const { x, y } = useNormalizedPointer(cardRef); // custom hook
-
-// Transformations appliquées à la carte
-const rotateX = useTransform(y, [-1, 1], [12, -12]); // deg
-const rotateY = useTransform(x, [-1, 1], [-12, 12]);
-const translateZ = useTransform(
-  [x, y],
-  ([xv, yv]) => Math.sqrt(xv * xv + yv * yv) * 8 // 0 → 8px de profondeur
-);
-
-// Highlight spéculaire qui suit le doigt
-const specularX = useTransform(x, [-1, 1], [0, 100]); // %
-const specularY = useTransform(y, [-1, 1], [0, 100]);
+const tiltRotateX = useTransform(tiltY, [-1, 1], [12, -12]); // deg
+const tiltRotateY = useTransform(tiltX, [-1, 1], [-12, 12]);
 ```
 
-Le résultat : la carte réagit à la main comme un objet physique. On "sent" le relief.
+- `will-change: transform` sur le tilt wrapper
 
-**Foil holographique**
+### Foil holographique
 
-Le foil est une couche en `position: absolute, inset: 0, mix-blend-mode: color-dodge` qui affiche un gradient arc-en-ciel dont l'angle et la position dépendent de la position du doigt.
+- Couche `motion.div` en `position: absolute, inset: 0` à l'intérieur de la face
+- `mix-blend-mode: color-dodge`
+- Gradient réactif au pointeur (zéro re-render, 100% `useTransform`) :
 
 ```tsx
-// Gradient qui tourne avec le tilt
-const hue = useTransform(x, [-1, 1], [0, 360]);
-const foilGradient = useTransform(
-  [x, y, hue],
-  ([xv, yv, hueV]) =>
-    `radial-gradient(
-      ellipse at ${(xv + 1) * 50}% ${(yv + 1) * 50}%,
-      hsl(${hueV}, 100%, 70%) 0%,
-      hsl(${hueV + 60}, 100%, 60%) 25%,
-      hsl(${hueV + 120}, 100%, 65%) 50%,
-      transparent 70%
-    )`
+const hue = useTransform(tiltX, [-1, 1], [0, 360]);
+const foilBg = useTransform(
+  [tiltX, tiltY, hue],
+  ([xv, yv, h]) =>
+    `radial-gradient(ellipse at ${(xv + 1) * 50}% ${(yv + 1) * 50}%,
+      hsl(${h}, 100%, 70%) 0%,
+      hsl(${h + 60}, 100%, 60%) 25%,
+      hsl(${h + 120}, 100%, 65%) 50%,
+      transparent 70%)`,
 );
 ```
 
-Opacité du foil :
-- Dos : 0 (le dos est opaque, pas de foil)
-- Face révélée : 0.28 pour une carte normale, 0.45 pour une carte `depth: 3`
-- Le foil peut être désactivé si `theme.id === 'youth'` (trop adulte pour les mineurs)
-
-**Animation de pioche**
-
-Quand `onDraw()` est appelé (swipe), la carte du dessous de la pile doit "remonter" :
-```
-Carte active → sortie (swipe)
-Couche -1 → scale(1 - 0.03) → scale(1) + translateY(5px → 0px)  // spring
-Couche -2 → scale(1 - 0.06) → scale(1 - 0.03)
-```
+- Opacité cible par profondeur (`DECK_DEPTH: { 1:1, 4:1, 2:2, 3:2, 5:3, 6:3 }`) :
+  - Depth 1 (Osez, Défi) : 0 — pas de foil
+  - Depth 2 (Parlez, Et si…) : 0.28
+  - Depth 3 (Vérité, Douceur) : 0.45
+- Transition `animate={{ opacity }}` 0.4s à la révélation
+- Désactivé si `theme.id === 'youth'`
 
 ---
 
-### Niveau 2 — Carte physique avec React Spring (dépendance légère)
+## Tableau des features
 
-`@react-spring/web` est plus adapté que Framer Motion pour des animations basées sur la vélocité continue (suivi de doigt).
-
-**Ce que ça change**
-- Le tilt suit le doigt en temps réel sans délai perceptible (spring à `tension: 400, friction: 30`)
-- Le retour à plat quand le doigt quitte la carte est naturel (spring decay)
-- La rotation du drag est un vrai spring physique, pas une ease function
-
-**Compatibilité** : `@react-spring/web` peut coexister avec Framer Motion — pas besoin de migrer l'existant.
+| Feature | État |
+|---------|------|
+| Flip dos→face | ✅ rotateY 520ms |
+| Pile fantôme (DeckStack) | ✅ 2 couches, animées au draw |
+| Swipe pour piocher | ✅ seuil 90px / 350px/s |
+| Tilt parallax ±12° | ✅ useNormalizedPointer |
+| Foil holographique CSS | ✅ color-dodge, depth-aware |
+| iOS Safari stable | ✅ WebkitBackfaceVisibility |
+| translateZ (profondeur pointer) | ❌ Niveau 1 non implémenté |
+| Spring physique (suivi doigt) | ❌ Niveau 2 — @react-spring/web |
+| Matière de surface WebGL | ❌ Niveau 3 — Three.js |
 
 ---
 
-### Niveau 3 — Canvas WebGL pour les effets de surface (avancé)
+## Vers le Niveau 2
 
-Pour les cartes premium (depth 3, adultes), un canvas Three.js superposé à la carte DOM :
-- Texture de linen/coton procédurale (bruit fractal GLSL)
+### Niveau 2 — Carte physique avec React Spring
+
+`@react-spring/web` pour un suivi de doigt sans délai perceptible.
+
+**Ce que ça ajoute**
+- Tilt suit le doigt en temps réel (spring `tension: 400, friction: 30` vs ease Framer)
+- Retour à plat naturel par decay quand le doigt quitte la carte
+- Drag rotation en spring physique plutôt qu'ease function
+
+**Compatibilité** : `@react-spring/web` coexiste avec Framer Motion — pas besoin de migrer le swipe/flip.
+
+---
+
+### Niveau 3 — Canvas WebGL pour les effets de surface
+
+Pour les cartes Vérité et Douceur (depth 3), canvas Three.js superposé à la carte DOM :
+- Texture linen/coton procédurale (bruit fractal GLSL)
 - Reflet spéculaire directionnel (PointLight virtuel suivi par le doigt)
 - Effet "ink on paper" sur le texte (displacement map légère)
-
-Réservé aux cartes Vérité et Douceur pour marquer visuellement leur caractère profond.
-
----
-
-### Tableau récap
-
-| Feature | Maintenant | Niveau 1 | Niveau 2 | Niveau 3 |
-|---------|-----------|---------|---------|---------|
-| Flip dos→face | ✅ | ✅ | ✅ | ✅ |
-| Pile fantôme | ✅ | ✅ amélioration animation | ✅ | ✅ |
-| Swipe pour piocher | ✅ | ✅ | ✅ spring | ✅ |
-| Tilt parallax | ❌ | ✅ | ✅ physique | ✅ |
-| Foil holographique | ❌ | ✅ CSS | ✅ CSS | ✅ WebGL |
-| Matière de surface | ❌ | ❌ | ❌ | ✅ WebGL |
-| iOS Safari stable | ✅ | ✅ | ✅ | ✅ |
-
----
-
-## Notes d'implémentation
-
-**Où ajouter le tilt**
-
-Le tilt doit être sur le conteneur `CardRenderer`, pas dans le flip container. Le flip (`rotateY`) s'applique sur l'enfant — les deux transforms s'appliquent en cascade via `perspective`.
-
-```
-conteneur tilt (rotateX, rotateY selon pointer)
-  └── flip container (rotateY 0/180)
-        ├── Dos
-        └── Face + foil layer
-```
-
-**Performance**
-
-- Utiliser `will-change: transform` sur le conteneur tilt
-- Throttle l'event `pointermove` à 60fps via `requestAnimationFrame`
-- Le foil gradient doit être en `useTransform` (pas `useState`) pour éviter les re-renders
-
-**Désactivation conditionnelle**
-
-```tsx
-const { reducedMotion } = useReducedMotion(); // @react-spring ou media query
-// Si reducedMotion : tilt désactivé, flip remplacé par fade
-```
