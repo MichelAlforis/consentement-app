@@ -6,6 +6,7 @@ import { DICE_CATEGORIES } from '../../../data';
 import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { useCardSession } from './hooks/useCardSession';
+import { PlayingCard } from './PlayingCard';
 
 interface CardGameScreenProps {
   isPremium: boolean;
@@ -13,9 +14,13 @@ interface CardGameScreenProps {
 }
 
 export function CardGameScreen({ isAdult }: CardGameScreenProps) {
-  const { colors } = useTheme();
+  const { colors, id: themeId } = useTheme();
   const { t } = useTranslation();
   const s = useCardSession(isAdult);
+
+  const deckRemaining = s.sessionMode === 'seance'
+    ? Math.max(0, s.seanceSize - s.cardCount)
+    : s.isSeanceDone ? 0 : 3;
 
   const endInsight = s.sessionDecks.some((d) => [5, 6].includes(d))
     ? t('cardGame.insight1')
@@ -202,34 +207,16 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               </div>
             )}
 
-            <div className="flex items-center justify-center mb-4" style={{ perspective: '1400px' }}>
-              <motion.div
-                animate={{ rotateY: s.isRevealed ? 180 : 0 }}
-                transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{ transformStyle: 'preserve-3d', width: '100%', maxWidth: 290, aspectRatio: '2 / 3', position: 'relative' }}
-              >
-                <div className="absolute inset-0 rounded-[28px] flex flex-col items-center justify-center gap-3 overflow-hidden"
-                  style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', background: s.cat.gradient, boxShadow: `0 24px 64px ${s.cat.border}55, 0 6px 20px rgba(0,0,0,0.15)` }}>
-                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 2px, transparent 2px)', backgroundSize: '20px 20px' }} />
-                  <span className="absolute top-5 left-5 text-xl text-white/35 font-black">{s.cat.emoji}</span>
-                  <span className="absolute bottom-5 right-5 text-xl text-white/35 font-black" style={{ transform: 'rotate(180deg)' }}>{s.cat.emoji}</span>
-                  <p className="text-white font-black text-2xl tracking-tight relative z-10" style={{ textShadow: '0 2px 16px rgba(0,0,0,0.3)' }}>{t(`diceCategories.${s.currentCard.deck}`)}</p>
-                  <span className="text-7xl relative z-10">{s.cat.emoji}</span>
-                  <p className="text-white/45 text-xs font-semibold tracking-[0.2em] uppercase relative z-10">{t('cardGame.cardBackLabel')}</p>
-                </div>
-                <div className="absolute inset-0 rounded-[28px] flex flex-col overflow-hidden"
-                  style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: colors.bgCard, boxShadow: '0 24px 64px rgba(0,0,0,0.12), 0 6px 20px rgba(0,0,0,0.08)', border: `1.5px solid ${colors.border}` }}>
-                  <div className="h-2.5 w-full shrink-0" style={{ background: s.cat.gradient }} />
-                  <div className="flex-1 flex flex-col items-center justify-center px-7 py-5 gap-5">
-                    <div className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm shrink-0" style={{ background: s.cat.gradient }}>
-                      <span className="text-xl">{s.cat.emoji}</span>
-                    </div>
-                    <p className="font-semibold text-[15px] leading-relaxed text-center" style={{ color: colors.textPrimary }}>{s.currentCard.text}</p>
-                  </div>
-                  <div className="h-1.5 w-full shrink-0" style={{ background: s.cat.gradient }} />
-                  {s.currentCard.ageGate === 'adult' && <span className="absolute bottom-3 right-4 text-[10px] font-black text-gray-300 select-none">✦</span>}
-                </div>
-              </motion.div>
+            <div className="flex items-center justify-center mb-4">
+              <PlayingCard
+                card={s.currentCard}
+                cat={s.cat}
+                isRevealed={s.isRevealed}
+                isAnimating={s.isAnimating}
+                deckRemaining={deckRemaining}
+                onDraw={s.isSeanceDone ? s.goToEnd : s.drawNewCard}
+                themeId={themeId}
+              />
             </div>
 
             <AnimatePresence>
