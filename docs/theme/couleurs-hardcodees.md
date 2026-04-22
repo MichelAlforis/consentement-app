@@ -1,8 +1,8 @@
 # Audit Couleurs Hardcodées — État & Décisions
 
-> Dernière mise à jour : 2026-04-22 — 3 passes effectuées.
+> Dernière mise à jour : 2026-04-22 — 4 passes effectuées.
 
-Deux passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
+Quatre passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
 
 ---
 
@@ -86,6 +86,16 @@ Les dégradés des cartes de jeux (`GamesHubScreen`, `DiceGameScreen`) sont des 
 | Cartes à tirer | Violet → Fuchsia | Créativité |
 | Scénarios guidés | Bleu → Cyan | Clarté, dialogue |
 
+### Identité visuelle Duo
+Les couleurs de la session Duo incarnent la rencontre de deux personnes — elles restent fixes indépendamment du thème :
+
+| Composant | Couleur | Raison |
+|-----------|---------|--------|
+| `DuoBumpStep` — bouton principal | `from-purple-500 to-pink-500` | Identité Bump : fusion deux individus |
+| `DuoConnectedStep` — cercle de fusion | `accent → secondary` via dégradé dynamique | S'adapte au thème tout en conservant la symbolique |
+| `DuoSpaceScreen` — badge "Recommandé" | `from-purple-500 to-pink-500` | Continuité identité Bump |
+| `DuoSpaceScreen` — fond caméra | `bg-gray-900` | Sémantique viewfinder (doit rester sombre) |
+
 ### Écrans pré-thème
 Ces écrans s'affichent avant que l'utilisateur choisisse son thème — les couleurs hardcodées n'ont pas d'impact :
 - `WelcomeScreen.tsx` — dégradé bleu/violet du logo app
@@ -123,6 +133,81 @@ Ces écrans s'affichent avant que l'utilisateur choisisse son thème — les cou
 |---------|--------------------|----------|
 | `HomeMinorScreen.tsx` | `text-gray-800/500`, `bg-white/80` | Basse (thème youth fixe) |
 | `DiceGameScreen.tsx` | Cartes de sélection `bg-white border-amber-200` | Basse (jeu interactif) |
+
+---
+
+## Passe 4 — Composants Duo + UI partagés (2026-04-22)
+
+### Contexte
+Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. Cause : composants Duo et UI partagés encore 0 % thématisés, rendant le thème dark-luxury incohérent dans les flux principaux.
+
+### Refactorisés
+
+**`app/components/duo/DuoNavBar.tsx`** — réécriture complète (0% → 100% thématisé)
+- Supprimé : `bg-gray-900/90`, `text-white`, `text-gray-400`, `bg-gray-700`, `bg-gray-800`, Tailwind color classes sur tous les boutons/étapes
+- Remplacé par :
+  - Fond barre : `colors.bgCard` + `backdrop-blur-sm`
+  - Étape active : `background: colors.accent, color: '#fff'`
+  - Étape passée : `background: colors.bgSecondary, color: colors.textSecondary`
+  - Étape future : `background: colors.bgPrimary, color: colors.textMuted`
+  - Hover : `hover:opacity-80` (agnostique au thème)
+  - Bouton reset : `hover:text-red-400` conservé (sémantique destructive)
+
+**`app/components/duo/DuoConnectedStep.tsx`** — animations de fusion thématisées
+- Supprimé : `from-purple-400 to-pink-400` (cercle gauche), `from-violet-400 to-purple-400` (cercle droit), `bg-purple-200` (pulses), couleurs hardcodées sur le cercle fusionné et la particule centrale
+- Remplacé par :
+  - Cercle gauche : `background: colors.accentGradient`
+  - Pulse gauche : `background: colors.accentLight`
+  - Cercle droit : `background: colors.secondaryGradient`
+  - Pulse droit : `background: colors.secondaryLight`
+  - Cercle fusionné : `linear-gradient(135deg, ${colors.accent} 0%, ${colors.secondary} 100%)`
+  - Particule centrale : `background: colors.accentLight`
+
+**`app/components/duo/DuoWaitingStep.tsx`** — animation d'attente thématisée
+- Supprimé : `border-purple-300` (anneaux concentriques), couleurs hardcodées particules et cœur
+- Remplacé par :
+  - Anneaux : `borderColor: colors.border` (fusionné dans l'objet `style` existant)
+  - Cœur : `color: colors.accent, fill: colors.accentLight`
+  - Fond cœur : `background: colors.bgSecondary`
+  - Particules : `background: colors.accentLight` (fusionné dans l'objet `style` existant)
+
+**`app/components/duo/DuoPactStep.tsx`** — items du pacte thématisés
+- Supprimé : tableau `pactItems` statique à scope module avec couleurs hardcodées `#c9a84c` et `#8b1a3a`
+- Remplacé par : config statique `pactItemsConfig` (structure uniquement) + tableau dynamique `pactItems` calculé à l'intérieur du composant avec `colors.accent` et `colors.secondary`
+- Fond conteneur : `colors.bgSecondary`
+
+**`app/components/ui/QRCode.tsx`** — thématisation complète
+- Supprimé : `from-gray-800 to-gray-900` (cadre), `bg-white` (fond intérieur), `bg-gray-900` (modules remplis), `border-purple-400` (anneau pulsé)
+- Remplacé par :
+  - Cadre : `colors.bgSecondary`
+  - Fond intérieur : `colors.bgCard`
+  - Module rempli : `colors.textPrimary` / vide : `colors.bgCard`
+  - Marqueurs de coin : `colors.textPrimary` (extérieur), `colors.bgCard` (anneau), `colors.textPrimary` (point)
+  - Anneau pulsé : `borderColor: colors.accent`
+
+**`app/components/screens/LearnScreen.tsx`** — icônes déplacées dans le composant
+- Supprimé : tableau `principleIcons` à scope module (inaccessible à `colors`)
+- Remplacé par : tableau `principleIcons` déclaré à l'intérieur de `LearnScreen()`, utilisant `colors.accent` pour tous les 5 icônes
+- Fond icône : `colors.bgSecondary`
+
+**`app/components/screens/DuoSpaceScreen.tsx`** — 26 occurrences corrigées
+- Supprimé : `text-gray-800/500/400`, `bg-gray-200`, `text-gray-400`, `border-gray-200`, `bg-purple-50/text-purple-600`, `border-purple-400/bg-purple-400`, toutes les classes Tailwind de couleur sur les icônes, séparateurs, inputs
+- Remplacé par :
+  - Titres/textes : `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
+  - Séparateur : `background: colors.divider`
+  - Fonds icônes : `colors.bgSecondary`
+  - Scanner (coins + ligne) : `colors.accent`
+  - Affichage code : `background: colors.bgSecondary, color: colors.accent`
+  - Inputs : `border: colors.border` / `colors.accent` (état focus)
+- Conservé : `from-purple-500 to-pink-500` (bouton Bump), badge "Recommandé", `bg-gray-900` (fond caméra)
+
+### Erreurs rencontrées et solutions
+
+| Composant | Erreur | Solution |
+|-----------|--------|---------|
+| `DuoWaitingStep` | Attribut `style` en double sur `motion.div` | Fusionner toutes les props CSS dans un seul objet `style` |
+| `DuoBumpStep` | `Button` n'accepte pas la prop `style` | Remplacer `!text-gray-400` par `className="opacity-50"` |
+| `DuoSpaceScreen` | `Card` n'accepte pas la prop `style` | Supprimer le style override — `Card variant="elevated"` se thématise lui-même |
 
 ---
 

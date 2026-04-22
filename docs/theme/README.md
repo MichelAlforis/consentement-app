@@ -34,8 +34,10 @@ app/
     │   ├── Card.tsx                 # useTheme() — glow/inner border premium
     │   ├── Button.tsx               # useTheme() — gradients via thème
     │   ├── ComfortSlider.tsx        # useTheme() — couleurs inactives via bgSecondary
+    │   ├── QRCode.tsx               # useTheme() — modules, cadre, anneau pulsé
     │   └── Header.tsx               # theme via prop (au-dessus du Provider)
     ├── duo/
+    │   ├── DuoNavBar.tsx            # useTheme() — barre de progression étapes
     │   ├── DuoBumpStep.tsx          # useTheme()
     │   ├── DuoConnectedStep.tsx     # useTheme()
     │   ├── DuoFillingStep.tsx       # useTheme()
