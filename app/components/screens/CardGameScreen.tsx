@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy } from 'lucide-react';
 import { cardData, DICE_CATEGORIES, CardData } from '../../data';
+import { useTheme } from '../../context/ThemeContext';
 
 type CardStep = 'pick' | 'playing' | 'end';
 type DeckId = 1 | 2 | 3 | 4 | 5 | 6 | 'random';
@@ -28,6 +29,7 @@ interface CardGameScreenProps {
 }
 
 export function CardGameScreen({ isAdult }: CardGameScreenProps) {
+  const { colors } = useTheme();
   const [step, setStep] = useState<CardStep>('pick');
   const [selectedDeck, setSelectedDeck] = useState<DeckId>('random');
   const [isSolo, setIsSolo] = useState(true);
@@ -151,8 +153,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             {/* Header */}
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-none">Cartes à tirer</h2>
-                <p className="text-sm text-gray-400 mt-1">
+                <h2 className="text-2xl font-black tracking-tight leading-none" style={{ color: colors.textPrimary }}>Cartes à tirer</h2>
+                <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
                   {available.length} cartes
                   {favorites.length > 0 && (
                     <span className="ml-2 text-rose-400">· ❤️ {favorites.length} favori{favorites.length > 1 ? 's' : ''}</span>
@@ -167,8 +169,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             </div>
 
             {/* Réglages compacts */}
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Réglages</p>
-            <div className="bg-gray-50 rounded-2xl p-3 mb-6 space-y-2.5">
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>Réglages</p>
+            <div className="rounded-2xl p-3 mb-6 space-y-2.5" style={{ background: colors.bgSecondary }}>
 
               {/* Solo / Duo */}
               <div className="grid grid-cols-2 gap-2">
@@ -183,7 +185,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                       className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 text-xs font-bold transition-all"
                       style={active
                         ? { borderColor: '#8b5cf6', background: '#f5f3ff', color: '#7c3aed' }
-                        : { borderColor: 'transparent', background: '#fff', color: '#9ca3af' }}
+                        : { borderColor: 'transparent', background: colors.bgCard, color: colors.textMuted }}
                     >
                       {icon}{label}
                     </motion.button>
@@ -192,13 +194,13 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               </div>
 
               {/* Séance / Libre */}
-              <div className="flex bg-white rounded-xl border border-gray-200 p-0.5 gap-0.5">
+              <div className="flex rounded-xl p-0.5 gap-0.5" style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}>
                 {([['seance', '✦ Séance'], ['libre', '∞ Libre']] as const).map(([mode, label]) => (
                   <button key={mode} onClick={() => setSessionMode(mode)}
                     className="flex-1 py-2 rounded-[10px] text-xs font-bold transition-all"
                     style={sessionMode === mode
                       ? { background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff' }
-                      : { color: '#9ca3af' }}
+                      : { color: colors.textMuted }}
                   >
                     {label}
                   </button>
@@ -214,7 +216,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                       className="py-2 rounded-xl text-xs font-bold border-2 transition-all"
                       style={seanceSize === n
                         ? { borderColor: '#8b5cf6', background: '#f5f3ff', color: '#7c3aed' }
-                        : { borderColor: '#e5e7eb', color: '#9ca3af' }}
+                        : { borderColor: colors.border, color: colors.textMuted }}
                     >
                       {n} cartes
                     </button>
@@ -224,7 +226,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             </div>
 
             {/* Deck picker */}
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Paquet</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>Paquet</p>
 
             <motion.button
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
@@ -232,15 +234,15 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               className="w-full mb-3 p-4 rounded-2xl border-2 flex items-center gap-4 transition-all"
               style={selectedDeck === 'random'
                 ? { borderColor: '#8b5cf6', background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)' }
-                : { borderColor: '#f3f4f6', background: '#fafafa' }}
+                : { borderColor: colors.border, background: colors.bgSecondary }}
             >
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
                 style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 35%, #ec4899 70%, #f59e0b 100%)' }}>
                 <Shuffle size={22} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className={`font-bold text-sm ${selectedDeck === 'random' ? 'text-violet-700' : 'text-gray-700'}`}>Aléatoire</p>
-                <p className="text-xs text-gray-400 mt-0.5">{available.length} cartes · tous les paquets</p>
+                <p className="font-bold text-sm" style={{ color: selectedDeck === 'random' ? '#7c3aed' : colors.textPrimary }}>Aléatoire</p>
+                <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{available.length} cartes · tous les paquets</p>
               </div>
               {selectedDeck === 'random' && (
                 <div className="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center shrink-0">
@@ -305,10 +307,10 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 <span className="text-sm leading-none">{cat.emoji}</span>
                 <span className="text-white font-bold text-xs tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.25)' }}>{cat.name}</span>
               </div>
-              <span className="text-xs font-semibold text-gray-400">
+              <span className="text-xs font-semibold" style={{ color: colors.textMuted }}>
                 {sessionMode === 'seance' ? `${cardCount} / ${seanceSize}` : `#${cardCount}`}
               </span>
-              <div className="ml-auto flex items-center gap-1 text-xs text-gray-400">
+              <div className="ml-auto flex items-center gap-1 text-xs" style={{ color: colors.textMuted }}>
                 {isSolo ? <><User size={12} /><span>Solo</span></> : <><Users size={12} /><span>À deux</span></>}
               </div>
             </div>
@@ -324,7 +326,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                       width: i < cardCount ? 8 : 6,
                       height: i < cardCount ? 8 : 6,
                       borderRadius: 999,
-                      background: i < cardCount ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : '#e5e7eb',
+                      background: i < cardCount ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : colors.border,
                       transition: 'width 0.3s, height 0.3s',
                     }}
                   />
@@ -362,16 +364,16 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                   style={{
                     backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg)',
-                    background: '#ffffff',
+                    background: colors.bgCard,
                     boxShadow: '0 24px 64px rgba(0,0,0,0.12), 0 6px 20px rgba(0,0,0,0.08)',
-                    border: '1.5px solid #f0f0f0',
+                    border: `1.5px solid ${colors.border}`,
                   }}>
                   <div className="h-2.5 w-full shrink-0" style={{ background: cat.gradient }} />
                   <div className="flex-1 flex flex-col items-center justify-center px-7 py-5 gap-5">
                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm shrink-0" style={{ background: cat.gradient }}>
                       <span className="text-xl">{cat.emoji}</span>
                     </div>
-                    <p className="text-gray-800 font-semibold text-[15px] leading-relaxed text-center">
+                    <p className="font-semibold text-[15px] leading-relaxed text-center" style={{ color: colors.textPrimary }}>
                       {currentCard.text}
                     </p>
                   </div>
@@ -392,7 +394,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                   transition={{ delay: 0.25 }}
                   className="flex items-center gap-3 mb-6 px-1"
                 >
-                  <p className="text-xs text-gray-400 flex-1">
+                  <p className="text-xs flex-1" style={{ color: colors.textMuted }}>
                     {isSolo ? "Prends le temps qu'il faut." : "Lisez ensemble. Sans timer."}
                   </p>
                   <motion.button
@@ -401,7 +403,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                     className="shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center border-2 transition-all"
                     style={isFavCard
                       ? { borderColor: '#fecdd3', background: '#fff1f2' }
-                      : { borderColor: '#f3f4f6', background: '#fff' }}
+                      : { borderColor: colors.border, background: colors.bgCard }}
                   >
                     <Heart size={18} className={isFavCard ? 'text-rose-400 fill-rose-400' : 'text-gray-300'} />
                   </motion.button>
@@ -430,7 +432,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                   : <><Shuffle size={18} />Nouvelle carte</>}
               </motion.button>
               <motion.button whileTap={{ scale: 0.97 }} onClick={reset}
-                className="w-full py-3.5 rounded-2xl border border-gray-200 bg-white text-sm font-semibold text-gray-500 flex items-center justify-center gap-2">
+                className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2"
+                style={{ border: `1px solid ${colors.border}`, background: colors.bgCard, color: colors.textSecondary }}>
                 <RotateCcw size={14} />
                 Changer de paquet
               </motion.button>
@@ -453,8 +456,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               ✨
             </motion.div>
 
-            <h3 className="text-2xl font-black text-gray-900 mb-2">Belle séance !</h3>
-            <p className="text-sm text-gray-400 mb-7 leading-relaxed">
+            <h3 className="text-2xl font-black mb-2" style={{ color: colors.textPrimary }}>Belle séance !</h3>
+            <p className="text-sm mb-7 leading-relaxed" style={{ color: colors.textMuted }}>
               {seanceSize} cartes · {sessionDecks.length} paquet{sessionDecks.length > 1 ? 's' : ''} exploré{sessionDecks.length > 1 ? 's' : ''}
               {favorites.length > 0 && ` · ❤️ ${favorites.length} favori${favorites.length > 1 ? 's' : ''}`}
             </p>
@@ -465,7 +468,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
                 className="w-full mb-6"
               >
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Paquets explorés</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>Paquets explorés</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {sessionDecks.map(d => {
                     const c = DICE_CATEGORIES[d];
@@ -504,7 +507,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => { setSessionMode('libre'); setStep('playing'); }}
-                className="w-full py-3.5 rounded-2xl border border-gray-200 bg-white text-sm font-semibold text-gray-500 flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2"
+                style={{ border: `1px solid ${colors.border}`, background: colors.bgCard, color: colors.textSecondary }}
               >
                 <Shuffle size={14} />
                 Continuer en mode libre

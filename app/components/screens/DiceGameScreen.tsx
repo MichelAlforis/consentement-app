@@ -8,6 +8,7 @@ import { Button } from '../ui';
 import { useDiceEngine } from '../../game-engine/dice/useDiceEngine';
 import { DiceRenderer } from '../../game-engine/dice/DiceRenderer';
 import type { DiceConfig, DiceItem } from '../../game-engine/dice/types';
+import { useTheme } from '../../context/ThemeContext';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -30,6 +31,7 @@ interface DiceGameScreenProps {
 }
 
 export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
+  const { colors } = useTheme();
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
   const [p1Answer, setP1Answer] = useState<DuoAnswer>(null);
@@ -94,8 +96,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
           <Dices size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Le Dé du Consentement</h2>
-          <p className="text-sm text-gray-500">{available.length} activités disponibles</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Le Dé du Consentement</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{available.length} activités disponibles</p>
         </div>
       </div>
 
@@ -111,20 +113,21 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" />
             </div>
 
-            <p className="text-sm font-semibold text-gray-700 mb-4">Comment tu veux jouer ?</p>
+            <p className="text-sm font-semibold mb-4" style={{ color: colors.textSecondary }}>Comment tu veux jouer ?</p>
             <div className="space-y-3 mb-8">
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={() => pickRoll(true)}
-                className="w-full p-5 rounded-3xl text-left bg-white border-2 border-amber-200 shadow-sm"
+                className="w-full p-5 rounded-3xl text-left border-2 border-amber-200 shadow-sm"
+                style={{ background: colors.bgCard }}
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
                     <User size={22} className="text-amber-500" />
                   </div>
                   <div>
-                    <p className="font-bold text-gray-800">Solo</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Explorer, réfléchir, se poser des questions — sans pression</p>
+                    <p className="font-bold" style={{ color: colors.textPrimary }}>Solo</p>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>Explorer, réfléchir, se poser des questions — sans pression</p>
                   </div>
                 </div>
               </motion.button>
@@ -132,15 +135,16 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={() => pickRoll(false)}
-                className="w-full p-5 rounded-3xl text-left bg-white border-2 border-orange-200 shadow-sm"
+                className="w-full p-5 rounded-3xl text-left border-2 border-orange-200 shadow-sm"
+                style={{ background: colors.bgCard }}
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center">
                     <Users size={22} className="text-orange-500" />
                   </div>
                   <div>
-                    <p className="font-bold text-gray-800">À deux</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Chacun vote séparément — le résultat s'affiche seulement si vous êtes d'accord tous les deux</p>
+                    <p className="font-bold" style={{ color: colors.textPrimary }}>À deux</p>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>Chacun vote séparément — le résultat s'affiche seulement si vous êtes d'accord tous les deux</p>
                   </div>
                 </div>
               </motion.button>
@@ -148,7 +152,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
             {/* Catégories en vitrine */}
             <div className="mt-auto">
-              <p className="text-xs text-gray-400 text-center mb-3">6 catégories au hasard</p>
+              <p className="text-xs text-center mb-3" style={{ color: colors.textMuted }}>6 catégories au hasard</p>
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(DICE_CATEGORIES).map(([face, c]) => (
                   <div key={face} className="rounded-2xl p-2.5 text-center" style={{ background: c.gradient }}>
@@ -182,7 +186,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   <motion.p
                     key="rolling-label"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="mt-4 text-sm text-gray-400"
+                    className="mt-4 text-sm"
+                    style={{ color: colors.textMuted }}
                   >
                     Le destin décide…
                   </motion.p>
@@ -222,7 +227,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                       border: `1.5px solid ${currentCat.border}`,
                     }}
                   >
-                    <p className="text-lg font-bold text-gray-800 leading-snug">{currentItem.text}</p>
+                    <p className="text-lg font-bold leading-snug" style={{ color: colors.textPrimary }}>{currentItem.text}</p>
                   </div>
 
                   {isSolo ? (
@@ -238,7 +243,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     </div>
                   ) : (
                     <div className="mt-auto">
-                      <p className="text-sm text-center text-gray-500 mb-3">Vous avez lu ? Passez au vote.</p>
+                      <p className="text-sm text-center mb-3" style={{ color: colors.textMuted }}>Vous avez lu ? Passez au vote.</p>
                       <Button onClick={() => setMode('duo-p1')} fullWidth>
                         <Users size={18} />
                         Commencer le vote
@@ -262,7 +267,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">1</span>
               </div>
-              <p className="font-semibold text-gray-800">Personne 1 — réponds seul·e</p>
+              <p className="font-semibold" style={{ color: colors.textPrimary }}>Personne 1 — réponds seul·e</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
@@ -270,12 +275,12 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
             </div>
 
-            <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
-              <p className="text-sm text-gray-700 font-medium leading-snug">{currentItem.text}</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
+              <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
 
-            <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
-            <p className="text-xs text-gray-400 text-center mb-6">
+            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>Tu es partant·e ?</p>
+            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
               L'autre ne verra pas ta réponse avant d'avoir voté à son tour.
             </p>
 
@@ -309,12 +314,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <motion.div
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-20 h-20 rounded-3xl bg-gray-100 flex items-center justify-center mb-6"
+              className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6"
+              style={{ background: colors.bgSecondary }}
             >
-              <EyeOff size={36} className="text-gray-400" />
+              <EyeOff size={36} style={{ color: colors.textMuted }} />
             </motion.div>
-            <h3 className="font-bold text-gray-800 text-lg mb-2">Réponse enregistrée</h3>
-            <p className="text-sm text-gray-500 max-w-xs mb-8">
+            <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>Réponse enregistrée</h3>
+            <p className="text-sm max-w-xs mb-8" style={{ color: colors.textMuted }}>
               Passe le téléphone à <strong>Personne 2</strong> sans lui montrer l'écran.
             </p>
             <Button onClick={() => setMode('duo-p2')}>
@@ -335,7 +341,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">2</span>
               </div>
-              <p className="font-semibold text-gray-800">Personne 2 — réponds seul·e</p>
+              <p className="font-semibold" style={{ color: colors.textPrimary }}>Personne 2 — réponds seul·e</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
@@ -343,12 +349,12 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
             </div>
 
-            <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
-              <p className="text-sm text-gray-700 font-medium leading-snug">{currentItem.text}</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
+              <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
 
-            <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
-            <p className="text-xs text-gray-400 text-center mb-6">
+            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>Tu es partant·e ?</p>
+            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
               Réponds honnêtement. Le résultat commun s'affiche après.
             </p>
 
@@ -388,11 +394,11 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               {bothYes ? '🎉' : '🤝'}
             </motion.div>
 
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
               {bothYes ? 'Go ! Vous êtes tous les deux partant·e·s !' : 'Pas cette fois'}
             </h3>
 
-            <p className="text-sm text-gray-500 max-w-xs leading-relaxed mb-2">
+            <p className="text-sm max-w-xs leading-relaxed mb-2" style={{ color: colors.textMuted }}>
               {bothYes
                 ? `Super — lancez-vous pour « ${currentCat.name} » !`
                 : "L'un·e de vous n'est pas à l'aise avec ça — et c'est parfaitement normal."}
