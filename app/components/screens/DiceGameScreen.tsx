@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff } from 'lucide-react';
-import { diePractices, DiePractice } from '../../data';
+import { diePractices, DICE_CATEGORIES, DiePractice } from '../../data';
 import { Button, Dice3D } from '../ui';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
@@ -31,13 +31,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     return false;
   }), [isAdult, isPremium]);
 
-  const roll = (solo: boolean) => {
+  const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    const picked = available[Math.floor(Math.random() * available.length)];
-    const face = Math.floor(Math.random() * 6) + 1;
+    const face = (Math.floor(Math.random() * 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+    const pool = available.filter(p => p.face === face);
+    const picked = (pool.length > 0 ? pool : available)[Math.floor(Math.random() * (pool.length > 0 ? pool : available).length)];
     setPractice(picked);
     setTargetFace(face);
     setRollCount(c => c + 1);
@@ -48,8 +49,9 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    const picked = available[Math.floor(Math.random() * available.length)];
-    const face = Math.floor(Math.random() * 6) + 1;
+    const face = (Math.floor(Math.random() * 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
+    const pool = available.filter(p => p.face === face);
+    const picked = (pool.length > 0 ? pool : available)[Math.floor(Math.random() * (pool.length > 0 ? pool : available).length)];
     setPractice(picked);
     setTargetFace(face);
     setRollCount(c => c + 1);
@@ -69,10 +71,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   };
 
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
-
-  // Le dé 3D est rendu en permanence (garde son état/rotation)
-  // On le cache/montre selon le mode
-  const showDice = ['rolling', 'practice'].includes(mode);
+  const cat = practice ? DICE_CATEGORIES[practice.face] : null;
 
   return (
     <motion.div
@@ -87,19 +86,18 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         </div>
         <div>
           <h2 className="text-xl font-bold text-gray-800">Le Dé du Consentement</h2>
-          <p className="text-sm text-gray-500">{available.length} pratiques disponibles</p>
+          <p className="text-sm text-gray-500">{available.length} activités disponibles</p>
         </div>
       </div>
 
       <AnimatePresence mode="wait">
 
-        {/* PICK — Choix solo / duo */}
+        {/* PICK */}
         {mode === 'pick' && (
           <motion.div key="pick"
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
             className="flex-1 flex flex-col"
           >
-            {/* Dé 3D statique en vitrine */}
             <div className="flex justify-center mb-8 mt-4">
               <Dice3D targetFace={1} isRolling={false} />
             </div>
@@ -108,7 +106,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <div className="space-y-3 mb-8">
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                onClick={() => roll(true)}
+                onClick={() => pickRoll(true)}
                 className="w-full p-5 rounded-3xl text-left bg-white border-2 border-amber-200 shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -117,14 +115,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   </div>
                   <div>
                     <p className="font-bold text-gray-800">Solo</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Explorer et apprendre ce que le consentement implique pour chaque pratique</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Explorer, réfléchir, se poser des questions — sans pression</p>
                   </div>
                 </div>
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                onClick={() => roll(false)}
+                onClick={() => pickRoll(false)}
                 className="w-full p-5 rounded-3xl text-left bg-white border-2 border-orange-200 shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -133,71 +131,88 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   </div>
                   <div>
                     <p className="font-bold text-gray-800">À deux</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Chacun répond séparément — le résultat s'affiche seulement si vous êtes d'accord tous les deux</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Chacun vote séparément — le résultat s'affiche seulement si vous êtes d'accord tous les deux</p>
                   </div>
                 </div>
               </motion.button>
             </div>
 
-            <div className="mt-auto p-3 rounded-2xl bg-gray-50 border border-gray-100">
-              <p className="text-xs text-gray-400 text-center">
-                Le dé choisit la pratique au hasard parmi les {available.length} disponibles.
-              </p>
+            {/* Catégories en vitrine */}
+            <div className="mt-auto">
+              <p className="text-xs text-gray-400 text-center mb-3">6 catégories au hasard</p>
+              <div className="grid grid-cols-3 gap-2">
+                {Object.entries(DICE_CATEGORIES).map(([face, c]) => (
+                  <div key={face} className="rounded-2xl p-2.5 text-center" style={{ background: c.gradient }}>
+                    <div className="text-lg">{c.emoji}</div>
+                    <div className="text-xs font-bold text-white mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>{c.name}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
 
-        {/* ROLLING + PRACTICE — Dé 3D animé puis résultat */}
-        {(mode === 'rolling' || mode === 'practice') && practice && (
+        {/* ROLLING + PRACTICE */}
+        {(mode === 'rolling' || mode === 'practice') && practice && cat && (
           <motion.div key="dice-view"
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col"
           >
-            {/* Zone dé */}
+            {/* Zone dé + titre catégorie */}
             <div className="flex flex-col items-center mb-6 mt-2">
               <Dice3D
                 targetFace={targetFace}
                 isRolling={isRolling}
                 onRollComplete={handleRollComplete}
               />
+
+              {/* Titre catégorie — tombe après le lancer */}
               <AnimatePresence>
                 {mode === 'rolling' && (
                   <motion.p
+                    key="rolling-label"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     className="mt-4 text-sm text-gray-400"
                   >
                     Le destin décide…
                   </motion.p>
                 )}
+                {mode === 'practice' && (
+                  <motion.div
+                    key="category-title"
+                    initial={{ opacity: 0, y: -40, rotate: -6, scale: 1.2 }}
+                    animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.05 }}
+                    className="mt-5 px-5 py-2 rounded-2xl flex items-center gap-2"
+                    style={{ background: cat.gradient, boxShadow: `0 4px 20px ${cat.border}80` }}
+                  >
+                    <span className="text-2xl">{cat.emoji}</span>
+                    <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
+                      {cat.name}
+                    </span>
+                    <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
 
-            {/* Fiche pratique — apparaît après le lancer */}
+            {/* Carte activité */}
             <AnimatePresence>
               {mode === 'practice' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.3 }}
                   className="flex-1 flex flex-col"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-2xl">{practice.emoji}</span>
-                    <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-widest">Tirage #{rollCount}</p>
-                      <p className="font-bold text-lg text-gray-800">{practice.name}</p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl overflow-hidden border border-gray-100 shadow-sm mb-4">
-                    <div className="p-4 bg-white">
-                      <h3 className="font-semibold text-gray-500 text-xs uppercase tracking-widest mb-2">C'est quoi ?</h3>
-                      <p className="text-sm text-gray-700 leading-relaxed">{practice.description}</p>
-                    </div>
-                    <div className="p-4 bg-amber-50 border-t border-amber-100">
-                      <h3 className="font-semibold text-amber-600 text-xs uppercase tracking-widest mb-2">Le consentement ici</h3>
-                      <p className="text-sm text-amber-800 leading-relaxed">{practice.consentNote}</p>
-                    </div>
+                  <div
+                    className="rounded-3xl p-6 mb-5 text-center"
+                    style={{
+                      background: `${cat.gradient.replace('linear-gradient(135deg, ', '').split(',')[0]}18`,
+                      border: `1.5px solid ${cat.border}`,
+                    }}
+                  >
+                    <p className="text-lg font-bold text-gray-800 leading-snug">{practice.text}</p>
                   </div>
 
                   {isSolo ? (
@@ -213,7 +228,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     </div>
                   ) : (
                     <div className="mt-auto">
-                      <p className="text-sm text-center text-gray-500 mb-3">Vous avez lu la fiche ? Passez au vote.</p>
+                      <p className="text-sm text-center text-gray-500 mb-3">Vous avez lu ? Passez au vote.</p>
                       <Button onClick={() => setMode('duo-p1')} fullWidth>
                         <Users size={18} />
                         Commencer le vote
@@ -227,8 +242,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
           </motion.div>
         )}
 
-        {/* DUO P1 — vote caché */}
-        {mode === 'duo-p1' && practice && (
+        {/* DUO P1 */}
+        {mode === 'duo-p1' && practice && cat && (
           <motion.div key="duo-p1"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
             className="flex-1 flex flex-col"
@@ -240,13 +255,18 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold text-gray-800">Personne 1 — réponds seul·e</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-100 mb-6 text-center">
-              <p className="text-base font-bold text-amber-800 mb-1">{practice.emoji} {practice.name}</p>
-              <p className="text-sm text-amber-700">Es-tu consentant·e pour cette pratique ?</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: cat.gradient }}>
+              <span className="text-3xl">{cat.emoji}</span>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{cat.name}</p>
             </div>
 
-            <p className="text-xs text-gray-400 text-center mb-4">
-              L'autre personne ne verra pas ta réponse avant d'avoir voté à son tour.
+            <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
+              <p className="text-sm text-gray-700 font-medium leading-snug">{practice.text}</p>
+            </div>
+
+            <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
+            <p className="text-xs text-gray-400 text-center mb-6">
+              L'autre ne verra pas ta réponse avant d'avoir voté à son tour.
             </p>
 
             <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -285,7 +305,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             </motion.div>
             <h3 className="font-bold text-gray-800 text-lg mb-2">Réponse enregistrée</h3>
             <p className="text-sm text-gray-500 max-w-xs mb-8">
-              Passe maintenant le téléphone à <strong>Personne 2</strong> sans lui montrer l'écran.
+              Passe le téléphone à <strong>Personne 2</strong> sans lui montrer l'écran.
             </p>
             <Button onClick={() => setMode('duo-p2')}>
               <Eye size={18} />
@@ -295,8 +315,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
           </motion.div>
         )}
 
-        {/* DUO P2 — vote caché */}
-        {mode === 'duo-p2' && practice && (
+        {/* DUO P2 */}
+        {mode === 'duo-p2' && practice && cat && (
           <motion.div key="duo-p2"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
             className="flex-1 flex flex-col"
@@ -308,12 +328,17 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold text-gray-800">Personne 2 — réponds seul·e</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-orange-50 border border-orange-100 mb-6 text-center">
-              <p className="text-base font-bold text-orange-800 mb-1">{practice.emoji} {practice.name}</p>
-              <p className="text-sm text-orange-700">Es-tu consentant·e pour cette pratique ?</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: cat.gradient }}>
+              <span className="text-3xl">{cat.emoji}</span>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{cat.name}</p>
             </div>
 
-            <p className="text-xs text-gray-400 text-center mb-4">
+            <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
+              <p className="text-sm text-gray-700 font-medium leading-snug">{practice.text}</p>
+            </div>
+
+            <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
+            <p className="text-xs text-gray-400 text-center mb-6">
               Réponds honnêtement. Le résultat commun s'affiche après.
             </p>
 
@@ -339,14 +364,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         )}
 
         {/* RÉVÉLATION */}
-        {mode === 'duo-reveal' && practice && (
+        {mode === 'duo-reveal' && practice && cat && (
           <motion.div key="duo-reveal"
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col items-center justify-center text-center"
           >
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0, rotate: -15 }}
+              animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 12, delay: 0.1 }}
               className="text-6xl mb-4"
             >
@@ -354,13 +379,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             </motion.div>
 
             <h3 className="text-xl font-bold text-gray-800 mb-2">
-              {bothYes ? 'Vous êtes d\'accord !' : 'Pas cette fois'}
+              {bothYes ? 'Go ! Vous êtes tous les deux partant·e·s !' : 'Pas cette fois'}
             </h3>
 
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed mb-2">
               {bothYes
-                ? `Vous êtes tous les deux ok pour « ${practice.name} ». Prenez le temps d'en parler avant.`
-                : 'L\'un·e de vous n\'est pas à l\'aise avec cette pratique — et c\'est parfaitement normal.'}
+                ? `Super — lancez-vous pour « ${cat.name} » !`
+                : "L'un·e de vous n'est pas à l'aise avec ça — et c'est parfaitement normal."}
             </p>
 
             {!bothYes && (

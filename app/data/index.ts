@@ -26,14 +26,25 @@ export interface LoiPoint {
 
 export type AgeGate = 'all' | 'adult' | 'premium';
 
+export const DICE_CATEGORIES: Record<number, {
+  name: string;
+  emoji: string;
+  gradient: string;
+  border: string;
+}> = {
+  1: { name: 'Osez',     emoji: '🎭', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', border: '#fbbf24' },
+  2: { name: 'Parlez',   emoji: '💬', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', border: '#a78bfa' },
+  3: { name: 'Et si…',   emoji: '🤔', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', border: '#f9a8d4' },
+  4: { name: 'Défi',     emoji: '🎯', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', border: '#93c5fd' },
+  5: { name: 'Vérité',   emoji: '✨', gradient: 'linear-gradient(135deg, #10b981, #059669)', border: '#6ee7b7' },
+  6: { name: 'Douceur',  emoji: '❤️', gradient: 'linear-gradient(135deg, #be123c, #9f1239)', border: '#fda4af' },
+};
+
 export interface DiePractice {
   id: string;
-  emoji: string;
-  name: string;
-  description: string;
-  consentNote: string;
+  face: 1 | 2 | 3 | 4 | 5 | 6;
+  text: string;
   ageGate: AgeGate;
-  level: 1 | 2 | 3;
 }
 
 export const comfortCategories: ComfortCategories = {
@@ -215,101 +226,53 @@ export const pornoVsRealite: PornoVsRealite[] = [
 ];
 
 export const diePractices: DiePractice[] = [
-  // Niveau 1 — Gratuit, tous publics (douceur, tendresse)
-  {
-    id: 'd1', level: 1, ageGate: 'all', emoji: '💋',
-    name: 'Un baiser',
-    description: 'Un baiser peut être doux, long, intense ou rapide. C\'est souvent le premier geste d\'intimité physique entre deux personnes.',
-    consentNote: 'Le consentement à un baiser ne vaut que pour ce baiser. Il ne s\'étend pas à autre chose.',
-  },
-  {
-    id: 'd2', level: 1, ageGate: 'all', emoji: '🤗',
-    name: 'Un câlin',
-    description: 'Se tenir dans les bras de quelqu\'un, sentir la chaleur d\'un corps. Simple, puissant, et souvent sous-estimé.',
-    consentNote: 'Certaines personnes ne sont pas à l\'aise avec le contact physique. Toujours vérifier avant de toucher.',
-  },
-  {
-    id: 'd3', level: 1, ageGate: 'all', emoji: '✋',
-    name: 'Un massage',
-    description: 'Toucher le corps de l\'autre avec douceur — dos, épaules, mains. Une forme d\'intimité non sexuelle mais très chargée en confiance.',
-    consentNote: 'Précise où tu veux masser et demande si c\'est ok. Le massage peut s\'arrêter à tout moment.',
-  },
-  {
-    id: 'd4', level: 1, ageGate: 'all', emoji: '🤝',
-    name: 'Se tenir la main',
-    description: 'Un geste simple qui dit beaucoup. En public ou en privé, tenir la main de quelqu\'un est un acte d\'affection conscient.',
-    consentNote: 'Même les gestes du quotidien méritent un accord. Propose ta main plutôt que de la prendre.',
-  },
-  {
-    id: 'd5', level: 1, ageGate: 'all', emoji: '💬',
-    name: 'Exprimer ce qu\'on aime',
-    description: 'Dire à l\'autre ce qui nous plaît — une façon de toucher, un moment, une sensation. La communication change tout.',
-    consentNote: 'Partager ses désirs crée de la confiance. Écouter ceux de l\'autre sans jugement aussi.',
-  },
-  {
-    id: 'd6', level: 1, ageGate: 'all', emoji: '👁️',
-    name: 'Un regard intense',
-    description: 'Le contact visuel soutenu pendant un moment d\'intimité peut être très puissant. Certains l\'adorent, d\'autres s\'en sentent exposés.',
-    consentNote: 'Demande si l\'autre est à l\'aise avec le contact visuel. Ce n\'est pas universel.',
-  },
+  // Face 1 — Osez 🎭
+  { id: 'o1', face: 1, ageGate: 'all',   text: "Regardez-vous dans les yeux en silence pendant 30 secondes. Premier qui rigole a perdu. 👀" },
+  { id: 'o2', face: 1, ageGate: 'all',   text: "Faites-vous un compliment inattendu — pas sur l'apparence, sur quelque chose que l'autre remarque rarement." },
+  { id: 'o3', face: 1, ageGate: 'all',   text: "Inventez un geste secret que vous serez les seuls à connaître. Utilisez-le au moins une fois ce soir." },
+  { id: 'o4', face: 1, ageGate: 'all',   text: "Échangez un objet que vous avez sur vous et expliquez en 30 secondes pourquoi il vous tient à cœur." },
+  { id: 'o5', face: 1, ageGate: 'adult', text: "Décrivez à voix haute ce que vous aimeriez faire ensemble ce soir — sans filtre, sans honte." },
+  { id: 'o6', face: 1, ageGate: 'adult', text: "Envoyez un message à l'autre décrivant exactement ce dont vous avez envie. Maintenant. Sans effacer." },
 
-  // Niveau 2 — Adultes, gratuit
-  {
-    id: 'd7', level: 2, ageGate: 'adult', emoji: '🌹',
-    name: 'Caresses intimes',
-    description: 'Toucher les parties intimes de l\'autre avec la main. Un acte sexuel qui demande une communication claire sur ce qui est agréable.',
-    consentNote: 'Demande ce qui est agréable pendant, pas seulement avant. Les préférences varient et se découvrent ensemble.',
-  },
-  {
-    id: 'd8', level: 2, ageGate: 'adult', emoji: '👄',
-    name: 'Fellation',
-    description: 'Stimulation orale du pénis. Une pratique courante dont le plaisir et le confort varient selon les personnes.',
-    consentNote: 'Ni obligation, ni dette. Cette pratique doit être souhaitée des deux côtés. La pression ou insistance n\'est jamais acceptable.',
-  },
-  {
-    id: 'd9', level: 2, ageGate: 'adult', emoji: '🌸',
-    name: 'Cunnilingus',
-    description: 'Stimulation orale de la vulve. Une pratique qui demande confiance, communication et attention aux signaux de l\'autre.',
-    consentNote: 'Chaque corps est différent. Communiquer pendant la pratique sur ce qui est agréable est essentiel.',
-  },
-  {
-    id: 'd10', level: 2, ageGate: 'adult', emoji: '🔥',
-    name: 'Masturbation mutuelle',
-    description: 'Se caresser mutuellement ou en même temps. Une forme d\'intimité sexuelle qui n\'implique pas de pénétration.',
-    consentNote: 'Montrer à l\'autre ce qu\'on aime est un acte de confiance. Aucune obligation de performance.',
-  },
-  {
-    id: 'd11', level: 2, ageGate: 'adult', emoji: '🎭',
-    name: 'Jeu de séduction',
-    description: 'Explorer une scène de désir, un fantasme léger, un rôle. Le jeu de séduction conscient peut renforcer la complicité.',
-    consentNote: 'Définir le cadre ensemble avant. Ce qui se passe dans le jeu reste dans le jeu — sauf si l\'un des deux veut arrêter.',
-  },
+  // Face 2 — Parlez 💬
+  { id: 'p1', face: 2, ageGate: 'all',   text: "Dites une chose que vous n'osez jamais dire normalement. L'autre écoute sans interrompre." },
+  { id: 'p2', face: 2, ageGate: 'all',   text: "Qu'est-ce que l'autre fait inconsciemment qui vous rend heureux·se ?" },
+  { id: 'p3', face: 2, ageGate: 'all',   text: "Racontez un moment précis où vous avez ressenti une confiance totale avec l'autre." },
+  { id: 'p4', face: 2, ageGate: 'all',   text: "Qu'est-ce que vous aimeriez que l'autre comprenne mieux de vous ?" },
+  { id: 'p5', face: 2, ageGate: 'adult', text: "Qu'est-ce qui vous excite en ce moment — quelque chose que vous n'avez jamais vraiment dit ?" },
+  { id: 'p6', face: 2, ageGate: 'adult', text: "Décrivez votre fantasme du moment en détail. L'autre écoute sans interrompre — ni juger." },
 
-  // Niveau 3 — Adultes, premium
-  {
-    id: 'd12', level: 3, ageGate: 'premium', emoji: '💫',
-    name: 'Pénétration vaginale',
-    description: 'La pénétration est un acte sexuel qui nécessite préparation, lubrification et communication continue.',
-    consentNote: 'Le consentement à la pénétration se vérifie au moment, pas à l\'avance. "Est-ce que tu es ok ?" pendant est aussi important qu\'avant.',
-  },
-  {
-    id: 'd13', level: 3, ageGate: 'premium', emoji: '⚡',
-    name: 'Pénétration anale',
-    description: 'Un acte qui nécessite préparation physique, beaucoup de lubrification et une communication renforcée. Douleur = signal d\'arrêt.',
-    consentNote: 'Cette pratique ne peut jamais être imposée ou surprise. La douleur doit faire stopper immédiatement. Un safeword clair est indispensable.',
-  },
-  {
-    id: 'd14', level: 3, ageGate: 'premium', emoji: '🎀',
-    name: 'Immobilisation douce',
-    description: 'Maintenir les poignets, utiliser un foulard. Une pratique de confiance qui appartient à l\'univers BDSM léger.',
-    consentNote: 'Accord explicite avant, safeword défini ensemble, et la personne immobilisée garde le contrôle final. Si elle dit stop, on s\'arrête.',
-  },
-  {
-    id: 'd15', level: 3, ageGate: 'premium', emoji: '👑',
-    name: 'Dynamique dominant·e / soumis·e',
-    description: 'Explorer une relation de pouvoir consentie, où l\'un guide et l\'autre suit. Un jeu de rôle qui demande une confiance absolue.',
-    consentNote: 'Cette dynamique doit être négociée en dehors du jeu, à tête reposée. Les règles, les limites et le safeword doivent être clairs avant de commencer.',
-  },
+  // Face 3 — Et si… 🤔
+  { id: 'e1', face: 3, ageGate: 'all',   text: "Et si vous passiez une journée parfaite ensemble — elle ressemble à quoi exactement ?" },
+  { id: 'e2', face: 3, ageGate: 'all',   text: "Et si vous deviez décrire votre relation avec une météo — il fait quel temps ?" },
+  { id: 'e3', face: 3, ageGate: 'all',   text: "Et si vous pouviez remonter le temps jusqu'à votre première rencontre — vous changeriez quoi ?" },
+  { id: 'e4', face: 3, ageGate: 'all',   text: "Et si vous pouviez avoir un super-pouvoir de couple — ça serait lequel ?" },
+  { id: 'e5', face: 3, ageGate: 'adult', text: "Et si vous pouviez rejouer votre première nuit ensemble — vous changeriez quoi ?" },
+  { id: 'e6', face: 3, ageGate: 'adult', text: "Et si vous pouviez essayer quelque chose de nouveau ce soir — vous choisiriez quoi ?" },
+
+  // Face 4 — Défi 🎯
+  { id: 'df1', face: 4, ageGate: 'all',   text: "Inventez un surnom ridicule pour l'autre. Il doit l'accepter ou en proposer un encore pire. 😄" },
+  { id: 'df2', face: 4, ageGate: 'all',   text: "Faites rire l'autre en 20 secondes max — sans le/la toucher. Chrono !" },
+  { id: 'df3', face: 4, ageGate: 'all',   text: "Mimez une scène d'un film culte. L'autre doit deviner lequel en moins de 5 essais." },
+  { id: 'df4', face: 4, ageGate: 'all',   text: "Prenez le selfie le plus bizarre et le plus laid possible ensemble. Celui qui rit le moins a perdu." },
+  { id: 'df5', face: 4, ageGate: 'adult', text: "Écrivez un mini-scénario à deux — une phrase chacun à tour de rôle. Le plus torride possible." },
+  { id: 'df6', face: 4, ageGate: 'adult', text: "Décrivez l'autre de façon sensuelle en 3 métaphores poétiques. Le plus lyrique gagne." },
+
+  // Face 5 — Vérité ✨
+  { id: 'v1', face: 5, ageGate: 'all',   text: "Qu'est-ce qui vous fait dire \"non\" immédiatement, sans hésiter ?" },
+  { id: 'v2', face: 5, ageGate: 'all',   text: "Y a-t-il quelque chose que vous aimeriez que l'autre fasse différemment ? Dites-le maintenant." },
+  { id: 'v3', face: 5, ageGate: 'all',   text: "Qu'est-ce que vous n'avez jamais osé demander à l'autre ?" },
+  { id: 'v4', face: 5, ageGate: 'all',   text: "Quel est votre plus grand besoin dans cette relation — celui que vous exprimez rarement ?" },
+  { id: 'v5', face: 5, ageGate: 'adult', text: "Qu'est-ce que vous aimeriez essayer — quelque chose que vous n'avez jamais osé demander ?" },
+  { id: 'v6', face: 5, ageGate: 'adult', text: "Y a-t-il quelque chose dans votre vie intime que vous aimeriez changer — soyez honnête." },
+
+  // Face 6 — Douceur ❤️
+  { id: 'c1', face: 6, ageGate: 'all',   text: "Prenez-vous dans les bras pendant 60 secondes. En silence. Chronométrez." },
+  { id: 'c2', face: 6, ageGate: 'all',   text: "Dites 3 choses que vous adorez chez l'autre — sans répéter quelque chose de déjà dit ce soir." },
+  { id: 'c3', face: 6, ageGate: 'all',   text: "Tenez-vous la main, fermez les yeux tous les deux. Restez comme ça 30 secondes." },
+  { id: 'c4', face: 6, ageGate: 'all',   text: "Laissez l'autre décider d'une chose qu'on fait ensemble ce soir — sans négocier, sans refuser." },
+  { id: 'c5', face: 6, ageGate: 'adult', text: "Dites à l'autre exactement ce que vous aimez dans la façon dont il/elle vous touche." },
+  { id: 'c6', face: 6, ageGate: 'adult', text: "Faites à l'autre un massage de 5 minutes, en silence. Juste donner, sans rien attendre." },
 ];
 
 export const loiPoints: LoiPoint[] = [
