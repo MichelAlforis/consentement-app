@@ -187,6 +187,19 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 - Contenu explicite = OK stores **si ton éducatif** (position du juriste co-fondateur = atout, pas obstacle)
 - Vérification âge renforcée requise pour l'app adulte avant lancement (⚖️ juriste)
 
+**Infrastructure technique ✅ Livrée (2026-04-22) :**
+
+| Élément | Statut |
+|---|---|
+| `app/lib/appVariant.ts` — vérité unique de la variante | ✅ |
+| `capacitor.config.ts` dynamique (`fr.consentement.app` / `fr.consentement.explicit`) | ✅ |
+| `authStore` — `isAdult` forcé + navigation 1er lancement adulte | ✅ |
+| `settingsStore` — `explicitMode: true` par défaut variante adulte | ✅ |
+| Scripts `build:main`, `build:adult`, `cap:sync:adult` | ✅ |
+| Contenu `explicit` dans les jeux (juriste) | 🔲 À rédiger |
+| Vérification d'âge renforcée (⚖️ juriste) | 🔲 À définir |
+| Compte unifié cross-apps (Supabase) | ⏸ V3 backend |
+
 ---
 
 ## V3 — Backend requis (post V2)

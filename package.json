@@ -14,7 +14,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "build:mobile": "NEXT_PUBLIC_MOBILE=true next build && npx cap sync",
+    "build:main": "NEXT_PUBLIC_APP_VARIANT=main APP_VARIANT=main next build",
+    "build:adult": "NEXT_PUBLIC_APP_VARIANT=adult APP_VARIANT=adult next build",
     "cap:sync": "npx cap sync",
+    "cap:sync:adult": "APP_VARIANT=adult npx cap sync",
     "cap:ios": "npx cap open ios",
     "cap:android": "npx cap open android"
   },

@@ -1,8 +1,10 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
+const isAdultVariant = process.env.APP_VARIANT === 'adult';
+
 const config: CapacitorConfig = {
-  appId: 'fr.consentement.app',
-  appName: 'Consentement',
+  appId: isAdultVariant ? 'fr.consentement.explicit' : 'fr.consentement.app',
+  appName: isAdultVariant ? 'Consentement Adultes' : 'Consentement',
   webDir: 'out',
   ios: {
     contentInset: 'always',

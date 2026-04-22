@@ -90,26 +90,25 @@ Pas de recréation de compte. Le backend Supabase (prévu V3) gère les deux app
 
 ---
 
-## Implémentation technique — quasi-gratuite
+## Implémentation technique ✅ Livrée (2026-04-22)
 
-La codebase est déjà architecturée pour ça. Les flags existent :
+### Architecture — un seul repo, deux builds
+
+Vérité unique de la variante dans `app/lib/appVariant.ts` :
 
 ```ts
-// app/stores/settingsStore.ts
-explicitMode: boolean   // mode explicite activé
-
-// props transmises partout
-isAdult: boolean        // adulte vs mineur
-isPremium: boolean      // accès contenu premium
+export const APP_VARIANT = (process.env.NEXT_PUBLIC_APP_VARIANT ?? 'main') as 'main' | 'adult';
+export const isAdultApp = APP_VARIANT === 'adult';
 ```
 
-**L'app adulte = même repo, build Capacitor séparé :**
+`capacitor.config.ts` est dynamique :
 
 ```ts
-// capacitor.config.adult.ts
+const isAdultVariant = process.env.APP_VARIANT === 'adult';
+
 const config: CapacitorConfig = {
-  appId: 'com.consentement.adults',
-  appName: 'Consentement Adults',
+  appId: isAdultVariant ? 'fr.consentement.explicit' : 'fr.consentement.app',
+  appName: isAdultVariant ? 'Consentement Adultes' : 'Consentement',
   // ...
 };
 ```
@@ -118,22 +117,25 @@ const config: CapacitorConfig = {
 
 | Paramètre | App principale | App adulte |
 |-----------|---------------|------------|
-| `appId` | `com.consentement.app` | `com.consentement.adults` |
-| `isAdult` forcé | non (auto-déclaratif) | `true` |
+| `appId` | `fr.consentement.app` | `fr.consentement.explicit` |
+| `isAdult` initial | `null` (auto-déclaratif) | `true` (forcé) |
 | `explicitMode` défaut | `false` | `true` |
-| `isPremium` requis | non | Payant d'emblée |
-| Contenu `diePractices` | `ageGate: 'all'` + `'adult'` | Tout + `'explicit'` |
-| Thème par défaut | Warm / Calm | Dark Luxury / Nude |
-| AgeCheck screen | ✅ | Vérification renforcée |
+| `AgeCheckScreen` | ✅ affiché | ⛔ sauté — va direct à `auth` |
+| Flux 1er lancement | Welcome → AgeCheck → Auth/Home | Welcome → Auth → Home |
+| Contenu `ageGate` | `all` + `adult` | `all` + `adult` + `explicit` |
 
-Un script de build sélectionne la config :
+Les stores Zustand (`authStore`, `settingsStore`) importent `isAdultApp` et ajustent leur état initial + rehydration en conséquence — aucune prop à passer en cascade.
+
+**Scripts de build :**
 
 ```sh
-# Build app principale
-npm run build && npx cap sync
+# App principale
+npm run build:main        # NEXT_PUBLIC_APP_VARIANT=main next build
+APP_VARIANT=main npx cap sync
 
-# Build app adulte
-ADULT_BUILD=true npm run build && npx cap sync --config capacitor.config.adult.ts
+# App adulte
+npm run build:adult       # NEXT_PUBLIC_APP_VARIANT=adult next build
+npm run cap:sync:adult    # APP_VARIANT=adult npx cap sync
 ```
 
 ---

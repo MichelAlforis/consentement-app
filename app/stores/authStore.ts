@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware';
 import { Language } from '../types';
 import { ThemeMode } from '../types/theme';
 import { useNavigationStore } from './navigationStore';
+import { isAdultApp } from '../lib/appVariant';
 
 interface AuthStore {
   isAuthenticated: boolean;
@@ -20,7 +21,7 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       isAuthenticated: false,
-      isAdult: null,
+      isAdult: isAdultApp ? true : null,
       userName: '',
       isHydrated: false,
 
@@ -53,6 +54,11 @@ export const useAuthStore = create<AuthStore>()(
         if (state) {
           state._setHydrated();
           const { navigateTo } = useNavigationStore.getState();
+          if (isAdultApp) {
+            state.isAdult = true;
+            navigateTo(state.userName ? 'home' : 'auth');
+            return;
+          }
           if ((state.isAdult && state.userName) || state.isAdult === false) {
             navigateTo('home');
           }

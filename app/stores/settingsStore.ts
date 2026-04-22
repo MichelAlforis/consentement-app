@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ThemeMode, Theme, themes } from '../types/theme';
 import { Language } from '../types';
+import { isAdultApp } from '../lib/appVariant';
 
 interface SettingsStore {
   themeMode: ThemeMode | null;
@@ -21,7 +22,7 @@ export const useSettingsStore = create<SettingsStore>()(
       themeMode: null,
       theme: null,
       language: 'fr',
-      explicitMode: false,
+      explicitMode: isAdultApp,
 
       selectTheme: (mode) =>
         set({ themeMode: mode, theme: themes[mode] }),
