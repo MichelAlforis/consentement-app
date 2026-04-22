@@ -4,3 +4,4 @@ export { Card } from './Card';
 export { ComfortSlider } from './ComfortSlider';
 export { MenuCard } from './MenuCard';
 export { QRCode } from './QRCode';
+export { Dice3D } from './Dice3D';
