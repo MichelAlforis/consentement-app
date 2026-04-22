@@ -1,0 +1,74 @@
+'use client';
+import { motion } from 'framer-motion';
+import { SavedGooseGame } from '../../../../data/goose-game';
+import { clearSavedGame } from '../../../../data/goose-game';
+
+interface IntroScreenProps {
+  savedGame: SavedGooseGame | null;
+  onNew: () => void;
+  onResume: () => void;
+}
+
+export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col items-center p-6 gap-6 min-h-[70vh]"
+      style={{ color: 'white' }}
+    >
+      <div className="text-center mt-4">
+        <div className="text-6xl mb-3">🎲</div>
+        <h1 className="text-2xl font-black mb-2">Le Jeu de l'Oie</h1>
+        <p className="text-white/65 text-sm leading-relaxed max-w-[280px] mx-auto">
+          2 joueurs · 1 téléphone · 24 cases<br />
+          Avancez ensemble, explorez ensemble.
+        </p>
+      </div>
+
+      <div
+        className="w-full max-w-[300px] rounded-2xl p-4 flex flex-col gap-2.5"
+        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+      >
+        {[
+          { emoji: '⏸️', bg: '#f87171', label: 'Pause',      desc: 'Un moment obligatoire pour se parler' },
+          { emoji: '⭐', bg: '#fbbf24', label: 'Chance',     desc: '+2 cases bonus' },
+          { emoji: '🤝', bg: '#60a5fa', label: 'Accord',     desc: 'Les deux disent OUI — ou on passe' },
+          { emoji: '💜', bg: '#c084fc', label: 'Complicité', desc: 'Activité Douceur imposée' },
+        ].map(item => (
+          <div key={item.label} className="flex items-center gap-3">
+            <span style={{
+              fontSize: 17, width: 32, height: 32,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: item.bg + '28', borderRadius: 8,
+            }}>
+              {item.emoji}
+            </span>
+            <span className="text-white font-semibold text-sm">{item.label}</span>
+            <span className="text-white/45 text-xs">{item.desc}</span>
+          </div>
+        ))}
+      </div>
+
+      {savedGame && (
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={onResume}
+          className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm"
+          style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.25)' }}
+        >
+          ↩️ Reprendre la partie en cours
+        </motion.button>
+      )}
+
+      <motion.button
+        whileTap={{ scale: 0.97 }}
+        onClick={() => { clearSavedGame(); onNew(); }}
+        className="w-full max-w-[300px] py-4 rounded-2xl font-bold text-base"
+        style={{ background: 'rgba(255,255,255,0.95)', color: '#1e293b' }}
+      >
+        {savedGame ? '✨ Nouvelle partie' : '✨ Commencer'}
+      </motion.button>
+    </motion.div>
+  );
+}
