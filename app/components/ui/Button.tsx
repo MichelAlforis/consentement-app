@@ -48,15 +48,15 @@ export function Button({
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onClick={onClick}
+      whileHover={disabled ? undefined : { scale: 1.02 }}
+      whileTap={disabled ? undefined : { scale: 0.98 }}
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
       style={getStyle()}
       className={`
         ${sizes[size]}
         ${fullWidth ? 'w-full' : ''}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${disabled ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'}
         font-medium flex items-center justify-center gap-2
         transition-all duration-200 active:brightness-95
         ${className}

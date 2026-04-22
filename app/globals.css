@@ -110,6 +110,21 @@
   .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
   .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
   .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+  .stagger-children > *:nth-child(7) { animation-delay: 0.7s; }
+  .stagger-children > *:nth-child(8) { animation-delay: 0.8s; }
+  .stagger-children > *:nth-child(9) { animation-delay: 0.9s; }
+
+  /* Skeleton loading */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-secondary, #f0f0f0) 25%,
+      var(--color-bg-card, #fafafa) 50%,
+      var(--color-bg-secondary, #f0f0f0) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
 }
 
 /* Custom gradient animations */
@@ -144,4 +159,23 @@
   border-radius: inherit;
   border: 2px solid currentColor;
   animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Toast timer bar */
+@keyframes toast-timer {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .skeleton {
+    animation: none;
+    background: var(--color-bg-secondary, #f0f0f0);
+  }
 }

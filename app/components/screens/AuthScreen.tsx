@@ -16,14 +16,32 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
   const { colors } = useTheme();
   const [name, setName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleConnect = () => {
-    if (showNameInput && name.trim()) {
+    if (!showNameInput) {
+      setShowNameInput(true);
+      return;
+    }
+    if (name.trim()) {
       onAuth(name.trim());
     } else {
-      setShowNameInput(true);
+      setHasError(true);
+      setTimeout(() => setHasError(false), 2500);
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    if (hasError) setHasError(false);
+  };
+
+  const borderColor = hasError
+    ? colors.error
+    : isFocused
+      ? colors.accent
+      : colors.border;
 
   return (
     <motion.div
@@ -63,18 +81,30 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
             <label className="block text-sm font-medium mb-2" style={{ color: colors.textSecondary }}>
               {t('auth.nameLabel')}
             </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t('auth.namePlaceholder')}
-              autoFocus
-              className="w-full px-4 py-3 rounded-xl border-2 text-base focus:outline-none focus:border-blue-400 transition-colors"
-              style={{ background: colors.bgSecondary, borderColor: colors.border, color: colors.textPrimary }}
-              onKeyDown={(e) => e.key === 'Enter' && name.trim() && onAuth(name.trim())}
-            />
-            <p className="text-xs mt-2" style={{ color: colors.textMuted }}>
-              {t('auth.namePrivacy')}
+            <motion.div
+              animate={hasError ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }}
+              transition={{ duration: 0.35 }}
+            >
+              <input
+                type="text"
+                value={name}
+                onChange={handleChange}
+                placeholder={t('auth.namePlaceholder')}
+                autoFocus
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                className="w-full px-4 py-3 rounded-xl border-2 text-base focus:outline-none transition-colors"
+                style={{
+                  background: colors.bgSecondary,
+                  borderColor,
+                  color: colors.textPrimary,
+                  transition: 'border-color 0.2s ease',
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleConnect()}
+              />
+            </motion.div>
+            <p className="text-xs mt-2" style={{ color: hasError ? colors.error : colors.textMuted }}>
+              {hasError ? t('auth.nameRequired') : t('auth.namePrivacy')}
             </p>
           </Card>
         </motion.div>
@@ -89,7 +119,6 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           onClick={handleConnect}
           fullWidth
           size="lg"
-          disabled={showNameInput && !name.trim()}
           className="!bg-gradient-to-r !from-blue-500 !to-blue-600 !shadow-blue-300/40"
         >
           <KeyRound size={20} />

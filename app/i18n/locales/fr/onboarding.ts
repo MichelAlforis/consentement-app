@@ -31,6 +31,7 @@ export const onboarding = {
     nameLabel: "Comment veux-tu qu'on t'appelle ?",
     namePlaceholder: 'Ton prénom...',
     namePrivacy: 'Ce prénom reste sur ton appareil uniquement',
+    nameRequired: 'Entre ton prénom pour continuer',
     btnConnect: 'Se connecter avec FranceConnect',
     btnContinue: 'Continuer',
     demoNote: 'Simulation — En production, redirection vers FranceConnect',

@@ -1,7 +1,7 @@
 'use client';
 
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { Header, Toast, AdBanner } from './components/ui';
@@ -56,7 +56,16 @@ const AD_SCREENS: Screen[] = [
 // ─── Loading fallback ────────────────────────────────────────────────────────
 
 function ScreenLoader() {
-  return <div className="min-h-dvh" style={{ background: '#0a0a0f' }} />;
+  const { colors } = useTheme();
+  return (
+    <div className="min-h-dvh p-5 pt-8 space-y-4" style={{ background: colors.bgPrimary }}>
+      <div className="skeleton h-5 w-2/5 rounded-2xl" />
+      <div className="skeleton h-4 w-3/5 rounded-xl" />
+      <div className="skeleton h-28 rounded-3xl mt-4" />
+      <div className="skeleton h-28 rounded-3xl" />
+      <div className="skeleton h-28 rounded-3xl" />
+    </div>
+  );
 }
 
 // ─── Android back button hook ────────────────────────────────────────────────
@@ -354,13 +363,15 @@ export default function ConsentementApp() {
 
   return (
     <ErrorBoundary label="root">
-      <LanguageProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <AppShell />
-          </ToastProvider>
-        </ThemeProvider>
-      </LanguageProvider>
+      <MotionConfig reducedMotion="user">
+        <LanguageProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <AppShell />
+            </ToastProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </MotionConfig>
     </ErrorBoundary>
   );
 }

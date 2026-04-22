@@ -31,6 +31,7 @@ export const onboarding = {
     nameLabel: 'What should we call you?',
     namePlaceholder: 'Your first name...',
     namePrivacy: 'This name stays on your device only',
+    nameRequired: 'Enter your name to continue',
     btnConnect: 'Sign in with FranceConnect',
     btnContinue: 'Continue',
     demoNote: 'Simulation — In production, redirects to FranceConnect',
