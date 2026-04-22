@@ -1,8 +1,8 @@
 # Audit Couleurs Hardcodées — État & Décisions
 
-> Dernière mise à jour : 2026-04-22 — 6 passes effectuées.
+> Dernière mise à jour : 2026-04-22 — 7 passes effectuées.
 
-Cinq passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
+Sept passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
 
 ---
 
@@ -281,6 +281,47 @@ Textes affectés : titre, sous-titre, labels des deux cards, conteneur confident
 - `from-amber-100 to-orange-200 text-amber-600` — icône Calendrier
 - `from-green-100 to-emerald-200 text-emerald-600` — icône Sprout (mineur)
 - `from-green-200 to-emerald-300 text-emerald-700` — icône TreeDeciduous (adulte)
+
+---
+
+## Passe 7 — WelcomeScreen + AuthScreen (2026-04-22)
+
+### Problème
+
+Même faille que la Passe 6 : WelcomeScreen et AuthScreen étaient classées "pré-thème" (affichées avant la sélection du thème). En réalité, le thème persistant en localStorage, ces écrans s'affichent sur le fond dark-luxury `#0f0d0e` pour tout utilisateur revenant dans l'app. Textes `text-gray-800/700/600/500/400` → contraste ~1.5:1, invisibles.
+
+### Corrigé
+
+**`app/components/screens/WelcomeScreen.tsx`**
+- Ajout de `useTheme()` + `const { colors } = useTheme()`
+- `text-gray-800` (titre h1) → `style={{ color: colors.textPrimary }}`
+- `text-gray-500` (description) → `style={{ color: colors.textMuted }}`
+- `bg-white/80 text-gray-600 border-gray-100` (pilliers) → `style={{ background: colors.bgCard, color: colors.textSecondary, border: \`1px solid ${colors.divider}\` }}`
+- `text-gray-400` (note confidentialité) → `style={{ color: colors.textMuted }}`
+
+**`app/components/screens/AuthScreen.tsx`**
+- Ajout de `useTheme()` + `const { colors } = useTheme()`
+- `text-gray-800` (titre h2) → `style={{ color: colors.textPrimary }}`
+- `text-gray-500` (sous-titre) → `style={{ color: colors.textMuted }}`
+- `text-gray-700` (label input, titre "Pourquoi") → `style={{ color: colors.textSecondary }}`
+- `border-gray-200` (input) → `style={{ background: colors.bgSecondary, borderColor: colors.border, color: colors.textPrimary }}`
+- `text-gray-400` × 2 (note nom, note démo) → `style={{ color: colors.textMuted }}`
+- `text-gray-600` (icône Lock, items liste) → `style={{ color: colors.textMuted/textSecondary }}`
+
+### Conservé (identité marque)
+- `text-violet-500` — tagline WelcomeScreen (identité app)
+- `bg-blue-50 text-blue-600` × 3 — badges Chiffré / RGPD / Officiel (FranceConnect — identité marque externe)
+- `bg-green-100 text-green-600` — puces ✓ de la liste (sémantique validation)
+
+### État final — couverture complète
+
+| Écran | Statut |
+|-------|--------|
+| WelcomeScreen | ✅ thématisé (Passe 7) |
+| AgeCheckScreen | ✅ thématisé (Passe 6) |
+| AuthScreen | ✅ thématisé (Passe 7) |
+| HomeMinorScreen | ✅ sûr — thème `youth` forcé automatiquement |
+| GooseGameScreen | ✅ sûr — fond violet/indigo propre au jeu, indépendant du thème |
 
 ---
 
