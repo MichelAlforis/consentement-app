@@ -62,7 +62,7 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
           className="text-xs font-medium px-2 py-1 rounded-full"
           style={{ color: currentLevel.color, backgroundColor: `${currentLevel.color}15` }}
         >
-          {t(`data.levels.${value}`)}
+          {t(`levels.${value}`)}
         </span>
       </motion.div>
     </div>

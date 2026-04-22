@@ -31,7 +31,7 @@ export const education = {
     },
   },
 
-  pornoVsRealite: {
+  pornoVsRealiteScreen: {
     title: 'Porn vs. Reality',
     subtitle: "What films don't show you",
     intro: "Porn is a <strong>fiction film</strong> made with actors. It doesn't show how real relationships work — nor consent, communication, or boundaries.",
@@ -40,7 +40,7 @@ export const education = {
     closing: "Real intimacy is built with communication, respect and consent. Not by imitating a film.",
   },
 
-  loi: {
+  loiScreen: {
     title: 'The law & consent',
     subtitle: 'What you risk. What protects you.',
     alert: {
@@ -51,7 +51,7 @@ export const education = {
     source2: 'French Penal Code — Articles 222-22 et seq.',
   },
 
-  quiz: {
+  quizScreen: {
     title: 'Quiz',
     question: 'Question {current} of {total}',
     correct: '✅ Correct!',

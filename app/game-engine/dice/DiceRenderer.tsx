@@ -273,7 +273,7 @@ export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, r
         currentFace={currentFace}
         isRolling={isRolling}
         onRollComplete={onRollComplete}
-        size={size ?? 120}
+        size={size ?? 200}
       />
     );
   }

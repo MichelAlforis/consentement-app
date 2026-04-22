@@ -31,8 +31,8 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
           <Film size={22} className="text-violet-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('pornoVsRealite.title')}</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>{t('pornoVsRealite.subtitle')}</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('pornoVsRealiteScreen.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{t('pornoVsRealiteScreen.subtitle')}</p>
         </div>
       </motion.div>
 
@@ -44,7 +44,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
       >
         <p
           className="text-sm text-violet-800 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: t('pornoVsRealite.intro') }}
+          dangerouslySetInnerHTML={{ __html: t('pornoVsRealiteScreen.intro') }}
         />
       </motion.div>
 
@@ -69,7 +69,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-2 mb-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 shrink-0 mt-0.5">
-                        {t('pornoVsRealite.inPorno')}
+                        {t('pornoVsRealiteScreen.inPorno')}
                       </span>
                       <p className="text-sm" style={{ color: colors.textSecondary }}>
                         {t(`pornoVsRealite.${i}.porno`)}
@@ -77,7 +77,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 shrink-0 mt-0.5">
-                        {t('pornoVsRealite.inReality')}
+                        {t('pornoVsRealiteScreen.inReality')}
                       </span>
                       <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>
                         {t(`pornoVsRealite.${i}.realite`)}
@@ -119,7 +119,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
         className="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-100"
       >
         <p className="text-sm text-blue-800 leading-relaxed text-center">
-          {t('pornoVsRealite.closing')}
+          {t('pornoVsRealiteScreen.closing')}
         </p>
       </motion.div>
     </motion.div>

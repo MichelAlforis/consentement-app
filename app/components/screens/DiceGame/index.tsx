@@ -100,7 +100,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             className="flex-1 flex flex-col"
           >
             <div className="flex justify-center mb-8 mt-4">
-              <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" />
+              <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" size={180} />
             </div>
 
             <p className="text-sm font-semibold mb-4" style={{ color: colors.textSecondary }}>{t('diceGame.howToPlay')}</p>
@@ -155,6 +155,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 isRolling={isRolling}
                 onRollComplete={() => { onRollComplete(); setMode('practice'); }}
                 renderer="webgl"
+                size={240}
               />
 
               <AnimatePresence>

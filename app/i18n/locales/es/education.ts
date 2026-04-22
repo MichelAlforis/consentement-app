@@ -31,7 +31,7 @@ export const education = {
     },
   },
 
-  pornoVsRealite: {
+  pornoVsRealiteScreen: {
     title: 'Porno vs. Realidad',
     subtitle: 'Lo que las películas no te muestran',
     intro: "El porno es una <strong>película de ficción</strong> rodada con actores. No muestra cómo funcionan las relaciones reales — ni el consentimiento, ni la comunicación, ni los límites.",
@@ -40,7 +40,7 @@ export const education = {
     closing: "La sexualidad real se construye con comunicación, respeto y consentimiento. No imitando una película.",
   },
 
-  loi: {
+  loiScreen: {
     title: 'La ley y el consentimiento',
     subtitle: 'Lo que arriesgas. Lo que te protege.',
     alert: {
@@ -51,7 +51,7 @@ export const education = {
     source2: 'Código Penal francés — Artículos 222-22 y siguientes',
   },
 
-  quiz: {
+  quizScreen: {
     title: 'Quiz',
     question: 'Pregunta {current} de {total}',
     correct: '✅ ¡Correcto!',

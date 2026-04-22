@@ -99,26 +99,12 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   return tex;
 }
 
-// ─── Matériaux PBR par face ───────────────────────────────────────────────────
-
-function useFaceMaterials(faces: DiceFace[]): THREE.MeshPhysicalMaterial[] {
-  return useMemo(() => {
-    return faces.map(face => {
-      const tex = makeFaceTexture(face);
-      return new THREE.MeshPhysicalMaterial({
-        map: tex,
-        transmission: 0,
-        roughness: 0.15,
-        metalness: 0,
-        envMapIntensity: 1.2,
-        clearcoat: 0.9,
-        clearcoatRoughness: 0.08,
-      });
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-}
-
 // ─── Cube animé ───────────────────────────────────────────────────────────────
+
+// RoundedBoxGeometry conserve 6 groupes (un par face) comme BoxGeometry.
+// Mapping groupe → index texture : +X=0, -X=1, +Y=2, -Y=3, +Z=4, -Z=5
+// face1→+Z(4), face2→+X(0), face3→+Y(2), face4→-Y(3), face5→-X(1), face6→-Z(5)
+const FACE_TEX_ORDER = [1, 4, 2, 3, 0, 5]; // textures[FACE_TEX_ORDER[groupIdx]]
 
 function AnimatedCube({
   faces, targetFaceId, isRolling, onRollComplete,
@@ -128,16 +114,12 @@ function AnimatedCube({
   isRolling: boolean;
   onRollComplete?: () => void;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const materials = useFaceMaterials(faces);
+  const groupRef = useRef<THREE.Group>(null);
 
-  // BoxGeometry a exactement 6 groupes (un par face) — mapping garanti
-  // +X=group0, -X=group1, +Y=group2, -Y=group3, +Z=group4, -Z=group5
-  // face1→+Z(4), face2→+X(0), face3→+Y(2), face4→-Y(3), face5→-X(1), face6→-Z(5)
-  const matArray = useMemo(() => {
-    const m = materials;
-    return [m[1], m[4], m[2], m[3], m[0], m[5]]; // group: +X,-X,+Y,-Y,+Z,-Z
-  }, [materials]);
+  const textures = useMemo(
+    () => faces.map(face => makeFaceTexture(face)),
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const anim = useRef({
     rolling: false,
@@ -154,7 +136,7 @@ function AnimatedCube({
   const cumulative = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (!isRolling || !meshRef.current) return;
+    if (!isRolling || !groupRef.current) return;
 
     const [tx, ty] = FACE_ROTATIONS[targetFaceId] ?? [0, 0];
     const baseX = Math.round(cumulative.current.x / (Math.PI * 2)) * Math.PI * 2;
@@ -165,8 +147,8 @@ function AnimatedCube({
 
     anim.current = {
       rolling: true,
-      startX: meshRef.current.rotation.x,
-      startY: meshRef.current.rotation.y,
+      startX: groupRef.current.rotation.x,
+      startY: groupRef.current.rotation.y,
       targetX: finalX,
       targetY: finalY,
       elapsed: 0,
@@ -180,29 +162,43 @@ function AnimatedCube({
 
   useFrame((_, delta) => {
     const a = anim.current;
-    const mesh = meshRef.current;
-    if (!mesh || !a.rolling || a.done) return;
+    const group = groupRef.current;
+    if (!group || !a.rolling || a.done) return;
 
     a.elapsed = Math.min(a.elapsed + delta, a.duration);
     const t = a.elapsed / a.duration;
     const eased = cubicBezier(t);
 
-    mesh.rotation.x = a.startX + (a.targetX - a.startX) * eased;
-    mesh.rotation.y = a.startY + (a.targetY - a.startY) * eased;
-    mesh.rotation.z = a.wobbleAmplitude * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
+    group.rotation.x = a.startX + (a.targetX - a.startX) * eased;
+    group.rotation.y = a.startY + (a.targetY - a.startY) * eased;
+    group.rotation.z = a.wobbleAmplitude * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
 
     if (t >= 1 && !a.done) {
       a.done = true;
       a.rolling = false;
-      mesh.rotation.z = 0;
+      group.rotation.z = 0;
       a.onComplete?.();
     }
   });
 
   return (
-    <mesh ref={meshRef} material={matArray}>
-      <boxGeometry args={[1, 1, 1]} />
-    </mesh>
+    <group ref={groupRef}>
+      <RoundedBox args={[1, 1, 1]} radius={0.08} smoothness={2}>
+        {FACE_TEX_ORDER.map((texIdx, groupIdx) => (
+          <meshPhysicalMaterial
+            key={groupIdx}
+            attach={`material-${groupIdx}`}
+            map={textures[texIdx]}
+            transmission={0}
+            roughness={0.18}
+            metalness={0}
+            envMapIntensity={0.9}
+            clearcoat={0.8}
+            clearcoatRoughness={0.1}
+          />
+        ))}
+      </RoundedBox>
+    </group>
   );
 }
 
@@ -223,8 +219,8 @@ function DiceScene({
 
   return (
     <>
-      <ambientLight intensity={0.3} />
-      <pointLight position={[5, 5, 5]} intensity={1.0} castShadow />
+      <pointLight position={[3, 4, 4]} intensity={0.55} castShadow />
+      <pointLight position={[-3, -2, 1]} intensity={0.18} />
       <Suspense fallback={null}>
         <Environment preset="studio" />
         <AnimatedCube

@@ -25,8 +25,8 @@ export function LoiConsentementScreen() {
           <Scale size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('loi.title')}</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>{t('loi.subtitle')}</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('loiScreen.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{t('loiScreen.subtitle')}</p>
         </div>
       </motion.div>
 
@@ -38,11 +38,11 @@ export function LoiConsentementScreen() {
       >
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={18} className="text-amber-600" />
-          <span className="font-bold text-amber-800">{t('loi.alert.title')}</span>
+          <span className="font-bold text-amber-800">{t('loiScreen.alert.title')}</span>
         </div>
         <p
           className="text-sm text-amber-900 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: t('loi.alert.text') }}
+          dangerouslySetInnerHTML={{ __html: t('loiScreen.alert.text') }}
         />
       </motion.div>
 
@@ -78,10 +78,10 @@ export function LoiConsentementScreen() {
         className="mt-6 text-center"
       >
         <p className="text-xs" style={{ color: colors.textMuted }}>
-          {t('loi.source1')}
+          {t('loiScreen.source1')}
         </p>
         <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
-          {t('loi.source2')}
+          {t('loiScreen.source2')}
         </p>
       </motion.div>
     </motion.div>

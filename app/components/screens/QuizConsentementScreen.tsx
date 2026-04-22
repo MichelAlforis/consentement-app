@@ -56,10 +56,10 @@ export function QuizConsentementScreen() {
 
   const getScoreLabel = () => {
     const plural = score > 1 ? 's' : '';
-    if (score >= 7) return { label: t('quiz.scoreLabels.excellent'), color: '#22c55e', emoji: '🏆' };
-    if (score >= 5) return { label: t('quiz.scoreLabels.good'), color: '#3b82f6', emoji: '👍' };
-    if (score >= 3) return { label: t('quiz.scoreLabels.notBad'), color: '#f59e0b', emoji: '📚' };
-    return { label: t('quiz.scoreLabels.retry'), color: '#ef4444', emoji: '💪' };
+    if (score >= 7) return { label: t('quizScreen.scoreLabels.excellent'), color: '#22c55e', emoji: '🏆' };
+    if (score >= 5) return { label: t('quizScreen.scoreLabels.good'), color: '#3b82f6', emoji: '👍' };
+    if (score >= 3) return { label: t('quizScreen.scoreLabels.notBad'), color: '#f59e0b', emoji: '📚' };
+    return { label: t('quizScreen.scoreLabels.retry'), color: '#ef4444', emoji: '💪' };
   };
 
   if (finished) {
@@ -81,7 +81,7 @@ export function QuizConsentementScreen() {
         </motion.div>
         <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{result.label}</h2>
         <p className="mb-6" style={{ color: colors.textMuted }}>
-          {t('quiz.score', { score: String(score), total: String(total), plural })}
+          {t('quizScreen.score', { score: String(score), total: String(total), plural })}
         </p>
         <div className="w-48 h-3 rounded-full mb-8 overflow-hidden" style={{ background: colors.bgSecondary }}>
           <motion.div
@@ -94,12 +94,12 @@ export function QuizConsentementScreen() {
         </div>
         {score < 7 && (
           <p className="text-sm text-center max-w-xs mb-6" style={{ color: colors.textMuted }}>
-            {t('quiz.adviceReread')}
+            {t('quizScreen.adviceReread')}
           </p>
         )}
         <Button onClick={handleReset} variant="secondary">
           <RotateCcw size={16} />
-          {t('quiz.restart')}
+          {t('quizScreen.restart')}
         </Button>
       </motion.div>
     );
@@ -116,9 +116,9 @@ export function QuizConsentementScreen() {
           <Gamepad2 size={22} className="text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('quiz.title')}</h2>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('quizScreen.title')}</h2>
           <p className="text-sm" style={{ color: colors.textMuted }}>
-            {t('quiz.question', { current: String(current + 1), total: String(total) })}
+            {t('quizScreen.question', { current: String(current + 1), total: String(total) })}
           </p>
         </div>
         <div className="ml-auto">
@@ -184,7 +184,7 @@ export function QuizConsentementScreen() {
                 className={`mb-4 p-4 rounded-2xl ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}
               >
                 <p className="text-sm font-semibold mb-1" style={{ color: isCorrect ? '#166534' : '#991b1b' }}>
-                  {isCorrect ? t('quiz.correct') : t('quiz.incorrect')}
+                  {isCorrect ? t('quizScreen.correct') : t('quizScreen.incorrect')}
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: isCorrect ? '#14532d' : '#7f1d1d' }}>
                   {explanationText}
@@ -195,11 +195,11 @@ export function QuizConsentementScreen() {
 
           {!confirmed ? (
             <Button onClick={handleConfirm} fullWidth disabled={selected === null}>
-              {t('quiz.validate')}
+              {t('quizScreen.validate')}
             </Button>
           ) : (
             <Button onClick={handleNext} fullWidth>
-              {current + 1 < total ? t('quiz.next') : t('quiz.finish')}
+              {current + 1 < total ? t('quizScreen.next') : t('quizScreen.finish')}
               <ChevronRight size={18} />
             </Button>
           )}
