@@ -3,6 +3,11 @@
 
 ---
 
+> # 📱 APPLICATION EXCLUSIVEMENT APP STORE (iOS) + GOOGLE PLAY (Android)
+> **Aucun déploiement web. Toutes les décisions techniques ciblent iOS 13+ et Android API 22+.**
+
+---
+
 ## Ce qui est déjà intégré dans le code
 
 ### Infrastructure Capacitor
