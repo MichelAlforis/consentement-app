@@ -11,29 +11,18 @@ interface DuoPactStepProps {
   onAccept: () => void;
 }
 
-const pactItems = [
-  {
-    icon: Handshake,
-    text: 'Cet espace est pour dialoguer, pas pour prouver',
-    color: 'text-pink-500',
-    bgColor: 'bg-pink-50',
-  },
-  {
-    icon: RefreshCw,
-    text: 'Le consentement reste révocable à tout moment',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-50',
-  },
-  {
-    icon: Lock,
-    text: 'Seules vos zones communes seront révélées',
-    color: 'text-violet-500',
-    bgColor: 'bg-violet-50',
-  },
+const pactItemsConfig = [
+  { icon: Handshake, text: 'Cet espace est pour dialoguer, pas pour prouver', useSecondary: false },
+  { icon: RefreshCw, text: 'Le consentement reste révocable à tout moment', useSecondary: true },
+  { icon: Lock, text: 'Seules vos zones communes seront révélées', useSecondary: false },
 ];
 
 export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
   const { colors } = useTheme();
+  const pactItems = pactItemsConfig.map(item => ({
+    ...item,
+    color: item.useSecondary ? colors.secondary : colors.accent,
+  }));
   const [myAccepted, setMyAccepted] = useState(false);
   const [partnerAccepted, setPartnerAccepted] = useState(false);
 
@@ -87,9 +76,10 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.15 }}
-            className={`${item.bgColor} rounded-2xl p-4 flex items-start gap-4`}
+            className="rounded-2xl p-4 flex items-start gap-4"
+            style={{ background: colors.bgSecondary }}
           >
-            <div className={`${item.color} mt-0.5`}>
+            <div className="mt-0.5" style={{ color: item.color }}>
               <item.icon size={24} />
             </div>
             <p className="flex-1 leading-relaxed" style={{ color: colors.textSecondary }}>

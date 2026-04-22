@@ -21,6 +21,7 @@ import {
 } from '../duo';
 import { comfortCategories } from '../../data';
 import { PersonalProfile, CommonGround, DuoStep, PartnerProfile } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoSpaceScreenProps {
   personalProfile: PersonalProfile;
@@ -77,6 +78,8 @@ export function DuoSpaceScreen({
   onUpdateSafeword,
   onBack,
 }: DuoSpaceScreenProps) {
+  const { colors } = useTheme();
+
   // État de connexion QR
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>('choice');
   const [generatedCode, setGeneratedCode] = useState('');
@@ -220,10 +223,10 @@ export function DuoSpaceScreen({
             >
               <Users size={28} className="text-purple-500 mt-1 shrink-0" />
               <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
                   Notre Espace
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm" style={{ color: colors.textMuted }}>
                   Connecte-toi avec ton/ta partenaire pour dialoguer ensemble.
                 </p>
               </div>
@@ -240,7 +243,7 @@ export function DuoSpaceScreen({
                   variant="elevated"
                   padding="lg"
                   onClick={() => setDuoStep('bump')}
-                  className="cursor-pointer hover:shadow-lg transition-shadow !bg-gradient-to-br !from-purple-50 !to-pink-50 !border-purple-200"
+                  className="cursor-pointer hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
@@ -248,12 +251,12 @@ export function DuoSpaceScreen({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-gray-800 text-lg">Bump</h3>
+                        <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>Bump</h3>
                         <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
                           Recommandé
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm" style={{ color: colors.textMuted }}>
                         Rapprochez vos téléphones pour vous connecter
                       </p>
                     </div>
@@ -268,9 +271,9 @@ export function DuoSpaceScreen({
                 transition={{ delay: 0.2 }}
                 className="flex items-center gap-4 py-2"
               >
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-sm text-gray-400">ou</span>
-                <div className="flex-1 h-px bg-gray-200" />
+                <div className="flex-1 h-px" style={{ background: colors.divider }} />
+                <span className="text-sm" style={{ color: colors.textMuted }}>ou</span>
+                <div className="flex-1 h-px" style={{ background: colors.divider }} />
               </motion.div>
 
               {/* Option QR Code */}
@@ -286,12 +289,12 @@ export function DuoSpaceScreen({
                   className="cursor-pointer hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <QrCode size={24} className="text-gray-600" />
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: colors.bgSecondary }}>
+                      <QrCode size={24} style={{ color: colors.textSecondary }} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-800">QR Code / Code manuel</h3>
-                      <p className="text-xs text-gray-500">Alternative si le bump ne marche pas</p>
+                      <h3 className="font-semibold" style={{ color: colors.textPrimary }}>QR Code / Code manuel</h3>
+                      <p className="text-xs" style={{ color: colors.textMuted }}>Alternative si le bump ne marche pas</p>
                     </div>
                   </div>
                 </Card>
@@ -305,11 +308,11 @@ export function DuoSpaceScreen({
                 className="mt-6"
               >
                 <Card variant="default" padding="lg">
-                  <p className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                  <p className="font-medium mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
                     <Lightbulb size={18} className="text-amber-500" />
                     Comment ça marche ?
                   </p>
-                  <ol className="space-y-2 text-sm text-gray-600">
+                  <ol className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
                     {[
                       'Vous êtes ensemble, chacun sur votre téléphone',
                       'Rapprochez vos téléphones (ou scannez le QR code)',
@@ -356,15 +359,16 @@ export function DuoSpaceScreen({
             >
               <button
                 onClick={() => setDuoStep('choice')}
-                className="flex items-center gap-2 text-gray-500 mb-4 hover:text-gray-700"
+                className="flex items-center gap-2 mb-4"
+                style={{ color: colors.textMuted }}
               >
                 <ArrowLeft size={18} />
                 <span className="text-sm">Retour</span>
               </button>
-              <h2 className="text-xl font-bold text-gray-800 mb-1">
+              <h2 className="text-xl font-bold mb-1" style={{ color: colors.textPrimary }}>
                 Connexion par QR Code
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm" style={{ color: colors.textMuted }}>
                 Choisissez votre méthode de connexion
               </p>
             </motion.div>
@@ -386,12 +390,12 @@ export function DuoSpaceScreen({
                     className="cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-violet-200 flex items-center justify-center">
-                        <QrCode size={24} className="text-purple-600" />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: colors.bgSecondary }}>
+                        <QrCode size={24} style={{ color: colors.accent }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">Générer mon code</h3>
-                        <p className="text-xs text-gray-500">Mon/ma partenaire scannera</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Générer mon code</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>Mon/ma partenaire scannera</p>
                       </div>
                     </div>
                   </Card>
@@ -404,12 +408,12 @@ export function DuoSpaceScreen({
                     className="cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-100 to-rose-200 flex items-center justify-center">
-                        <Camera size={24} className="text-pink-600" />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: colors.bgSecondary }}>
+                        <Camera size={24} style={{ color: colors.accent }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">Scanner un code</h3>
-                        <p className="text-xs text-gray-500">Je scanne le code partenaire</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Scanner un code</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>Je scanne le code partenaire</p>
                       </div>
                     </div>
                   </Card>
@@ -422,12 +426,12 @@ export function DuoSpaceScreen({
                     className="cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <Link2 size={24} className="text-gray-600" />
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: colors.bgSecondary }}>
+                        <Link2 size={24} style={{ color: colors.textSecondary }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">Code manuel</h3>
-                        <p className="text-xs text-gray-500">Saisir le code à 6 chiffres</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Code manuel</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>Saisir le code à 6 chiffres</p>
                       </div>
                     </div>
                   </Card>
@@ -446,20 +450,21 @@ export function DuoSpaceScreen({
                     <div className="flex justify-center mb-4">
                       <QRCode size={140} />
                     </div>
-                    <div className="bg-purple-50 rounded-xl p-3 mb-3">
-                      <p className="text-xs text-purple-600 mb-1">Code de connexion</p>
+                    <div className="rounded-xl p-3 mb-3" style={{ background: colors.bgSecondary }}>
+                      <p className="text-xs mb-1" style={{ color: colors.accent }}>Code de connexion</p>
                       <div className="flex items-center justify-center gap-3">
-                        <span className="text-2xl font-mono font-bold tracking-[0.3em] text-purple-700">
+                        <span className="text-2xl font-mono font-bold tracking-[0.3em]" style={{ color: colors.accent }}>
                           {generatedCode}
                         </span>
                         <button
                           onClick={handleCopyCode}
-                          className="p-2 rounded-lg bg-purple-100 hover:bg-purple-200 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{ background: colors.bgSecondary, color: colors.accent }}
                         >
                           {copied ? (
                             <Check size={18} className="text-green-600" />
                           ) : (
-                            <Copy size={18} className="text-purple-600" />
+                            <Copy size={18} style={{ color: colors.accent }} />
                           )}
                         </button>
                       </div>
@@ -469,7 +474,7 @@ export function DuoSpaceScreen({
                   <Card variant="warning" padding="sm" className="mb-4">
                     <div className="flex items-center gap-3">
                       <Loader2 size={18} className="text-amber-600 animate-spin" />
-                      <p className="text-sm text-gray-700">En attente...</p>
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>En attente...</p>
                     </div>
                   </Card>
 
@@ -493,14 +498,15 @@ export function DuoSpaceScreen({
                 >
                   <Card variant="elevated" className="text-center mb-4 overflow-hidden">
                     <div className="relative bg-gray-900 rounded-xl aspect-square max-w-[240px] mx-auto flex items-center justify-center">
-                      <div className="absolute top-3 left-3 w-10 h-10 border-l-4 border-t-4 border-purple-400 rounded-tl-lg" />
-                      <div className="absolute top-3 right-3 w-10 h-10 border-r-4 border-t-4 border-purple-400 rounded-tr-lg" />
-                      <div className="absolute bottom-3 left-3 w-10 h-10 border-l-4 border-b-4 border-purple-400 rounded-bl-lg" />
-                      <div className="absolute bottom-3 right-3 w-10 h-10 border-r-4 border-b-4 border-purple-400 rounded-br-lg" />
+                      <div className="absolute top-3 left-3 w-10 h-10 border-l-4 border-t-4 rounded-tl-lg" style={{ borderColor: colors.accent }} />
+                      <div className="absolute top-3 right-3 w-10 h-10 border-r-4 border-t-4 rounded-tr-lg" style={{ borderColor: colors.accent }} />
+                      <div className="absolute bottom-3 left-3 w-10 h-10 border-l-4 border-b-4 rounded-bl-lg" style={{ borderColor: colors.accent }} />
+                      <div className="absolute bottom-3 right-3 w-10 h-10 border-r-4 border-b-4 rounded-br-lg" style={{ borderColor: colors.accent }} />
 
                       {isScanning && (
                         <motion.div
-                          className="absolute left-6 right-6 h-0.5 bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
+                          className="absolute left-6 right-6 h-0.5 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
+                          style={{ background: colors.accent }}
                           animate={{ y: [-80, 80] }}
                           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                         />
@@ -533,8 +539,8 @@ export function DuoSpaceScreen({
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <Card variant="elevated" padding="lg" className="mb-4">
-                    <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <Link2 size={18} className="text-purple-500" />
+                    <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: colors.textPrimary }}>
+                      <Link2 size={18} style={{ color: colors.accent }} />
                       Code de connexion
                     </h3>
                     <div className="relative">
@@ -549,10 +555,12 @@ export function DuoSpaceScreen({
                         className={`w-full px-4 py-4 rounded-xl border-2 text-center text-2xl font-mono tracking-[0.5em] focus:outline-none transition-colors ${
                           isCodeValid
                             ? 'border-green-400 bg-green-50'
-                            : inputCode.length > 0
-                              ? 'border-purple-300 bg-purple-50/50'
-                              : 'border-gray-200 focus:border-purple-400'
+                            : ''
                         }`}
+                        style={!isCodeValid ? {
+                          borderColor: inputCode.length > 0 ? colors.accent : colors.border,
+                          background: inputCode.length > 0 ? `${colors.bgSecondary}80` : undefined,
+                        } : {}}
                       />
                       {inputCode.length > 0 && (
                         <motion.div
@@ -563,7 +571,7 @@ export function DuoSpaceScreen({
                           {isCodeValid ? (
                             <CheckCircle2 size={24} className="text-green-500" />
                           ) : (
-                            <span className="text-sm text-purple-400 font-medium">
+                            <span className="text-sm font-medium" style={{ color: colors.accent }}>
                               {inputCode.length}/6
                             </span>
                           )}

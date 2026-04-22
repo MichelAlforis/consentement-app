@@ -42,8 +42,9 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
         {[0, 1, 2, 3].map((i) => (
           <motion.div
             key={i}
-            className="absolute inset-0 rounded-full border-2 border-purple-200"
+            className="absolute inset-0 rounded-full border-2"
             style={{
+              borderColor: colors.border,
               scale: 0.4 + i * 0.2,
             }}
             animate={{
@@ -65,8 +66,8 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
-            <Heart size={32} className="text-purple-400" fill="#c4b5fd" />
+          <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: colors.bgSecondary }}>
+            <Heart size={32} style={{ color: colors.accent }} fill={colors.accentLight} />
           </div>
         </motion.div>
 
@@ -74,8 +75,9 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`particle-${i}`}
-            className="absolute w-2 h-2 rounded-full bg-purple-300"
+            className="absolute w-2 h-2 rounded-full"
             style={{
+              background: colors.accentLight,
               left: `${30 + Math.random() * 40}%`,
               top: `${30 + Math.random() * 40}%`,
             }}

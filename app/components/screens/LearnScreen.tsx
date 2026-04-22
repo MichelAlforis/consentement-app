@@ -9,17 +9,17 @@ import { Card } from '../ui';
 import { consentPrinciples } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 
-// Map des icônes pour les principes
-const principleIcons = [
-  <RefreshCw size={24} className="text-pink-600" key="1" />,
-  <MessageSquare size={24} className="text-pink-600" key="2" />,
-  <Target size={24} className="text-pink-600" key="3" />,
-  <HeartHandshake size={24} className="text-pink-600" key="4" />,
-  <Brain size={24} className="text-pink-600" key="5" />,
-];
-
 export function LearnScreen() {
   const { colors } = useTheme();
+
+  const principleIcons = [
+    <RefreshCw size={24} key="1" style={{ color: colors.accent }} />,
+    <MessageSquare size={24} key="2" style={{ color: colors.accent }} />,
+    <Target size={24} key="3" style={{ color: colors.accent }} />,
+    <HeartHandshake size={24} key="4" style={{ color: colors.accent }} />,
+    <Brain size={24} key="5" style={{ color: colors.accent }} />,
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -32,7 +32,7 @@ export function LearnScreen() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6 flex items-start gap-3"
       >
-        <BookOpen size={28} className="text-pink-500 mt-1 shrink-0" />
+        <BookOpen size={28} className="mt-1 shrink-0" style={{ color: colors.accent }} />
         <div>
           <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
             Comprendre le consentement
@@ -56,7 +56,8 @@ export function LearnScreen() {
               <div className="flex items-start gap-4">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-                  className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-200 flex items-center justify-center shrink-0"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{ background: colors.bgSecondary }}
                 >
                   {principleIcons[index]}
                 </motion.div>

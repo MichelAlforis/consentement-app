@@ -32,13 +32,15 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
           initial={{ x: -60, scale: 0.8 }}
           animate={{ x: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-lg"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full shadow-lg"
+          style={{ background: colors.accentGradient }}
         >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.5, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 rounded-full bg-pink-300"
+            className="absolute inset-0 rounded-full"
+            style={{ background: colors.accentLight }}
           />
         </motion.div>
 
@@ -47,13 +49,15 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
           initial={{ x: 60, scale: 0.8 }}
           animate={{ x: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 shadow-lg"
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-24 h-24 rounded-full shadow-lg"
+          style={{ background: colors.secondaryGradient }}
         >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 0.5, 0] }}
             transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-            className="absolute inset-0 rounded-full bg-purple-300"
+            className="absolute inset-0 rounded-full"
+            style={{ background: colors.secondaryLight }}
           />
         </motion.div>
 
@@ -62,13 +66,15 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, duration: 0.8, ease: 'easeOut' }}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-violet-500 shadow-xl"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full shadow-xl"
+          style={{ background: `linear-gradient(135deg, ${colors.accent} 0%, ${colors.secondary} 100%)` }}
         >
           {/* Pulse effect */}
           <motion.div
             animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-300 to-violet-300"
+            className="absolute inset-0 rounded-full"
+            style={{ background: `linear-gradient(135deg, ${colors.accentLight} 0%, ${colors.secondaryLight} 100%)` }}
           />
           {/* Coeur au centre */}
           <motion.div
@@ -107,7 +113,8 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
         <motion.div
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-3 h-3 rounded-full bg-purple-300"
+          className="w-3 h-3 rounded-full"
+          style={{ background: colors.accentLight }}
         />
       </motion.div>
     </motion.div>
