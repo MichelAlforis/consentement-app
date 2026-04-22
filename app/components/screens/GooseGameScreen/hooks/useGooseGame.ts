@@ -11,7 +11,7 @@ import { useDice } from './useDice';
 import { usePawnAnimation } from './usePawnAnimation';
 import { useConfetti } from './useConfetti';
 import { Player, Phase, TurnStep } from '../types';
-import { vibrate } from '../utils';
+import { useHaptics } from '../../../../game-engine/shared/useHaptics';
 
 export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   // ── Phase ──────────────────────────────────────────────────────────────────
@@ -50,6 +50,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   useEffect(() => { gameRef.current = { pos0, pos1, curPlayer, accordsCount, p1, p2 }; });
 
   // ── Sub-hooks ──────────────────────────────────────────────────────────────
+  const { vibrate } = useHaptics();
   const { animatingPos, animate: animatePawn } = usePawnAnimation();
   const { show: showConfetti, key: confettiKey, trigger: triggerConfetti } = useConfetti();
 
@@ -102,7 +103,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
         return;
       }
     }
-  }, [isAdult, triggerConfetti]);
+  }, [isAdult, triggerConfetti, vibrate]);
 
   // ── Dé ─────────────────────────────────────────────────────────────────────
   const onDiceLanded = useCallback((face: 1 | 2 | 3 | 4 | 5 | 6) => {
@@ -157,13 +158,13 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
     setAccordVote0(vote);
     setStep('accord-hidden');
     vibrate(40);
-  }, []);
+  }, [vibrate]);
 
   const handleAccordP2Vote = useCallback((vote: boolean) => {
     setAccordVote1(vote);
     setStep('accord-result');
     vibrate(40);
-  }, []);
+  }, [vibrate]);
 
   const handleAccordResult = useCallback((bothYes: boolean) => {
     const { pos0: p0, pos1: p1c, curPlayer: cp, accordsCount: ac } = gameRef.current;

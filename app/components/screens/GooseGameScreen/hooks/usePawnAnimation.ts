@@ -1,10 +1,11 @@
 'use client';
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { vibrate } from '../utils';
+import { useHaptics } from '../../../../game-engine/shared/useHaptics';
 
 export function usePawnAnimation() {
   const [animatingPos, setAnimatingPos] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { vibrate } = useHaptics();
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -33,7 +34,7 @@ export function usePawnAnimation() {
 
     setAnimatingPos(from);
     timerRef.current = setTimeout(hop, 160);
-  }, []);
+  }, [vibrate]);
 
   return { animatingPos, animate };
 }

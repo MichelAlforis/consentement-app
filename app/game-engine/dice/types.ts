@@ -1,4 +1,6 @@
 export interface DiceFace {
+  /** Numéro de face (1–N). Doit correspondre à l'ordre dans DiceConfig.faces (faces[0].id === 1, etc.)
+   *  et aux clés de FACE_ROTATIONS dans les renderers CSS 3D. */
   id: number;
   label: string;
   emoji: string;

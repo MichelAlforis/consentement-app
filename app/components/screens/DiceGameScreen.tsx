@@ -3,11 +3,25 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff } from 'lucide-react';
-import { diePractices, DICE_CATEGORIES, DiePractice } from '../../data';
+import { diePractices, DICE_CATEGORIES } from '../../data';
 import { Button, Dice3D } from '../ui';
+import { useDiceEngine } from '../../game-engine/dice/useDiceEngine';
+import type { DiceConfig, DiceItem } from '../../game-engine/dice/types';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
+
+// DiceFace ids 1–6 correspondent aux numéros de face (FACE_ROTATIONS de Dice3D)
+const DICE_CONFIG: DiceConfig = {
+  faces: ([1, 2, 3, 4, 5, 6] as const).map(n => ({
+    id: n,
+    label: DICE_CATEGORIES[n].name,
+    emoji: DICE_CATEGORIES[n].emoji,
+    gradient: DICE_CATEGORIES[n].gradient,
+    border: DICE_CATEGORIES[n].border,
+    color: DICE_CATEGORIES[n].border,
+  })),
+};
 
 interface DiceGameScreenProps {
   isPremium: boolean;
@@ -17,9 +31,6 @@ interface DiceGameScreenProps {
 export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
-  const [targetFace, setTargetFace] = useState(1);
-  const [isRolling, setIsRolling] = useState(false);
-  const [practice, setPractice] = useState<DiePractice | null>(null);
   const [p1Answer, setP1Answer] = useState<DuoAnswer>(null);
   const [p2Answer, setP2Answer] = useState<DuoAnswer>(null);
   const [rollCount, setRollCount] = useState(0);
@@ -31,47 +42,45 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     return false;
   }), [isAdult, isPremium]);
 
+  const diceItems = useMemo<DiceItem[]>(
+    () => available.map(p => ({ id: p.id, faceId: p.face, text: p.text })),
+    [available],
+  );
+
+  const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
+
+  const targetFace = currentFace?.id ?? 1;
+  const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
+
   const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    const face = (Math.floor(Math.random() * 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
-    const pool = available.filter(p => p.face === face);
-    const picked = (pool.length > 0 ? pool : available)[Math.floor(Math.random() * (pool.length > 0 ? pool : available).length)];
-    setPractice(picked);
-    setTargetFace(face);
     setRollCount(c => c + 1);
-    setIsRolling(true);
+    roll();
   };
 
   const reroll = () => {
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    const face = (Math.floor(Math.random() * 6) + 1) as 1 | 2 | 3 | 4 | 5 | 6;
-    const pool = available.filter(p => p.face === face);
-    const picked = (pool.length > 0 ? pool : available)[Math.floor(Math.random() * (pool.length > 0 ? pool : available).length)];
-    setPractice(picked);
-    setTargetFace(face);
     setRollCount(c => c + 1);
-    setIsRolling(true);
+    roll();
   };
 
   const handleRollComplete = () => {
-    setIsRolling(false);
+    onRollComplete();
     setMode('practice');
   };
 
   const reset = () => {
     setMode('pick');
-    setPractice(null);
     setP1Answer(null);
     setP2Answer(null);
   };
 
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
-  const cat = practice ? DICE_CATEGORIES[practice.face] : null;
 
   return (
     <motion.div
@@ -153,7 +162,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         )}
 
         {/* ROLLING + PRACTICE */}
-        {(mode === 'rolling' || mode === 'practice') && practice && cat && (
+        {(mode === 'rolling' || mode === 'practice') && (
           <motion.div key="dice-view"
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col"
@@ -166,7 +175,6 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 onRollComplete={handleRollComplete}
               />
 
-              {/* Titre catégorie — tombe après le lancer */}
               <AnimatePresence>
                 {mode === 'rolling' && (
                   <motion.p
@@ -177,18 +185,18 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     Le destin décide…
                   </motion.p>
                 )}
-                {mode === 'practice' && (
+                {mode === 'practice' && currentCat && (
                   <motion.div
                     key="category-title"
                     initial={{ opacity: 0, y: -40, rotate: -6, scale: 1.2 }}
                     animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.05 }}
                     className="mt-5 px-5 py-2 rounded-2xl flex items-center gap-2"
-                    style={{ background: cat.gradient, boxShadow: `0 4px 20px ${cat.border}80` }}
+                    style={{ background: currentCat.gradient, boxShadow: `0 4px 20px ${currentCat.border}80` }}
                   >
-                    <span className="text-2xl">{cat.emoji}</span>
+                    <span className="text-2xl">{currentCat.emoji}</span>
                     <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
-                      {cat.name}
+                      {currentCat.name}
                     </span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
@@ -198,7 +206,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
             {/* Carte activité */}
             <AnimatePresence>
-              {mode === 'practice' && (
+              {mode === 'practice' && currentItem && currentCat && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -208,11 +216,11 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   <div
                     className="rounded-3xl p-6 mb-5 text-center"
                     style={{
-                      background: `${cat.gradient.replace('linear-gradient(135deg, ', '').split(',')[0]}18`,
-                      border: `1.5px solid ${cat.border}`,
+                      background: `${currentCat.gradient.replace('linear-gradient(135deg, ', '').split(',')[0]}18`,
+                      border: `1.5px solid ${currentCat.border}`,
                     }}
                   >
-                    <p className="text-lg font-bold text-gray-800 leading-snug">{practice.text}</p>
+                    <p className="text-lg font-bold text-gray-800 leading-snug">{currentItem.text}</p>
                   </div>
 
                   {isSolo ? (
@@ -243,7 +251,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         )}
 
         {/* DUO P1 */}
-        {mode === 'duo-p1' && practice && cat && (
+        {mode === 'duo-p1' && currentItem && currentCat && (
           <motion.div key="duo-p1"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
             className="flex-1 flex flex-col"
@@ -255,13 +263,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold text-gray-800">Personne 1 — réponds seul·e</p>
             </div>
 
-            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: cat.gradient }}>
-              <span className="text-3xl">{cat.emoji}</span>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{cat.name}</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
+              <span className="text-3xl">{currentCat.emoji}</span>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
             </div>
 
             <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
-              <p className="text-sm text-gray-700 font-medium leading-snug">{practice.text}</p>
+              <p className="text-sm text-gray-700 font-medium leading-snug">{currentItem.text}</p>
             </div>
 
             <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
@@ -316,7 +324,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         )}
 
         {/* DUO P2 */}
-        {mode === 'duo-p2' && practice && cat && (
+        {mode === 'duo-p2' && currentItem && currentCat && (
           <motion.div key="duo-p2"
             initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
             className="flex-1 flex flex-col"
@@ -328,13 +336,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold text-gray-800">Personne 2 — réponds seul·e</p>
             </div>
 
-            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: cat.gradient }}>
-              <span className="text-3xl">{cat.emoji}</span>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{cat.name}</p>
+            <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
+              <span className="text-3xl">{currentCat.emoji}</span>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
             </div>
 
             <div className="rounded-2xl bg-gray-50 p-4 mb-4 text-center">
-              <p className="text-sm text-gray-700 font-medium leading-snug">{practice.text}</p>
+              <p className="text-sm text-gray-700 font-medium leading-snug">{currentItem.text}</p>
             </div>
 
             <p className="text-base font-bold text-gray-800 text-center mb-2">Tu es partant·e ?</p>
@@ -364,7 +372,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         )}
 
         {/* RÉVÉLATION */}
-        {mode === 'duo-reveal' && practice && cat && (
+        {mode === 'duo-reveal' && currentCat && (
           <motion.div key="duo-reveal"
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col items-center justify-center text-center"
@@ -384,7 +392,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed mb-2">
               {bothYes
-                ? `Super — lancez-vous pour « ${cat.name} » !`
+                ? `Super — lancez-vous pour « ${currentCat.name} » !`
                 : "L'un·e de vous n'est pas à l'aise avec ça — et c'est parfaitement normal."}
             </p>
 

@@ -40,13 +40,22 @@ function CubeFace({ face, transform }: { face: DiceFace; transform: string }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 3,
-        boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.25), inset 0 -2px 6px rgba(0,0,0,0.15)',
+        boxShadow: 'inset 0 2px 10px rgba(255,255,255,0.3), inset 0 -3px 8px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08)',
+        overflow: 'hidden',
       }}
     >
-      <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none' }}>{face.emoji}</span>
+      {/* Highlight spéculaire — simule une source lumineuse en haut à gauche */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        borderRadius: 17,
+        background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
+        pointerEvents: 'none',
+      }} />
+      <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.emoji}</span>
       <span style={{
         fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
-        textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none',
+        textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',
       }}>
         {face.label}
       </span>
@@ -63,7 +72,8 @@ function Cube6({
   onRollComplete?: () => void;
 }) {
   const theme = useTheme();
-  const controls = useAnimation();
+  const cubeControls = useAnimation();
+  const wrapControls = useAnimation();
   const cumulative = useRef({ x: 0, y: 0 });
   const [landed, setLanded] = useState(false);
 
@@ -75,21 +85,47 @@ function Cube6({
     const baseY = Math.round(cumulative.current.y / 360) * 360;
     const finalX = baseX + 1080 + tx;
     const finalY = baseY + 720 + ty;
+    // Instabilité Z aléatoire ±5° — revient à 0 en fin d'animation
+    const zWobble = (Math.random() - 0.5) * 10;
     cumulative.current = { x: finalX, y: finalY };
-    controls.start({
+    cubeControls.start({
       rotateX: finalX,
       rotateY: finalY,
+      rotateZ: [0, zWobble, -zWobble * 0.6, zWobble * 0.25, 0],
       transition: { duration: 1.7, ease: [0.22, 0.61, 0.36, 1] },
     }).then(() => {
       setLanded(true);
       onRollComplete?.();
+      // Shake + micro-rebond à l'atterrissage (cosmétique, non-bloquant)
+      wrapControls.start({
+        x: [0, -4, 4, -2, 2, 0],
+        scale: [1, 1.05, 0.97, 1.02, 0.99, 1],
+        transition: { duration: 0.35, ease: 'easeOut' },
+      });
     });
   }, [isRolling, targetFaceIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const glowColor = theme.effects.cardGlow ?? theme.effects.shimmerColor;
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div style={{ position: 'relative', width: 100, height: 100 }}>
+      {/* Ombre portée — se comprime pendant le vol, s'étale à l'atterrissage */}
+      <motion.div
+        animate={{ scaleY: isRolling ? 0.45 : 1, opacity: isRolling ? 0.28 : 0.55 }}
+        transition={{ duration: 1.5, ease: [0.22, 0.61, 0.36, 1] }}
+        style={{
+          position: 'absolute',
+          bottom: -9,
+          left: '15%',
+          right: '15%',
+          height: 9,
+          background: 'rgba(0,0,0,0.45)',
+          borderRadius: '50%',
+          filter: 'blur(5px)',
+          transformOrigin: 'center bottom',
+        }}
+      />
+
       {/* Glow anneau thème — visible après l'atterrissage */}
       <AnimatePresence>
         {landed && glowColor && glowColor !== 'transparent' && (
@@ -111,16 +147,20 @@ function Cube6({
         )}
       </AnimatePresence>
 
-      <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 12px 20px rgba(0,0,0,0.25))', position: 'relative', zIndex: 1 }}>
-        <motion.div
-          animate={controls}
-          style={{ width: 100, height: 100, position: 'relative', transformStyle: 'preserve-3d' }}
-        >
-          {faces.map((face, i) => (
-            <CubeFace key={face.id} face={face} transform={FACE_TRANSFORMS_6[i]} />
-          ))}
-        </motion.div>
-      </div>
+      {/* Wrapper — reçoit le shake/scale post-atterrissage */}
+      <motion.div animate={wrapControls} style={{ position: 'relative', zIndex: 1 }}>
+        {/* drop-shadow sur le conteneur extérieur — jamais sur preserve-3d */}
+        <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))' }}>
+          <motion.div
+            animate={cubeControls}
+            style={{ width: 100, height: 100, position: 'relative', transformStyle: 'preserve-3d' }}
+          >
+            {faces.map((face, i) => (
+              <CubeFace key={face.id} face={face} transform={FACE_TRANSFORMS_6[i]} />
+            ))}
+          </motion.div>
+        </div>
+      </motion.div>
 
       {/* Shimmer thème sur la face avant — uniquement quand posé */}
       {theme.effects.shimmer && landed && (
@@ -170,7 +210,7 @@ function FlatTile({
         style={{
           width: '100%', height: '100%',
           position: 'relative', transformStyle: 'preserve-3d',
-          filter: 'drop-shadow(0 12px 20px rgba(0,0,0,0.25))',
+          filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))',
         }}
       >
         {/* Dos */}
@@ -190,12 +230,19 @@ function FlatTile({
           transform: 'rotateY(180deg)',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: 3,
-          boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.25)',
+          boxShadow: 'inset 0 2px 10px rgba(255,255,255,0.3)',
+          overflow: 'hidden',
         }}>
-          <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none' }}>{face.emoji}</span>
+          {/* Highlight spéculaire */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 17,
+            background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
+            pointerEvents: 'none',
+          }} />
+          <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.emoji}</span>
           <span style={{
             fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
-            textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none',
+            textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',
           }}>
             {face.label}
           </span>
