@@ -92,8 +92,10 @@ Exemples par catégorie :
 
 | Fichier | Rôle |
 |---------|------|
-| `app/components/ui/Dice3D.tsx` | Cube CSS 3D — rendu, animation, faces colorées |
-| `app/components/screens/DiceGameScreen.tsx` | Écran de jeu complet — 7 états |
+| `app/game-engine/dice/DiceCanvas.tsx` | Cube R3F WebGL PBR — rendu, animation, faces colorées |
+| `app/game-engine/dice/DiceRenderer.tsx` | Interface publique — bascule `css`/`webgl`, prop `size` |
+| `app/game-engine/dice/useDiceEngine.ts` | Logique tirage — anti-répétition, haptiques |
+| `app/components/screens/DiceGame/index.tsx` | Écran de jeu complet — 7 états |
 | `app/data/index.ts` | `DICE_CATEGORIES` + `diePractices` (36 entrées) |
 
 ### États du jeu (`GameMode`)
@@ -105,11 +107,12 @@ pick → rolling → practice → (solo: fin)
 
 ### Dé 3D — points clés
 
-- Cube CSS pur : `transform-style: preserve-3d`, 6 faces `position: absolute` + `translateZ(50px)`
-- **Règle critique :** le `filter` CSS doit être sur le *conteneur*, jamais sur l'élément `preserve-3d` (crée un stacking context qui aplatit le cube en 2D)
+- `RoundedBoxGeometry` de **three-stdlib** (hérite BoxGeometry → 6 groupes, `radius=0.08`)
+- 6 `MeshPhysicalMaterial` : canvas texture par face (gradient + emoji + label centré)
+- Éclairage : 2 `PointLight` doux + `Environment preset="studio"` (IBL ambient)
 - Rotation cumulative via `useRef` : évite le snap-back entre les lancers
-- Chaque lancer ajoute 1080°X + 720°Y avant l'angle cible → le cube tourne toujours dans le même sens
-- Framer Motion `useAnimation` contrôle la transition (`duration: 1.7s`, ease custom)
+- Chaque lancer ajoute 1080°X + 720°Y avant l'angle cible → tourne toujours dans le même sens
+- Ease `cubic-bezier(0.22, 0.61, 0.36, 1)` calculée manuellement (pas Framer Motion en R3F)
 
 ### Animation du titre catégorie
 

@@ -9,7 +9,7 @@
 
 ## Concept
 
-Jeu de plateau tour par tour pour 2 joueurs sur 1 téléphone. Le dé 3D existant détermine combien de cases avancer. La case d'arrivée déclenche une activité — question, défi, moment de tendresse.
+Jeu de plateau tour par tour pour 2 joueurs sur 1 téléphone. Le dé R3F WebGL PBR (même moteur que Le Dé du Consentement) détermine combien de cases avancer. La case d'arrivée déclenche une activité — question, défi, moment de tendresse.
 
 Le consentement est intégré dans la mécanique même : certaines cases obligent **les deux joueurs à dire oui** pour que l'activité compte. Un "non" ne pénalise personne — on passe simplement. Le refus est sans friction.
 
@@ -187,9 +187,9 @@ Actions concrètes nécessitant le double accord, anti-répétition activée :
 | Fichier | Rôle |
 |---------|------|
 | `app/data/goose-game.ts` | Plateau, zones, activités Pause/Accord/exclusives, helpers localStorage |
-| `app/components/screens/GooseGameScreen.tsx` | Composant complet — guard premium + wrapper + jeu |
+| `app/components/screens/GooseGameScreen/index.tsx` | Orchestrateur — guard premium + state machine + hooks |
 | `app/data/index.ts` | `DICE_CATEGORIES` + `diePractices` — réutilisés sans modification |
-| `app/components/ui/Dice3D.tsx` | Dé 3D partagé avec Le Dé du Consentement |
+| `app/game-engine/dice/DiceRenderer.tsx` | Dé R3F WebGL PBR — `renderer="webgl" size={200}` (même moteur que DiceGameScreen) |
 
 ### Architecture du composant
 

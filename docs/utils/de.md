@@ -1,9 +1,9 @@
 # Rendu du dé — État actuel → 2026
 
 **Fichiers clés :**
-- `app/components/ui/Dice3D.tsx` — dé hardcodé du Consentement (6 catégories fixes, utilisé par GooseGameScreen — CSS Level 1)
-- `app/game-engine/dice/DiceRenderer.tsx` — rendu générique, prop `renderer?: 'css' | 'webgl'` (défaut `'css'`)
-- `app/game-engine/dice/DiceCanvas.tsx` — implémentation WebGL R3F (utilisée par DiceGameScreen)
+- ~~`app/components/ui/Dice3D.tsx`~~ — **supprimé** (dé CSS Level 1 legacy, remplacé par DiceRenderer dans tous les jeux)
+- `app/game-engine/dice/DiceRenderer.tsx` — rendu générique, prop `renderer?: 'css' | 'webgl'` (défaut `'css'`), `size?: number`
+- `app/game-engine/dice/DiceCanvas.tsx` — implémentation WebGL R3F (DiceGameScreen + GooseGameScreen)
 - `app/game-engine/dice/useDiceEngine.ts` — logique de tirage générique (anti-répétition, haptiques)
 - `app/game-engine/dice/types.ts` — `DiceFace.id` = numéro de face 1–N (correspond à l'ordre dans `faces[]` et aux clés de `FACE_ROTATIONS`)
 
@@ -38,31 +38,35 @@
 
 ### Architecture logique
 
-- `DiceGameScreen` utilise `useDiceEngine` + `DiceRenderer renderer="webgl"` → `DiceCanvas` (R3F PBR)
-- `GooseGameScreen` utilise `useDice` (hook simple, face 1–6) + `Dice3D` (CSS Level 1) — haptiques via `useHaptics`
-- `DiceRenderer` est l'interface publique : `renderer="css"` → CSS Level 1, `renderer="webgl"` → R3F
+- `DiceGameScreen` utilise `useDiceEngine` + `DiceRenderer renderer="webgl" size={240}` → `DiceCanvas` (R3F PBR)
+- `GooseGameScreen` utilise `useDice` (hook simple, face 1–6) + `DiceRenderer renderer="webgl" size={200}` → même moteur R3F
+- `DiceRenderer` est l'interface publique : `renderer="css"` → CSS Level 1 (Cube6/FlatTile), `renderer="webgl"` → R3F
 
 ---
 
-## Niveau 1 — CSS amélioré ✅ FAIT
+## Niveau 1 — CSS amélioré ✅ (DiceRenderer uniquement)
 
-Toutes les améliorations du niveau 1 sont implémentées dans `Dice3D.tsx` et `DiceRenderer.tsx`.
+Les améliorations CSS Level 1 (wobble Z, shake, ombre dynamique, spéculaire) sont dans `DiceRenderer.tsx` (Cube6 + FlatTile).
+`Dice3D.tsx` a été supprimé — GooseGameScreen utilise désormais le renderer WebGL.
 
 ---
 
-## Niveau 2 — React Three Fiber ✅ FAIT (sans Rapier)
+## Niveau 2 — React Three Fiber ✅ FAIT — DiceGameScreen + GooseGameScreen
 
-`DiceCanvas.tsx` — cube WebGL actif dans `DiceGameScreen`.
+`DiceCanvas.tsx` — cube WebGL actif dans les deux jeux.
 
 **Stack installée**
 ```
-three + @react-three/fiber + @react-three/drei
+three + @react-three/fiber + @react-three/drei + three-stdlib (RoundedBoxGeometry)
 ```
 
 **Ce qui tourne**
-- `AnimatedCube` : `RoundedBox` Three.js, rotation pilotée par `useFrame` avec la même ease cubic-bezier que le CSS
-- 6 `MeshPhysicalMaterial` : canvas textures 2D par face (gradient + emoji + label) + `transmission: 0.18`, `clearcoat: 0.6`, `roughness: 0.22`
-- Éclairage réel : `PointLight` × 2 + `AmbientLight` + `Environment preset="studio"`
+- `AnimatedCube` : `RoundedBoxGeometry` de **three-stdlib** (hérite de BoxGeometry → 6 groupes corrects, coins arrondis `radius=0.08`)
+  - ⚠️ Ne pas utiliser `RoundedBox` de **drei** — c'est une ExtrudeGeometry avec seulement 2 groupes (toutes faces mono-couleur)
+- 6 `MeshPhysicalMaterial` via `mesh.geometry + mesh.material` : canvas textures 2D par face (gradient + emoji + label)
+  - `roughness: 0.18`, `clearcoat: 0.8`, `envMapIntensity: 0.9`
+  - UV de three-stdlib déjà orientés correctement — **aucun flip canvas**
+- Éclairage : 2 `PointLight` doux (0.55 + 0.18) — `Environment preset="studio"` gère l'IBL ambient (pas d'`AmbientLight`)
 - `ContactShadows` via drei
 - Wobble Z pendant le lancer, reset à 0 en fin d'animation
 - `DiceRenderer renderer="webgl"` bascule sur `DiceCanvas` ; `renderer="css"` garde le CSS Level 1
@@ -144,6 +148,6 @@ Faces avec effet **holographique** ou **foil arc-en-ciel** via GLSL fragment sha
 ## Ordre recommandé
 
 1. ~~**Niveau 1 CSS**~~ ✅ wobble Z, shake, ombre dynamique, spéculaire
-2. ~~**Niveau 2 R3F** (sans Rapier)~~ ✅ PBR + éclairage réel + ContactShadows — DiceGameScreen
+2. ~~**Niveau 2 R3F** (sans Rapier)~~ ✅ PBR + éclairage réel + ContactShadows — DiceGameScreen **+ GooseGameScreen**
 3. **Niveau 2b Rapier** — physique réelle, rebond, détection face par raycast
 4. **Niveau 3 Shader** — iridescent/foil holographique, nécessite R3F en place
