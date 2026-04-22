@@ -106,7 +106,7 @@ export function Dice3D({ targetFace, isRolling, onRollComplete }: Dice3DProps) {
   }, [isRolling, targetFace]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div style={{ perspective: 500, width: SIZE, height: SIZE }}>
+    <div style={{ perspective: 500, width: SIZE, height: SIZE, filter: 'drop-shadow(0 12px 20px rgba(245,158,11,0.25))' }}>
       <motion.div
         animate={controls}
         style={{
@@ -114,8 +114,6 @@ export function Dice3D({ targetFace, isRolling, onRollComplete }: Dice3DProps) {
           height: SIZE,
           position: 'relative',
           transformStyle: 'preserve-3d',
-          // Ombre portée sous le cube
-          filter: 'drop-shadow(0 12px 20px rgba(245,158,11,0.25))',
         }}
       >
         {[1, 2, 3, 4, 5, 6].map((face, i) => (
