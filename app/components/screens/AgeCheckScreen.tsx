@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Sprout, TreeDeciduous, Lock } from 'lucide-react';
 import { Card } from '../ui';
 import { useTranslation } from '../../i18n';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AgeCheckScreenProps {
   onSelectMinor: () => void;
@@ -12,6 +13,7 @@ interface AgeCheckScreenProps {
 
 export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <motion.div
@@ -33,10 +35,10 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
           <Calendar size={40} className="text-amber-600" />
         </motion.div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           {t('ageCheck.title')}
         </h2>
-        <p className="text-gray-500">
+        <p style={{ color: colors.textMuted }}>
           {t('ageCheck.subtitle')}
         </p>
       </motion.div>
@@ -51,10 +53,10 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
               <Sprout size={28} className="text-emerald-600" />
             </motion.div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-800 text-lg">
+              <h3 className="font-semibold text-lg" style={{ color: colors.textPrimary }}>
                 {t('ageCheck.minor.title')}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
                 {t('ageCheck.minor.desc')}
               </p>
             </div>
@@ -70,10 +72,10 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
               <TreeDeciduous size={28} className="text-emerald-700" />
             </motion.div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-800 text-lg">
+              <h3 className="font-semibold text-lg" style={{ color: colors.textPrimary }}>
                 {t('ageCheck.adult.title')}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
                 {t('ageCheck.adult.desc')}
               </p>
             </div>
@@ -85,10 +87,11 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-8 p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center gap-2"
+        className="mt-8 p-4 rounded-2xl flex items-center justify-center gap-2"
+        style={{ background: colors.bgSecondary, border: `1px solid ${colors.divider}` }}
       >
-        <Lock size={14} className="text-gray-400" />
-        <p className="text-xs text-gray-400">
+        <Lock size={14} style={{ color: colors.textMuted }} />
+        <p className="text-xs" style={{ color: colors.textMuted }}>
           {t('ageCheck.privacy')}
         </p>
       </motion.div>

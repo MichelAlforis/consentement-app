@@ -1,6 +1,6 @@
 # Audit Couleurs Hardcodées — État & Décisions
 
-> Dernière mise à jour : 2026-04-22 — 5 passes effectuées.
+> Dernière mise à jour : 2026-04-22 — 6 passes effectuées.
 
 Cinq passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
 
@@ -97,10 +97,11 @@ Les couleurs de la session Duo incarnent la rencontre de deux personnes — elle
 | `DuoSpaceScreen` — fond caméra | `bg-gray-900` | Sémantique viewfinder (doit rester sombre) |
 
 ### Écrans pré-thème
-Ces écrans s'affichent avant que l'utilisateur choisisse son thème — les couleurs hardcodées n'ont pas d'impact :
-- `WelcomeScreen.tsx` — dégradé bleu/violet du logo app
-- `AgeCheckScreen.tsx` — vert émeraude (sémantique âge)
-- `AuthScreen.tsx` — bleu FranceConnect (identité marque)
+⚠️ **Important** : le thème persiste via localStorage. Même les écrans "pré-thème" s'affichent sur le fond dark-luxury (`#0f0d0e`) si l'utilisateur revient à cet écran. Seules les couleurs d'*identité de marque* peuvent rester fixes.
+
+- `WelcomeScreen.tsx` — dégradé bleu/violet du logo app (identité marque — acceptable)
+- `AuthScreen.tsx` — bleu FranceConnect (identité marque externe — fixe)
+- `AgeCheckScreen.tsx` — **thématisé en Passe 6** (textes étaient invisibles en dark-luxury)
 
 ---
 
@@ -257,6 +258,32 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
 
 ---
 
+---
+
+## Passe 6 — AgeCheckScreen (2026-04-22)
+
+### Problème
+
+`AgeCheckScreen` était classée "écran pré-thème" et considérée immunisée contre les problèmes de contraste. En réalité, le thème est persisté en localStorage : un utilisateur revenant sur cet écran après avoir sélectionné dark-luxury voyait `text-gray-800` (`#1f2937`) sur fond `#0f0d0e` → contraste ~1.5:1, texte invisible.
+
+Textes affectés : titre, sous-titre, labels des deux cards, conteneur confidentialité.
+
+### Corrigé
+
+**`app/components/screens/AgeCheckScreen.tsx`**
+- Ajout de `useTheme()` + `const { colors } = useTheme()`
+- `text-gray-800` × 3 → `style={{ color: colors.textPrimary }}`
+- `text-gray-500` × 2 → `style={{ color: colors.textMuted }}`
+- `bg-gray-50 border border-gray-100` → `style={{ background: colors.bgSecondary, border: \`1px solid ${colors.divider}\` }}`
+- `text-gray-400` × 2 (icône + texte confidentialité) → `style={{ color: colors.textMuted }}`
+
+### Conservé (identité âge)
+- `from-amber-100 to-orange-200 text-amber-600` — icône Calendrier
+- `from-green-100 to-emerald-200 text-emerald-600` — icône Sprout (mineur)
+- `from-green-200 to-emerald-300 text-emerald-700` — icône TreeDeciduous (adulte)
+
+---
+
 ## Règle de décision
 
 ```
@@ -265,10 +292,11 @@ Couleur à thématiser si :
   ✓ Fond de carte ou conteneur
   ✓ Bordure d'un élément UI
   ✓ Bouton d'action principal
+  ✓ Écran "pré-thème" → le thème persiste en localStorage, tous les écrans peuvent s'afficher sur n'importe quel fond
 
 Couleur à laisser fixe si :
   ✗ Sémantique universelle (rouge = stop, vert = ok)
   ✗ Identité de marque externe (FranceConnect bleu)
   ✗ Couleur propre à un jeu/module (identité visuelle)
-  ✗ Écran affiché avant sélection du thème
+  ✗ Identité sémantique de l'écran (amber = âge, vert = croissance, etc.)
 ```
