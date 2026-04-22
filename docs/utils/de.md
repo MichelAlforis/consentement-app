@@ -1,8 +1,9 @@
 # Rendu du dé — État actuel → 2026
 
 **Fichiers clés :**
-- `app/components/ui/Dice3D.tsx` — dé hardcodé du Consentement (6 catégories fixes, utilisé par DiceGameScreen + GooseGameScreen)
-- `app/game-engine/dice/DiceRenderer.tsx` — rendu générique configurable (même niveau CSS, utilisé par le moteur générique)
+- `app/components/ui/Dice3D.tsx` — dé hardcodé du Consentement (6 catégories fixes, utilisé par GooseGameScreen — CSS Level 1)
+- `app/game-engine/dice/DiceRenderer.tsx` — rendu générique, prop `renderer?: 'css' | 'webgl'` (défaut `'css'`)
+- `app/game-engine/dice/DiceCanvas.tsx` — implémentation WebGL R3F (utilisée par DiceGameScreen)
 - `app/game-engine/dice/useDiceEngine.ts` — logique de tirage générique (anti-répétition, haptiques)
 - `app/game-engine/dice/types.ts` — `DiceFace.id` = numéro de face 1–N (correspond à l'ordre dans `faces[]` et aux clés de `FACE_ROTATIONS`)
 
@@ -37,9 +38,9 @@
 
 ### Architecture logique
 
-- `DiceGameScreen` utilise `useDiceEngine` (anti-répétition, haptiques via `useHaptics`) + `Dice3D` (rendu)
-- `GooseGameScreen` utilise `useDice` (hook simple, face 1–6) + `Dice3D` (rendu) — haptiques via `useHaptics`
-- `DiceRenderer` est l'interface de rendu du moteur générique — même qualité CSS que `Dice3D`
+- `DiceGameScreen` utilise `useDiceEngine` + `DiceRenderer renderer="webgl"` → `DiceCanvas` (R3F PBR)
+- `GooseGameScreen` utilise `useDice` (hook simple, face 1–6) + `Dice3D` (CSS Level 1) — haptiques via `useHaptics`
+- `DiceRenderer` est l'interface publique : `renderer="css"` → CSS Level 1, `renderer="webgl"` → R3F
 
 ---
 
@@ -49,7 +50,31 @@ Toutes les améliorations du niveau 1 sont implémentées dans `Dice3D.tsx` et `
 
 ---
 
-## Niveau 2 — React Three Fiber (dépendance ~500kb, 3–5 jours)
+## Niveau 2 — React Three Fiber ✅ FAIT (sans Rapier)
+
+`DiceCanvas.tsx` — cube WebGL actif dans `DiceGameScreen`.
+
+**Stack installée**
+```
+three + @react-three/fiber + @react-three/drei
+```
+
+**Ce qui tourne**
+- `AnimatedCube` : `RoundedBox` Three.js, rotation pilotée par `useFrame` avec la même ease cubic-bezier que le CSS
+- 6 `MeshPhysicalMaterial` : canvas textures 2D par face (gradient + emoji + label) + `transmission: 0.18`, `clearcoat: 0.6`, `roughness: 0.22`
+- Éclairage réel : `PointLight` × 2 + `AmbientLight` + `Environment preset="studio"`
+- `ContactShadows` via drei
+- Wobble Z pendant le lancer, reset à 0 en fin d'animation
+- `DiceRenderer renderer="webgl"` bascule sur `DiceCanvas` ; `renderer="css"` garde le CSS Level 1
+
+**Ce qui n'est pas encore là (Rapier)**
+- Physique réelle (rebond, vélocité angulaire)
+- Détection de face par raycast
+- Pour l'instant : même logique de rotation cumulative qu'en CSS
+
+---
+
+## Niveau 2b — Rapier physics (optionnel, 2–3 jours)
 
 Le vrai saut qualitatif. Un objet 3D dans un canvas WebGL.
 
@@ -79,8 +104,7 @@ Le vrai saut qualitatif. Un objet 3D dans un canvas WebGL.
 ```ts
 // Rapier : appliquer une impulsion rotationnelle aléatoire
 rigidBody.applyTorqueImpulse({ x: rand(-8, 8), y: rand(-8, 8), z: rand(-4, 4) });
-// Rapier arrête la physique quand la vélocité < threshold, face détectée par raycast
-// onLanded() déclenche la suite de jeu
+// Arrêt quand vélocité < threshold → face détectée par raycast → onLanded()
 ```
 
 **Structure composant**
@@ -119,6 +143,7 @@ Faces avec effet **holographique** ou **foil arc-en-ciel** via GLSL fragment sha
 
 ## Ordre recommandé
 
-1. ~~**Niveau 1 CSS** (physique + matière)~~ ✅ **FAIT** — wobble Z, shake, ombre dynamique, spéculaire
-2. **Niveau 2 R3F** — intégration progressive, le CSS reste le fallback
-3. **Plus tard** — Shader iridescent une fois R3F en place
+1. ~~**Niveau 1 CSS**~~ ✅ wobble Z, shake, ombre dynamique, spéculaire
+2. ~~**Niveau 2 R3F** (sans Rapier)~~ ✅ PBR + éclairage réel + ContactShadows — DiceGameScreen
+3. **Niveau 2b Rapier** — physique réelle, rebond, détection face par raycast
+4. **Niveau 3 Shader** — iridescent/foil holographique, nécessite R3F en place

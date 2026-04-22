@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import { ShimmerLayer } from '../../components/ui/ThemeEffects';
+import { DiceCanvas } from './DiceCanvas';
 import type { DiceConfig, DiceFace } from './types';
 
 // ─── 6-face 3D cube ───────────────────────────────────────────────────────────
@@ -259,9 +260,24 @@ export interface DiceRendererProps {
   currentFace: DiceFace | null;
   isRolling: boolean;
   onRollComplete?: () => void;
+  /** 'css' (défaut) : cube CSS 3D Level 1 | 'webgl' : R3F PBR */
+  renderer?: 'css' | 'webgl';
+  size?: number;
 }
 
-export function DiceRenderer({ config, currentFace, isRolling, onRollComplete }: DiceRendererProps) {
+export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size }: DiceRendererProps) {
+  if (renderer === 'webgl') {
+    return (
+      <DiceCanvas
+        config={config}
+        currentFace={currentFace}
+        isRolling={isRolling}
+        onRollComplete={onRollComplete}
+        size={size ?? 120}
+      />
+    );
+  }
+
   const { faces } = config;
   const displayFace = currentFace ?? faces[0];
   const targetIndex = currentFace ? faces.findIndex(f => f.id === currentFace.id) : 0;

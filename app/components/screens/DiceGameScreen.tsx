@@ -4,8 +4,9 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff } from 'lucide-react';
 import { diePractices, DICE_CATEGORIES } from '../../data';
-import { Button, Dice3D } from '../ui';
+import { Button } from '../ui';
 import { useDiceEngine } from '../../game-engine/dice/useDiceEngine';
+import { DiceRenderer } from '../../game-engine/dice/DiceRenderer';
 import type { DiceConfig, DiceItem } from '../../game-engine/dice/types';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
@@ -49,7 +50,6 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
 
-  const targetFace = currentFace?.id ?? 1;
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
 
   const pickRoll = (solo: boolean) => {
@@ -108,7 +108,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             className="flex-1 flex flex-col"
           >
             <div className="flex justify-center mb-8 mt-4">
-              <Dice3D targetFace={1} isRolling={false} />
+              <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" />
             </div>
 
             <p className="text-sm font-semibold text-gray-700 mb-4">Comment tu veux jouer ?</p>
@@ -169,10 +169,12 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
           >
             {/* Zone dé + titre catégorie */}
             <div className="flex flex-col items-center mb-6 mt-2">
-              <Dice3D
-                targetFace={targetFace}
+              <DiceRenderer
+                config={DICE_CONFIG}
+                currentFace={currentFace}
                 isRolling={isRolling}
                 onRollComplete={handleRollComplete}
+                renderer="webgl"
               />
 
               <AnimatePresence>
