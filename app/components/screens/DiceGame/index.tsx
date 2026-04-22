@@ -3,20 +3,19 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff } from 'lucide-react';
-import { diePractices, DICE_CATEGORIES } from '../../data';
-import { Button } from '../ui';
-import { useDiceEngine } from '../../game-engine/dice/useDiceEngine';
-import { DiceRenderer } from '../../game-engine/dice/DiceRenderer';
-import type { DiceConfig, DiceItem } from '../../game-engine/dice/types';
-import { useTheme } from '../../context/ThemeContext';
-import { useTranslation } from '../../i18n';
+import { diePractices, DICE_CATEGORIES } from '../../../data';
+import { Button } from '../../ui';
+import { useDiceEngine } from '../../../game-engine/dice/useDiceEngine';
+import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
+import type { DiceConfig, DiceItem } from '../../../game-engine/dice/types';
+import { useTheme } from '../../../context/ThemeContext';
+import { useTranslation } from '../../../i18n';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
 
-// DiceFace ids 1–6 correspondent aux numéros de face (FACE_ROTATIONS de Dice3D)
 const DICE_CONFIG: DiceConfig = {
-  faces: ([1, 2, 3, 4, 5, 6] as const).map(n => ({
+  faces: ([1, 2, 3, 4, 5, 6] as const).map((n) => ({
     id: n,
     label: DICE_CATEGORIES[n].name,
     emoji: DICE_CATEGORIES[n].emoji,
@@ -40,7 +39,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const [p2Answer, setP2Answer] = useState<DuoAnswer>(null);
   const [rollCount, setRollCount] = useState(0);
 
-  const available = useMemo(() => diePractices.filter(p => {
+  const available = useMemo(() => diePractices.filter((p) => {
     if (p.ageGate === 'all') return true;
     if (p.ageGate === 'adult') return isAdult;
     if (p.ageGate === 'premium') return isAdult && isPremium;
@@ -48,21 +47,21 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   }), [isAdult, isPremium]);
 
   const diceItems = useMemo<DiceItem[]>(
-    () => available.map(p => ({ id: p.id, faceId: p.face, text: p.text })),
+    () => available.map((p) => ({ id: p.id, faceId: p.face, text: p.text })),
     [available],
   );
 
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
-
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
   const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
+  const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
 
   const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    setRollCount(c => c + 1);
+    setRollCount((c) => c + 1);
     roll();
   };
 
@@ -70,13 +69,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    setRollCount(c => c + 1);
+    setRollCount((c) => c + 1);
     roll();
-  };
-
-  const handleRollComplete = () => {
-    onRollComplete();
-    setMode('practice');
   };
 
   const reset = () => {
@@ -85,15 +79,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setP2Answer(null);
   };
 
-  const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="p-5 pb-10 min-h-[75vh] flex flex-col"
-    >
-      {/* Header */}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10 min-h-[75vh] flex flex-col">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-11 h-11 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
           <Dices size={22} className="text-amber-600" />
@@ -118,42 +105,27 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
             <p className="text-sm font-semibold mb-4" style={{ color: colors.textSecondary }}>{t('diceGame.howToPlay')}</p>
             <div className="space-y-3 mb-8">
-              <motion.button
-                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                onClick={() => pickRoll(true)}
-                className="w-full p-5 rounded-3xl text-left border-2 border-amber-200 shadow-sm"
-                style={{ background: colors.bgCard }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
-                    <User size={22} className="text-amber-500" />
+              {([
+                [true, <User key="u" size={22} className="text-amber-500" />, t('diceGame.solo.title'), t('diceGame.solo.desc'), 'border-amber-200'],
+                [false, <Users key="us" size={22} className="text-orange-500" />, t('diceGame.duo.title'), t('diceGame.duo.desc'), 'border-orange-200'],
+              ] as [boolean, React.ReactNode, string, string, string][]).map(([solo, icon, title, desc, border]) => (
+                <motion.button key={title}
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  onClick={() => pickRoll(solo)}
+                  className={`w-full p-5 rounded-3xl text-left border-2 ${border} shadow-sm`}
+                  style={{ background: colors.bgCard }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">{icon}</div>
+                    <div>
+                      <p className="font-bold" style={{ color: colors.textPrimary }}>{title}</p>
+                      <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold" style={{ color: colors.textPrimary }}>{t('diceGame.solo.title')}</p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('diceGame.solo.desc')}</p>
-                  </div>
-                </div>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                onClick={() => pickRoll(false)}
-                className="w-full p-5 rounded-3xl text-left border-2 border-orange-200 shadow-sm"
-                style={{ background: colors.bgCard }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center">
-                    <Users size={22} className="text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="font-bold" style={{ color: colors.textPrimary }}>{t('diceGame.duo.title')}</p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('diceGame.duo.desc')}</p>
-                  </div>
-                </div>
-              </motion.button>
+                </motion.button>
+              ))}
             </div>
 
-            {/* Catégories en vitrine */}
             <div className="mt-auto">
               <p className="text-xs text-center mb-3" style={{ color: colors.textMuted }}>{t('diceGame.categories')}</p>
               <div className="grid grid-cols-3 gap-2">
@@ -176,30 +148,22 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col"
           >
-            {/* Zone dé + titre catégorie */}
             <div className="flex flex-col items-center mb-6 mt-2">
               <DiceRenderer
                 config={DICE_CONFIG}
                 currentFace={currentFace}
                 isRolling={isRolling}
-                onRollComplete={handleRollComplete}
+                onRollComplete={() => { onRollComplete(); setMode('practice'); }}
                 renderer="webgl"
               />
 
               <AnimatePresence>
                 {mode === 'rolling' && (
-                  <motion.p
-                    key="rolling-label"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="mt-4 text-sm"
-                    style={{ color: colors.textMuted }}
-                  >
-                    {t('diceGame.rolling')}
-                  </motion.p>
+                  <motion.p key="rolling-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="mt-4 text-sm" style={{ color: colors.textMuted }}>{t('diceGame.rolling')}</motion.p>
                 )}
                 {mode === 'practice' && currentCat && (
-                  <motion.div
-                    key="category-title"
+                  <motion.div key="category-title"
                     initial={{ opacity: 0, y: -40, rotate: -6, scale: 1.2 }}
                     animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.05 }}
@@ -207,52 +171,33 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     style={{ background: currentCat.gradient, boxShadow: `0 4px 20px ${currentCat.border}80` }}
                   >
                     <span className="text-2xl">{currentCat.emoji}</span>
-                    <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
-                      {currentCatName}
-                    </span>
+                    <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Carte activité */}
             <AnimatePresence>
               {mode === 'practice' && currentItem && currentCat && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                   className="flex-1 flex flex-col"
                 >
-                  <div
-                    className="rounded-3xl p-6 mb-5 text-center"
-                    style={{
-                      background: `${currentCat.gradient.replace('linear-gradient(135deg, ', '').split(',')[0]}18`,
-                      border: `1.5px solid ${currentCat.border}`,
-                    }}
-                  >
+                  <div className="rounded-3xl p-6 mb-5 text-center"
+                    style={{ background: `${currentCat.gradient.replace('linear-gradient(135deg, ', '').split(',')[0]}18`, border: `1.5px solid ${currentCat.border}` }}>
                     <p className="text-lg font-bold leading-snug" style={{ color: colors.textPrimary }}>{currentItem.text}</p>
                   </div>
 
                   {isSolo ? (
                     <div className="space-y-3 mt-auto">
-                      <Button onClick={reroll} fullWidth>
-                        <Dices size={18} />
-                        {t('diceGame.newRoll')}
-                      </Button>
-                      <Button onClick={reset} variant="secondary" fullWidth>
-                        <RotateCcw size={16} />
-                        {t('diceGame.changeMode')}
-                      </Button>
+                      <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
+                      <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
                     </div>
                   ) : (
                     <div className="mt-auto">
                       <p className="text-sm text-center mb-3" style={{ color: colors.textMuted }}>{t('diceGame.readVote')}</p>
                       <Button onClick={() => setMode('duo-p1')} fullWidth>
-                        <Users size={18} />
-                        {t('diceGame.startVote')}
-                        <ChevronRight size={18} />
+                        <Users size={18} />{t('diceGame.startVote')}<ChevronRight size={18} />
                       </Button>
                     </div>
                   )}
@@ -274,34 +219,26 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               </div>
               <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person1')}</p>
             </div>
-
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <span className="text-3xl">{currentCat.emoji}</span>
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
-
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
-
             <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.areYouIn')}</p>
-            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
-              {t('diceGame.hideNote')}
-            </p>
-
+            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>{t('diceGame.hideNote')}</p>
             <div className="grid grid-cols-2 gap-3 mt-auto">
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP1Answer('no'); setMode('duo-hidden'); }}
-                className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2"
-              >
+                className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2">
                 <X size={24} className="text-red-500" />
                 <span className="font-bold text-red-600 text-sm">{t('diceGame.no')}</span>
                 <span className="text-xs text-red-400">{t('diceGame.noNote')}</span>
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP1Answer('yes'); setMode('duo-hidden'); }}
-                className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2"
-              >
+                className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2">
                 <Check size={24} className="text-green-500" />
                 <span className="font-bold text-green-600 text-sm">{t('diceGame.yes')}</span>
                 <span className="text-xs text-green-400">{t('diceGame.yesNote')}</span>
@@ -316,24 +253,15 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex-1 flex flex-col items-center justify-center text-center"
           >
-            <motion.div
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6"
-              style={{ background: colors.bgSecondary }}
-            >
+            <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+              className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6" style={{ background: colors.bgSecondary }}>
               <EyeOff size={36} style={{ color: colors.textMuted }} />
             </motion.div>
             <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.recorded')}</h3>
-            <p
-              className="text-sm max-w-xs mb-8"
-              style={{ color: colors.textMuted }}
-              dangerouslySetInnerHTML={{ __html: t('diceGame.passPhone') }}
-            />
+            <p className="text-sm max-w-xs mb-8" style={{ color: colors.textMuted }}
+              dangerouslySetInnerHTML={{ __html: t('diceGame.passPhone') }} />
             <Button onClick={() => setMode('duo-p2')}>
-              <Eye size={18} />
-              {t('diceGame.person2Ready')}
-              <ChevronRight size={18} />
+              <Eye size={18} />{t('diceGame.person2Ready')}<ChevronRight size={18} />
             </Button>
           </motion.div>
         )}
@@ -350,34 +278,26 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               </div>
               <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person2')}</p>
             </div>
-
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <span className="text-3xl">{currentCat.emoji}</span>
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
-
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
-
             <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.areYouIn')}</p>
-            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
-              {t('diceGame.honestNote')}
-            </p>
-
+            <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>{t('diceGame.honestNote')}</p>
             <div className="grid grid-cols-2 gap-3 mt-auto">
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP2Answer('no'); setMode('duo-reveal'); }}
-                className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2"
-              >
+                className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2">
                 <X size={24} className="text-red-500" />
                 <span className="font-bold text-red-600 text-sm">{t('diceGame.no')}</span>
                 <span className="text-xs text-red-400">{t('diceGame.noNote')}</span>
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP2Answer('yes'); setMode('duo-reveal'); }}
-                className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2"
-              >
+                className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2">
                 <Check size={24} className="text-green-500" />
                 <span className="font-bold text-green-600 text-sm">{t('diceGame.yes')}</span>
                 <span className="text-xs text-green-400">{t('diceGame.yesNote')}</span>
@@ -393,44 +313,28 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             className="flex-1 flex flex-col items-center justify-center text-center"
           >
             <motion.div
-              initial={{ scale: 0, rotate: -15 }}
-              animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 12, delay: 0.1 }}
               className="text-6xl mb-4"
-            >
-              {bothYes ? '🎉' : '🤝'}
-            </motion.div>
+            >{bothYes ? '🎉' : '🤝'}</motion.div>
 
             <h3 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
               {bothYes ? t('diceGame.bothYes') : t('diceGame.notThisTime')}
             </h3>
-
             <p className="text-sm max-w-xs leading-relaxed mb-2" style={{ color: colors.textMuted }}>
-              {bothYes
-                ? t('diceGame.bothYesSub', { cat: currentCatName })
-                : t('diceGame.notThisTimeSub')}
+              {bothYes ? t('diceGame.bothYesSub', { cat: currentCatName }) : t('diceGame.notThisTimeSub')}
             </p>
 
             {!bothYes && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                className="mt-2 mb-4 p-3 rounded-2xl bg-blue-50 border border-blue-100 max-w-xs"
-              >
-                <p className="text-xs text-blue-700">
-                  {t('diceGame.anonymity')}
-                </p>
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                className="mt-2 mb-4 p-3 rounded-2xl bg-blue-50 border border-blue-100 max-w-xs">
+                <p className="text-xs text-blue-700">{t('diceGame.anonymity')}</p>
               </motion.div>
             )}
 
             <div className="space-y-3 w-full max-w-xs mt-6">
-              <Button onClick={reroll} fullWidth>
-                <Dices size={18} />
-                {t('diceGame.newRoll')}
-              </Button>
-              <Button onClick={reset} variant="secondary" fullWidth>
-                <RotateCcw size={16} />
-                {t('diceGame.changeMode')}
-              </Button>
+              <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
+              <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
             </div>
           </motion.div>
         )}

@@ -1,9 +1,15 @@
 import { useLanguage } from '../context/LanguageContext';
+import type { Language } from '../types';
+
+// ─── Locale loader ────────────────────────────────────────────────────────────
+// Actuellement : imports TS (locales/*/index.ts)
+// Migration JSON : remplacer par import fr from './locales/fr.json' etc.
+//                 puis exécuter : node scripts/migrate-locales.mjs
+// ─────────────────────────────────────────────────────────────────────────────
 import { fr } from './locales/fr';
 import { en } from './locales/en';
 import { es } from './locales/es';
 import type { Translations } from './locales/fr';
-import type { Language } from '../types';
 
 const translations: Record<Language, Translations> = {
   fr: fr as unknown as Translations,
@@ -30,8 +36,9 @@ export function useTranslation() {
   const fallback = translations.fr;
 
   function t(key: string, params?: Record<string, string | number>): string {
-    const value = getNestedValue(dict as unknown as Record<string, unknown>, key)
-      ?? getNestedValue(fallback as unknown as Record<string, unknown>, key);
+    const value =
+      getNestedValue(dict as unknown as Record<string, unknown>, key) ??
+      getNestedValue(fallback as unknown as Record<string, unknown>, key);
 
     if (value === undefined) return key;
     if (typeof value === 'string') return params ? interpolate(value, params) : value;

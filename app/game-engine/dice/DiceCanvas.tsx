@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, ContactShadows } from '@react-three/drei';
+import { Environment, ContactShadows, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import type { DiceFace, DiceConfig } from './types';
 
@@ -56,7 +56,7 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   canvas.height = size;
   const ctx = canvas.getContext('2d')!;
 
-  // Gradient plein canvas — pas de clip arrondi (UV boxGeometry = orientations variées)
+  // Gradient de fond — plein canvas (pas de clip : UV boxGeometry variables par face)
   const grad = ctx.createLinearGradient(0, 0, size, size);
   const stops = face.gradient.match(/#[0-9a-fA-F]{6}/g) ?? ['#444', '#222'];
   grad.addColorStop(0, stops[0]);
@@ -64,30 +64,35 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, size, size);
 
-  // Highlight spéculaire haut-gauche — le clearcoat PBR en ajoute un dynamique par-dessus
-  const spec = ctx.createRadialGradient(size * 0.25, size * 0.2, 0, size * 0.3, size * 0.25, size * 0.5);
-  spec.addColorStop(0, 'rgba(255,255,255,0.32)');
+  // Vignette aux coins — simule l'arrondi des bords sans clip géométrique
+  const vig = ctx.createRadialGradient(size / 2, size / 2, size * 0.3, size / 2, size / 2, size * 0.78);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.52)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, size, size);
+
+  // Highlight spéculaire discret — le clearcoat PBR ajoute un reflet dynamique par-dessus
+  const spec = ctx.createRadialGradient(size * 0.3, size * 0.22, 0, size * 0.3, size * 0.22, size * 0.45);
+  spec.addColorStop(0, 'rgba(255,255,255,0.28)');
   spec.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = spec;
   ctx.fillRect(0, 0, size, size);
-
-  // Bord intérieur — simule l'épaisseur de la face
-  roundedRect(ctx, size * 0.06, size * 0.06, size * 0.88, size * 0.88, size * 0.12);
-  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-  ctx.lineWidth = size * 0.025;
-  ctx.stroke();
 
   // Emoji
   ctx.font = `${size * 0.42}px serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'white';
-  ctx.fillText(face.emoji, size / 2, size * 0.42);
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = size * 0.04;
+  ctx.fillText(face.emoji, size / 2, size * 0.43);
 
   // Label
+  ctx.shadowBlur = size * 0.02;
   ctx.font = `900 ${size * 0.11}px system-ui, sans-serif`;
   ctx.fillStyle = 'rgba(255,255,255,0.95)';
   ctx.fillText(face.label.toUpperCase(), size / 2, size * 0.74);
+  ctx.shadowBlur = 0;
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.needsUpdate = true;
@@ -102,12 +107,12 @@ function useFaceMaterials(faces: DiceFace[]): THREE.MeshPhysicalMaterial[] {
       const tex = makeFaceTexture(face);
       return new THREE.MeshPhysicalMaterial({
         map: tex,
-        transmission: 0,        // opaque — la texture doit être lisible
+        transmission: 0,
         roughness: 0.15,
-        metalness: 0.02,
-        envMapIntensity: 0.8,
-        clearcoat: 0.85,        // vernis brillant pour l'effet résine
-        clearcoatRoughness: 0.05,
+        metalness: 0,
+        envMapIntensity: 1.2,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.08,
       });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -218,9 +223,8 @@ function DiceScene({
 
   return (
     <>
-      <ambientLight intensity={0.35} />
-      <pointLight position={[3, 5, 3]} intensity={1.8} castShadow />
-      <pointLight position={[-2, -3, 2]} intensity={0.4} color="#8b5cf6" />
+      <ambientLight intensity={0.3} />
+      <pointLight position={[5, 5, 5]} intensity={1.0} castShadow />
       <Suspense fallback={null}>
         <Environment preset="studio" />
         <AnimatedCube
@@ -251,13 +255,13 @@ export interface DiceCanvasProps {
   size?: number;
 }
 
-export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 120 }: DiceCanvasProps) {
+export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 180 }: DiceCanvasProps) {
   const targetFaceId = currentFace?.id ?? 1;
 
   return (
     <div style={{ width: size, height: size }}>
       <Canvas
-        camera={{ position: [0, 0, 2.8], fov: 42 }}
+        camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}

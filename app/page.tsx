@@ -25,25 +25,25 @@ import {
 
 // ─── Lazy screen imports (code splitting automatique) ────────────────────────
 
-const WelcomeScreen = lazy(() => import('./components/screens/WelcomeScreen'));
-const AgeCheckScreen = lazy(() => import('./components/screens/AgeCheckScreen'));
-const AuthScreen = lazy(() => import('./components/screens/AuthScreen'));
-const HomeMinorScreen = lazy(() => import('./components/screens/HomeMinorScreen'));
-const HomeAdultScreen = lazy(() => import('./components/screens/HomeAdultScreen'));
-const PersonalSpaceScreen = lazy(() => import('./components/screens/PersonalSpaceScreen'));
-const DuoSpaceScreen = lazy(() => import('./components/screens/DuoSpaceScreen'));
-const LearnScreen = lazy(() => import('./components/screens/LearnScreen'));
-const HelpScreen = lazy(() => import('./components/screens/HelpScreen'));
-const PornoVsRealiteScreen = lazy(() => import('./components/screens/PornoVsRealiteScreen'));
-const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen'));
-const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen'));
-const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen'));
-const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen'));
-const DiceGameScreen = lazy(() => import('./components/screens/DiceGameScreen'));
-const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen'));
-const CardGameScreen = lazy(() => import('./components/screens/CardGameScreen'));
-const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen'));
-const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen'));
+const WelcomeScreen = lazy(() => import('./components/screens/WelcomeScreen').then(m => ({ default: m.WelcomeScreen })));
+const AgeCheckScreen = lazy(() => import('./components/screens/AgeCheckScreen').then(m => ({ default: m.AgeCheckScreen })));
+const AuthScreen = lazy(() => import('./components/screens/AuthScreen').then(m => ({ default: m.AuthScreen })));
+const HomeMinorScreen = lazy(() => import('./components/screens/HomeMinorScreen').then(m => ({ default: m.HomeMinorScreen })));
+const HomeAdultScreen = lazy(() => import('./components/screens/HomeAdultScreen').then(m => ({ default: m.HomeAdultScreen })));
+const PersonalSpaceScreen = lazy(() => import('./components/screens/PersonalSpaceScreen').then(m => ({ default: m.PersonalSpaceScreen })));
+const DuoSpaceScreen = lazy(() => import('./components/screens/DuoSpace').then(m => ({ default: m.DuoSpaceScreen })));
+const LearnScreen = lazy(() => import('./components/screens/LearnScreen').then(m => ({ default: m.LearnScreen })));
+const HelpScreen = lazy(() => import('./components/screens/HelpScreen').then(m => ({ default: m.HelpScreen })));
+const PornoVsRealiteScreen = lazy(() => import('./components/screens/PornoVsRealiteScreen').then(m => ({ default: m.PornoVsRealiteScreen })));
+const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen').then(m => ({ default: m.LoiConsentementScreen })));
+const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen').then(m => ({ default: m.QuizConsentementScreen })));
+const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen').then(m => ({ default: m.AccompagnementMineurScreen })));
+const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen').then(m => ({ default: m.GamesHubScreen })));
+const DiceGameScreen = lazy(() => import('./components/screens/DiceGame').then(m => ({ default: m.DiceGameScreen })));
+const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen').then(m => ({ default: m.GooseGameScreen })));
+const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
+const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
+const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
 
