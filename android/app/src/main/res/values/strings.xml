@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Consentement</string>
+    <string name="title_activity_main">Consentement</string>
+    <string name="package_name">fr.consentement.app</string>
+    <string name="custom_url_scheme">fr.consentement.app</string>
+</resources>

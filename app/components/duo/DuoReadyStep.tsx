@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Check } from 'lucide-react';
 import { Button } from '../ui';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoReadyStepProps {
   partnerName: string;
@@ -11,6 +12,7 @@ interface DuoReadyStepProps {
 }
 
 export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
+  const { colors } = useTheme();
   const [myReady, setMyReady] = useState(false);
   const [partnerReady, setPartnerReady] = useState(false);
 
@@ -68,13 +70,13 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
         transition={{ delay: 0.2 }}
         className="text-center mb-8"
       >
-        <h2 className="text-2xl font-bold text-gray-800 mb-3">
+        <h2 className="text-2xl font-bold mb-3" style={{ color: colors.textPrimary }}>
           Prêts ?
         </h2>
-        <p className="text-gray-500 leading-relaxed">
+        <p className="leading-relaxed" style={{ color: colors.textMuted }}>
           Vous avez chacun exploré vos envies.
         </p>
-        <p className="text-gray-600 font-medium mt-2">
+        <p className="font-medium mt-2" style={{ color: colors.textSecondary }}>
           Prêts à découvrir ce que vous partagez ?
         </p>
       </motion.div>
@@ -86,7 +88,7 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
         transition={{ delay: 0.4 }}
         className="w-full max-w-xs mb-8"
       >
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="rounded-2xl p-5" style={{ background: colors.bgSecondary }}>
           <div className="flex justify-around items-center">
             {/* Mon status */}
             <div className="text-center">
@@ -95,8 +97,9 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
                 className={`w-14 h-14 rounded-full mx-auto mb-2 flex items-center justify-center transition-colors ${
                   myReady
                     ? 'bg-gradient-to-br from-green-400 to-emerald-500'
-                    : 'bg-gray-200'
+                    : ''
                 }`}
+                style={!myReady ? { background: colors.border } : {}}
               >
                 {myReady ? (
                   <Check size={28} className="text-white" />
@@ -104,12 +107,13 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
                   <motion.div
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="w-3 h-3 rounded-full bg-gray-400"
+                    className="w-3 h-3 rounded-full"
+                    style={{ background: colors.textMuted }}
                   />
                 )}
               </motion.div>
-              <p className="text-sm font-medium text-gray-700">Toi</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>Toi</p>
+              <p className="text-xs" style={{ color: colors.textMuted }}>
                 {myReady ? 'Prêt·e' : 'En attente'}
               </p>
             </div>
@@ -134,8 +138,9 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
                 className={`w-14 h-14 rounded-full mx-auto mb-2 flex items-center justify-center transition-colors ${
                   partnerReady
                     ? 'bg-gradient-to-br from-green-400 to-emerald-500'
-                    : 'bg-gray-200'
+                    : ''
                 }`}
+                style={!partnerReady ? { background: colors.border } : {}}
               >
                 {partnerReady ? (
                   <Check size={28} className="text-white" />
@@ -143,12 +148,13 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
                   <motion.div
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    className="w-3 h-3 rounded-full bg-gray-400"
+                    className="w-3 h-3 rounded-full"
+                    style={{ background: colors.textMuted }}
                   />
                 )}
               </motion.div>
-              <p className="text-sm font-medium text-gray-700">{partnerName}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>{partnerName}</p>
+              <p className="text-xs" style={{ color: colors.textMuted }}>
                 {partnerReady ? 'Prêt·e' : 'En attente'}
               </p>
             </div>
@@ -179,7 +185,7 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="text-gray-500"
+          style={{ color: colors.textMuted }}
         >
           En attente de {partnerName}...
         </motion.p>

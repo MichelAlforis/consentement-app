@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoConnectedStepProps {
   partnerName: string;
@@ -9,6 +10,8 @@ interface DuoConnectedStepProps {
 }
 
 export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepProps) {
+  const { colors } = useTheme();
+
   // Auto-avance après 4 secondes
   useEffect(() => {
     const timer = setTimeout(onComplete, 4000);
@@ -86,10 +89,10 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
         transition={{ delay: 1.2 }}
         className="text-center"
       >
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           Vous êtes connectés
         </h2>
-        <p className="text-gray-500 text-lg">
+        <p className="text-lg" style={{ color: colors.textMuted }}>
           Prenez un moment ensemble.
         </p>
       </motion.div>

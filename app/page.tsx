@@ -58,6 +58,11 @@ export default function ConsentementApp() {
     deactivatePremium,
   } = useAppState();
 
+  // Attendre la lecture du localStorage avant tout rendu
+  if (!isHydrated) {
+    return <div className="min-h-dvh" style={{ background: '#0a0a0f' }} />;
+  }
+
   if (!themeMode || !theme) {
     return <ThemeSelectScreen onSelectTheme={selectTheme} isPremium={isPremium} onGoPremium={() => { selectTheme('warm'); navigateTo('premium'); }} />;
   }
@@ -238,60 +243,61 @@ export default function ConsentementApp() {
       {/* Grain cinématographique — thème Nude */}
       {theme.effects.grain && <GrainOverlay />}
 
-      {/* Footer - Navigation démo */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="px-4 py-3 safe-area-bottom"
-        style={{
-          background: theme.colors.bgCard,
-          borderTop: `1px solid ${theme.colors.divider}`,
-        }}
-      >
-        {/* Navigation rapide démo */}
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <button
-            onClick={() => navigateTo('welcome')}
-            className="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-          >
-            Accueil
-          </button>
-          <button
-            onClick={() => handleAgeSelect(false)}
-            className="px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
-          >
-            Mode Ado
-          </button>
-          <button
-            onClick={() => {
-              handleAgeSelect(true);
-              handleAuth('Demo');
-            }}
-            className="px-3 py-1.5 text-xs rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-          >
-            Mode Adulte
-          </button>
-          <button
-            onClick={() => isPremium ? deactivatePremium() : navigateTo('premium')}
-            className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
-              isPremium
-                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-            }`}
-          >
-            {isPremium ? '★ Premium ON' : 'Premium'}
-          </button>
-          <button
-            onClick={resetAllData}
-            className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
-          >
-            Reset
-          </button>
-        </div>
-        <p className="text-center text-xs" style={{ color: theme.colors.textMuted }}>
-          🎭 Mode démo — Navigation libre
-        </p>
-      </motion.div>
+      {/* Footer - Navigation démo (développement uniquement) */}
+      {process.env.NODE_ENV === 'development' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="px-4 py-3 safe-area-bottom"
+          style={{
+            background: theme.colors.bgCard,
+            borderTop: `1px solid ${theme.colors.divider}`,
+          }}
+        >
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <button
+              onClick={() => navigateTo('welcome')}
+              className="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Accueil
+            </button>
+            <button
+              onClick={() => handleAgeSelect(false)}
+              className="px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+            >
+              Mode Ado
+            </button>
+            <button
+              onClick={() => {
+                handleAgeSelect(true);
+                handleAuth('Demo');
+              }}
+              className="px-3 py-1.5 text-xs rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+            >
+              Mode Adulte
+            </button>
+            <button
+              onClick={() => isPremium ? deactivatePremium() : navigateTo('premium')}
+              className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
+                isPremium
+                  ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                  : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+              }`}
+            >
+              {isPremium ? '★ Premium ON' : 'Premium'}
+            </button>
+            <button
+              onClick={resetAllData}
+              className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+          <p className="text-center text-xs" style={{ color: theme.colors.textMuted }}>
+            🎭 Mode démo — Navigation libre
+          </p>
+        </motion.div>
+      )}
     </div>
     </ThemeProvider>
   );

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Handshake, RefreshCw, Lock, Check } from 'lucide-react';
 import { Button } from '../ui';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoPactStepProps {
   partnerName: string;
@@ -32,6 +33,7 @@ const pactItems = [
 ];
 
 export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
+  const { colors } = useTheme();
   const [myAccepted, setMyAccepted] = useState(false);
   const [partnerAccepted, setPartnerAccepted] = useState(false);
 
@@ -69,10 +71,10 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           Notre pacte
         </h2>
-        <p className="text-gray-500">
+        <p style={{ color: colors.textMuted }}>
           Avant de commencer, un rappel important
         </p>
       </motion.div>
@@ -90,7 +92,7 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
             <div className={`${item.color} mt-0.5`}>
               <item.icon size={24} />
             </div>
-            <p className="text-gray-700 flex-1 leading-relaxed">
+            <p className="flex-1 leading-relaxed" style={{ color: colors.textSecondary }}>
               {item.text}
             </p>
           </motion.div>
@@ -102,7 +104,8 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="bg-gray-50 rounded-2xl p-4 mb-6"
+        className="rounded-2xl p-4 mb-6"
+        style={{ background: colors.bgSecondary }}
       >
         <div className="flex justify-around">
           {/* Mon status */}
@@ -112,16 +115,17 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
               className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
                 myAccepted
                   ? 'bg-green-100'
-                  : 'bg-gray-200'
+                  : ''
               }`}
+              style={!myAccepted ? { background: colors.border } : {}}
             >
               {myAccepted ? (
                 <Check size={24} className="text-green-600" />
               ) : (
-                <span className="text-gray-400">...</span>
+                <span style={{ color: colors.textMuted }}>...</span>
               )}
             </motion.div>
-            <p className="text-sm text-gray-600">Toi</p>
+            <p className="text-sm" style={{ color: colors.textSecondary }}>Toi</p>
           </div>
 
           {/* Séparateur */}
@@ -141,8 +145,9 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
               className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
                 partnerAccepted
                   ? 'bg-green-100'
-                  : 'bg-gray-200'
+                  : ''
               }`}
+              style={!partnerAccepted ? { background: colors.border } : {}}
             >
               {partnerAccepted ? (
                 <Check size={24} className="text-green-600" />
@@ -150,13 +155,13 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
                 <motion.span
                   animate={{ opacity: [0.3, 0.6, 0.3] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-gray-400"
+                  style={{ color: colors.textMuted }}
                 >
                   ...
                 </motion.span>
               )}
             </motion.div>
-            <p className="text-sm text-gray-600">{partnerName}</p>
+            <p className="text-sm" style={{ color: colors.textSecondary }}>{partnerName}</p>
           </div>
         </div>
       </motion.div>
@@ -186,7 +191,7 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
           <motion.p
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="text-gray-500"
+            style={{ color: colors.textMuted }}
           >
             En attente de {partnerName}...
           </motion.p>

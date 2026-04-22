@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Screen, PersonalProfile, PartnerProfile, CommonGround, Language, AgeGroup } from '../types';
 import { ThemeMode, themes, Theme } from '../types/theme';
 import { comfortCategories, initialPersonalProfile } from '../data';
+import { isCapacitor } from '../lib/platform';
 
 // Clés localStorage
 const STORAGE_KEYS = {
@@ -103,6 +104,27 @@ export function useAppState() {
       setCurrentScreen('home-minor');
     }
   }, [isAdult]);
+
+  // Ref toujours à jour — utilisé dans le listener Capacitor
+  const goBackRef = useRef(goBack);
+  useEffect(() => { goBackRef.current = goBack; }, [goBack]);
+
+  // Bouton retour Android (Capacitor)
+  useEffect(() => {
+    if (!isCapacitor()) return;
+    let cleanup: (() => void) | undefined;
+    import('@capacitor/app').then(({ App }) => {
+      const noBack = ['welcome', 'age-check', 'home-minor', 'home-adult'];
+      App.addListener('backButton', () => {
+        setCurrentScreen(prev => {
+          if (noBack.includes(prev)) return prev;
+          goBackRef.current();
+          return prev;
+        });
+      }).then(handle => { cleanup = () => handle.remove(); });
+    });
+    return () => cleanup?.();
+  }, []);
 
   // Auth
   const handleAgeSelect = useCallback((adult: boolean) => {

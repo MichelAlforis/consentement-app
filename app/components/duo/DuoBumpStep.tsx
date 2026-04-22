@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Wifi, WifiOff, QrCode } from 'lucide-react';
 import { Button, Card } from '../ui';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoBumpStepProps {
   onBumpSuccess: () => void;
@@ -13,6 +14,7 @@ interface DuoBumpStepProps {
 type BumpState = 'waiting' | 'detecting' | 'connecting' | 'failed';
 
 export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
+  const { colors } = useTheme();
   const [bumpState, setBumpState] = useState<BumpState>('waiting');
   const [pulseCount, setPulseCount] = useState(0);
 
@@ -94,7 +96,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <div className="w-16 h-28 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-lg border-2 border-gray-700">
                   <Smartphone size={24} className="text-purple-400" />
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-center">Toi</p>
+                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>Toi</p>
               </motion.div>
 
               {/* Téléphone droit (partenaire) */}
@@ -106,7 +108,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <div className="w-16 h-28 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-lg border-2 border-gray-700">
                   <Smartphone size={24} className="text-pink-400" />
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-center">Partenaire</p>
+                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>Partenaire</p>
               </motion.div>
 
               {/* Icône Bluetooth/NFC au centre */}
@@ -119,10 +121,10 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               </motion.div>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+            <h2 className="text-2xl font-bold mb-3" style={{ color: colors.textPrimary }}>
               Rapprochez vos téléphones
             </h2>
-            <p className="text-gray-500 mb-2">
+            <p className="mb-2" style={{ color: colors.textMuted }}>
               Faites un "bump" pour vous connecter
             </p>
             <motion.p
@@ -160,10 +162,10 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
               className="w-20 h-20 mx-auto mb-6 rounded-full border-4 border-purple-200 border-t-purple-500"
             />
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
+            <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
               Appareil détecté !
             </h2>
-            <p className="text-gray-500">
+            <p style={{ color: colors.textMuted }}>
               Connexion en cours...
             </p>
           </motion.div>
@@ -216,20 +218,20 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               <WifiOff size={36} className="text-amber-500" />
             </motion.div>
 
-            <h2 className="text-xl font-bold text-gray-800 mb-2">
+            <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
               Connexion difficile
             </h2>
-            <p className="text-gray-500 mb-6">
+            <p className="mb-6" style={{ color: colors.textMuted }}>
               Pas de souci ! Utilisons le QR code à la place.
             </p>
 
             <Card variant="default" padding="md" className="mb-6 text-left">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm" style={{ color: colors.textSecondary }}>
                 <strong>Pourquoi ça n'a pas marché ?</strong>
                 <br />
                 La connexion directe peut échouer si :
               </p>
-              <ul className="text-sm text-gray-500 mt-2 space-y-1">
+              <ul className="text-sm mt-2 space-y-1" style={{ color: colors.textMuted }}>
                 <li>• iPhone ↔ Android (limitations Apple)</li>
                 <li>• Bluetooth désactivé</li>
                 <li>• Téléphones trop éloignés</li>

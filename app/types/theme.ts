@@ -200,7 +200,7 @@ export const darkLuxuryTheme: Theme = {
 
     textPrimary: '#f0ece4',
     textSecondary: '#c8bfb0',
-    textMuted: '#7a7068',
+    textMuted: '#8a8078',
 
     border: 'rgba(201, 168, 76, 0.2)',
     divider: 'rgba(255, 255, 255, 0.06)',

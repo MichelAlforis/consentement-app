@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { LifeBuoy, Phone, Heart, AlertTriangle, Shield, MessageSquare, Ambulance } from 'lucide-react';
 import { Card } from '../ui';
 import { helpResources } from '../../data';
+import { useTheme } from '../../context/ThemeContext';
 
 export function HelpScreen() {
+  const { colors } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -20,10 +22,10 @@ export function HelpScreen() {
       >
         <LifeBuoy size={28} className="text-teal-500 mt-1 shrink-0" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
             Besoin d'aide ?
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: colors.textMuted }}>
             Tu n'es pas seul·e. Des personnes sont là pour t'écouter.
           </p>
         </div>
@@ -44,7 +46,7 @@ export function HelpScreen() {
                 style={{ backgroundColor: resource.color }}
               />
               <div className="p-5 pl-6">
-                <h3 className="font-semibold text-gray-800 mb-1">
+                <h3 className="font-semibold mb-1" style={{ color: colors.textPrimary }}>
                   {resource.name}
                 </h3>
                 <motion.a
@@ -56,7 +58,7 @@ export function HelpScreen() {
                   <Phone size={20} />
                   {resource.phone}
                 </motion.a>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm mt-2" style={{ color: colors.textMuted }}>
                   {resource.desc}
                 </p>
               </div>
@@ -73,11 +75,11 @@ export function HelpScreen() {
         className="mt-6"
       >
         <Card variant="default" padding="lg">
-          <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+          <h4 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
             <Heart size={18} className="text-blue-500" />
             Tu peux aussi parler à...
           </h4>
-          <ul className="space-y-2 text-sm text-gray-600">
+          <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
             {[
               'Un adulte de confiance',
               'Un·e infirmier·e scolaire',
@@ -107,7 +109,7 @@ export function HelpScreen() {
         className="mt-4"
       >
         <Card variant="warning" padding="lg">
-          <p className="font-semibold text-gray-800 flex items-center gap-2">
+          <p className="font-semibold flex items-center gap-2" style={{ color: colors.textPrimary }}>
             <AlertTriangle size={18} className="text-amber-600" />
             En cas d'urgence
           </p>
@@ -115,29 +117,32 @@ export function HelpScreen() {
             <motion.a
               href="tel:17"
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-white/80 rounded-xl py-3 text-center flex flex-col items-center"
+              className="flex-1 rounded-xl py-3 text-center flex flex-col items-center"
+              style={{ background: colors.bgCard }}
             >
               <Shield size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">17</span>
-              <span className="text-xs text-gray-600">Police</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>Police</span>
             </motion.a>
             <motion.a
               href="tel:15"
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-white/80 rounded-xl py-3 text-center flex flex-col items-center"
+              className="flex-1 rounded-xl py-3 text-center flex flex-col items-center"
+              style={{ background: colors.bgCard }}
             >
               <Ambulance size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">15</span>
-              <span className="text-xs text-gray-600">SAMU</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>SAMU</span>
             </motion.a>
             <motion.a
               href="tel:114"
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-white/80 rounded-xl py-3 text-center flex flex-col items-center"
+              className="flex-1 rounded-xl py-3 text-center flex flex-col items-center"
+              style={{ background: colors.bgCard }}
             >
               <MessageSquare size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">114</span>
-              <span className="text-xs text-gray-600">SMS</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>SMS</span>
             </motion.a>
           </div>
         </Card>

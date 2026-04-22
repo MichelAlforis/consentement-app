@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Heart } from 'lucide-react';
 import { comfortCategories } from '../../data';
 import { CommonGround } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoRevealStepProps {
   commonGround: CommonGround;
@@ -21,6 +22,7 @@ const categoryEmoji: Record<CategoryKey, string> = {
 };
 
 export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) {
+  const { colors } = useTheme();
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(-1); // -1 = intro
   const [showItems, setShowItems] = useState(false);
   const [revealedItems, setRevealedItems] = useState<string[]>([]);
@@ -112,7 +114,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
         >
           ✨
         </motion.div>
-        <h2 className="text-2xl font-bold text-gray-800 text-center">
+        <h2 className="text-2xl font-bold text-center" style={{ color: colors.textPrimary }}>
           Découvrons vos zones communes...
         </h2>
       </motion.div>
@@ -148,8 +150,9 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                 ? 'bg-green-400'
                 : idx === currentCategoryIndex
                 ? 'bg-purple-500'
-                : 'bg-gray-300'
+                : ''
             }`}
+            style={idx >= currentCategoryIndex && idx !== currentCategoryIndex ? { background: colors.divider } : {}}
           />
         ))}
       </div>
@@ -175,7 +178,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
             >
               {categoryEmoji[currentCategoryKey]}
             </motion.span>
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
               {currentCategory.title}
             </h3>
           </motion.div>
@@ -200,10 +203,11 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                         scale: 0.8
                       }}
                       transition={{ type: 'spring', stiffness: 300 }}
-                      className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3"
+                      className="rounded-xl p-4 shadow-sm border flex items-center gap-3"
+                      style={{ background: colors.bgCard, borderColor: colors.border }}
                     >
                       <span className="text-2xl">{item.icon}</span>
-                      <span className="flex-1 font-medium text-gray-700">{item.label}</span>
+                      <span className="flex-1 font-medium" style={{ color: colors.textSecondary }}>{item.label}</span>
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={isRevealed ? { scale: 1 } : { scale: 0 }}
@@ -220,10 +224,10 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                   animate={{ opacity: 1 }}
                   className="text-center py-8"
                 >
-                  <p className="text-gray-400 italic">
+                  <p className="italic" style={{ color: colors.textMuted }}>
                     Pas de zones communes ici pour l'instant
                   </p>
-                  <p className="text-sm text-gray-300 mt-2">
+                  <p className="text-sm mt-2" style={{ color: colors.divider }}>
                     C'est OK — le dialogue reste ouvert
                   </p>
                 </motion.div>
@@ -256,7 +260,8 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
               <motion.div
                 animate={{ y: [0, 5, 0] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="text-gray-400 text-sm"
+                className="text-sm"
+                style={{ color: colors.textMuted }}
               >
                 Catégorie suivante...
               </motion.div>
@@ -278,7 +283,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
               >
                 💜
               </motion.div>
-              <p className="text-lg font-medium text-gray-700">
+              <p className="text-lg font-medium" style={{ color: colors.textSecondary }}>
                 Voilà ce que vous partagez
               </p>
             </motion.div>

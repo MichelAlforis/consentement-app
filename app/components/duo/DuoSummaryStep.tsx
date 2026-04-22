@@ -6,6 +6,7 @@ import { Heart, ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronU
 import { Card, Button } from '../ui';
 import { comfortCategories } from '../../data';
 import { CommonGround, PersonalProfile } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoSummaryStepProps {
   commonGround: CommonGround;
@@ -23,6 +24,7 @@ export function DuoSummaryStep({
   partnerName,
   partnerSafeword,
 }: DuoSummaryStepProps) {
+  const { colors } = useTheme();
   const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>(['tenderness']);
   const [notes, setNotes] = useState('');
   const [showNotes, setShowNotes] = useState(false);
@@ -63,10 +65,10 @@ export function DuoSummaryStep({
         >
           <Heart size={32} className="text-purple-500" fill="#a855f7" />
         </motion.div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           Votre espace commun
         </h2>
-        <p className="text-gray-500">
+        <p style={{ color: colors.textMuted }}>
           {totalCommon} zone{totalCommon > 1 ? 's' : ''} de confort partagée{totalCommon > 1 ? 's' : ''}
         </p>
       </motion.div>
@@ -91,23 +93,23 @@ export function DuoSummaryStep({
                 {/* Header clickable */}
                 <button
                   onClick={() => toggleCategory(key)}
-                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className="w-full px-4 py-3 flex items-center justify-between transition-colors"
                   style={{
                     background: `linear-gradient(135deg, ${category.color}10 0%, transparent 100%)`
                   }}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{category.icon}</span>
-                    <span className="font-medium text-gray-800">{category.title}</span>
+                    <span className="font-medium" style={{ color: colors.textPrimary }}>{category.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 bg-white px-2 py-0.5 rounded-full">
+                    <span className="text-sm px-2 py-0.5 rounded-full" style={{ color: colors.textMuted, background: colors.bgCard }}>
                       {compatibleItems.length}
                     </span>
                     {isExpanded ? (
-                      <ChevronUp size={18} className="text-gray-400" />
+                      <ChevronUp size={18} style={{ color: colors.textMuted }} />
                     ) : (
-                      <ChevronDown size={18} className="text-gray-400" />
+                      <ChevronDown size={18} style={{ color: colors.textMuted }} />
                     )}
                   </div>
                 </button>
@@ -123,15 +125,16 @@ export function DuoSummaryStep({
                       compatibleItems.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0"
+                          className="flex items-center gap-3 py-2 last:border-0"
+                          style={{ borderBottom: `1px solid ${colors.border}` }}
                         >
                           <span className="text-lg">{item.icon}</span>
-                          <span className="flex-1 text-sm text-gray-700">{item.label}</span>
+                          <span className="flex-1 text-sm" style={{ color: colors.textSecondary }}>{item.label}</span>
                           <Check size={18} className="text-green-500" />
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm text-gray-400 italic py-2">
+                      <p className="text-sm italic py-2" style={{ color: colors.textMuted }}>
                         Pas de zones communes dans cette catégorie
                       </p>
                     )}
@@ -150,19 +153,19 @@ export function DuoSummaryStep({
         transition={{ delay: 0.3 }}
       >
         <Card variant="warning" padding="lg" className="mb-4">
-          <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <h3 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textPrimary }}>
             <ShieldAlert size={20} className="text-amber-600" />
             Vos mots d'alerte
           </h3>
           <div className="flex gap-3">
-            <div className="flex-1 bg-white/80 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1">Toi</p>
+            <div className="flex-1 rounded-xl p-3 text-center" style={{ background: colors.bgCard }}>
+              <p className="text-xs mb-1" style={{ color: colors.textMuted }}>Toi</p>
               <p className="font-semibold text-red-500">
                 {personalProfile.safeword || 'Non défini'}
               </p>
             </div>
-            <div className="flex-1 bg-white/80 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1">{partnerName}</p>
+            <div className="flex-1 rounded-xl p-3 text-center" style={{ background: colors.bgCard }}>
+              <p className="text-xs mb-1" style={{ color: colors.textMuted }}>{partnerName}</p>
               <p className="font-semibold text-red-500">{partnerSafeword}</p>
             </div>
           </div>
@@ -180,15 +183,15 @@ export function DuoSummaryStep({
             onClick={() => setShowNotes(!showNotes)}
             className="w-full flex items-center justify-between"
           >
-            <span className="flex items-center gap-2 text-gray-700">
+            <span className="flex items-center gap-2" style={{ color: colors.textSecondary }}>
               <PenLine size={18} className="text-purple-500" />
               <span className="font-medium">Ajouter des notes</span>
-              <span className="text-xs text-gray-400">(optionnel)</span>
+              <span className="text-xs" style={{ color: colors.textMuted }}>(optionnel)</span>
             </span>
             {showNotes ? (
-              <ChevronUp size={18} className="text-gray-400" />
+              <ChevronUp size={18} style={{ color: colors.textMuted }} />
             ) : (
-              <ChevronDown size={18} className="text-gray-400" />
+              <ChevronDown size={18} style={{ color: colors.textMuted }} />
             )}
           </button>
 
@@ -221,14 +224,14 @@ export function DuoSummaryStep({
           padding="lg"
           className="mb-3 !bg-gradient-to-br !from-purple-50 !to-pink-50 !border-purple-100"
         >
-          <p className="text-center text-gray-700 flex items-center justify-center gap-2">
+          <p className="text-center flex items-center justify-center gap-2" style={{ color: colors.textSecondary }}>
             <MessageCircle size={18} className="text-purple-500" />
             <em>Ceci est un début de conversation, pas une fin.</em>
           </p>
         </Card>
 
         <Card variant="default" padding="md">
-          <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
+          <p className="text-xs text-center flex items-center justify-center gap-2" style={{ color: colors.textMuted }}>
             <AlertTriangle size={14} className="text-amber-500" />
             Rappel : le consentement est révocable à tout moment.
             <br />

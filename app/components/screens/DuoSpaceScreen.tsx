@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { isCapacitor } from '../../lib/platform';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, QrCode, Link2, Lightbulb, CheckCircle2,
@@ -111,7 +112,14 @@ export function DuoSpaceScreen({
   };
 
   const handleCopyCode = async () => {
-    await navigator.clipboard.writeText(generatedCode);
+    try {
+      if (isCapacitor()) {
+        const { Clipboard } = await import('@capacitor/clipboard');
+        await Clipboard.write({ string: generatedCode });
+      } else {
+        await navigator.clipboard.writeText(generatedCode);
+      }
+    } catch { /* l'utilisateur verra le code affiché à l'écran */ }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

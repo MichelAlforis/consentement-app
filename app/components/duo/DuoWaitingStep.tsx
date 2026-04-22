@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoWaitingStepProps {
   partnerName: string;
@@ -10,6 +11,7 @@ interface DuoWaitingStepProps {
 }
 
 export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepProps) {
+  const { colors } = useTheme();
   const [dots, setDots] = useState('');
 
   // Animation des points
@@ -103,9 +105,9 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
           Tu as terminé 💜
         </p>
         <motion.p
-          className="text-gray-500"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
+          style={{ color: colors.textMuted }}
         >
           En attente de {partnerName}{dots}
         </motion.p>
@@ -116,7 +118,8 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="mt-8 text-sm text-gray-400 italic text-center max-w-xs"
+        className="mt-8 text-sm italic text-center max-w-xs"
+        style={{ color: colors.textMuted }}
       >
         Chacun avance à son rythme.
         <br />

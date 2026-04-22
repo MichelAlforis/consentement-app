@@ -6,6 +6,7 @@ import { ChevronRight, Check } from 'lucide-react';
 import { Button, Card, ComfortSlider } from '../ui';
 import { comfortCategories } from '../../data';
 import { PersonalProfile } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 
 interface DuoFillingStepProps {
   partnerName: string;
@@ -25,6 +26,7 @@ export function DuoFillingStep({
   onUpdateSafeword,
   onComplete,
 }: DuoFillingStepProps) {
+  const { colors } = useTheme();
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [showSafeword, setShowSafeword] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState<'exploring' | 'almost' | 'done'>('exploring');
@@ -71,10 +73,10 @@ export function DuoFillingStep({
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           Chacun son moment
         </h2>
-        <p className="text-gray-500 text-sm mb-4">
+        <p className="text-sm mb-4" style={{ color: colors.textMuted }}>
           Remplis ton profil en privé, à ton rythme
         </p>
 
@@ -118,9 +120,8 @@ export function DuoFillingStep({
               {categoryKeys.map((key, idx) => (
                 <div
                   key={key}
-                  className={`flex-1 h-1.5 rounded-full transition-colors ${
-                    idx <= currentCategoryIndex ? 'bg-purple-500' : 'bg-gray-200'
-                  }`}
+                  className="flex-1 h-1.5 rounded-full transition-colors"
+                  style={{ background: idx <= currentCategoryIndex ? colors.accent : colors.border }}
                 />
               ))}
             </div>
@@ -130,10 +131,10 @@ export function DuoFillingStep({
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl">{currentCategory.icon}</span>
                 <div>
-                  <h3 className="font-bold text-gray-800 text-lg">
+                  <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>
                     {currentCategory.title}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm" style={{ color: colors.textMuted }}>
                     {currentCategory.description}
                   </p>
                 </div>
@@ -149,7 +150,7 @@ export function DuoFillingStep({
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">{item.icon}</span>
-                      <span className="text-gray-700 font-medium">{item.label}</span>
+                      <span className="font-medium" style={{ color: colors.textSecondary }}>{item.label}</span>
                     </div>
                     <ComfortSlider
                       value={personalProfile[currentCategoryKey][item.id] || 0}
@@ -186,10 +187,10 @@ export function DuoFillingStep({
             <Card variant="elevated" padding="lg" className="mb-4">
               <div className="text-center mb-6">
                 <span className="text-4xl mb-3 block">🛡️</span>
-                <h3 className="font-bold text-gray-800 text-lg mb-2">
+                <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>
                   Ton mot d'alerte
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm" style={{ color: colors.textMuted }}>
                   Un mot pour dire "stop" à tout moment, sans avoir à expliquer
                 </p>
               </div>
@@ -202,7 +203,7 @@ export function DuoFillingStep({
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none text-center text-lg"
               />
 
-              <p className="text-xs text-gray-400 mt-3 text-center">
+              <p className="text-xs mt-3 text-center" style={{ color: colors.textMuted }}>
                 Ce mot sera partagé avec {partnerName}
               </p>
             </Card>
