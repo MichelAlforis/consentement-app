@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Shield, Lock, Check, KeyRound, Landmark, Flag } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useTranslation } from '../../i18n';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AuthScreenProps {
   onAuth: (name: string) => void;
@@ -12,6 +13,7 @@ interface AuthScreenProps {
 
 export function AuthScreen({ onAuth }: AuthScreenProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [name, setName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
 
@@ -43,10 +45,10 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           <Flag size={48} className="text-white" />
         </motion.div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           {t('auth.title')}
         </h2>
-        <p className="text-gray-500">
+        <p style={{ color: colors.textMuted }}>
           {t('auth.subtitle')}
         </p>
       </motion.div>
@@ -58,7 +60,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           className="mb-4"
         >
           <Card variant="default" padding="lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: colors.textSecondary }}>
               {t('auth.nameLabel')}
             </label>
             <input
@@ -67,10 +69,11 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
               onChange={(e) => setName(e.target.value)}
               placeholder={t('auth.namePlaceholder')}
               autoFocus
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-base focus:outline-none focus:border-blue-400 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border-2 text-base focus:outline-none focus:border-blue-400 transition-colors"
+              style={{ background: colors.bgSecondary, borderColor: colors.border, color: colors.textPrimary }}
               onKeyDown={(e) => e.key === 'Enter' && name.trim() && onAuth(name.trim())}
             />
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs mt-2" style={{ color: colors.textMuted }}>
               {t('auth.namePrivacy')}
             </p>
           </Card>
@@ -93,7 +96,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
           {showNameInput ? t('auth.btnContinue') : t('auth.btnConnect')}
         </Button>
 
-        <p className="text-center text-xs text-gray-400 mt-3">
+        <p className="text-center text-xs mt-3" style={{ color: colors.textMuted }}>
           {t('auth.demoNote')}
         </p>
       </motion.div>
@@ -105,8 +108,8 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
         className="mt-8"
       >
         <Card variant="default" padding="lg">
-          <h4 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
-            <Lock size={18} className="text-gray-600" />
+          <h4 className="font-semibold mb-4 flex items-center gap-2" style={{ color: colors.textSecondary }}>
+            <Lock size={18} style={{ color: colors.textMuted }} />
             {t('auth.why.title')}
           </h4>
 
@@ -121,7 +124,8 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + i * 0.1 }}
-                className="flex items-center gap-3 text-sm text-gray-600"
+                className="flex items-center gap-3 text-sm"
+                style={{ color: colors.textSecondary }}
               >
                 <span className="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
                   <Check size={14} />

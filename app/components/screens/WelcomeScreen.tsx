@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
 import { Button } from '../ui';
 import { useTranslation } from '../../i18n';
+import { useTheme } from '../../context/ThemeContext';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -11,6 +12,7 @@ interface WelcomeScreenProps {
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const pillars = [
     { icon: <ShieldCheck size={15} />, label: t('welcome.pillars.consent') },
@@ -62,7 +64,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           transition={{ delay: 0.3 }}
           className="mb-4"
         >
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight mb-1">
+          <h1 className="text-3xl font-bold tracking-tight mb-1" style={{ color: colors.textPrimary }}>
             Consentement
           </h1>
           <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">
@@ -74,7 +76,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="text-base text-gray-500 leading-relaxed max-w-xs mb-8"
+          className="text-base leading-relaxed max-w-xs mb-8" style={{ color: colors.textMuted }}
         >
           {t('welcome.description')}
         </motion.p>
@@ -91,7 +93,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.65 + i * 0.1 }}
-              className="px-3 py-1.5 bg-white/80 backdrop-blur rounded-full text-sm text-gray-600 border border-gray-100 shadow-sm flex items-center gap-1.5"
+              className="px-3 py-1.5 backdrop-blur rounded-full text-sm shadow-sm flex items-center gap-1.5"
+              style={{ background: colors.bgCard, color: colors.textSecondary, border: `1px solid ${colors.divider}` }}
             >
               {p.icon}
               {p.label}
@@ -120,7 +123,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
-          className="text-center text-xs text-gray-400"
+          className="text-center text-xs" style={{ color: colors.textMuted }}
         >
           {t('welcome.privacy')}
         </motion.p>
