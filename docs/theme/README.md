@@ -26,11 +26,14 @@ Le thème `youth` est appliqué automatiquement quand l'utilisateur sélectionne
 app/
 ├── layout.tsx                       # Inter (next/font/google) — typographie globale
 ├── types/theme.ts                  # ThemeColors, ThemeEffects, Theme, 5 définitions
-├── context/ThemeContext.tsx         # ThemeProvider + useTheme() hook
+├── context/
+│   ├── ThemeContext.tsx             # ThemeProvider + useTheme() hook
+│   └── ToastContext.tsx             # ToastProvider + useToast() hook (max 2, 2.8s)
 ├── hooks/useAppState.ts             # État thème (themeMode, selectTheme, localStorage)
 └── components/
     ├── ui/
     │   ├── ThemeEffects.tsx         # GrainOverlay, ShimmerLayer, PreviewShimmer
+    │   ├── Toast.tsx                # useTheme() + useToast() — safe area aware
     │   ├── MenuCard.tsx             # useTheme() — shimmer premium intégré
     │   ├── Card.tsx                 # useTheme() — glow/inner border premium
     │   ├── Button.tsx               # useTheme() — gradients via thème
@@ -57,8 +60,11 @@ app/
         ├── QuizConsentementScreen.tsx # useTheme()
         ├── LoiConsentementScreen.tsx  # useTheme()
         ├── PornoVsRealiteScreen.tsx   # useTheme()
-        ├── DiceGameScreen.tsx       # useTheme() — textes/fonds ; identité amber conservée
-        ├── CardGameScreen.tsx       # useTheme() — textes/fonds ; identité violet conservée
+        ├── DiceGame/index.tsx       # useTheme() — textes/fonds ; identité amber conservée
+        ├── CardGame/index.tsx       # useTheme() — textes/fonds ; identité violet conservée
+        ├── DuoSpace/index.tsx       # useTheme() + useToast() (copie code)
+        ├── GooseGameScreen/
+        │   └── components/Overlay.tsx  # backdrop-blur scrim + safe area padding
         └── ThemeSelectScreen.tsx    # Previews animées pour thèmes premium
 ```
 
@@ -67,9 +73,10 @@ app/
 ```
 useAppState (themeMode state + localStorage)
     ↓
-page.tsx → <ThemeProvider theme={theme}>
+page.tsx → <ThemeProvider> → <ToastProvider>
     ↓
-useTheme() → { colors, effects } dans n'importe quel composant enfant
+useTheme()  → { colors, effects }   dans n'importe quel composant
+useToast()  → { show }              dans n'importe quel composant
 ```
 
 ---
@@ -122,7 +129,7 @@ interface ThemeEffects {
 |------|--------|
 | accent | `#e07a5f` Terracotta |
 | secondary | `#8fb996` Sauge |
-| bgGradient | Crème → Pêche clair |
+| bgGradient | Bloom terracotta NE + linéaire crème → pêche |
 | textPrimary | `#3d3d3d` |
 
 ### Calm 🌙
@@ -130,7 +137,7 @@ interface ThemeEffects {
 |------|--------|
 | accent | `#5c6ac4` Indigo |
 | secondary | `#9d8cd9` Lavande |
-| bgGradient | Gris clair → Gris bleuté |
+| bgGradient | Bloom lavande SO + linéaire gris clair → gris bleuté |
 | textPrimary | `#2d3142` |
 
 ### Dark Luxury ✨ (Premium)
@@ -138,7 +145,7 @@ interface ThemeEffects {
 |------|--------|
 | accent | `#c9a84c` Or |
 | secondary | `#8b1a3a` Bordeaux |
-| bgGradient | `#0f0d0e` → `#1e1520` Noir |
+| bgGradient | Bloom bordeaux NE + bloom or SO + linéaire `#0f0d0e` → `#1a1020` |
 | bgCard | `rgba(30,24,28,0.95)` Noir chaud |
 | textPrimary | `#f0ece4` Crème |
 | textMuted | `#8a8078` Gris chaud — contraste 5:1 sur `#0f0d0e` (WCAG AA ✓) |
@@ -148,8 +155,85 @@ interface ThemeEffects {
 |------|--------|
 | accent | `#b07d6a` Nude rosé |
 | secondary | `#8c7860` Taupe |
-| bgGradient | Crème → Ivoire |
+| bgGradient | Bloom rosé NE + linéaire crème → ivoire chaud |
 | textPrimary | `#2e2420` Brun foncé |
+
+### Youth 🌈
+| Rôle | Valeur |
+|------|--------|
+| accent | `#3b82f6` Bleu |
+| secondary | `#8b5cf6` Violet |
+| bgGradient | Bloom violet S + linéaire bleu très clair → ciel |
+| textPrimary | `#1e3a5f` |
+
+---
+
+## Toast system
+
+### Architecture
+
+```
+ToastContext.tsx   → ToastProvider + useToast() hook
+Toast.tsx          → composant visuel (useTheme + useToast)
+page.tsx           → <ToastProvider> wrappant <AppShell>, <Toast /> rendu dans AppShell
+```
+
+### API
+
+```typescript
+import { useToast } from '../../context/ToastContext';
+
+function MonComposant() {
+  const { show } = useToast();
+
+  return (
+    <button onClick={() => show('Profil sauvegardé', 'success')}>
+      Enregistrer
+    </button>
+  );
+}
+```
+
+Types disponibles : `'default'` (accent) · `'success'` (colors.success) · `'error'` (colors.error).
+
+### Comportement
+
+- Max 2 toasts simultanés (le plus ancien est évincé)
+- Auto-dismiss après **2.8s**
+- Animation spring (framer-motion) : slide-up in + fade out
+- `backdropFilter: blur(12px)` + `-webkit-backdrop-filter` (iOS Capacitor)
+
+### Positionnement mobile (iOS + Android)
+
+```css
+bottom: max(calc(env(safe-area-inset-bottom, 0px) + 80px), 96px)
+```
+
+Requiert `viewportFit: 'cover'` dans le viewport meta — déjà configuré dans `layout.tsx`.
+- iOS iPhone 14+ (34px safe area) : ~114px du bas → au-dessus du home indicator
+- Android (0px safe area) : 96px du bas → au-dessus des barres de navigation
+
+---
+
+## Overlays — GooseGame
+
+`GooseGameScreen/components/Overlay.tsx` est le composant bottom-sheet utilisé par tous les overlays du Jeu de l'Oie.
+
+### Scrim (fond assombri)
+
+```typescript
+backdropFilter: 'blur(6px)',
+WebkitBackdropFilter: 'blur(6px)',  // iOS Capacitor
+background: 'rgba(0,0,0,0.55)',     // fallback si backdrop-filter non supporté
+```
+
+### Safe area (panneau)
+
+```css
+padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), 44px)
+```
+
+Minimum garanti de 44px — couvre le home indicator iOS (34px) avec marge confortable.
 
 ---
 
