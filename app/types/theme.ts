@@ -1,6 +1,6 @@
 // Deux thèmes tendance, non genrés
 
-export type ThemeMode = 'warm' | 'calm';
+export type ThemeMode = 'warm' | 'calm' | 'dark-luxury' | 'nude' | 'youth';
 
 export interface ThemeColors {
   // Backgrounds
@@ -147,7 +147,133 @@ export const calmTheme: Theme = {
   }
 };
 
+// Thème DARK LUXURY - Noir profond, or, bordeaux — adulte premium
+export const darkLuxuryTheme: Theme = {
+  id: 'dark-luxury',
+  name: 'Sombre & Luxe',
+  emoji: '✨',
+  description: 'Intimiste et sophistiqué',
+  colors: {
+    bgPrimary: '#0f0d0e',
+    bgSecondary: '#1a1518',
+    bgGradient: 'linear-gradient(135deg, #0f0d0e 0%, #1e1520 100%)',
+    bgCard: 'rgba(30, 24, 28, 0.95)',
+    bgCardHover: 'rgba(40, 32, 36, 1)',
+
+    accent: '#c9a84c',
+    accentLight: '#e8d08a',
+    accentGradient: 'linear-gradient(135deg, #c9a84c 0%, #e8c96a 100%)',
+    accentShadow: 'rgba(201, 168, 76, 0.4)',
+
+    secondary: '#8b1a3a',
+    secondaryLight: '#c45c7a',
+    secondaryGradient: 'linear-gradient(135deg, #8b1a3a 0%, #b52d52 100%)',
+
+    textPrimary: '#f0ece4',
+    textSecondary: '#c8bfb0',
+    textMuted: '#7a7068',
+
+    border: 'rgba(201, 168, 76, 0.2)',
+    divider: 'rgba(255, 255, 255, 0.06)',
+
+    success: '#5a9e6f',
+    warning: '#c9a84c',
+    error: '#8b1a3a',
+
+    comfortNo: '#8b1a3a',
+    comfortWait: '#c9744c',
+    comfortCurious: '#c9a84c',
+    comfortOk: '#5a9e6f',
+    comfortLove: '#9d5cba',
+  }
+};
+
+// Thème NUDE - Crème, taupe, nude — minimaliste haut de gamme
+export const nudeTheme: Theme = {
+  id: 'nude',
+  name: 'Nude & Doux',
+  emoji: '🤍',
+  description: 'Élégant et épuré',
+  colors: {
+    bgPrimary: '#faf7f4',
+    bgSecondary: '#f2ede8',
+    bgGradient: 'linear-gradient(135deg, #faf7f4 0%, #f0e8e0 100%)',
+    bgCard: 'rgba(255, 253, 250, 0.92)',
+    bgCardHover: 'rgba(255, 255, 255, 1)',
+
+    accent: '#b07d6a',
+    accentLight: '#ddb9ac',
+    accentGradient: 'linear-gradient(135deg, #b07d6a 0%, #c99888 100%)',
+    accentShadow: 'rgba(176, 125, 106, 0.3)',
+
+    secondary: '#8c7860',
+    secondaryLight: '#c4b4a4',
+    secondaryGradient: 'linear-gradient(135deg, #8c7860 0%, #a89280 100%)',
+
+    textPrimary: '#2e2420',
+    textSecondary: '#6b5a50',
+    textMuted: '#a89890',
+
+    border: 'rgba(176, 125, 106, 0.15)',
+    divider: 'rgba(0, 0, 0, 0.05)',
+
+    success: '#7a9e7e',
+    warning: '#c9a84c',
+    error: '#b07d6a',
+
+    comfortNo: '#b07d6a',
+    comfortWait: '#c9a880',
+    comfortCurious: '#c9c280',
+    comfortOk: '#7a9e7e',
+    comfortLove: '#a080b0',
+  }
+};
+
+// Thème YOUTH - Coloré, lumineux, rassurant — interface mineurs
+export const youthTheme: Theme = {
+  id: 'youth',
+  name: 'Jeunesse',
+  emoji: '🌈',
+  description: 'Coloré et bienveillant',
+  colors: {
+    bgPrimary: '#f0f7ff',
+    bgSecondary: '#e8f4ff',
+    bgGradient: 'linear-gradient(135deg, #f0f7ff 0%, #e8f0ff 100%)',
+    bgCard: 'rgba(255, 255, 255, 0.92)',
+    bgCardHover: 'rgba(255, 255, 255, 1)',
+
+    accent: '#3b82f6',
+    accentLight: '#93c5fd',
+    accentGradient: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    accentShadow: 'rgba(59, 130, 246, 0.3)',
+
+    secondary: '#8b5cf6',
+    secondaryLight: '#c4b5fd',
+    secondaryGradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+
+    textPrimary: '#1e293b',
+    textSecondary: '#475569',
+    textMuted: '#94a3b8',
+
+    border: 'rgba(59, 130, 246, 0.15)',
+    divider: 'rgba(0, 0, 0, 0.05)',
+
+    success: '#22c55e',
+    warning: '#f59e0b',
+    error: '#ef4444',
+
+    comfortNo: '#ef4444',
+    comfortWait: '#f97316',
+    comfortCurious: '#eab308',
+    comfortOk: '#22c55e',
+    comfortLove: '#8b5cf6',
+  }
+};
+
 export const themes: Record<ThemeMode, Theme> = {
   warm: warmTheme,
   calm: calmTheme,
+  'dark-luxury': darkLuxuryTheme,
+  'nude': nudeTheme,
+  'youth': youthTheme,
 };

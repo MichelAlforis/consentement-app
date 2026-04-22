@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Screen, PersonalProfile, PartnerProfile, CommonGround } from '../types';
+import { Screen, PersonalProfile, PartnerProfile, CommonGround, Language, AgeGroup } from '../types';
 import { ThemeMode, themes, Theme } from '../types/theme';
 import { comfortCategories, initialPersonalProfile } from '../data';
 
@@ -11,6 +11,8 @@ const STORAGE_KEYS = {
   isAdult: 'consentement_isAdult',
   userName: 'consentement_userName',
   profile: 'consentement_profile',
+  isPremium: 'consentement_isPremium',
+  language: 'consentement_language',
 } as const;
 
 // Helper pour lire depuis localStorage
@@ -42,6 +44,8 @@ export function useAppState() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [userName, setUserName] = useState('');
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [language, setLanguage] = useState<Language>('fr');
 
   // Hydratation depuis localStorage au montage
   useEffect(() => {
@@ -49,8 +53,12 @@ export function useAppState() {
     const storedIsAdult = getStoredValue<boolean | null>(STORAGE_KEYS.isAdult, null);
     const storedUserName = getStoredValue<string>(STORAGE_KEYS.userName, '');
     const storedProfile = getStoredValue<PersonalProfile>(STORAGE_KEYS.profile, initialPersonalProfile);
+    const storedIsPremium = getStoredValue<boolean>(STORAGE_KEYS.isPremium, false);
+    const storedLanguage = getStoredValue<Language>(STORAGE_KEYS.language, 'fr');
 
     if (storedTheme) setThemeMode(storedTheme);
+    if (storedIsPremium) setIsPremium(storedIsPremium);
+    if (storedLanguage) setLanguage(storedLanguage);
     if (storedIsAdult !== null) {
       setIsAdult(storedIsAdult);
       setIsAuthenticated(storedIsAdult && storedUserName !== '');
@@ -103,8 +111,22 @@ export function useAppState() {
     if (adult) {
       setCurrentScreen('auth');
     } else {
+      // Appliquer le thème youth automatiquement pour les mineurs
+      setThemeMode('youth');
+      setStoredValue(STORAGE_KEYS.theme, 'youth');
       setCurrentScreen('home-minor');
     }
+  }, []);
+
+  const activatePremium = useCallback(() => {
+    setIsPremium(true);
+    setStoredValue(STORAGE_KEYS.isPremium, true);
+    setCurrentScreen('home-adult');
+  }, []);
+
+  const changeLanguage = useCallback((lang: Language) => {
+    setLanguage(lang);
+    setStoredValue(STORAGE_KEYS.language, lang);
   }, []);
 
   const handleAuth = useCallback((name: string) => {
@@ -197,7 +219,9 @@ export function useAppState() {
 
   // Screen helpers
   const showHeader = !['welcome', 'age-check', 'auth'].includes(currentScreen);
-  const canGoBack = !['welcome', 'age-check', 'home-minor', 'home-adult'].includes(currentScreen);
+  const canGoBack = ![
+    'welcome', 'age-check', 'home-minor', 'home-adult'
+  ].includes(currentScreen);
 
   // Reset toutes les données
   const resetAllData = useCallback(() => {
@@ -214,6 +238,8 @@ export function useAppState() {
     setDuoCode('');
     setPartnerProfile(null);
     setShowComparison(false);
+    setIsPremium(false);
+    setLanguage('fr');
   }, []);
 
   return {
@@ -230,6 +256,8 @@ export function useAppState() {
     partnerProfile,
     showComparison,
     isHydrated,
+    isPremium,
+    language,
 
     // Screen helpers
     showHeader,
@@ -248,6 +276,8 @@ export function useAppState() {
     setShowComparison,
     getCommonGround,
     resetAllData,
+    activatePremium,
+    changeLanguage,
   };
 }
 

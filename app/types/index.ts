@@ -11,7 +11,21 @@ export type Screen =
   | 'learn'
   | 'help'
   | 'scenarios-minor'
-  | 'feelings';
+  | 'feelings'
+  // Modules mineurs V2
+  | 'porno-vs-realite'
+  | 'loi-consentement'
+  | 'quiz-consentement'
+  | 'accompagnement-mineur'
+  // Jeux
+  | 'jeux'
+  | 'jeu-des'
+  // Premium
+  | 'premium';
+
+export type Language = 'fr' | 'en' | 'es';
+
+export type AgeGroup = 'minor' | 'adult';
 
 export interface ComfortItem {
   id: string;

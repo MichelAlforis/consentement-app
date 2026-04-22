@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Users, BookOpen, Lock, Heart } from 'lucide-react';
+import { User, Users, BookOpen, Lock, Heart, Gamepad2 } from 'lucide-react';
 import { MenuCard, Card } from '../ui';
 import { Screen } from '../../types';
 
@@ -62,11 +62,20 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
         />
 
         <MenuCard
+          icon={<Gamepad2 size={26} className="text-white" />}
+          title="Jeux"
+          description="Explorer le consentement en jouant"
+          onClick={() => onNavigate('jeux')}
+          variant="amber"
+          delay={3}
+        />
+
+        <MenuCard
           icon={<BookOpen size={26} className="text-pink-600" />}
           title="Ressources"
           description="Guides et informations"
           onClick={() => onNavigate('learn')}
-          delay={3}
+          delay={4}
         />
       </div>
 

@@ -9,7 +9,7 @@ interface MenuCardProps {
   title: string;
   description: string;
   onClick: () => void;
-  variant?: 'default' | 'pink' | 'purple' | 'green';
+  variant?: 'default' | 'pink' | 'purple' | 'green' | 'amber';
   delay?: number;
 }
 
@@ -34,6 +34,12 @@ const variantStyles = {
   },
   green: {
     bg: 'bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-300/40',
+    iconBg: 'bg-white/20 backdrop-blur',
+    title: 'text-white',
+    desc: 'text-white/80',
+  },
+  amber: {
+    bg: 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-300/40',
     iconBg: 'bg-white/20 backdrop-blur',
     title: 'text-white',
     desc: 'text-white/80',

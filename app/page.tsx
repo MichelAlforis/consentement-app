@@ -14,6 +14,12 @@ import {
   DuoSpaceScreen,
   LearnScreen,
   HelpScreen,
+  PornoVsRealiteScreen,
+  LoiConsentementScreen,
+  QuizConsentementScreen,
+  AccompagnementMineurScreen,
+  GamesHubScreen,
+  DiceGameScreen,
 } from './components/screens';
 
 export default function ConsentementApp() {
@@ -30,6 +36,7 @@ export default function ConsentementApp() {
     showHeader,
     canGoBack,
     isHydrated,
+    isPremium,
     selectTheme,
     navigateTo,
     goBack,
@@ -44,9 +51,8 @@ export default function ConsentementApp() {
     resetAllData,
   } = useAppState();
 
-  // Si pas de thème sélectionné, afficher la sélection de thème
   if (!themeMode || !theme) {
-    return <ThemeSelectScreen onSelectTheme={selectTheme} />;
+    return <ThemeSelectScreen onSelectTheme={selectTheme} isPremium={isPremium} />;
   }
 
   const renderScreen = () => {
@@ -103,6 +109,24 @@ export default function ConsentementApp() {
       case 'help':
         return <HelpScreen />;
 
+      case 'porno-vs-realite':
+        return <PornoVsRealiteScreen onBack={goBack} />;
+
+      case 'loi-consentement':
+        return <LoiConsentementScreen />;
+
+      case 'quiz-consentement':
+        return <QuizConsentementScreen />;
+
+      case 'accompagnement-mineur':
+        return <AccompagnementMineurScreen onNavigate={navigateTo} />;
+
+      case 'jeux':
+        return <GamesHubScreen onNavigate={navigateTo} isPremium={isPremium} isAdult={isAdult ?? false} />;
+
+      case 'jeu-des':
+        return <DiceGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+
       default:
         return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
     }
@@ -120,6 +144,18 @@ export default function ConsentementApp() {
         return 'Comprendre';
       case 'help':
         return 'Aide';
+      case 'porno-vs-realite':
+        return 'Porno vs. Réalité';
+      case 'loi-consentement':
+        return 'La Loi';
+      case 'quiz-consentement':
+        return 'Quiz';
+      case 'accompagnement-mineur':
+        return 'Je me pose des questions';
+      case 'jeux':
+        return 'Jeux';
+      case 'jeu-des':
+        return 'Le Dé du Consentement';
       default:
         return isAdult ? 'Mon Espace' : 'Espace Éducatif';
     }
