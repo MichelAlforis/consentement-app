@@ -4,15 +4,15 @@ export type Screen =
   | 'welcome'
   | 'age-check'
   | 'auth'
-  | 'home-minor'
-  | 'home-adult'
+  | 'home'
+  | 'settings'
   | 'personal-space'
   | 'duo-space'
   | 'learn'
   | 'help'
   | 'scenarios-minor'
   | 'feelings'
-  // Modules mineurs V2
+  // Modules éducatifs
   | 'porno-vs-realite'
   | 'loi-consentement'
   | 'quiz-consentement'

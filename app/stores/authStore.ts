@@ -30,13 +30,13 @@ export const useAuthStore = create<AuthStore>()(
           navigateTo('auth');
         } else {
           selectTheme('youth');
-          navigateTo('home-minor');
+          navigateTo('home');
         }
       },
 
       handleAuth: (name) => {
         set({ isAuthenticated: true, userName: name });
-        useNavigationStore.getState().navigateTo('home-adult');
+        useNavigationStore.getState().navigateTo('home');
       },
 
       _setHydrated: () => set({ isHydrated: true }),
@@ -51,12 +51,9 @@ export const useAuthStore = create<AuthStore>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           state._setHydrated();
-          // Restore navigation after rehydration
           const { navigateTo } = useNavigationStore.getState();
-          if (state.isAdult && state.userName) {
-            navigateTo('home-adult');
-          } else if (state.isAdult === false) {
-            navigateTo('home-minor');
+          if ((state.isAdult && state.userName) || state.isAdult === false) {
+            navigateTo('home');
           }
         }
       },

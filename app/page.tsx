@@ -4,7 +4,8 @@ import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
-import { Header, Toast } from './components/ui';
+import { Header, Toast, AdBanner } from './components/ui';
+import { Screen } from './types';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './context/ToastContext';
 import { GrainOverlay } from './components/ui/ThemeEffects';
@@ -28,8 +29,8 @@ import {
 const WelcomeScreen = lazy(() => import('./components/screens/WelcomeScreen').then(m => ({ default: m.WelcomeScreen })));
 const AgeCheckScreen = lazy(() => import('./components/screens/AgeCheckScreen').then(m => ({ default: m.AgeCheckScreen })));
 const AuthScreen = lazy(() => import('./components/screens/AuthScreen').then(m => ({ default: m.AuthScreen })));
-const HomeMinorScreen = lazy(() => import('./components/screens/HomeMinorScreen').then(m => ({ default: m.HomeMinorScreen })));
-const HomeAdultScreen = lazy(() => import('./components/screens/HomeAdultScreen').then(m => ({ default: m.HomeAdultScreen })));
+const HomeScreen = lazy(() => import('./components/screens/HomeScreen').then(m => ({ default: m.HomeScreen })));
+const SettingsScreen = lazy(() => import('./components/screens/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
 const PersonalSpaceScreen = lazy(() => import('./components/screens/PersonalSpaceScreen').then(m => ({ default: m.PersonalSpaceScreen })));
 const DuoSpaceScreen = lazy(() => import('./components/screens/DuoSpace').then(m => ({ default: m.DuoSpaceScreen })));
 const LearnScreen = lazy(() => import('./components/screens/LearnScreen').then(m => ({ default: m.LearnScreen })));
@@ -45,6 +46,13 @@ const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m
 const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 
+// Screens affichant une bannière publicitaire (freemium uniquement)
+const AD_SCREENS: Screen[] = [
+  'learn', 'scenarios-minor', 'feelings',
+  'porno-vs-realite', 'loi-consentement', 'quiz-consentement', 'accompagnement-mineur',
+  'jeux',
+];
+
 // ─── Loading fallback ────────────────────────────────────────────────────────
 
 function ScreenLoader() {
@@ -55,22 +63,19 @@ function ScreenLoader() {
 
 function useAndroidBackButton() {
   const { goBack } = useNavigationStore();
-  const { isAdult } = useAuthStore();
   const currentScreen = useNavigationStore((s) => s.currentScreen);
   const goBackRef = useRef(goBack);
-  const isAdultRef = useRef(isAdult);
 
   useEffect(() => { goBackRef.current = goBack; }, [goBack]);
-  useEffect(() => { isAdultRef.current = isAdult; }, [isAdult]);
 
   useEffect(() => {
     if (!isCapacitor()) return;
     let cleanup: (() => void) | undefined;
-    const noBack = ['welcome', 'age-check', 'home-minor', 'home-adult'];
+    const noBack = ['welcome', 'age-check', 'home'];
     import('@capacitor/app').then(({ App }) => {
       App.addListener('backButton', () => {
         if (!noBack.includes(currentScreen)) {
-          goBackRef.current(isAdultRef.current);
+          goBackRef.current();
         }
       }).then((handle) => { cleanup = () => handle.remove(); });
     });
@@ -125,11 +130,17 @@ function AppShell() {
       case 'auth':
         return <AuthScreen onAuth={handleAuth} />;
 
-      case 'home-minor':
-        return <HomeMinorScreen onNavigate={navigateTo} />;
+      case 'home':
+        return (
+          <HomeScreen
+            isAdult={isAdult}
+            userName={useAuthStore.getState().userName}
+            onNavigate={navigateTo}
+          />
+        );
 
-      case 'home-adult':
-        return <HomeAdultScreen userName={useAuthStore.getState().userName} onNavigate={navigateTo} />;
+      case 'settings':
+        return <SettingsScreen isPremium={isPremium} onNavigate={navigateTo} />;
 
       case 'personal-space':
         return (
@@ -137,7 +148,7 @@ function AppShell() {
             profile={personalProfile}
             onUpdateLevel={updateComfortLevel}
             onUpdateSafeword={updateSafeword}
-            onSave={() => goBack(isAdult)}
+            onSave={() => goBack()}
           />
         );
 
@@ -147,7 +158,7 @@ function AppShell() {
             personalProfile={personalProfile}
             onUpdateComfort={updateComfortLevel}
             onUpdateSafeword={updateSafeword}
-            onBack={() => goBack(isAdult)}
+            onBack={() => goBack()}
           />
         );
 
@@ -160,7 +171,7 @@ function AppShell() {
         return <HelpScreen />;
 
       case 'porno-vs-realite':
-        return <PornoVsRealiteScreen onBack={() => goBack(isAdult)} />;
+        return <PornoVsRealiteScreen onBack={() => goBack()} />;
 
       case 'loi-consentement':
         return <LoiConsentementScreen />;
@@ -193,7 +204,7 @@ function AppShell() {
       case 'theme-select':
         return (
           <ThemeSelectScreen
-            onSelectTheme={(mode) => { selectTheme(mode); navigateTo(isAdult ? 'home-adult' : 'home-minor'); }}
+            onSelectTheme={(mode) => { selectTheme(mode); navigateTo('home'); }}
             isPremium={isPremium}
             onGoPremium={() => navigateTo('premium')}
           />
@@ -203,7 +214,7 @@ function AppShell() {
         return (
           <PremiumScreen
             onActivate={() => { activatePremium(); navigateTo('theme-select'); }}
-            onBack={() => goBack(isAdult)}
+            onBack={() => goBack()}
           />
         );
 
@@ -214,6 +225,7 @@ function AppShell() {
 
   const getHeaderTitle = () => {
     switch (currentScreen) {
+      case 'settings': return t('headers.settings');
       case 'personal-space': return t('headers.personalSpace');
       case 'duo-space': return t('headers.duoSpace');
       case 'learn':
@@ -255,7 +267,7 @@ function AppShell() {
             title={getHeaderTitle()}
             subtitle={getHeaderSubtitle()}
             showBack={canGoBack}
-            onBack={() => goBack(isAdult)}
+            onBack={() => goBack()}
             theme={theme}
           />
         )}
@@ -272,6 +284,10 @@ function AppShell() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {!isPremium && AD_SCREENS.includes(currentScreen) && (
+        <AdBanner onGoPremium={() => navigateTo('premium')} />
+      )}
 
       {theme.effects.grain && <GrainOverlay />}
       <Toast />

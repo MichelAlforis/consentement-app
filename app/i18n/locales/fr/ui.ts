@@ -10,6 +10,7 @@ export const ui = {
     duoSpace: 'Notre Espace',
     learn: 'Comprendre',
     help: 'Aide',
+    settings: 'Paramètres',
     pornoVsRealite: 'Porno vs. Réalité',
     loi: 'La Loi',
     quiz: 'Quiz',
@@ -22,6 +23,35 @@ export const ui = {
     defaultMinor: 'Espace Éducatif',
     personalSubtitle: 'Profil de confort',
     duoSubtitle: 'Dialogue à deux',
+  },
+
+  ad: {
+    label: 'Publicité',
+    removeCta: 'Retirer les pubs',
+    placeholder: 'Espace publicitaire',
+  },
+
+  settings: {
+    language: {
+      title: 'Langue',
+      desc: 'Choisir la langue de l\'application',
+    },
+    theme: {
+      title: 'Thème',
+      desc: 'Changer l\'ambiance visuelle',
+    },
+    help: {
+      title: 'Aide & Urgences',
+      desc: 'Numéros utiles, ressources disponibles 24h/24',
+    },
+    premium: {
+      title: 'Passer Premium',
+      desc: 'Tous les jeux + zéro publicité',
+    },
+    premiumActive: {
+      title: 'Premium actif',
+      desc: 'Tous les contenus débloqués, sans publicité',
+    },
   },
 
   themeSelect: {

@@ -113,7 +113,7 @@ export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurS
                 </div>
               </a>
             </div>
-            <Button onClick={() => onNavigate('home-minor')} variant="secondary" fullWidth>
+            <Button onClick={() => onNavigate('home')} variant="secondary" fullWidth>
               {t('accompagnement.backHome')}
             </Button>
           </motion.div>
@@ -220,7 +220,7 @@ export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurS
                 </div>
               ))}
             </div>
-            <Button onClick={() => onNavigate('home-minor')} fullWidth variant="secondary">
+            <Button onClick={() => onNavigate('home')} fullWidth variant="secondary">
               {t('accompagnement.guide.backHome')}
             </Button>
           </motion.div>
