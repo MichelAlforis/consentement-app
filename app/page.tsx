@@ -4,8 +4,9 @@ import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
-import { Header } from './components/ui';
+import { Header, Toast } from './components/ui';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { ToastProvider } from './context/ToastContext';
 import { GrainOverlay } from './components/ui/ThemeEffects';
 import { useTheme } from './context/ThemeContext';
 import { useTranslation } from './i18n';
@@ -273,6 +274,7 @@ function AppShell() {
       </div>
 
       {theme.effects.grain && <GrainOverlay />}
+      <Toast />
 
       {process.env.NODE_ENV === 'development' && (
         <DevBar
@@ -338,7 +340,9 @@ export default function ConsentementApp() {
     <ErrorBoundary label="root">
       <LanguageProvider>
         <ThemeProvider>
-          <AppShell />
+          <ToastProvider>
+            <AppShell />
+          </ToastProvider>
         </ThemeProvider>
       </LanguageProvider>
     </ErrorBoundary>

@@ -81,7 +81,7 @@ export const warmTheme: Theme = {
     // Backgrounds
     bgPrimary: '#fef7f0',
     bgSecondary: '#fff5eb',
-    bgGradient: 'linear-gradient(135deg, #fef7f0 0%, #ffecd2 100%)',
+    bgGradient: 'radial-gradient(ellipse at 88% 8%, rgba(244,162,97,0.40) 0%, transparent 50%), linear-gradient(160deg, #fef7f0 0%, #feecd0 100%)',
     bgCard: 'rgba(255, 255, 255, 0.85)',
     bgCardHover: 'rgba(255, 255, 255, 0.95)',
 
@@ -130,7 +130,7 @@ export const calmTheme: Theme = {
     // Backgrounds
     bgPrimary: '#f5f6f8',
     bgSecondary: '#eef0f4',
-    bgGradient: 'linear-gradient(135deg, #f5f6f8 0%, #e8eaef 100%)',
+    bgGradient: 'radial-gradient(ellipse at 12% 88%, rgba(157,140,217,0.28) 0%, transparent 50%), linear-gradient(160deg, #f5f6f8 0%, #e7eaf2 100%)',
     bgCard: 'rgba(255, 255, 255, 0.9)',
     bgCardHover: 'rgba(255, 255, 255, 1)',
 
@@ -185,7 +185,7 @@ export const darkLuxuryTheme: Theme = {
   colors: {
     bgPrimary: '#0f0d0e',
     bgSecondary: '#1a1518',
-    bgGradient: 'linear-gradient(135deg, #0f0d0e 0%, #1e1520 100%)',
+    bgGradient: 'radial-gradient(ellipse at 82% 8%, rgba(139,26,58,0.32) 0%, transparent 48%), radial-gradient(ellipse at 18% 88%, rgba(201,168,76,0.16) 0%, transparent 48%), linear-gradient(160deg, #0f0d0e 0%, #1a1020 100%)',
     bgCard: 'rgba(30, 24, 28, 0.95)',
     bgCardHover: 'rgba(40, 32, 36, 1)',
 
@@ -234,7 +234,7 @@ export const nudeTheme: Theme = {
   colors: {
     bgPrimary: '#faf7f4',
     bgSecondary: '#f2ede8',
-    bgGradient: 'linear-gradient(135deg, #faf7f4 0%, #f0e8e0 100%)',
+    bgGradient: 'radial-gradient(ellipse at 82% 6%, rgba(176,125,106,0.26) 0%, transparent 50%), linear-gradient(160deg, #faf7f4 0%, #ece4d8 100%)',
     bgCard: 'rgba(255, 253, 250, 0.92)',
     bgCardHover: 'rgba(255, 255, 255, 1)',
 
@@ -276,7 +276,7 @@ export const youthTheme: Theme = {
   colors: {
     bgPrimary: '#f0f7ff',
     bgSecondary: '#e8f4ff',
-    bgGradient: 'linear-gradient(135deg, #f0f7ff 0%, #e8f0ff 100%)',
+    bgGradient: 'radial-gradient(ellipse at 50% 92%, rgba(139,92,246,0.20) 0%, transparent 50%), linear-gradient(160deg, #f0f7ff 0%, #e5eeff 100%)',
     bgCard: 'rgba(255, 255, 255, 0.92)',
     bgCardHover: 'rgba(255, 255, 255, 1)',
 

@@ -6,3 +6,4 @@ export { MenuCard } from './MenuCard';
 export { QRCode } from './QRCode';
 export { Dice3D } from './Dice3D';
 export { ErrorBoundary } from './ErrorBoundary';
+export { Toast } from './Toast';
