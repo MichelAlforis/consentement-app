@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, ContactShadows, RoundedBox } from '@react-three/drei';
+import { Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three-stdlib';
 import type { DiceFace, DiceConfig } from './types';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -101,10 +102,11 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
 
 // ─── Cube animé ───────────────────────────────────────────────────────────────
 
-// RoundedBoxGeometry conserve 6 groupes (un par face) comme BoxGeometry.
-// Mapping groupe → index texture : +X=0, -X=1, +Y=2, -Y=3, +Z=4, -Z=5
-// face1→+Z(4), face2→+X(0), face3→+Y(2), face4→-Y(3), face5→-X(1), face6→-Z(5)
-const FACE_TEX_ORDER = [1, 4, 2, 3, 0, 5]; // textures[FACE_TEX_ORDER[groupIdx]]
+// three-stdlib RoundedBoxGeometry étend BoxGeometry → 6 groupes identiques.
+// Group order : +X=0, -X=1, +Y=2, -Y=3, +Z=4, -Z=5
+// face1→+Z(group4), face2→+X(group0), face3→+Y(group2)
+// face4→-Y(group3), face5→-X(group1), face6→-Z(group5)
+// matArray[materialIndex] = texture index : [1, 4, 2, 3, 0, 5]
 
 function AnimatedCube({
   faces, targetFaceId, isRolling, onRollComplete,
@@ -120,6 +122,25 @@ function AnimatedCube({
     () => faces.map(face => makeFaceTexture(face)),
     [], // eslint-disable-line react-hooks/exhaustive-deps
   );
+
+  // RoundedBoxGeometry de three-stdlib : coins arrondis + 6 groupes BoxGeometry
+  const geometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 2, 0.08), []);
+
+  // matArray indexé par materialIndex (0–5), même ordre que BoxGeometry groups
+  const matArray = useMemo(() => {
+    const mat = (texIdx: number) => new THREE.MeshPhysicalMaterial({
+      map: textures[texIdx],
+      transmission: 0,
+      roughness: 0.18,
+      metalness: 0,
+      envMapIntensity: 0.9,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.1,
+    });
+    // +X=group0=face2=tex[1], -X=group1=face5=tex[4], +Y=group2=face3=tex[2]
+    // -Y=group3=face4=tex[3], +Z=group4=face1=tex[0], -Z=group5=face6=tex[5]
+    return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
+  }, [textures]);
 
   const anim = useRef({
     rolling: false,
@@ -183,21 +204,7 @@ function AnimatedCube({
 
   return (
     <group ref={groupRef}>
-      <RoundedBox args={[1, 1, 1]} radius={0.08} smoothness={2}>
-        {FACE_TEX_ORDER.map((texIdx, groupIdx) => (
-          <meshPhysicalMaterial
-            key={groupIdx}
-            attach={`material-${groupIdx}`}
-            map={textures[texIdx]}
-            transmission={0}
-            roughness={0.18}
-            metalness={0}
-            envMapIntensity={0.9}
-            clearcoat={0.8}
-            clearcoatRoughness={0.1}
-          />
-        ))}
-      </RoundedBox>
+      <mesh geometry={geometry} material={matArray} />
     </group>
   );
 }
