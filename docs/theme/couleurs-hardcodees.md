@@ -1,8 +1,8 @@
 # Audit Couleurs Hardcodées — État & Décisions
 
-> Dernière mise à jour : 2026-04-22 — 4 passes effectuées.
+> Dernière mise à jour : 2026-04-22 — 5 passes effectuées.
 
-Quatre passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
+Cinq passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
 
 ---
 

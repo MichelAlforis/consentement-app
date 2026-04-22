@@ -9,6 +9,7 @@ import { useDiceEngine } from '../../game-engine/dice/useDiceEngine';
 import { DiceRenderer } from '../../game-engine/dice/DiceRenderer';
 import type { DiceConfig, DiceItem } from '../../game-engine/dice/types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -32,6 +33,7 @@ interface DiceGameScreenProps {
 
 export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
   const [p1Answer, setP1Answer] = useState<DuoAnswer>(null);
@@ -53,6 +55,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
 
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
+  const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
 
   const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
@@ -96,8 +99,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
           <Dices size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Le Dé du Consentement</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>{available.length} activités disponibles</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('diceGame.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{t('diceGame.available', { count: available.length })}</p>
         </div>
       </div>
 
@@ -113,7 +116,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" />
             </div>
 
-            <p className="text-sm font-semibold mb-4" style={{ color: colors.textSecondary }}>Comment tu veux jouer ?</p>
+            <p className="text-sm font-semibold mb-4" style={{ color: colors.textSecondary }}>{t('diceGame.howToPlay')}</p>
             <div className="space-y-3 mb-8">
               <motion.button
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
@@ -126,8 +129,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     <User size={22} className="text-amber-500" />
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: colors.textPrimary }}>Solo</p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>Explorer, réfléchir, se poser des questions — sans pression</p>
+                    <p className="font-bold" style={{ color: colors.textPrimary }}>{t('diceGame.solo.title')}</p>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('diceGame.solo.desc')}</p>
                   </div>
                 </div>
               </motion.button>
@@ -143,8 +146,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     <Users size={22} className="text-orange-500" />
                   </div>
                   <div>
-                    <p className="font-bold" style={{ color: colors.textPrimary }}>À deux</p>
-                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>Chacun vote séparément — le résultat s'affiche seulement si vous êtes d'accord tous les deux</p>
+                    <p className="font-bold" style={{ color: colors.textPrimary }}>{t('diceGame.duo.title')}</p>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('diceGame.duo.desc')}</p>
                   </div>
                 </div>
               </motion.button>
@@ -152,12 +155,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
             {/* Catégories en vitrine */}
             <div className="mt-auto">
-              <p className="text-xs text-center mb-3" style={{ color: colors.textMuted }}>6 catégories au hasard</p>
+              <p className="text-xs text-center mb-3" style={{ color: colors.textMuted }}>{t('diceGame.categories')}</p>
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(DICE_CATEGORIES).map(([face, c]) => (
                   <div key={face} className="rounded-2xl p-2.5 text-center" style={{ background: c.gradient }}>
                     <div className="text-lg">{c.emoji}</div>
-                    <div className="text-xs font-bold text-white mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>{c.name}</div>
+                    <div className="text-xs font-bold text-white mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                      {t(`diceCategories.${face}`)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -189,7 +194,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     className="mt-4 text-sm"
                     style={{ color: colors.textMuted }}
                   >
-                    Le destin décide…
+                    {t('diceGame.rolling')}
                   </motion.p>
                 )}
                 {mode === 'practice' && currentCat && (
@@ -203,7 +208,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   >
                     <span className="text-2xl">{currentCat.emoji}</span>
                     <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
-                      {currentCat.name}
+                      {currentCatName}
                     </span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
@@ -234,19 +239,19 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     <div className="space-y-3 mt-auto">
                       <Button onClick={reroll} fullWidth>
                         <Dices size={18} />
-                        Nouveau tirage
+                        {t('diceGame.newRoll')}
                       </Button>
                       <Button onClick={reset} variant="secondary" fullWidth>
                         <RotateCcw size={16} />
-                        Changer de mode
+                        {t('diceGame.changeMode')}
                       </Button>
                     </div>
                   ) : (
                     <div className="mt-auto">
-                      <p className="text-sm text-center mb-3" style={{ color: colors.textMuted }}>Vous avez lu ? Passez au vote.</p>
+                      <p className="text-sm text-center mb-3" style={{ color: colors.textMuted }}>{t('diceGame.readVote')}</p>
                       <Button onClick={() => setMode('duo-p1')} fullWidth>
                         <Users size={18} />
-                        Commencer le vote
+                        {t('diceGame.startVote')}
                         <ChevronRight size={18} />
                       </Button>
                     </div>
@@ -267,21 +272,21 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">1</span>
               </div>
-              <p className="font-semibold" style={{ color: colors.textPrimary }}>Personne 1 — réponds seul·e</p>
+              <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person1')}</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <span className="text-3xl">{currentCat.emoji}</span>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
 
-            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>Tu es partant·e ?</p>
+            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.areYouIn')}</p>
             <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
-              L'autre ne verra pas ta réponse avant d'avoir voté à son tour.
+              {t('diceGame.hideNote')}
             </p>
 
             <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -290,16 +295,16 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2"
               >
                 <X size={24} className="text-red-500" />
-                <span className="font-bold text-red-600 text-sm">Non</span>
-                <span className="text-xs text-red-400">Pas cette fois</span>
+                <span className="font-bold text-red-600 text-sm">{t('diceGame.no')}</span>
+                <span className="text-xs text-red-400">{t('diceGame.noNote')}</span>
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP1Answer('yes'); setMode('duo-hidden'); }}
                 className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2"
               >
                 <Check size={24} className="text-green-500" />
-                <span className="font-bold text-green-600 text-sm">Oui</span>
-                <span className="text-xs text-green-400">Je suis ok</span>
+                <span className="font-bold text-green-600 text-sm">{t('diceGame.yes')}</span>
+                <span className="text-xs text-green-400">{t('diceGame.yesNote')}</span>
               </motion.button>
             </div>
           </motion.div>
@@ -319,13 +324,15 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             >
               <EyeOff size={36} style={{ color: colors.textMuted }} />
             </motion.div>
-            <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>Réponse enregistrée</h3>
-            <p className="text-sm max-w-xs mb-8" style={{ color: colors.textMuted }}>
-              Passe le téléphone à <strong>Personne 2</strong> sans lui montrer l'écran.
-            </p>
+            <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.recorded')}</h3>
+            <p
+              className="text-sm max-w-xs mb-8"
+              style={{ color: colors.textMuted }}
+              dangerouslySetInnerHTML={{ __html: t('diceGame.passPhone') }}
+            />
             <Button onClick={() => setMode('duo-p2')}>
               <Eye size={18} />
-              Personne 2 est prête
+              {t('diceGame.person2Ready')}
               <ChevronRight size={18} />
             </Button>
           </motion.div>
@@ -341,21 +348,21 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">2</span>
               </div>
-              <p className="font-semibold" style={{ color: colors.textPrimary }}>Personne 2 — réponds seul·e</p>
+              <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person2')}</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <span className="text-3xl">{currentCat.emoji}</span>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCat.name}</p>
+              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
 
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
             </div>
 
-            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>Tu es partant·e ?</p>
+            <p className="text-base font-bold text-center mb-2" style={{ color: colors.textPrimary }}>{t('diceGame.areYouIn')}</p>
             <p className="text-xs text-center mb-6" style={{ color: colors.textMuted }}>
-              Réponds honnêtement. Le résultat commun s'affiche après.
+              {t('diceGame.honestNote')}
             </p>
 
             <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -364,16 +371,16 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 className="p-4 rounded-2xl border-2 border-red-200 bg-red-50 flex flex-col items-center gap-2"
               >
                 <X size={24} className="text-red-500" />
-                <span className="font-bold text-red-600 text-sm">Non</span>
-                <span className="text-xs text-red-400">Pas cette fois</span>
+                <span className="font-bold text-red-600 text-sm">{t('diceGame.no')}</span>
+                <span className="text-xs text-red-400">{t('diceGame.noNote')}</span>
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => { setP2Answer('yes'); setMode('duo-reveal'); }}
                 className="p-4 rounded-2xl border-2 border-green-200 bg-green-50 flex flex-col items-center gap-2"
               >
                 <Check size={24} className="text-green-500" />
-                <span className="font-bold text-green-600 text-sm">Oui</span>
-                <span className="text-xs text-green-400">Je suis ok</span>
+                <span className="font-bold text-green-600 text-sm">{t('diceGame.yes')}</span>
+                <span className="text-xs text-green-400">{t('diceGame.yesNote')}</span>
               </motion.button>
             </div>
           </motion.div>
@@ -395,13 +402,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             </motion.div>
 
             <h3 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-              {bothYes ? 'Go ! Vous êtes tous les deux partant·e·s !' : 'Pas cette fois'}
+              {bothYes ? t('diceGame.bothYes') : t('diceGame.notThisTime')}
             </h3>
 
             <p className="text-sm max-w-xs leading-relaxed mb-2" style={{ color: colors.textMuted }}>
               {bothYes
-                ? `Super — lancez-vous pour « ${currentCat.name} » !`
-                : "L'un·e de vous n'est pas à l'aise avec ça — et c'est parfaitement normal."}
+                ? t('diceGame.bothYesSub', { cat: currentCatName })
+                : t('diceGame.notThisTimeSub')}
             </p>
 
             {!bothYes && (
@@ -410,7 +417,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 className="mt-2 mb-4 p-3 rounded-2xl bg-blue-50 border border-blue-100 max-w-xs"
               >
                 <p className="text-xs text-blue-700">
-                  On ne sait pas qui a dit non — et c'est voulu. Personne n'a à se justifier.
+                  {t('diceGame.anonymity')}
                 </p>
               </motion.div>
             )}
@@ -418,11 +425,11 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <div className="space-y-3 w-full max-w-xs mt-6">
               <Button onClick={reroll} fullWidth>
                 <Dices size={18} />
-                Nouveau tirage
+                {t('diceGame.newRoll')}
               </Button>
               <Button onClick={reset} variant="secondary" fullWidth>
                 <RotateCcw size={16} />
-                Changer de mode
+                {t('diceGame.changeMode')}
               </Button>
             </div>
           </motion.div>

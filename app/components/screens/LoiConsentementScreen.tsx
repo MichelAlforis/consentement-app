@@ -4,16 +4,18 @@ import { motion } from 'framer-motion';
 import { Scale, AlertTriangle } from 'lucide-react';
 import { loiPoints } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 export function LoiConsentementScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="p-5 pb-10"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,12 +25,11 @@ export function LoiConsentementScreen() {
           <Scale size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>La loi & le consentement</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>Ce que tu risques. Ce qui te protège.</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('loi.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{t('loi.subtitle')}</p>
         </div>
       </motion.div>
 
-      {/* Alerte âge légal — card en évidence */}
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -37,14 +38,14 @@ export function LoiConsentementScreen() {
       >
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={18} className="text-amber-600" />
-          <span className="font-bold text-amber-800">À retenir absolument</span>
+          <span className="font-bold text-amber-800">{t('loi.alert.title')}</span>
         </div>
-        <p className="text-sm text-amber-900 leading-relaxed">
-          En France, l'âge légal du consentement est <strong>15 ans</strong>. En dessous de cet âge, aucun rapport sexuel avec un adulte ne peut être légal — même si le jeune dit oui.
-        </p>
+        <p
+          className="text-sm text-amber-900 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: t('loi.alert.text') }}
+        />
       </motion.div>
 
-      {/* Points de loi */}
       <div className="space-y-3">
         {loiPoints.map((point, i) => (
           <motion.div
@@ -58,15 +59,18 @@ export function LoiConsentementScreen() {
             <div className="flex items-start gap-3">
               <span className="text-2xl shrink-0">{point.emoji}</span>
               <div>
-                <h3 className="font-semibold mb-1 text-sm" style={{ color: colors.textPrimary }}>{point.titre}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>{point.contenu}</p>
+                <h3 className="font-semibold mb-1 text-sm" style={{ color: colors.textPrimary }}>
+                  {t(`loi.${i}.titre`)}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+                  {t(`loi.${i}.contenu`)}
+                </p>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Mention source */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -74,10 +78,10 @@ export function LoiConsentementScreen() {
         className="mt-6 text-center"
       >
         <p className="text-xs" style={{ color: colors.textMuted }}>
-          Contenu validé par notre co-fondateur juriste en droit pénal.
+          {t('loi.source1')}
         </p>
         <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
-          Code pénal français — Articles 222-22 et suivants
+          {t('loi.source2')}
         </p>
       </motion.div>
     </motion.div>

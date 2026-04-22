@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Dices, CreditCard, ScrollText, Lock, Gamepad2, Layers } from 'lucide-react';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface GamesHubScreenProps {
   onNavigate: (screen: Screen) => void;
@@ -22,9 +23,10 @@ interface GameCardProps {
   delay: number;
   onClick: () => void;
   gradient: string;
+  lockLabel: string;
 }
 
-function GameCard({ icon, title, desc, tag, tagColor, locked, delay, onClick, gradient }: GameCardProps) {
+function GameCard({ icon, title, desc, tag, tagColor, locked, delay, onClick, gradient, lockLabel }: GameCardProps) {
   return (
     <motion.button
       initial={{ opacity: 0, y: 16 }}
@@ -40,7 +42,7 @@ function GameCard({ icon, title, desc, tag, tagColor, locked, delay, onClick, gr
         <div className="absolute inset-0 rounded-3xl bg-black/25 flex items-center justify-center z-10">
           <div className="bg-white/90 rounded-2xl px-4 py-2 flex items-center gap-2 shadow">
             <Lock size={14} className="text-gray-600" />
-            <span className="text-sm font-semibold text-gray-700">Premium</span>
+            <span className="text-sm font-semibold text-gray-700">{lockLabel}</span>
           </div>
         </div>
       )}
@@ -66,13 +68,14 @@ function GameCard({ icon, title, desc, tag, tagColor, locked, delay, onClick, gr
 
 export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: GamesHubScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="p-5 pb-10"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -82,78 +85,80 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
           <Gamepad2 size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Jeux</h2>
-          <p className="text-sm" style={{ color: colors.textSecondary }}>Explorer, découvrir, dialoguer.</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('games.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textSecondary }}>{t('games.subtitle')}</p>
         </div>
       </motion.div>
 
-      {/* Intro */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-100"
       >
-        <p className="text-sm text-amber-800 leading-relaxed">
-          Les jeux sont conçus pour <strong>explorer le consentement par la pratique</strong> — seul·e ou à deux, avec plaisir et sans pression.
-        </p>
+        <p
+          className="text-sm text-amber-800 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: t('games.intro') }}
+        />
       </motion.div>
 
-      {/* Jeu gratuit */}
       <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>
-        Gratuit
+        {t('games.free')}
       </p>
 
       <div className="space-y-3 mb-6">
         <GameCard
           icon={<Dices size={28} className="text-white" />}
-          title="Le Dé du Consentement"
-          desc={isAdult ? 'Solo ou à deux — 6 catégories, 3 niveaux' : 'Solo ou à deux — niveau découverte'}
-          tag="Gratuit"
+          title={t('games.dice.title')}
+          desc={isAdult ? t('games.dice.descAdult') : t('games.dice.descMinor')}
+          tag={t('games.free')}
           tagColor="#16a34a"
           delay={0.2}
           gradient="linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)"
+          lockLabel={t('games.locked')}
           onClick={() => onNavigate('jeu-des')}
         />
       </div>
 
-      {/* Jeux premium */}
       <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>
-        Premium
+        {t('games.premium')}
       </p>
 
       <div className="space-y-3">
         <GameCard
           icon={<Layers size={28} className="text-white" />}
-          title="Jeu de l'Oie"
-          desc="À deux · 24 cases · plateau narratif avec le dé du consentement"
-          tag="Premium"
+          title={t('games.goose.title')}
+          desc={t('games.goose.desc')}
+          tag={t('games.premium')}
           tagColor="#7c3aed"
           locked={!isPremium}
           delay={0.3}
           gradient="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
+          lockLabel={t('games.locked')}
           onClick={() => isPremium ? onNavigate('jeu-oie') : onGoPremium()}
         />
         <GameCard
           icon={<CreditCard size={28} className="text-white" />}
-          title="Cartes à tirer"
-          desc={isAdult ? '84 cartes — 6 paquets, solo ou à deux' : '60 cartes — 6 paquets, solo ou à deux'}
-          tag="Premium"
+          title={t('games.cards.title')}
+          desc={isAdult ? t('games.cards.descAdult') : t('games.cards.descMinor')}
+          tag={t('games.premium')}
           tagColor="#7c3aed"
           locked={!isPremium}
           delay={0.4}
           gradient="linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)"
+          lockLabel={t('games.locked')}
           onClick={() => isPremium ? onNavigate('jeu-cartes') : onGoPremium()}
         />
         <GameCard
           icon={<ScrollText size={28} className="text-white" />}
-          title="Scénarios guidés"
-          desc="À deux — situations à jouer ensemble avec le consentement intégré"
-          tag="Bientôt"
+          title={t('games.scenarios.title')}
+          desc={t('games.scenarios.desc')}
+          tag={t('games.comingSoon')}
           tagColor="#0369a1"
           locked={!isPremium}
           delay={0.5}
           gradient="linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)"
+          lockLabel={t('games.locked')}
           onClick={() => !isPremium && onGoPremium()}
         />
       </div>

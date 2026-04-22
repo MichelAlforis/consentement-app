@@ -5,6 +5,7 @@ import { User, Users, BookOpen, Lock, Gamepad2, Heart } from 'lucide-react';
 import { MenuCard } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface HomeAdultScreenProps {
   userName: string;
@@ -13,6 +14,7 @@ interface HomeAdultScreenProps {
 
 export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -20,7 +22,6 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
       animate={{ opacity: 1 }}
       className="p-5"
     >
-      {/* Welcome Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,20 +37,19 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
         </div>
         <div>
           <h2 className="text-xl font-bold mb-1" style={{ color: colors.textPrimary }}>
-            Bonjour {userName}
+            {t('homeAdult.greeting', { name: userName })}
           </h2>
           <p className="text-sm" style={{ color: colors.textSecondary }}>
-            Explore ton profil de confort ou connecte-toi avec ton/ta partenaire.
+            {t('homeAdult.subtitle')}
           </p>
         </div>
       </motion.div>
 
-      {/* Main Actions */}
       <div className="space-y-3">
         <MenuCard
           icon={<User size={26} className="text-white" />}
-          title="Mon Espace"
-          description="Explorer mes zones de confort"
+          title={t('homeAdult.menu.personal.title')}
+          description={t('homeAdult.menu.personal.desc')}
           onClick={() => onNavigate('personal-space')}
           variant="accent"
           delay={1}
@@ -57,8 +57,8 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
 
         <MenuCard
           icon={<Users size={26} className="text-white" />}
-          title="Notre Espace"
-          description="Dialoguer avec mon/ma partenaire"
+          title={t('homeAdult.menu.duo.title')}
+          description={t('homeAdult.menu.duo.desc')}
           onClick={() => onNavigate('duo-space')}
           variant="secondary"
           delay={2}
@@ -66,8 +66,8 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
 
         <MenuCard
           icon={<Gamepad2 size={26} className="text-white" />}
-          title="Jeux"
-          description="Explorer le consentement en jouant"
+          title={t('homeAdult.menu.games.title')}
+          description={t('homeAdult.menu.games.desc')}
           onClick={() => onNavigate('jeux')}
           variant="amber"
           delay={3}
@@ -75,14 +75,13 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
 
         <MenuCard
           icon={<BookOpen size={26} style={{ color: colors.accent }} />}
-          title="Ressources"
-          description="Guides et informations"
+          title={t('homeAdult.menu.resources.title')}
+          description={t('homeAdult.menu.resources.desc')}
           onClick={() => onNavigate('learn')}
           delay={4}
         />
       </div>
 
-      {/* Privacy Note */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,7 +91,7 @@ export function HomeAdultScreen({ userName, onNavigate }: HomeAdultScreenProps) 
       >
         <Lock size={14} style={{ color: colors.textMuted }} />
         <p className="text-xs" style={{ color: colors.textMuted }}>
-          Tes données sont chiffrées et tu peux les supprimer à tout moment.
+          {t('homeAdult.privacy')}
         </p>
       </motion.div>
     </motion.div>

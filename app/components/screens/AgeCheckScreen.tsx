@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Calendar, Sprout, TreeDeciduous, Lock } from 'lucide-react';
 import { Card } from '../ui';
+import { useTranslation } from '../../i18n';
 
 interface AgeCheckScreenProps {
   onSelectMinor: () => void;
@@ -10,13 +11,14 @@ interface AgeCheckScreenProps {
 }
 
 export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-dvh flex flex-col p-6"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -32,14 +34,13 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
         </motion.div>
 
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Quel âge as-tu ?
+          {t('ageCheck.title')}
         </h2>
         <p className="text-gray-500">
-          L'expérience s'adapte à ton âge
+          {t('ageCheck.subtitle')}
         </p>
       </motion.div>
 
-      {/* Options */}
       <div className="flex-1 flex flex-col gap-4">
         <Card onClick={onSelectMinor} variant="elevated" delay={1}>
           <div className="flex items-start gap-4">
@@ -51,10 +52,10 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
             </motion.div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-800 text-lg">
-                J'ai moins de 18 ans
+                {t('ageCheck.minor.title')}
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Accès éducatif, aucun compte requis
+                {t('ageCheck.minor.desc')}
               </p>
             </div>
           </div>
@@ -70,17 +71,16 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
             </motion.div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-800 text-lg">
-                J'ai 18 ans ou plus
+                {t('ageCheck.adult.title')}
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Accès complet avec authentification
+                {t('ageCheck.adult.desc')}
               </p>
             </div>
           </div>
         </Card>
       </div>
 
-      {/* Privacy note */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -89,7 +89,7 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
       >
         <Lock size={14} className="text-gray-400" />
         <p className="text-xs text-gray-400">
-          Cette information reste sur ton appareil et n'est jamais partagée
+          {t('ageCheck.privacy')}
         </p>
       </motion.div>
     </motion.div>

@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Film, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import { Film, ChevronDown, ChevronUp } from 'lucide-react';
 import { pornoVsRealite } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface PornoVsRealiteScreenProps {
   onBack: () => void;
@@ -12,6 +13,7 @@ interface PornoVsRealiteScreenProps {
 
 export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -20,7 +22,6 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
       animate={{ opacity: 1 }}
       className="p-5 pb-10"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -30,24 +31,23 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
           <Film size={22} className="text-violet-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Porno vs. Réalité</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>Ce que les films ne te montrent pas</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('pornoVsRealite.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>{t('pornoVsRealite.subtitle')}</p>
         </div>
       </motion.div>
 
-      {/* Intro */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
         className="mb-6 p-4 rounded-2xl bg-violet-50 border border-violet-100"
       >
-        <p className="text-sm text-violet-800 leading-relaxed">
-          Le porno est un <strong>film de fiction</strong> tourné avec des acteurs. Il ne montre pas comment les vraies relations se passent — ni le consentement, ni la communication, ni les limites.
-        </p>
+        <p
+          className="text-sm text-violet-800 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: t('pornoVsRealite.intro') }}
+        />
       </motion.div>
 
-      {/* Cartes comparaison */}
       <div className="space-y-3">
         {pornoVsRealite.map((item, i) => {
           const isOpen = expanded === item.id;
@@ -60,7 +60,6 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
               className="rounded-2xl overflow-hidden shadow-sm border"
               style={{ background: colors.bgCard, borderColor: colors.border }}
             >
-              {/* En-tête toujours visible */}
               <button
                 onClick={() => setExpanded(isOpen ? null : item.id)}
                 className="w-full p-4 text-left"
@@ -68,19 +67,21 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                 <div className="flex items-start gap-3">
                   <span className="text-2xl shrink-0">{item.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    {/* Porno */}
                     <div className="flex items-start gap-2 mb-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 shrink-0 mt-0.5">
-                        Dans le porno
+                        {t('pornoVsRealite.inPorno')}
                       </span>
-                      <p className="text-sm" style={{ color: colors.textSecondary }}>{item.porno}</p>
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
+                        {t(`pornoVsRealite.${i}.porno`)}
+                      </p>
                     </div>
-                    {/* Réalité */}
                     <div className="flex items-start gap-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700 shrink-0 mt-0.5">
-                        Dans la réalité
+                        {t('pornoVsRealite.inReality')}
                       </span>
-                      <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>{item.realite}</p>
+                      <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>
+                        {t(`pornoVsRealite.${i}.realite`)}
+                      </p>
                     </div>
                   </div>
                   <div className="shrink-0 mt-1" style={{ color: colors.textMuted }}>
@@ -89,7 +90,6 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                 </div>
               </button>
 
-              {/* Explication dépliable */}
               <AnimatePresence>
                 {isOpen && (
                   <motion.div
@@ -101,7 +101,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                   >
                     <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: colors.divider }}>
                       <p className="text-sm leading-relaxed rounded-xl p-3" style={{ color: colors.textSecondary, background: colors.bgSecondary }}>
-                        💡 {item.explication}
+                        💡 {t(`pornoVsRealite.${i}.explication`)}
                       </p>
                     </div>
                   </motion.div>
@@ -112,7 +112,6 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
         })}
       </div>
 
-      {/* Message de clôture */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -120,7 +119,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
         className="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-100"
       >
         <p className="text-sm text-blue-800 leading-relaxed text-center">
-          <strong>La vraie sexualité, ça se construit avec communication, respect et consentement.</strong> Pas en imitant un film.
+          {t('pornoVsRealite.closing')}
         </p>
       </motion.div>
     </motion.div>

@@ -6,9 +6,11 @@ import { Gamepad2, ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import { quizQuestions } from '../../data';
 import { Button } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 export function QuizConsentementScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -18,6 +20,10 @@ export function QuizConsentementScreen() {
   const question = quizQuestions[current];
   const isCorrect = selected === question.correctIndex;
   const total = quizQuestions.length;
+
+  const questionText = t(`quiz.${current}.question`);
+  const optionTexts = [0, 1, 2, 3].map(i => t(`quiz.${current}.options.${i}`));
+  const explanationText = t(`quiz.${current}.explanation`);
 
   const handleSelect = (index: number) => {
     if (confirmed) return;
@@ -49,14 +55,16 @@ export function QuizConsentementScreen() {
   };
 
   const getScoreLabel = () => {
-    if (score >= 7) return { label: 'Excellent !', color: '#22c55e', emoji: '🏆' };
-    if (score >= 5) return { label: 'Bien !', color: '#3b82f6', emoji: '👍' };
-    if (score >= 3) return { label: 'Pas mal', color: '#f59e0b', emoji: '📚' };
-    return { label: 'À retravailler', color: '#ef4444', emoji: '💪' };
+    const plural = score > 1 ? 's' : '';
+    if (score >= 7) return { label: t('quiz.scoreLabels.excellent'), color: '#22c55e', emoji: '🏆' };
+    if (score >= 5) return { label: t('quiz.scoreLabels.good'), color: '#3b82f6', emoji: '👍' };
+    if (score >= 3) return { label: t('quiz.scoreLabels.notBad'), color: '#f59e0b', emoji: '📚' };
+    return { label: t('quiz.scoreLabels.retry'), color: '#ef4444', emoji: '💪' };
   };
 
   if (finished) {
     const result = getScoreLabel();
+    const plural = score > 1 ? 's' : '';
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -73,7 +81,7 @@ export function QuizConsentementScreen() {
         </motion.div>
         <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{result.label}</h2>
         <p className="mb-6" style={{ color: colors.textMuted }}>
-          {score} bonne{score > 1 ? 's' : ''} réponse{score > 1 ? 's' : ''} sur {total}
+          {t('quiz.score', { score: String(score), total: String(total), plural })}
         </p>
         <div className="w-48 h-3 rounded-full mb-8 overflow-hidden" style={{ background: colors.bgSecondary }}>
           <motion.div
@@ -86,12 +94,12 @@ export function QuizConsentementScreen() {
         </div>
         {score < 7 && (
           <p className="text-sm text-center max-w-xs mb-6" style={{ color: colors.textMuted }}>
-            Relis les modules <strong>Porno vs. Réalité</strong> et <strong>La Loi</strong> pour mieux comprendre.
+            {t('quiz.adviceReread')}
           </p>
         )}
         <Button onClick={handleReset} variant="secondary">
           <RotateCcw size={16} />
-          Recommencer
+          {t('quiz.restart')}
         </Button>
       </motion.div>
     );
@@ -103,14 +111,15 @@ export function QuizConsentementScreen() {
       animate={{ opacity: 1 }}
       className="p-5 pb-10"
     >
-      {/* Header */}
       <div className="flex items-start gap-3 mb-5">
         <div className="w-11 h-11 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
           <Gamepad2 size={22} className="text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Quiz</h2>
-          <p className="text-sm" style={{ color: colors.textMuted }}>Question {current + 1} sur {total}</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('quiz.title')}</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>
+            {t('quiz.question', { current: String(current + 1), total: String(total) })}
+          </p>
         </div>
         <div className="ml-auto">
           <Trophy size={16} className="text-amber-400 inline mr-1" />
@@ -118,16 +127,14 @@ export function QuizConsentementScreen() {
         </div>
       </div>
 
-      {/* Barre de progression */}
       <div className="w-full h-2 rounded-full mb-6 overflow-hidden" style={{ background: colors.bgSecondary }}>
         <motion.div
-          animate={{ width: `${((current) / total) * 100}%` }}
+          animate={{ width: `${(current / total) * 100}%` }}
           transition={{ duration: 0.4 }}
           className="h-full rounded-full bg-blue-400"
         />
       </div>
 
-      {/* Question */}
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -137,12 +144,11 @@ export function QuizConsentementScreen() {
           transition={{ duration: 0.25 }}
         >
           <div className="mb-6 p-4 rounded-2xl shadow-sm border" style={{ background: colors.bgCard, borderColor: colors.border }}>
-            <p className="text-base font-semibold leading-snug" style={{ color: colors.textPrimary }}>{question.question}</p>
+            <p className="text-base font-semibold leading-snug" style={{ color: colors.textPrimary }}>{questionText}</p>
           </div>
 
-          {/* Options */}
           <div className="space-y-2.5 mb-5">
-            {question.options.map((option, i) => {
+            {optionTexts.map((option, i) => {
               let bgClass = '';
               let borderClass = '';
               let textColor = colors.textSecondary;
@@ -169,7 +175,6 @@ export function QuizConsentementScreen() {
             })}
           </div>
 
-          {/* Explication après confirmation */}
           <AnimatePresence>
             {confirmed && (
               <motion.div
@@ -179,23 +184,22 @@ export function QuizConsentementScreen() {
                 className={`mb-4 p-4 rounded-2xl ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}
               >
                 <p className="text-sm font-semibold mb-1" style={{ color: isCorrect ? '#166534' : '#991b1b' }}>
-                  {isCorrect ? '✅ Bonne réponse !' : '❌ Pas tout à fait'}
+                  {isCorrect ? t('quiz.correct') : t('quiz.incorrect')}
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: isCorrect ? '#14532d' : '#7f1d1d' }}>
-                  {question.explanation}
+                  {explanationText}
                 </p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Boutons */}
           {!confirmed ? (
             <Button onClick={handleConfirm} fullWidth disabled={selected === null}>
-              Valider
+              {t('quiz.validate')}
             </Button>
           ) : (
             <Button onClick={handleNext} fullWidth>
-              {current + 1 < total ? 'Question suivante' : 'Voir mon score'}
+              {current + 1 < total ? t('quiz.next') : t('quiz.finish')}
               <ChevronRight size={18} />
             </Button>
           )}

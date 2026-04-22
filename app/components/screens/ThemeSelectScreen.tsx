@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Crown, Lock } from 'lucide-react';
 import { ThemeMode, themes } from '../../types/theme';
 import { PreviewShimmer } from '../ui/ThemeEffects';
+import { useTranslation } from '../../i18n';
 
 interface ThemeSelectScreenProps {
   onSelectTheme: (theme: ThemeMode) => void;
@@ -31,13 +32,14 @@ const themeGradients: Record<ThemeMode, string> = {
 };
 
 export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremium }: ThemeSelectScreenProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-dvh flex flex-col p-6 bg-gradient-to-br from-gray-50 to-gray-100"
     >
-      {/* Logo */}
       <motion.div
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
@@ -55,14 +57,13 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         transition={{ delay: 0.2 }}
         className="text-center mb-8"
       >
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">Choisis ton ambiance</h1>
-        <p className="text-gray-500 text-sm">Tu pourras changer à tout moment</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-1">{t('themeSelect.title')}</h1>
+        <p className="text-gray-500 text-sm">{t('themeSelect.subtitle')}</p>
       </motion.div>
 
-      {/* Thèmes gratuits */}
       <div className="max-w-sm mx-auto w-full space-y-3 mb-4">
         {freeThemes.map((mode, i) => {
-          const t = themes[mode];
+          const theme = themes[mode];
           return (
             <motion.button
               key={mode}
@@ -77,12 +78,12 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
             >
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ background: t.colors.accentGradient }}>
-                  <span className="text-2xl">{t.emoji}</span>
+                  style={{ background: theme.colors.accentGradient }}>
+                  <span className="text-2xl">{theme.emoji}</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base" style={{ color: t.colors.textPrimary }}>{t.name}</h3>
-                  <p className="text-sm" style={{ color: t.colors.textSecondary }}>{t.description}</p>
+                  <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
+                  <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -95,7 +96,6 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         })}
       </div>
 
-      {/* Séparateur Premium */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -104,15 +104,14 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
       >
         <div className="flex-1 h-px bg-gray-200" />
         <span className="text-xs text-gray-400 flex items-center gap-1">
-          <Lock size={11} /> Premium
+          <Lock size={11} /> {t('premium.title').split(' ').pop()}
         </span>
         <div className="flex-1 h-px bg-gray-200" />
       </motion.div>
 
-      {/* Thèmes premium */}
       <div className="max-w-sm mx-auto w-full space-y-3">
         {premiumThemes.map((mode, i) => {
-          const t = themes[mode];
+          const theme = themes[mode];
           const locked = !isPremium;
           const isDarkLuxury = mode === 'dark-luxury';
           const isNude = mode === 'nude';
@@ -142,10 +141,8 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
                     : '0 8px 30px rgba(0,0,0,0.12)',
               }}
             >
-              {/* Shimmer animé — dark-luxury */}
               {isDarkLuxury && locked && <PreviewShimmer color="#c9a84c" />}
 
-              {/* Overlay + badge lock */}
               {locked && (
                 <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-2"
                   style={{ background: isDarkLuxury ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.18)', zIndex: 10 }}
@@ -164,19 +161,19 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
                     </span>
                   </div>
                   <p className="text-xs" style={{ color: isDarkLuxury ? 'rgba(201,168,76,0.7)' : 'rgba(92,74,64,0.7)' }}>
-                    Appuie pour débloquer
+                    {t('games.unlock')}
                   </p>
                 </div>
               )}
 
               <div className="flex items-center gap-4 mb-3" style={{ position: 'relative', zIndex: 5 }}>
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ background: t.colors.accentGradient }}>
-                  <span className="text-2xl">{t.emoji}</span>
+                  style={{ background: theme.colors.accentGradient }}>
+                  <span className="text-2xl">{theme.emoji}</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base" style={{ color: t.colors.textPrimary }}>{t.name}</h3>
-                  <p className="text-sm" style={{ color: t.colors.textSecondary }}>{t.description}</p>
+                  <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
+                  <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>
                 </div>
               </div>
               <div className="flex gap-2" style={{ position: 'relative', zIndex: 5 }}>
@@ -195,7 +192,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         transition={{ delay: 0.9 }}
         className="text-center text-xs text-gray-400 mt-6 mb-2"
       >
-        Les thèmes premium font partie de l'abonnement
+        {t('premium.themesNote')}
       </motion.p>
     </motion.div>
   );

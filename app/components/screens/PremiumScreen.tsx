@@ -4,35 +4,31 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Check, ArrowLeft, CreditCard, Lock, Sparkles, Dices, Palette } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface PremiumScreenProps {
   onActivate: () => void;
   onBack: () => void;
 }
 
-const FEATURES = [
-  { icon: <Dices size={16} />, label: 'Dé du consentement — niveau 3 (pratiques avancées)' },
-  { icon: <Sparkles size={16} />, label: 'Cartes à tirer — jeu de séduction guidé' },
-  { icon: <Sparkles size={16} />, label: 'Scénarios guidés — aventures narratives' },
-  { icon: <Palette size={16} />, label: 'Thèmes exclusifs : Dark Luxury & Nude' },
-  { icon: <Crown size={16} />, label: 'Accès prioritaire aux nouvelles fonctionnalités' },
-];
-
 type Step = 'offer' | 'processing' | 'success';
 
 export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>('offer');
+
+  const features = [
+    { icon: <Dices size={16} />, label: t('premium.features.dice') },
+    { icon: <Sparkles size={16} />, label: t('premium.features.cards') },
+    { icon: <Sparkles size={16} />, label: t('premium.features.scenarios') },
+    { icon: <Palette size={16} />, label: t('premium.features.themes') },
+    { icon: <Crown size={16} />, label: t('premium.features.access') },
+  ];
 
   function handlePayment() {
     setStep('processing');
-    setTimeout(() => {
-      setStep('success');
-    }, 2200);
-  }
-
-  function handleSuccess() {
-    onActivate();
+    setTimeout(() => setStep('success'), 2200);
   }
 
   return (
@@ -50,7 +46,6 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             exit={{ opacity: 0, y: -16 }}
             className="p-5"
           >
-            {/* Header */}
             <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={onBack}
@@ -58,33 +53,29 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               >
                 <ArrowLeft size={20} style={{ color: colors.textSecondary }} />
               </button>
-              <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Passer à Premium</h1>
+              <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{t('premium.title')}</h1>
             </div>
 
-            {/* Hero */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
               className="rounded-3xl p-6 mb-6 text-center"
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)',
-              }}
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
               <div className="flex justify-center mb-3">
                 <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
                   <Crown size={32} className="text-yellow-300" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-1">Consentement Premium</h2>
-              <p className="text-white/80 text-sm mb-4">Expérience complète, sans limite</p>
+              <h2 className="text-2xl font-bold text-white mb-1">{t('premium.heroTitle')}</h2>
+              <p className="text-white/80 text-sm mb-4">{t('premium.heroSubtitle')}</p>
               <div className="inline-flex items-baseline gap-1 bg-white/20 rounded-2xl px-5 py-2">
-                <span className="text-3xl font-bold text-white">4,99 €</span>
-                <span className="text-white/70 text-sm">/ mois</span>
+                <span className="text-3xl font-bold text-white">{t('premium.price')}</span>
+                <span className="text-white/70 text-sm">{t('premium.perMonth')}</span>
               </div>
             </motion.div>
 
-            {/* Features */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -93,9 +84,9 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
             >
               <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: colors.textMuted }}>
-                Inclus dans Premium
+                {t('premium.includedTitle')}
               </p>
-              {FEATURES.map((f, i) => (
+              {features.map((f, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -8 }}
@@ -111,7 +102,6 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               ))}
             </motion.div>
 
-            {/* CTA */}
             <motion.button
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -122,12 +112,12 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
               <CreditCard size={18} />
-              Simuler le paiement
+              {t('premium.payBtn')}
             </motion.button>
 
             <p className="text-center text-xs mt-3 flex items-center justify-center gap-1" style={{ color: colors.textMuted }}>
               <Lock size={11} />
-              Mode démo — aucun paiement réel
+              {t('premium.demoNote')}
             </p>
           </motion.div>
         )}
@@ -141,9 +131,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             className="flex flex-col items-center justify-center min-h-[60vh] p-8 gap-6"
           >
             <div className="relative w-20 h-20">
-              <motion.div
-                className="absolute inset-0 rounded-full border-4 border-purple-200"
-              />
+              <motion.div className="absolute inset-0 rounded-full border-4 border-purple-200" />
               <motion.div
                 className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-600"
                 animate={{ rotate: 360 }}
@@ -154,8 +142,8 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               </div>
             </div>
             <div className="text-center">
-              <p className="font-semibold mb-1" style={{ color: colors.textPrimary }}>Traitement en cours…</p>
-              <p className="text-sm" style={{ color: colors.textMuted }}>Simulation du paiement sécurisé</p>
+              <p className="font-semibold mb-1" style={{ color: colors.textPrimary }}>{t('premium.processing')}</p>
+              <p className="text-sm" style={{ color: colors.textMuted }}>{t('premium.processingDesc')}</p>
             </div>
             <div className="flex gap-1.5">
               {[0, 1, 2].map(i => (
@@ -192,9 +180,9 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>Bienvenue Premium !</h2>
+              <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>{t('premium.successTitle')}</h2>
               <p className="text-sm max-w-xs" style={{ color: colors.textMuted }}>
-                Ton accès Premium est activé. Profite de toutes les fonctionnalités exclusives.
+                {t('premium.successDesc')}
               </p>
             </motion.div>
 
@@ -204,7 +192,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               transition={{ delay: 0.35 }}
               className="w-full space-y-2"
             >
-              {FEATURES.map((f, i) => (
+              {features.map((f, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -8 }}
@@ -223,11 +211,11 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
               whileTap={{ scale: 0.97 }}
-              onClick={handleSuccess}
+              onClick={onActivate}
               className="w-full py-4 rounded-2xl font-semibold text-white shadow-lg"
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
-              Accéder à Premium
+              {t('premium.accessBtn')}
             </motion.button>
           </motion.div>
         )}

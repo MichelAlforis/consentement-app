@@ -8,9 +8,11 @@ import {
 import { Card } from '../ui';
 import { consentPrinciples } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 export function LearnScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const principleIcons = [
     <RefreshCw size={24} key="1" style={{ color: colors.accent }} />,
@@ -20,13 +22,19 @@ export function LearnScreen() {
     <Brain size={24} key="5" style={{ color: colors.accent }} />,
   ];
 
+  const furtherItems = [
+    t('learn.further.item1'),
+    t('learn.further.item2'),
+    t('learn.further.item3'),
+    t('learn.further.item4'),
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="p-5"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -35,17 +43,16 @@ export function LearnScreen() {
         <BookOpen size={28} className="mt-1 shrink-0" style={{ color: colors.accent }} />
         <div>
           <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-            Comprendre le consentement
+            {t('learn.title')}
           </h2>
           <p className="text-sm" style={{ color: colors.textMuted }}>
-            Les piliers d'une relation saine et respectueuse
+            {t('learn.subtitle')}
           </p>
         </div>
       </motion.div>
 
-      {/* Principles */}
       <div className="space-y-3">
-        {consentPrinciples.map((principle, index) => (
+        {consentPrinciples.map((_, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, x: -20 }}
@@ -63,10 +70,10 @@ export function LearnScreen() {
                 </motion.div>
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: colors.textPrimary }}>
-                    {principle.title}
+                    {t(`principles.${index}.title`)}
                   </h3>
                   <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-                    {principle.text}
+                    {t(`principles.${index}.text`)}
                   </p>
                 </div>
               </div>
@@ -75,7 +82,6 @@ export function LearnScreen() {
         ))}
       </div>
 
-      {/* Key takeaway */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -86,16 +92,15 @@ export function LearnScreen() {
           <div className="flex items-center justify-center gap-2 mb-1">
             <Lightbulb size={20} className="text-emerald-600" />
             <p className="font-semibold" style={{ color: colors.textPrimary }}>
-              Le consentement n'est pas un contrat
+              {t('learn.keyTakeaway')}
             </p>
           </div>
           <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
-            C'est une conversation continue, basée sur le respect mutuel.
+            {t('learn.keyText')}
           </p>
         </Card>
       </motion.div>
 
-      {/* Additional resources */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -105,15 +110,10 @@ export function LearnScreen() {
         <Card variant="default" padding="lg">
           <h4 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
             <GraduationCap size={18} style={{ color: colors.textSecondary }} />
-            Pour aller plus loin
+            {t('learn.further.title')}
           </h4>
           <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
-            {[
-              'Le consentement s\'applique à chaque situation',
-              'Ton corps t\'appartient, toujours',
-              'Poser des limites est un signe de force',
-              'La communication est la clé'
-            ].map((item, i) => (
+            {furtherItems.map((item, i) => (
               <motion.li
                 key={i}
                 initial={{ opacity: 0, x: -10 }}

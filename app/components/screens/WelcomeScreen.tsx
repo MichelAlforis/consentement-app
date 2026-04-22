@@ -3,16 +3,19 @@
 import { motion } from 'framer-motion';
 import { ShieldCheck, BookOpen, MessageCircle, ArrowRight } from 'lucide-react';
 import { Button } from '../ui';
+import { useTranslation } from '../../i18n';
 
 interface WelcomeScreenProps {
   onStart: () => void;
 }
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+  const { t } = useTranslation();
+
   const pillars = [
-    { icon: <ShieldCheck size={15} />, label: 'Consentement' },
-    { icon: <BookOpen size={15} />, label: 'Éducation' },
-    { icon: <MessageCircle size={15} />, label: 'Dialogue' },
+    { icon: <ShieldCheck size={15} />, label: t('welcome.pillars.consent') },
+    { icon: <BookOpen size={15} />, label: t('welcome.pillars.education') },
+    { icon: <MessageCircle size={15} />, label: t('welcome.pillars.dialogue') },
   ];
 
   return (
@@ -22,7 +25,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       className="min-h-dvh flex flex-col justify-between p-6 pb-10"
     >
       <div className="flex-1 flex flex-col items-center justify-center text-center">
-        {/* Logo animé */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -54,7 +56,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           ))}
         </motion.div>
 
-        {/* Titre */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,21 +66,19 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             Consentement
           </h1>
           <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">
-            Apprendre. Comprendre. Décider.
+            {t('welcome.tagline')}
           </p>
         </motion.div>
 
-        {/* Message principal */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
           className="text-base text-gray-500 leading-relaxed max-w-xs mb-8"
         >
-          Le porno ne t'apprend pas le consentement. On est là pour ça — sans tabou, sans jugement.
+          {t('welcome.description')}
         </motion.p>
 
-        {/* Pilliers */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -101,7 +100,6 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         </motion.div>
       </div>
 
-      {/* CTA */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -114,7 +112,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           size="lg"
           className="shadow-xl shadow-violet-300/30"
         >
-          Commencer
+          {t('welcome.cta')}
           <ArrowRight size={20} />
         </Button>
 
@@ -124,7 +122,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           transition={{ delay: 0.9 }}
           className="text-center text-xs text-gray-400"
         >
-          100% privé — rien n'est enregistré sans ton accord
+          {t('welcome.privacy')}
         </motion.p>
       </motion.div>
     </motion.div>

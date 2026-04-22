@@ -5,16 +5,25 @@ import { LifeBuoy, Phone, Heart, AlertTriangle, Shield, MessageSquare, Ambulance
 import { Card } from '../ui';
 import { helpResources } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 export function HelpScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
+
+  const alsoTalkItems = [
+    t('help.alsoTalk.item1'),
+    t('help.alsoTalk.item2'),
+    t('help.alsoTalk.item3'),
+    t('help.alsoTalk.item4'),
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="p-5"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,15 +32,14 @@ export function HelpScreen() {
         <LifeBuoy size={28} className="text-teal-500 mt-1 shrink-0" />
         <div>
           <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-            Besoin d'aide ?
+            {t('help.title')}
           </h2>
           <p className="text-sm" style={{ color: colors.textMuted }}>
-            Tu n'es pas seul·e. Des personnes sont là pour t'écouter.
+            {t('help.subtitle')}
           </p>
         </div>
       </motion.div>
 
-      {/* Resources */}
       <div className="space-y-3">
         {helpResources.map((resource, index) => (
           <motion.div
@@ -59,7 +67,7 @@ export function HelpScreen() {
                   {resource.phone}
                 </motion.a>
                 <p className="text-sm mt-2" style={{ color: colors.textMuted }}>
-                  {resource.desc}
+                  {t(`helpResources.${index}.desc`)}
                 </p>
               </div>
             </Card>
@@ -67,7 +75,6 @@ export function HelpScreen() {
         ))}
       </div>
 
-      {/* Additional help */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -77,15 +84,10 @@ export function HelpScreen() {
         <Card variant="default" padding="lg">
           <h4 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
             <Heart size={18} className="text-blue-500" />
-            Tu peux aussi parler à...
+            {t('help.alsoTalk.title')}
           </h4>
           <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
-            {[
-              'Un adulte de confiance',
-              'Un·e infirmier·e scolaire',
-              'Un·e CPE',
-              'Le médecin de famille'
-            ].map((item, i) => (
+            {alsoTalkItems.map((item, i) => (
               <motion.li
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
@@ -101,7 +103,6 @@ export function HelpScreen() {
         </Card>
       </motion.div>
 
-      {/* Emergency */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,7 +112,7 @@ export function HelpScreen() {
         <Card variant="warning" padding="lg">
           <p className="font-semibold flex items-center gap-2" style={{ color: colors.textPrimary }}>
             <AlertTriangle size={18} className="text-amber-600" />
-            En cas d'urgence
+            {t('help.emergency.title')}
           </p>
           <div className="flex gap-4 mt-3">
             <motion.a
@@ -122,7 +123,7 @@ export function HelpScreen() {
             >
               <Shield size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">17</span>
-              <span className="text-xs" style={{ color: colors.textSecondary }}>Police</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>{t('help.emergency.police')}</span>
             </motion.a>
             <motion.a
               href="tel:15"
@@ -132,7 +133,7 @@ export function HelpScreen() {
             >
               <Ambulance size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">15</span>
-              <span className="text-xs" style={{ color: colors.textSecondary }}>SAMU</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>{t('help.emergency.samu')}</span>
             </motion.a>
             <motion.a
               href="tel:114"
@@ -142,7 +143,7 @@ export function HelpScreen() {
             >
               <MessageSquare size={20} className="text-red-500 mb-1" />
               <span className="block text-2xl font-bold text-red-500">114</span>
-              <span className="text-xs" style={{ color: colors.textSecondary }}>SMS</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>{t('help.emergency.sms')}</span>
             </motion.a>
           </div>
         </Card>
