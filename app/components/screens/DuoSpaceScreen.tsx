@@ -5,7 +5,7 @@ import { isCapacitor } from '../../lib/platform';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, QrCode, Link2, Lightbulb, CheckCircle2,
-  Camera, Copy, Loader2, Check, ArrowLeft, Smartphone, Wifi
+  Camera, Copy, Loader2, Check, ArrowLeft, Wifi
 } from 'lucide-react';
 import { Button, Card, QRCode } from '../ui';
 import {
@@ -22,6 +22,7 @@ import {
 import { comfortCategories } from '../../data';
 import { PersonalProfile, CommonGround, DuoStep, PartnerProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoSpaceScreenProps {
   personalProfile: PersonalProfile;
@@ -32,7 +33,6 @@ interface DuoSpaceScreenProps {
 
 type ConnectionMode = 'choice' | 'generate' | 'scan' | 'manual';
 
-// Générateur de profil partenaire réaliste
 function generatePartnerProfile(): PartnerProfile {
   const profile: PartnerProfile = { tenderness: {}, intensity: {}, trust: {} };
   const baseComfort = Math.random() > 0.5 ? 3 : 2;
@@ -51,7 +51,6 @@ function generatePartnerProfile(): PartnerProfile {
   return profile;
 }
 
-// Calcul du common ground
 function calculateCommonGround(personal: PersonalProfile, partner: PartnerProfile): CommonGround {
   const common: CommonGround = { tenderness: {}, intensity: {}, trust: {} };
 
@@ -69,7 +68,6 @@ function calculateCommonGround(personal: PersonalProfile, partner: PartnerProfil
   return common;
 }
 
-// Noms de partenaires simulés
 const partnerNames = ['Alex', 'Charlie', 'Sam', 'Jordan', 'Morgan', 'Taylor'];
 
 export function DuoSpaceScreen({
@@ -79,15 +77,14 @@ export function DuoSpaceScreen({
   onBack,
 }: DuoSpaceScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
-  // État de connexion QR
   const [connectionMode, setConnectionMode] = useState<ConnectionMode>('choice');
   const [generatedCode, setGeneratedCode] = useState('');
   const [inputCode, setInputCode] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // État du flow duo
   const [duoStep, setDuoStep] = useState<DuoStep>('choice');
   const [partnerName] = useState(() => partnerNames[Math.floor(Math.random() * partnerNames.length)]);
   const [partnerProfile, setPartnerProfile] = useState<PartnerProfile | null>(null);
@@ -95,19 +92,16 @@ export function DuoSpaceScreen({
 
   const isCodeValid = inputCode.length === 6;
 
-  // Handler: Bump réussi
   const handleBumpSuccess = useCallback(() => {
     setPartnerProfile(generatePartnerProfile());
     setDuoStep('connected');
   }, []);
 
-  // Handler: Fallback vers QR
   const handleFallbackQR = useCallback(() => {
     setDuoStep('qr-fallback');
     setConnectionMode('choice');
   }, []);
 
-  // Handlers QR code
   const handleGenerateCode = () => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedCode(code);
@@ -122,7 +116,7 @@ export function DuoSpaceScreen({
       } else {
         await navigator.clipboard.writeText(generatedCode);
       }
-    } catch { /* l'utilisateur verra le code affiché à l'écran */ }
+    } catch { /* code visible à l'écran */ }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -143,37 +137,17 @@ export function DuoSpaceScreen({
     setDuoStep('connected');
   }, []);
 
-  // Handlers du flow
-  const handleConnectionComplete = useCallback(() => {
-    setDuoStep('pact');
-  }, []);
+  const handleConnectionComplete = useCallback(() => setDuoStep('pact'), []);
+  const handlePactAccepted = useCallback(() => setDuoStep('filling'), []);
+  const handleFillingComplete = useCallback(() => setDuoStep('waiting'), []);
+  const handlePartnerReady = useCallback(() => setDuoStep('ready'), []);
+  const handleRevealStart = useCallback(() => setDuoStep('reveal'), []);
+  const handleRevealComplete = useCallback(() => setDuoStep('summary'), []);
 
-  const handlePactAccepted = useCallback(() => {
-    setDuoStep('filling');
-  }, []);
-
-  const handleFillingComplete = useCallback(() => {
-    setDuoStep('waiting');
-  }, []);
-
-  const handlePartnerReady = useCallback(() => {
-    setDuoStep('ready');
-  }, []);
-
-  const handleRevealStart = useCallback(() => {
-    setDuoStep('reveal');
-  }, []);
-
-  const handleRevealComplete = useCallback(() => {
-    setDuoStep('summary');
-  }, []);
-
-  // Calcul du common ground si on a les deux profils
   const commonGround = partnerProfile
     ? calculateCommonGround(personalProfile, partnerProfile)
     : null;
 
-  // Reset
   const handleReset = () => {
     setDuoStep('choice');
     setConnectionMode('choice');
@@ -182,9 +156,7 @@ export function DuoSpaceScreen({
     setGeneratedCode('');
   };
 
-  // Navigation directe (démo)
   const handleGoToStep = useCallback((step: DuoStep) => {
-    // S'assurer qu'on a un profil partenaire pour les étapes qui en ont besoin
     if (!partnerProfile && ['connected', 'pact', 'filling', 'waiting', 'ready', 'reveal', 'summary'].includes(step)) {
       setPartnerProfile(generatePartnerProfile());
     }
@@ -197,7 +169,6 @@ export function DuoSpaceScreen({
       animate={{ opacity: 1 }}
       className="min-h-full flex flex-col"
     >
-      {/* Barre de navigation démo */}
       <DuoNavBar
         currentStep={duoStep}
         onBack={onBack}
@@ -206,7 +177,6 @@ export function DuoSpaceScreen({
       />
 
       <AnimatePresence mode="wait">
-        {/* Étape: Choix initial - Bump ou QR */}
         {duoStep === 'choice' && (
           <motion.div
             key="choice"
@@ -215,7 +185,6 @@ export function DuoSpaceScreen({
             exit={{ opacity: 0 }}
             className="p-5"
           >
-            {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -224,16 +193,15 @@ export function DuoSpaceScreen({
               <Users size={28} className="text-purple-500 mt-1 shrink-0" />
               <div>
                 <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-                  Notre Espace
+                  {t('duo.title')}
                 </h2>
                 <p className="text-sm" style={{ color: colors.textMuted }}>
-                  Connecte-toi avec ton/ta partenaire pour dialoguer ensemble.
+                  {t('duo.subtitle')}
                 </p>
               </div>
             </motion.div>
 
             <div className="space-y-4">
-              {/* Option principale: Bump */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -251,20 +219,19 @@ export function DuoSpaceScreen({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>Bump</h3>
+                        <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>{t('duo.bump.title')}</h3>
                         <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-                          Recommandé
+                          {t('duo.bump.tag')}
                         </span>
                       </div>
                       <p className="text-sm" style={{ color: colors.textMuted }}>
-                        Rapprochez vos téléphones pour vous connecter
+                        {t('duo.bump.desc')}
                       </p>
                     </div>
                   </div>
                 </Card>
               </motion.div>
 
-              {/* Séparateur */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -272,11 +239,10 @@ export function DuoSpaceScreen({
                 className="flex items-center gap-4 py-2"
               >
                 <div className="flex-1 h-px" style={{ background: colors.divider }} />
-                <span className="text-sm" style={{ color: colors.textMuted }}>ou</span>
+                <span className="text-sm" style={{ color: colors.textMuted }}>{t('duo.or')}</span>
                 <div className="flex-1 h-px" style={{ background: colors.divider }} />
               </motion.div>
 
-              {/* Option QR Code */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -293,14 +259,13 @@ export function DuoSpaceScreen({
                       <QrCode size={24} style={{ color: colors.textSecondary }} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold" style={{ color: colors.textPrimary }}>QR Code / Code manuel</h3>
-                      <p className="text-xs" style={{ color: colors.textMuted }}>Alternative si le bump ne marche pas</p>
+                      <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('duo.qr.title')}</h3>
+                      <p className="text-xs" style={{ color: colors.textMuted }}>{t('duo.qr.desc')}</p>
                     </div>
                   </div>
                 </Card>
               </motion.div>
 
-              {/* How it works */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -310,20 +275,15 @@ export function DuoSpaceScreen({
                 <Card variant="default" padding="lg">
                   <p className="font-medium mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
                     <Lightbulb size={18} className="text-amber-500" />
-                    Comment ça marche ?
+                    {t('duo.how.title')}
                   </p>
                   <ol className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
-                    {[
-                      'Vous êtes ensemble, chacun sur votre téléphone',
-                      'Rapprochez vos téléphones (ou scannez le QR code)',
-                      'Vous remplissez vos profils séparément',
-                      "L'app révèle vos zones communes"
-                    ].map((step, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {(['step1', 'step2', 'step3', 'step4'] as const).map((step, i) => (
+                      <li key={step} className="flex items-start gap-2">
                         <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold shrink-0">
                           {i + 1}
                         </span>
-                        {step}
+                        {t(`duo.how.${step}`)}
                       </li>
                     ))}
                   </ol>
@@ -333,7 +293,6 @@ export function DuoSpaceScreen({
           </motion.div>
         )}
 
-        {/* Étape: Bump */}
         {duoStep === 'bump' && (
           <DuoBumpStep
             key="bump"
@@ -342,7 +301,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape: QR Fallback */}
         {duoStep === 'qr-fallback' && (
           <motion.div
             key="qr-fallback"
@@ -351,7 +309,6 @@ export function DuoSpaceScreen({
             exit={{ opacity: 0 }}
             className="p-5"
           >
-            {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -363,13 +320,13 @@ export function DuoSpaceScreen({
                 style={{ color: colors.textMuted }}
               >
                 <ArrowLeft size={18} />
-                <span className="text-sm">Retour</span>
+                <span className="text-sm">{t('duo.back')}</span>
               </button>
               <h2 className="text-xl font-bold mb-1" style={{ color: colors.textPrimary }}>
-                Connexion par QR Code
+                {t('duo.qrFallback.title')}
               </h2>
               <p className="text-sm" style={{ color: colors.textMuted }}>
-                Choisissez votre méthode de connexion
+                {t('duo.qrFallback.subtitle')}
               </p>
             </motion.div>
 
@@ -382,7 +339,6 @@ export function DuoSpaceScreen({
                   exit={{ opacity: 0, y: -20 }}
                   className="space-y-3"
                 >
-                  {/* Générer */}
                   <Card
                     variant="elevated"
                     padding="md"
@@ -394,13 +350,12 @@ export function DuoSpaceScreen({
                         <QrCode size={24} style={{ color: colors.accent }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Générer mon code</h3>
-                        <p className="text-xs" style={{ color: colors.textMuted }}>Mon/ma partenaire scannera</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('duo.generate.title')}</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>{t('duo.generate.desc')}</p>
                       </div>
                     </div>
                   </Card>
 
-                  {/* Scanner */}
                   <Card
                     variant="elevated"
                     padding="md"
@@ -412,13 +367,12 @@ export function DuoSpaceScreen({
                         <Camera size={24} style={{ color: colors.accent }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Scanner un code</h3>
-                        <p className="text-xs" style={{ color: colors.textMuted }}>Je scanne le code partenaire</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('duo.scan.title')}</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>{t('duo.scan.desc')}</p>
                       </div>
                     </div>
                   </Card>
 
-                  {/* Manuel */}
                   <Card
                     variant="elevated"
                     padding="md"
@@ -430,15 +384,14 @@ export function DuoSpaceScreen({
                         <Link2 size={24} style={{ color: colors.textSecondary }} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>Code manuel</h3>
-                        <p className="text-xs" style={{ color: colors.textMuted }}>Saisir le code à 6 chiffres</p>
+                        <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('duo.manual.title')}</h3>
+                        <p className="text-xs" style={{ color: colors.textMuted }}>{t('duo.manual.desc')}</p>
                       </div>
                     </div>
                   </Card>
                 </motion.div>
               )}
 
-              {/* Mode: QR généré */}
               {connectionMode === 'generate' && (
                 <motion.div
                   key="generate"
@@ -451,7 +404,7 @@ export function DuoSpaceScreen({
                       <QRCode size={140} />
                     </div>
                     <div className="rounded-xl p-3 mb-3" style={{ background: colors.bgSecondary }}>
-                      <p className="text-xs mb-1" style={{ color: colors.accent }}>Code de connexion</p>
+                      <p className="text-xs mb-1" style={{ color: colors.accent }}>{t('duo.generate.codeLabel')}</p>
                       <div className="flex items-center justify-center gap-3">
                         <span className="text-2xl font-mono font-bold tracking-[0.3em]" style={{ color: colors.accent }}>
                           {generatedCode}
@@ -474,21 +427,20 @@ export function DuoSpaceScreen({
                   <Card variant="warning" padding="sm" className="mb-4">
                     <div className="flex items-center gap-3">
                       <Loader2 size={18} className="text-amber-600 animate-spin" />
-                      <p className="text-sm" style={{ color: colors.textSecondary }}>En attente...</p>
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>{t('duo.generate.waiting')}</p>
                     </div>
                   </Card>
 
                   <Button onClick={handleConnect} fullWidth variant="secondary" className="mb-2">
                     <CheckCircle2 size={18} />
-                    Simuler connexion (démo)
+                    {t('duo.generate.simulate')}
                   </Button>
                   <Button onClick={() => setConnectionMode('choice')} fullWidth variant="ghost">
-                    Retour
+                    {t('duo.back')}
                   </Button>
                 </motion.div>
               )}
 
-              {/* Mode: Scanner */}
               {connectionMode === 'scan' && (
                 <motion.div
                   key="scan"
@@ -524,13 +476,12 @@ export function DuoSpaceScreen({
 
                   {isScanning && (
                     <Button onClick={() => setConnectionMode('choice')} fullWidth variant="ghost">
-                      Annuler
+                      {t('duo.scan.cancel')}
                     </Button>
                   )}
                 </motion.div>
               )}
 
-              {/* Mode: Manuel */}
               {connectionMode === 'manual' && (
                 <motion.div
                   key="manual"
@@ -541,7 +492,7 @@ export function DuoSpaceScreen({
                   <Card variant="elevated" padding="lg" className="mb-4">
                     <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: colors.textPrimary }}>
                       <Link2 size={18} style={{ color: colors.accent }} />
-                      Code de connexion
+                      {t('duo.generate.codeLabel')}
                     </h3>
                     <div className="relative">
                       <input
@@ -553,9 +504,7 @@ export function DuoSpaceScreen({
                         onChange={(e) => setInputCode(e.target.value.replace(/\D/g, ''))}
                         autoFocus
                         className={`w-full px-4 py-4 rounded-xl border-2 text-center text-2xl font-mono tracking-[0.5em] focus:outline-none transition-colors ${
-                          isCodeValid
-                            ? 'border-green-400 bg-green-50'
-                            : ''
+                          isCodeValid ? 'border-green-400 bg-green-50' : ''
                         }`}
                         style={!isCodeValid ? {
                           borderColor: inputCode.length > 0 ? colors.accent : colors.border,
@@ -585,7 +534,7 @@ export function DuoSpaceScreen({
                       disabled={!isCodeValid}
                       className="mt-4"
                     >
-                      Se connecter
+                      {t('duo.manual.connect')}
                     </Button>
                   </Card>
 
@@ -597,7 +546,7 @@ export function DuoSpaceScreen({
                     fullWidth
                     variant="ghost"
                   >
-                    Retour
+                    {t('duo.back')}
                   </Button>
                 </motion.div>
               )}
@@ -605,7 +554,6 @@ export function DuoSpaceScreen({
           </motion.div>
         )}
 
-        {/* Étape 1: Connectés - Animation cercles */}
         {duoStep === 'connected' && (
           <DuoConnectedStep
             key="connected"
@@ -614,7 +562,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 2: Notre pacte */}
         {duoStep === 'pact' && (
           <DuoPactStep
             key="pact"
@@ -623,7 +570,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 3: Remplissage profil */}
         {duoStep === 'filling' && (
           <DuoFillingStep
             key="filling"
@@ -635,7 +581,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 4: En attente */}
         {duoStep === 'waiting' && (
           <DuoWaitingStep
             key="waiting"
@@ -644,7 +589,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 5: Prêts ? */}
         {duoStep === 'ready' && (
           <DuoReadyStep
             key="ready"
@@ -653,7 +597,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 6: Révélation */}
         {duoStep === 'reveal' && commonGround && (
           <DuoRevealStep
             key="reveal"
@@ -662,7 +605,6 @@ export function DuoSpaceScreen({
           />
         )}
 
-        {/* Étape 7: Récapitulatif */}
         {duoStep === 'summary' && commonGround && (
           <motion.div key="summary">
             <DuoSummaryStep
@@ -671,11 +613,10 @@ export function DuoSpaceScreen({
               partnerName={partnerName}
               partnerSafeword={partnerSafeword}
             />
-            {/* Bouton recommencer */}
             <div className="px-5 pb-6">
               <Button onClick={handleReset} fullWidth variant="ghost">
                 <ArrowLeft size={18} />
-                Nouvelle session
+                {t('duo.newSession')}
               </Button>
             </div>
           </motion.div>

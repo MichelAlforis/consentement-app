@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
+import { useTranslation } from '../../../../i18n';
 
 type AccordStep = Extract<TurnStep, 'accord-intro' | 'accord-p1' | 'accord-hidden' | 'accord-p2' | 'accord-result'>;
 
@@ -25,6 +26,7 @@ export function AccordFlow({
   accordVote0, accordVote1, accordsCount,
   onIntroNext, onP1Vote, onP2Ready, onP2Vote, onResult,
 }: AccordFlowProps) {
+  const { t } = useTranslation();
   const bothYes = accordVote0 === true && accordVote1 === true;
 
   return (
@@ -34,8 +36,8 @@ export function AccordFlow({
         <Overlay key="acc-intro" color="linear-gradient(160deg, #1d4ed8, #1e40af)">
           <div className="text-center mb-5">
             <div className="text-4xl mb-2">🤝</div>
-            <h3 className="text-white text-xl font-black">Case Accord</h3>
-            <p className="text-white/65 text-sm mt-1">Les deux doivent dire OUI pour que ça compte</p>
+            <h3 className="text-white text-xl font-black">{t('gooseGame.accord.title')}</h3>
+            <p className="text-white/65 text-sm mt-1">{t('gooseGame.accord.sub')}</p>
           </div>
           <div className="rounded-2xl p-4 mb-6" style={{ background: 'rgba(255,255,255,0.1)' }}>
             <p className="text-white text-base font-semibold" style={{ lineHeight: 1.55 }}>{activity}</p>
@@ -45,7 +47,7 @@ export function AccordFlow({
             className="w-full py-4 rounded-2xl font-bold text-base"
             style={{ background: 'rgba(255,255,255,0.95)', color: '#1d4ed8' }}
           >
-            Voter en secret →
+            {t('gooseGame.accord.voteSecret')}
           </button>
         </Overlay>
       )}
@@ -54,8 +56,8 @@ export function AccordFlow({
         <Overlay key="acc-p1" color="#0f172a">
           <div className="text-center mb-4">
             <span className="text-3xl">{player1.emoji}</span>
-            <p className="text-white font-bold mt-1">{player1.name}, c'est ton vote</p>
-            <p className="text-white/45 text-xs mt-0.5">L'autre ne voit pas ta réponse</p>
+            <p className="text-white font-bold mt-1">{t('gooseGame.accord.yourVote', { name: player1.name })}</p>
+            <p className="text-white/45 text-xs mt-0.5">{t('gooseGame.accord.noSee')}</p>
           </div>
           <p className="text-white/75 text-sm text-center mb-7 leading-relaxed">{activity}</p>
           <VoteButtons onVote={onP1Vote} />
@@ -67,10 +69,10 @@ export function AccordFlow({
           <div className="text-center py-6">
             <div className="text-5xl mb-4">🙈</div>
             <h3 className="text-white text-xl font-bold mb-2">
-              Passe le téléphone à {player2.name}
+              {t('gooseGame.accord.passPhone', { name: player2.name })}
             </h3>
             <p className="text-white/40 text-sm mb-8">
-              {player1.name} a voté. Ne montrez pas l'écran.
+              {t('gooseGame.accord.voted', { name: player1.name })}
             </p>
             <motion.button
               whileTap={{ scale: 0.97 }}
@@ -78,7 +80,7 @@ export function AccordFlow({
               className="w-full py-4 rounded-2xl font-bold text-base"
               style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.22)' }}
             >
-              {player2.name} est prêt·e →
+              {t('gooseGame.accord.ready', { name: player2.name })}
             </motion.button>
           </div>
         </Overlay>
@@ -88,8 +90,8 @@ export function AccordFlow({
         <Overlay key="acc-p2" color="#0f172a">
           <div className="text-center mb-4">
             <span className="text-3xl">{player2.emoji}</span>
-            <p className="text-white font-bold mt-1">{player2.name}, c'est ton vote</p>
-            <p className="text-white/45 text-xs mt-0.5">Vote sans regarder ce qu'a répondu {player1.name}</p>
+            <p className="text-white font-bold mt-1">{t('gooseGame.accord.yourVote', { name: player2.name })}</p>
+            <p className="text-white/45 text-xs mt-0.5">{t('gooseGame.accord.voteWithout', { name: player1.name })}</p>
           </div>
           <p className="text-white/75 text-sm text-center mb-7 leading-relaxed">{activity}</p>
           <VoteButtons onVote={onP2Vote} />
@@ -113,23 +115,23 @@ export function AccordFlow({
               {bothYes ? '🎉' : '🤗'}
             </motion.div>
             <h3 className="text-white text-xl font-black mb-2">
-              {bothYes ? 'Accord réussi !' : 'Pas de souci'}
+              {bothYes ? t('gooseGame.accord.success') : t('gooseGame.accord.noWorry')}
             </h3>
             {bothYes ? (
               <>
                 <p className="text-white/70 text-sm mb-2">
-                  {player1.name} ✅ · {player2.name} ✅
+                  {t('gooseGame.accord.bothYesPlayers', { p1: player1.name, p2: player2.name })}
                 </p>
                 <p className="text-white/55 text-sm mb-7">
-                  Accord #{accordsCount + 1} — vous avez dit oui ensemble.
+                  {t('gooseGame.accord.accordNum', { count: accordsCount + 1 })}
                 </p>
               </>
             ) : (
               <>
                 <p className="text-white/60 text-sm mb-2">
-                  Un non a été dit — c'est le consentement qui fonctionne.
+                  {t('gooseGame.accord.noSaid')}
                 </p>
-                <p className="text-white/40 text-xs mb-7">Personne ne recule, on continue.</p>
+                <p className="text-white/40 text-xs mb-7">{t('gooseGame.accord.noRecule')}</p>
               </>
             )}
             <motion.button
@@ -138,7 +140,7 @@ export function AccordFlow({
               className="w-full py-4 rounded-2xl font-bold text-base"
               style={{ background: 'rgba(255,255,255,0.95)', color: '#1e293b' }}
             >
-              Continuer →
+              {t('gooseGame.accord.continueBtn')}
             </motion.button>
           </div>
         </Overlay>
@@ -148,20 +150,19 @@ export function AccordFlow({
   );
 }
 
-// ─── Boutons Oui / Non réutilisés pour P1 et P2 ──────────────────────────────
-
 function VoteButtons({ onVote }: { onVote: (v: boolean) => void }) {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-3">
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(false)}
         className="flex-1 py-4 rounded-2xl font-bold text-lg"
         style={{ background: 'rgba(239,68,68,0.18)', color: '#fca5a5', border: '1.5px solid rgba(239,68,68,0.35)' }}>
-        Non 🚫
+        {t('gooseGame.accord.no')}
       </motion.button>
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(true)}
         className="flex-1 py-4 rounded-2xl font-bold text-lg"
         style={{ background: 'rgba(34,197,94,0.18)', color: '#86efac', border: '1.5px solid rgba(34,197,94,0.35)' }}>
-        Oui ✅
+        {t('gooseGame.accord.yes')}
       </motion.button>
     </div>
   );

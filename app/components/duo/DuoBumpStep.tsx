@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Wifi, WifiOff, QrCode } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoBumpStepProps {
   onBumpSuccess: () => void;
@@ -15,10 +16,10 @@ type BumpState = 'waiting' | 'detecting' | 'connecting' | 'failed';
 
 export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [bumpState, setBumpState] = useState<BumpState>('waiting');
   const [pulseCount, setPulseCount] = useState(0);
 
-  // Animation de pulse pour simuler la recherche
   useEffect(() => {
     if (bumpState === 'waiting') {
       const interval = setInterval(() => {
@@ -28,10 +29,8 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
     }
   }, [bumpState]);
 
-  // Simuler une détection après quelques secondes (pour la démo)
   const handleSimulateBump = () => {
     setBumpState('detecting');
-
     setTimeout(() => {
       setBumpState('connecting');
       setTimeout(() => {
@@ -40,7 +39,6 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
     }, 1000);
   };
 
-  // Simuler un échec puis fallback QR
   const handleSimulateFail = () => {
     setBumpState('detecting');
     setTimeout(() => {
@@ -56,7 +54,6 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
       className="flex flex-col items-center justify-center min-h-[70vh] px-6"
     >
       <AnimatePresence mode="wait">
-        {/* État: En attente du bump */}
         {bumpState === 'waiting' && (
           <motion.div
             key="waiting"
@@ -65,29 +62,17 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
             exit={{ opacity: 0, y: -20 }}
             className="text-center"
           >
-            {/* Animation des deux téléphones */}
             <div className="relative w-64 h-48 mb-8">
-              {/* Ondes de recherche */}
               {[0, 1, 2].map((i) => (
                 <motion.div
                   key={i}
                   className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-purple-300"
                   initial={{ width: 60, height: 60, opacity: 0.6 }}
-                  animate={{
-                    width: [60, 200],
-                    height: [60, 200],
-                    opacity: [0.6, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: i * 0.6,
-                    ease: 'easeOut',
-                  }}
+                  animate={{ width: [60, 200], height: [60, 200], opacity: [0.6, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.6, ease: 'easeOut' }}
                 />
               ))}
 
-              {/* Téléphone gauche (moi) */}
               <motion.div
                 animate={{ x: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -96,10 +81,9 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <div className="w-16 h-28 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-lg border-2 border-gray-700">
                   <Smartphone size={24} className="text-purple-400" />
                 </div>
-                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>Toi</p>
+                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>{t('duo.you')}</p>
               </motion.div>
 
-              {/* Téléphone droit (partenaire) */}
               <motion.div
                 animate={{ x: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
@@ -108,10 +92,9 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <div className="w-16 h-28 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center shadow-lg border-2 border-gray-700">
                   <Smartphone size={24} className="text-pink-400" />
                 </div>
-                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>Partenaire</p>
+                <p className="text-xs mt-2 text-center" style={{ color: colors.textMuted }}>{t('duo.partner')}</p>
               </motion.div>
 
-              {/* Icône Bluetooth/NFC au centre */}
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -122,33 +105,31 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
             </div>
 
             <h2 className="text-2xl font-bold mb-3" style={{ color: colors.textPrimary }}>
-              Rapprochez vos téléphones
+              {t('duo.bump.waiting.instruction')}
             </h2>
             <p className="mb-2" style={{ color: colors.textMuted }}>
-              Faites un "bump" pour vous connecter
+              {t('duo.bump.waiting.sub')}
             </p>
             <motion.p
               animate={{ opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="text-sm text-purple-500"
             >
-              Recherche en cours...
+              {t('duo.bump.waiting.searching')}
             </motion.p>
 
-            {/* Boutons démo */}
             <div className="mt-8 space-y-3 w-full max-w-xs">
               <Button onClick={handleSimulateBump} fullWidth variant="primary">
                 <Wifi size={18} />
-                Simuler le bump (démo)
+                {t('duo.bump.waiting.simBump')}
               </Button>
               <Button onClick={handleSimulateFail} fullWidth variant="ghost" className="opacity-50">
-                Simuler un échec
+                {t('duo.bump.waiting.simFail')}
               </Button>
             </div>
           </motion.div>
         )}
 
-        {/* État: Détection en cours */}
         {bumpState === 'detecting' && (
           <motion.div
             key="detecting"
@@ -163,15 +144,14 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               className="w-20 h-20 mx-auto mb-6 rounded-full border-4 border-purple-200 border-t-purple-500"
             />
             <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-              Appareil détecté !
+              {t('duo.bump.detecting.title')}
             </h2>
             <p style={{ color: colors.textMuted }}>
-              Connexion en cours...
+              {t('duo.bump.detecting.sub')}
             </p>
           </motion.div>
         )}
 
-        {/* État: Connexion réussie */}
         {bumpState === 'connecting' && (
           <motion.div
             key="connecting"
@@ -196,12 +176,11 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               </motion.span>
             </motion.div>
             <h2 className="text-xl font-bold text-green-600">
-              Bump réussi !
+              {t('duo.bump.success')}
             </h2>
           </motion.div>
         )}
 
-        {/* État: Échec - Fallback QR */}
         {bumpState === 'failed' && (
           <motion.div
             key="failed"
@@ -219,36 +198,32 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
             </motion.div>
 
             <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-              Connexion difficile
+              {t('duo.bump.failed.title')}
             </h2>
             <p className="mb-6" style={{ color: colors.textMuted }}>
-              Pas de souci ! Utilisons le QR code à la place.
+              {t('duo.bump.failed.sub')}
             </p>
 
             <Card variant="default" padding="md" className="mb-6 text-left">
               <p className="text-sm" style={{ color: colors.textSecondary }}>
-                <strong>Pourquoi ça n'a pas marché ?</strong>
+                <strong>{t('duo.bump.failed.why.title')}</strong>
                 <br />
-                La connexion directe peut échouer si :
+                {t('duo.bump.failed.why.sub')}
               </p>
               <ul className="text-sm mt-2 space-y-1" style={{ color: colors.textMuted }}>
-                <li>• iPhone ↔ Android (limitations Apple)</li>
-                <li>• Bluetooth désactivé</li>
-                <li>• Téléphones trop éloignés</li>
+                <li>• {t('duo.bump.failed.why.reason1')}</li>
+                <li>• {t('duo.bump.failed.why.reason2')}</li>
+                <li>• {t('duo.bump.failed.why.reason3')}</li>
               </ul>
             </Card>
 
             <div className="space-y-3 w-full max-w-xs mx-auto">
               <Button onClick={onFallbackQR} fullWidth variant="primary">
                 <QrCode size={18} />
-                Utiliser le QR code
+                {t('duo.bump.failed.useQr')}
               </Button>
-              <Button
-                onClick={() => setBumpState('waiting')}
-                fullWidth
-                variant="ghost"
-              >
-                Réessayer le bump
+              <Button onClick={() => setBumpState('waiting')} fullWidth variant="ghost">
+                {t('duo.bump.failed.retry')}
               </Button>
             </div>
           </motion.div>

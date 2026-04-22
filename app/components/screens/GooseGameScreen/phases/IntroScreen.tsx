@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { SavedGooseGame } from '../../../../data/goose-game';
 import { clearSavedGame } from '../../../../data/goose-game';
+import { useTranslation } from '../../../../i18n';
 
 interface IntroScreenProps {
   savedGame: SavedGooseGame | null;
@@ -10,6 +11,15 @@ interface IntroScreenProps {
 }
 
 export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
+  const { t } = useTranslation();
+
+  const cells = [
+    { emoji: '⏸️', bg: '#f87171', label: t('gooseGame.intro.cellPause'),      desc: t('gooseGame.intro.cellPauseDesc') },
+    { emoji: '⭐', bg: '#fbbf24', label: t('gooseGame.intro.cellChance'),     desc: t('gooseGame.intro.cellChanceDesc') },
+    { emoji: '🤝', bg: '#60a5fa', label: t('gooseGame.intro.cellAccord'),     desc: t('gooseGame.intro.cellAccordDesc') },
+    { emoji: '💜', bg: '#c084fc', label: t('gooseGame.intro.cellComplicite'), desc: t('gooseGame.intro.cellCompliciteDesc') },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -19,10 +29,10 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
     >
       <div className="text-center mt-4">
         <div className="text-6xl mb-3">🎲</div>
-        <h1 className="text-2xl font-black mb-2">Le Jeu de l'Oie</h1>
+        <h1 className="text-2xl font-black mb-2">{t('gooseGame.intro.title')}</h1>
         <p className="text-white/65 text-sm leading-relaxed max-w-[280px] mx-auto">
-          2 joueurs · 1 téléphone · 24 cases<br />
-          Avancez ensemble, explorez ensemble.
+          {t('gooseGame.intro.sub1')}<br />
+          {t('gooseGame.intro.sub2')}
         </p>
       </div>
 
@@ -30,12 +40,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         className="w-full max-w-[300px] rounded-2xl p-4 flex flex-col gap-2.5"
         style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
       >
-        {[
-          { emoji: '⏸️', bg: '#f87171', label: 'Pause',      desc: 'Un moment obligatoire pour se parler' },
-          { emoji: '⭐', bg: '#fbbf24', label: 'Chance',     desc: '+2 cases bonus' },
-          { emoji: '🤝', bg: '#60a5fa', label: 'Accord',     desc: 'Les deux disent OUI — ou on passe' },
-          { emoji: '💜', bg: '#c084fc', label: 'Complicité', desc: 'Activité Douceur imposée' },
-        ].map(item => (
+        {cells.map(item => (
           <div key={item.label} className="flex items-center gap-3">
             <span style={{
               fontSize: 17, width: 32, height: 32,
@@ -57,7 +62,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
           className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm"
           style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.25)' }}
         >
-          ↩️ Reprendre la partie en cours
+          {t('gooseGame.intro.resume')}
         </motion.button>
       )}
 
@@ -67,7 +72,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         className="w-full max-w-[300px] py-4 rounded-2xl font-bold text-base"
         style={{ background: 'rgba(255,255,255,0.95)', color: '#1e293b' }}
       >
-        {savedGame ? '✨ Nouvelle partie' : '✨ Commencer'}
+        {savedGame ? t('gooseGame.intro.new') : t('gooseGame.intro.start')}
       </motion.button>
     </motion.div>
   );

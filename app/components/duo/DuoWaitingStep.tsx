@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoWaitingStepProps {
   partnerName: string;
@@ -12,6 +13,7 @@ interface DuoWaitingStepProps {
 
 export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [dots, setDots] = useState('');
 
   // Animation des points
@@ -104,14 +106,14 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
         className="text-center"
       >
         <p className="text-2xl mb-2">
-          Tu as terminé 💜
+          {t('duo.waiting.done')}
         </p>
         <motion.p
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
           style={{ color: colors.textMuted }}
         >
-          En attente de {partnerName}{dots}
+          {t('duo.waiting.waitingPartner', { name: partnerName })}{dots}
         </motion.p>
       </motion.div>
 
@@ -123,9 +125,9 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
         className="mt-8 text-sm italic text-center max-w-xs"
         style={{ color: colors.textMuted }}
       >
-        Chacun avance à son rythme.
-        <br />
-        C'est ce qui rend ce moment précieux.
+        {t('duo.waiting.poem').split('\n').map((line, i) => (
+          <span key={i}>{line}{i === 0 && <br />}</span>
+        ))}
       </motion.p>
     </motion.div>
   );

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PAWN_EMOJIS } from '../../../../data/goose-game';
+import { useTranslation } from '../../../../i18n';
 
 interface SetupPlayerProps {
   playerIndex: 0 | 1;
@@ -10,6 +11,7 @@ interface SetupPlayerProps {
 }
 
 export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerProps) {
+  const { t } = useTranslation();
   const [name, setName]   = useState('');
   const [emoji, setEmoji] = useState<string | null>(null);
   const available = PAWN_EMOJIS.filter(e => e !== otherEmoji);
@@ -26,16 +28,16 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
       >
         <div className="text-center mt-4">
           <div className="text-4xl mb-2">{playerIndex === 0 ? '1️⃣' : '2️⃣'}</div>
-          <h2 className="text-xl font-bold text-white">Joueur {playerIndex + 1}</h2>
-          <p className="text-white/60 text-sm mt-1">Prénom et pion</p>
+          <h2 className="text-xl font-bold text-white">{t('gooseGame.setup.title', { n: playerIndex + 1 })}</h2>
+          <p className="text-white/60 text-sm mt-1">{t('gooseGame.setup.sub')}</p>
         </div>
 
         <div>
-          <label className="block text-white/80 text-sm font-semibold mb-2">Prénom</label>
+          <label className="block text-white/80 text-sm font-semibold mb-2">{t('gooseGame.setup.nameLabel')}</label>
           <input
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder={playerIndex === 0 ? 'Ex. Léa' : 'Ex. Marc'}
+            placeholder={playerIndex === 0 ? t('gooseGame.setup.placeholder1') : t('gooseGame.setup.placeholder2')}
             maxLength={20}
             className="w-full px-4 py-3 rounded-2xl text-gray-900 font-medium text-base outline-none"
             style={{ background: 'rgba(255,255,255,0.95)' }}
@@ -43,7 +45,7 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
         </div>
 
         <div>
-          <label className="block text-white/80 text-sm font-semibold mb-3">Ton pion</label>
+          <label className="block text-white/80 text-sm font-semibold mb-3">{t('gooseGame.setup.pawnLabel')}</label>
           <div className="flex justify-center gap-3 flex-wrap">
             {available.map(e => (
               <motion.button
@@ -74,7 +76,7 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
             marginTop: 'auto', transition: 'all 0.2s ease',
           }}
         >
-          {playerIndex === 0 ? 'Suivant →' : '🎲 Commencer'}
+          {playerIndex === 0 ? t('gooseGame.setup.next') : t('gooseGame.setup.start')}
         </motion.button>
       </motion.div>
     </AnimatePresence>

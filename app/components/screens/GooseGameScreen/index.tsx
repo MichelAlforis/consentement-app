@@ -9,6 +9,7 @@ import { BoardGrid, Legend } from './components/Board';
 import { ConfettiParticles } from './components/ConfettiParticles';
 import { ZoneIndicator } from './components/ZoneIndicator';
 
+import { useTranslation } from '../../../i18n';
 import { IntroScreen } from './phases/IntroScreen';
 import { SetupPlayer } from './phases/SetupPlayer';
 import { PacteScreen } from './phases/PacteScreen';
@@ -26,6 +27,7 @@ interface GooseGameScreenProps {
 }
 
 export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
+  const { t } = useTranslation();
   if (!isPremium) {
     return (
       <motion.div
@@ -36,9 +38,9 @@ export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
       >
         <div className="text-5xl">🔒</div>
         <div>
-          <h2 className="text-xl font-black mb-2">Jeu de l'Oie — Premium</h2>
+          <h2 className="text-xl font-black mb-2">{t('gooseGame.premium')}</h2>
           <p className="text-white/60 text-sm leading-relaxed max-w-[260px] mx-auto">
-            Ce jeu est réservé aux membres Premium.
+            {t('gooseGame.premiumSub')}
           </p>
         </div>
       </motion.div>
@@ -50,6 +52,7 @@ export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
 // ─── Jeu ──────────────────────────────────────────────────────────────────────
 
 function GooseGameInner({ isAdult }: { isAdult: boolean }) {
+  const { t } = useTranslation();
   const game = useGooseGame({ isAdult });
 
   const {
@@ -165,7 +168,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
         >
           <span style={{ fontSize: 30 }}>{activePawn}</span>
           <p className="text-white/55 text-sm mt-1">
-            C'est ton tour, <span className="text-white font-bold">{activeName}</span>
+            {t('gooseGame.yourTurn', { name: activeName })}
           </p>
         </motion.div>
 
@@ -187,13 +190,13 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
                 borderRadius: 16, padding: '12px 36px', fontWeight: 800, fontSize: 16,
               }}
             >
-              Lancer 🎲
+              {t('gooseGame.roll')}
             </motion.button>
           )}
 
           {(step === 'rolling' || animatingPos !== null) && (
             <p className="text-white/40 text-sm animate-pulse">
-              {animatingPos !== null ? 'En route…' : 'En train de lancer…'}
+              {animatingPos !== null ? t('gooseGame.moving') : t('gooseGame.rolling')}
             </p>
           )}
         </div>
@@ -203,7 +206,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
             style={{ background: 'rgba(96,165,250,0.18)', border: '1px solid rgba(96,165,250,0.3)' }}>
             <span style={{ fontSize: 14 }}>🤝</span>
             <span className="text-blue-300 text-sm font-semibold">
-              {accordsCount} accord{accordsCount > 1 ? 's' : ''}
+              {accordsCount} {accordsCount > 1 ? t('gooseGame.accordBadgePlural') : t('gooseGame.accordBadge')}
             </span>
           </div>
         )}

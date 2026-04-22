@@ -7,6 +7,7 @@ import { Button, Card, ComfortSlider } from '../ui';
 import { comfortCategories } from '../../data';
 import { PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoFillingStepProps {
   partnerName: string;
@@ -27,6 +28,7 @@ export function DuoFillingStep({
   onComplete,
 }: DuoFillingStepProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [showSafeword, setShowSafeword] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState<'exploring' | 'almost' | 'done'>('exploring');
@@ -35,7 +37,6 @@ export function DuoFillingStep({
   const currentCategory = comfortCategories[currentCategoryKey];
   const isLastCategory = currentCategoryIndex === categoryKeys.length - 1;
 
-  // Simuler la progression du partenaire
   useEffect(() => {
     const timer1 = setTimeout(() => setPartnerStatus('almost'), 8000 + Math.random() * 5000);
     return () => clearTimeout(timer1);
@@ -49,16 +50,11 @@ export function DuoFillingStep({
     }
   };
 
-  const handleFinish = () => {
-    onComplete();
-  };
-
-  // Messages de status partenaire
-  const partnerMessages = {
-    exploring: `${partnerName} explore ses zones de confort...`,
-    almost: `${partnerName} a presque fini...`,
-    done: `${partnerName} a terminé`,
-  };
+  const partnerMessage = partnerStatus === 'exploring'
+    ? t('duo.filling.partnerExploring', { name: partnerName })
+    : partnerStatus === 'almost'
+      ? t('duo.filling.partnerAlmost', { name: partnerName })
+      : t('duo.filling.partnerDone', { name: partnerName });
 
   return (
     <motion.div
@@ -67,20 +63,18 @@ export function DuoFillingStep({
       exit={{ opacity: 0 }}
       className="px-5 py-6"
     >
-      {/* Header avec status partenaire */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
         <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-          Chacun son moment
+          {t('duo.filling.title')}
         </h2>
         <p className="text-sm mb-4" style={{ color: colors.textMuted }}>
-          Remplis ton profil en privé, à ton rythme
+          {t('duo.filling.sub')}
         </p>
 
-        {/* Status partenaire */}
         <motion.div
           className="bg-purple-50 rounded-xl p-3 flex items-center gap-3"
           animate={{ opacity: [0.7, 1, 0.7] }}
@@ -101,9 +95,7 @@ export function DuoFillingStep({
               />
             )}
           </motion.div>
-          <p className="text-sm text-purple-700 italic">
-            {partnerMessages[partnerStatus]}
-          </p>
+          <p className="text-sm text-purple-700 italic">{partnerMessage}</p>
         </motion.div>
       </motion.div>
 
@@ -115,7 +107,6 @@ export function DuoFillingStep({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            {/* Progress */}
             <div className="flex gap-2 mb-6">
               {categoryKeys.map((key, idx) => (
                 <div
@@ -126,16 +117,15 @@ export function DuoFillingStep({
               ))}
             </div>
 
-            {/* Catégorie actuelle */}
             <Card variant="elevated" padding="lg" className="mb-4">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl">{currentCategory.icon}</span>
                 <div>
                   <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>
-                    {currentCategory.title}
+                    {t(`comfort.${currentCategoryKey}.title`)}
                   </h3>
                   <p className="text-sm" style={{ color: colors.textMuted }}>
-                    {currentCategory.description}
+                    {t(`comfort.${currentCategoryKey}.description`)}
                   </p>
                 </div>
               </div>
@@ -150,7 +140,9 @@ export function DuoFillingStep({
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg">{item.icon}</span>
-                      <span className="font-medium" style={{ color: colors.textSecondary }}>{item.label}</span>
+                      <span className="font-medium" style={{ color: colors.textSecondary }}>
+                        {t(`comfort.${currentCategoryKey}.items.${item.id}`)}
+                      </span>
                     </div>
                     <ComfortSlider
                       value={personalProfile[currentCategoryKey][item.id] || 0}
@@ -161,12 +153,8 @@ export function DuoFillingStep({
               </div>
             </Card>
 
-            <Button
-              onClick={handleNextCategory}
-              fullWidth
-              variant="primary"
-            >
-              {isLastCategory ? 'Définir mon mot d\'alerte' : 'Continuer'}
+            <Button onClick={handleNextCategory} fullWidth variant="primary">
+              {isLastCategory ? t('duo.filling.safewordBtn') : t('duo.filling.next')}
               <ChevronRight size={18} />
             </Button>
           </motion.div>
@@ -177,7 +165,6 @@ export function DuoFillingStep({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            {/* Progress complété */}
             <div className="flex gap-2 mb-6">
               {categoryKeys.map((_, idx) => (
                 <div key={idx} className="flex-1 h-1.5 rounded-full bg-purple-500" />
@@ -188,10 +175,10 @@ export function DuoFillingStep({
               <div className="text-center mb-6">
                 <span className="text-4xl mb-3 block">🛡️</span>
                 <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>
-                  Ton mot d'alerte
+                  {t('duo.filling.safeword.title')}
                 </h3>
                 <p className="text-sm" style={{ color: colors.textMuted }}>
-                  Un mot pour dire "stop" à tout moment, sans avoir à expliquer
+                  {t('duo.filling.safeword.sub')}
                 </p>
               </div>
 
@@ -199,22 +186,22 @@ export function DuoFillingStep({
                 type="text"
                 value={personalProfile.safeword}
                 onChange={(e) => onUpdateSafeword(e.target.value)}
-                placeholder="Ex: Rouge, Ananas, Stop..."
+                placeholder={t('duo.filling.safeword.placeholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none text-center text-lg"
               />
 
               <p className="text-xs mt-3 text-center" style={{ color: colors.textMuted }}>
-                Ce mot sera partagé avec {partnerName}
+                {t('duo.filling.sharedWith', { name: partnerName })}
               </p>
             </Card>
 
             <Button
-              onClick={handleFinish}
+              onClick={onComplete}
               fullWidth
               variant="primary"
               disabled={!personalProfile.safeword.trim()}
             >
-              J'ai terminé 💜
+              {t('duo.filling.done')}
             </Button>
           </motion.div>
         )}

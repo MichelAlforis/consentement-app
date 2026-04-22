@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { comfortLevels } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface ComfortSliderProps {
   value: number;
@@ -12,6 +13,7 @@ interface ComfortSliderProps {
 
 export function ComfortSlider({ value = 0, onChange, disabled = false }: ComfortSliderProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const currentLevel = comfortLevels[value] || comfortLevels[0];
 
   return (
@@ -60,7 +62,7 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
           className="text-xs font-medium px-2 py-1 rounded-full"
           style={{ color: currentLevel.color, backgroundColor: `${currentLevel.color}15` }}
         >
-          {currentLevel.label}
+          {t(`data.levels.${value}`)}
         </span>
       </motion.div>
     </div>

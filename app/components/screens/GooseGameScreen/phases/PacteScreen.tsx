@@ -2,12 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Player } from '../types';
-
-const PACTE_LINES = [
-  "Un non est toujours respecté — sans question, sans pression.",
-  "Ce que nous partageons ici reste entre nous.",
-  "Nous pouvons faire une pause ou arrêter à tout moment.",
-];
+import { useTranslation } from '../../../../i18n';
 
 const PACTE_ICONS = ['🤝', '🔒', '⏸️'];
 
@@ -18,11 +13,19 @@ interface PacteScreenProps {
 }
 
 export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
+  const { t } = useTranslation();
   const [ready, setReady] = useState(false);
 
+  const pacteLines = [
+    t('gooseGame.pacte.line1'),
+    t('gooseGame.pacte.line2'),
+    t('gooseGame.pacte.line3'),
+  ];
+
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 500 + PACTE_LINES.length * 500 + 400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setReady(true), 500 + pacteLines.length * 500 + 400);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -32,7 +35,6 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
       className="flex flex-col items-center gap-6 p-6 pt-8 min-h-[80vh]"
       style={{ color: 'white' }}
     >
-      {/* Pions */}
       <motion.div
         initial={{ opacity: 0, scale: 0.7 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -56,13 +58,12 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
         transition={{ delay: 0.3 }}
         className="text-center"
       >
-        <h2 className="text-xl font-black mb-1">Notre pacte</h2>
-        <p className="text-white/50 text-sm">Avant de commencer, nous nous engageons à :</p>
+        <h2 className="text-xl font-black mb-1">{t('gooseGame.pacte.title')}</h2>
+        <p className="text-white/50 text-sm">{t('gooseGame.pacte.sub')}</p>
       </motion.div>
 
-      {/* Engagements */}
       <div className="w-full max-w-[300px] flex flex-col gap-3">
-        {PACTE_LINES.map((line, i) => (
+        {pacteLines.map((line, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: -20 }}
@@ -102,7 +103,7 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
           transition: 'all 0.4s ease',
         }}
       >
-        Nous acceptons ✨
+        {t('gooseGame.pacte.acceptBtn')}
       </motion.button>
     </motion.div>
   );

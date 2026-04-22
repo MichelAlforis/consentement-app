@@ -6,6 +6,7 @@ import { Check, Heart } from 'lucide-react';
 import { comfortCategories } from '../../data';
 import { CommonGround } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoRevealStepProps {
   commonGround: CommonGround;
@@ -23,14 +24,14 @@ const categoryEmoji: Record<CategoryKey, string> = {
 
 export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) {
   const { colors } = useTheme();
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(-1); // -1 = intro
+  const { t } = useTranslation();
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(-1);
   const [showItems, setShowItems] = useState(false);
   const [revealedItems, setRevealedItems] = useState<string[]>([]);
 
   const currentCategoryKey = categoryKeys[currentCategoryIndex];
   const currentCategory = currentCategoryKey ? comfortCategories[currentCategoryKey] : null;
 
-  // Commencer la révélation après 1.5 secondes
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentCategoryIndex(0);
@@ -38,22 +39,16 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
     return () => clearTimeout(timer);
   }, []);
 
-  // Révéler les items un par un quand on change de catégorie
   useEffect(() => {
     if (currentCategoryIndex < 0 || !currentCategory) return;
-
     setShowItems(false);
     setRevealedItems([]);
-
-    // Petit délai avant de montrer les items
     const showTimer = setTimeout(() => {
       setShowItems(true);
     }, 800);
-
     return () => clearTimeout(showTimer);
   }, [currentCategoryIndex, currentCategory]);
 
-  // Révéler les items progressivement
   useEffect(() => {
     if (!showItems || !currentCategory) return;
 
@@ -61,7 +56,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
       item => commonGround[currentCategoryKey][item.id]?.compatible
     );
 
-    // Si pas d'items compatibles, passer directement à la suite
     if (compatibleItems.length === 0) {
       const timer = setTimeout(() => {
         if (currentCategoryIndex < categoryKeys.length - 1) {
@@ -73,7 +67,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
       return () => clearTimeout(timer);
     }
 
-    // Révéler les items un par un
     const itemIds = compatibleItems.map(item => item.id);
     let currentIndex = 0;
 
@@ -84,12 +77,10 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
         currentIndex++;
       } else {
         clearInterval(interval);
-        // Passer à la catégorie suivante après une pause
         setTimeout(() => {
           if (currentCategoryIndex < categoryKeys.length - 1) {
             setCurrentCategoryIndex(prev => prev + 1);
           } else {
-            // Fini ! Passer au summary après un délai
             setTimeout(onComplete, 2000);
           }
         }, 1500);
@@ -99,7 +90,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
     return () => clearInterval(interval);
   }, [showItems, currentCategory, currentCategoryKey, commonGround, currentCategoryIndex, onComplete]);
 
-  // Intro
   if (currentCategoryIndex < 0) {
     return (
       <motion.div
@@ -115,7 +105,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
           ✨
         </motion.div>
         <h2 className="text-2xl font-bold text-center" style={{ color: colors.textPrimary }}>
-          Découvrons vos zones communes...
+          {t('duo.reveal.intro')}
         </h2>
       </motion.div>
     );
@@ -129,6 +119,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
 
   const isLastCategory = currentCategoryIndex === categoryKeys.length - 1;
   const allItemsRevealed = revealedItems.length === compatibleItems.length;
+  const zoneCount = compatibleItems.length;
 
   return (
     <motion.div
@@ -136,7 +127,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
       animate={{ opacity: 1 }}
       className="px-5 py-6 min-h-[70vh]"
     >
-      {/* Progress dots */}
       <div className="flex justify-center gap-3 mb-8">
         {categoryKeys.map((key, idx) => (
           <motion.div
@@ -157,7 +147,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
         ))}
       </div>
 
-      {/* Catégorie actuelle */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentCategoryKey}
@@ -165,7 +154,6 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
         >
-          {/* Header catégorie */}
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
@@ -179,11 +167,10 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
               {categoryEmoji[currentCategoryKey]}
             </motion.span>
             <h3 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
-              {currentCategory.title}
+              {t(`comfort.${currentCategoryKey}.title`)}
             </h3>
           </motion.div>
 
-          {/* Items révélés */}
           {showItems && (
             <div className="space-y-3 max-w-sm mx-auto">
               {compatibleItems.length > 0 ? (
@@ -193,21 +180,15 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                     <motion.div
                       key={item.id}
                       initial={{ opacity: 0, x: -20, scale: 0.8 }}
-                      animate={isRevealed ? {
-                        opacity: 1,
-                        x: 0,
-                        scale: 1
-                      } : {
-                        opacity: 0,
-                        x: -20,
-                        scale: 0.8
-                      }}
+                      animate={isRevealed ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: -20, scale: 0.8 }}
                       transition={{ type: 'spring', stiffness: 300 }}
                       className="rounded-xl p-4 shadow-sm border flex items-center gap-3"
                       style={{ background: colors.bgCard, borderColor: colors.border }}
                     >
                       <span className="text-2xl">{item.icon}</span>
-                      <span className="flex-1 font-medium" style={{ color: colors.textSecondary }}>{item.label}</span>
+                      <span className="flex-1 font-medium" style={{ color: colors.textSecondary }}>
+                        {t(`comfort.${currentCategoryKey}.items.${item.id}`)}
+                      </span>
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={isRevealed ? { scale: 1 } : { scale: 0 }}
@@ -225,17 +206,16 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                   className="text-center py-8"
                 >
                   <p className="italic" style={{ color: colors.textMuted }}>
-                    Pas de zones communes ici pour l'instant
+                    {t('duo.reveal.noCommon')}
                   </p>
                   <p className="text-sm mt-2" style={{ color: colors.divider }}>
-                    C'est OK — le dialogue reste ouvert
+                    {t('duo.reveal.noCommonSub')}
                   </p>
                 </motion.div>
               )}
             </div>
           )}
 
-          {/* Message de fin de catégorie */}
           {allItemsRevealed && compatibleItems.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -244,12 +224,11 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
             >
               <p className="text-purple-500 font-medium flex items-center justify-center gap-2">
                 <Heart size={16} fill="#a855f7" />
-                {compatibleItems.length} zone{compatibleItems.length > 1 ? 's' : ''} commune{compatibleItems.length > 1 ? 's' : ''}
+                {zoneCount} {zoneCount > 1 ? t('duo.reveal.zones') : t('duo.reveal.zone')}
               </p>
             </motion.div>
           )}
 
-          {/* Transition vers suivant */}
           {allItemsRevealed && !isLastCategory && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -263,12 +242,11 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                 className="text-sm"
                 style={{ color: colors.textMuted }}
               >
-                Catégorie suivante...
+                {t('duo.reveal.nextCat')}
               </motion.div>
             </motion.div>
           )}
 
-          {/* Message final */}
           {allItemsRevealed && isLastCategory && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -284,7 +262,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                 💜
               </motion.div>
               <p className="text-lg font-medium" style={{ color: colors.textSecondary }}>
-                Voilà ce que vous partagez
+                {t('duo.reveal.share')}
               </p>
             </motion.div>
           )}

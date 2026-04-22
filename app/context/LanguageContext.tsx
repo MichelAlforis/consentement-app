@@ -2,6 +2,7 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { Language } from '../types';
+import { useSettingsStore } from '../stores/settingsStore';
 
 interface LanguageContextValue {
   language: Language;
@@ -13,11 +14,8 @@ const LanguageContext = createContext<LanguageContextValue>({
   changeLanguage: () => {},
 });
 
-export function LanguageProvider({
-  language,
-  changeLanguage,
-  children,
-}: LanguageContextValue & { children: ReactNode }) {
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const { language, changeLanguage } = useSettingsStore();
   return (
     <LanguageContext.Provider value={{ language, changeLanguage }}>
       {children}

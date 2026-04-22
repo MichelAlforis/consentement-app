@@ -1,70 +1,110 @@
 'use client';
 
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppState, AppStateReturn } from './hooks/useAppState';
-import { Header } from './components/ui';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
-import { useTranslation } from './i18n';
+import { Header } from './components/ui';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { GrainOverlay } from './components/ui/ThemeEffects';
+import { useTheme } from './context/ThemeContext';
+import { useTranslation } from './i18n';
+import { isCapacitor } from './lib/platform';
 import {
-  ThemeSelectScreen,
-  WelcomeScreen,
-  AgeCheckScreen,
-  AuthScreen,
-  HomeMinorScreen,
-  HomeAdultScreen,
-  PersonalSpaceScreen,
-  DuoSpaceScreen,
-  LearnScreen,
-  HelpScreen,
-  PornoVsRealiteScreen,
-  LoiConsentementScreen,
-  QuizConsentementScreen,
-  AccompagnementMineurScreen,
-  GamesHubScreen,
-  DiceGameScreen,
-  GooseGameScreen,
-  CardGameScreen,
-  PremiumScreen,
-} from './components/screens';
+  useNavigationStore,
+  useAuthStore,
+  useSettingsStore,
+  useProfileStore,
+  usePremiumStore,
+  useDuoStore,
+  selectShowHeader,
+  selectCanGoBack,
+  resetAllData,
+} from './stores';
 
-function AppInner(props: AppStateReturn) {
+// ─── Lazy screen imports (code splitting automatique) ────────────────────────
+
+const WelcomeScreen = lazy(() => import('./components/screens/WelcomeScreen'));
+const AgeCheckScreen = lazy(() => import('./components/screens/AgeCheckScreen'));
+const AuthScreen = lazy(() => import('./components/screens/AuthScreen'));
+const HomeMinorScreen = lazy(() => import('./components/screens/HomeMinorScreen'));
+const HomeAdultScreen = lazy(() => import('./components/screens/HomeAdultScreen'));
+const PersonalSpaceScreen = lazy(() => import('./components/screens/PersonalSpaceScreen'));
+const DuoSpaceScreen = lazy(() => import('./components/screens/DuoSpaceScreen'));
+const LearnScreen = lazy(() => import('./components/screens/LearnScreen'));
+const HelpScreen = lazy(() => import('./components/screens/HelpScreen'));
+const PornoVsRealiteScreen = lazy(() => import('./components/screens/PornoVsRealiteScreen'));
+const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen'));
+const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen'));
+const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen'));
+const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen'));
+const DiceGameScreen = lazy(() => import('./components/screens/DiceGameScreen'));
+const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen'));
+const CardGameScreen = lazy(() => import('./components/screens/CardGameScreen'));
+const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen'));
+const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen'));
+
+// ─── Loading fallback ────────────────────────────────────────────────────────
+
+function ScreenLoader() {
+  return <div className="min-h-dvh" style={{ background: '#0a0a0f' }} />;
+}
+
+// ─── Android back button hook ────────────────────────────────────────────────
+
+function useAndroidBackButton() {
+  const { goBack } = useNavigationStore();
+  const { isAdult } = useAuthStore();
+  const currentScreen = useNavigationStore((s) => s.currentScreen);
+  const goBackRef = useRef(goBack);
+  const isAdultRef = useRef(isAdult);
+
+  useEffect(() => { goBackRef.current = goBack; }, [goBack]);
+  useEffect(() => { isAdultRef.current = isAdult; }, [isAdult]);
+
+  useEffect(() => {
+    if (!isCapacitor()) return;
+    let cleanup: (() => void) | undefined;
+    const noBack = ['welcome', 'age-check', 'home-minor', 'home-adult'];
+    import('@capacitor/app').then(({ App }) => {
+      App.addListener('backButton', () => {
+        if (!noBack.includes(currentScreen)) {
+          goBackRef.current(isAdultRef.current);
+        }
+      }).then((handle) => { cleanup = () => handle.remove(); });
+    });
+    return () => cleanup?.();
+  }, [currentScreen]);
+}
+
+// ─── App shell ───────────────────────────────────────────────────────────────
+
+function AppShell() {
+  const theme = useTheme();
   const { t } = useTranslation();
-  const {
-    themeMode,
-    theme,
-    isAdult,
-    currentScreen,
-    userName,
-    personalProfile,
-    showComparison,
-    showHeader,
-    canGoBack,
-    isPremium,
-    selectTheme,
-    navigateTo,
-    goBack,
-    handleAgeSelect,
-    handleAuth,
-    updateComfortLevel,
-    updateSafeword,
-    connectDuo,
-    updateDuoCode,
-    setShowComparison,
-    getCommonGround,
-    resetAllData,
-    activatePremium,
-    deactivatePremium,
-  } = props;
 
-  if (!themeMode || !theme) {
+  const currentScreen = useNavigationStore((s) => s.currentScreen);
+  const { navigateTo, goBack } = useNavigationStore();
+  const { isAdult, handleAgeSelect, handleAuth } = useAuthStore();
+  const { themeMode, selectTheme } = useSettingsStore();
+  const { personalProfile } = useProfileStore();
+  const { updateComfortLevel, updateSafeword } = useProfileStore();
+  const { isPremium, activatePremium, deactivatePremium } = usePremiumStore();
+
+  useAndroidBackButton();
+
+  const showHeader = selectShowHeader(currentScreen);
+  const canGoBack = selectCanGoBack(currentScreen);
+
+  if (!themeMode) {
     return (
-      <ThemeSelectScreen
-        onSelectTheme={selectTheme}
-        isPremium={isPremium}
-        onGoPremium={() => { selectTheme('warm'); navigateTo('premium'); }}
-      />
+      <Suspense fallback={<ScreenLoader />}>
+        <ThemeSelectScreen
+          onSelectTheme={selectTheme}
+          isPremium={isPremium}
+          onGoPremium={() => { selectTheme('warm'); navigateTo('premium'); }}
+        />
+      </Suspense>
     );
   }
 
@@ -76,8 +116,8 @@ function AppInner(props: AppStateReturn) {
       case 'age-check':
         return (
           <AgeCheckScreen
-            onSelectMinor={() => handleAgeSelect(false)}
-            onSelectAdult={() => handleAgeSelect(true)}
+            onSelectMinor={() => handleAgeSelect(false, selectTheme)}
+            onSelectAdult={() => handleAgeSelect(true, selectTheme)}
           />
         );
 
@@ -88,7 +128,7 @@ function AppInner(props: AppStateReturn) {
         return <HomeMinorScreen onNavigate={navigateTo} />;
 
       case 'home-adult':
-        return <HomeAdultScreen userName={userName} onNavigate={navigateTo} />;
+        return <HomeAdultScreen userName={useAuthStore.getState().userName} onNavigate={navigateTo} />;
 
       case 'personal-space':
         return (
@@ -96,7 +136,7 @@ function AppInner(props: AppStateReturn) {
             profile={personalProfile}
             onUpdateLevel={updateComfortLevel}
             onUpdateSafeword={updateSafeword}
-            onSave={goBack}
+            onSave={() => goBack(isAdult)}
           />
         );
 
@@ -106,7 +146,7 @@ function AppInner(props: AppStateReturn) {
             personalProfile={personalProfile}
             onUpdateComfort={updateComfortLevel}
             onUpdateSafeword={updateSafeword}
-            onBack={goBack}
+            onBack={() => goBack(isAdult)}
           />
         );
 
@@ -119,7 +159,7 @@ function AppInner(props: AppStateReturn) {
         return <HelpScreen />;
 
       case 'porno-vs-realite':
-        return <PornoVsRealiteScreen onBack={goBack} />;
+        return <PornoVsRealiteScreen onBack={() => goBack(isAdult)} />;
 
       case 'loi-consentement':
         return <LoiConsentementScreen />;
@@ -162,7 +202,7 @@ function AppInner(props: AppStateReturn) {
         return (
           <PremiumScreen
             onActivate={() => { activatePremium(); navigateTo('theme-select'); }}
-            onBack={goBack}
+            onBack={() => goBack(isAdult)}
           />
         );
 
@@ -177,8 +217,7 @@ function AppInner(props: AppStateReturn) {
       case 'duo-space': return t('headers.duoSpace');
       case 'learn':
       case 'scenarios-minor':
-      case 'feelings':
-        return t('headers.learn');
+      case 'feelings': return t('headers.learn');
       case 'help': return t('headers.help');
       case 'porno-vs-realite': return t('headers.pornoVsRealite');
       case 'loi-consentement': return t('headers.loi');
@@ -200,109 +239,108 @@ function AppInner(props: AppStateReturn) {
     }
   };
 
+  const pageTransition =
+    theme.effects.pageTransition === 'fade'
+      ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.45, ease: 'easeInOut' } }
+      : theme.effects.pageTransition === 'drift'
+        ? { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 }, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } }
+        : { initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -20 }, transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] } };
+
   return (
-    <ThemeProvider theme={theme}>
-      <div
-        className="min-h-dvh flex flex-col"
-        style={{ background: theme.colors.bgGradient }}
-      >
-        <AnimatePresence>
-          {showHeader && (
-            <Header
-              title={getHeaderTitle()}
-              subtitle={getHeaderSubtitle()}
-              showBack={canGoBack}
-              onBack={goBack}
-              theme={theme}
-            />
-          )}
-        </AnimatePresence>
-
-        <div className="flex-1 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentScreen}
-              {...(theme.effects.pageTransition === 'fade'
-                ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.45, ease: 'easeInOut' } }
-                : theme.effects.pageTransition === 'drift'
-                  ? { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 }, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } }
-                  : { initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -20 }, transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] } }
-              )}
-            >
-              {renderScreen()}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {theme.effects.grain && <GrainOverlay />}
-
-        {process.env.NODE_ENV === 'development' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="px-4 py-3 safe-area-bottom"
-            style={{
-              background: theme.colors.bgCard,
-              borderTop: `1px solid ${theme.colors.divider}`,
-            }}
-          >
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <button
-                onClick={() => navigateTo('welcome')}
-                className="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-              >
-                {t('devBar.home')}
-              </button>
-              <button
-                onClick={() => handleAgeSelect(false)}
-                className="px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
-              >
-                {t('devBar.modeMinor')}
-              </button>
-              <button
-                onClick={() => { handleAgeSelect(true); handleAuth('Demo'); }}
-                className="px-3 py-1.5 text-xs rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-              >
-                {t('devBar.modeAdult')}
-              </button>
-              <button
-                onClick={() => isPremium ? deactivatePremium() : navigateTo('premium')}
-                className={`px-3 py-1.5 text-xs rounded-full transition-colors ${
-                  isPremium
-                    ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                    : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                }`}
-              >
-                {isPremium ? t('devBar.premiumOn') : t('devBar.premium')}
-              </button>
-              <button
-                onClick={resetAllData}
-                className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
-              >
-                {t('devBar.reset')}
-              </button>
-            </div>
-            <p className="text-center text-xs" style={{ color: theme.colors.textMuted }}>
-              {t('devBar.demo')}
-            </p>
-          </motion.div>
+    <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
+      <AnimatePresence>
+        {showHeader && (
+          <Header
+            title={getHeaderTitle()}
+            subtitle={getHeaderSubtitle()}
+            showBack={canGoBack}
+            onBack={() => goBack(isAdult)}
+            theme={theme}
+          />
         )}
+      </AnimatePresence>
+
+      <div className="flex-1 overflow-y-auto">
+        <AnimatePresence mode="wait">
+          <motion.div key={currentScreen} {...pageTransition}>
+            <Suspense fallback={<ScreenLoader />}>
+              <ErrorBoundary label={currentScreen}>
+                {renderScreen()}
+              </ErrorBoundary>
+            </Suspense>
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </ThemeProvider>
+
+      {theme.effects.grain && <GrainOverlay />}
+
+      {process.env.NODE_ENV === 'development' && (
+        <DevBar
+          isPremium={isPremium}
+          navigateTo={navigateTo}
+          handleAgeSelect={(adult) => handleAgeSelect(adult, selectTheme)}
+          handleAuth={handleAuth}
+          activatePremium={activatePremium}
+          deactivatePremium={deactivatePremium}
+          theme={theme}
+        />
+      )}
+    </div>
   );
 }
 
+// ─── Dev toolbar ─────────────────────────────────────────────────────────────
+
+function DevBar({ isPremium, navigateTo, handleAgeSelect, handleAuth, activatePremium, deactivatePremium, theme }: {
+  isPremium: boolean;
+  navigateTo: (screen: import('./types').Screen) => void;
+  handleAgeSelect: (adult: boolean) => void;
+  handleAuth: (name: string) => void;
+  activatePremium: () => void;
+  deactivatePremium: () => void;
+  theme: import('./types/theme').Theme;
+}) {
+  const { t } = useTranslation();
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="px-4 py-3 safe-area-bottom"
+      style={{ background: theme.colors.bgCard, borderTop: `1px solid ${theme.colors.divider}` }}
+    >
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <button onClick={() => navigateTo('welcome')} className="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">{t('devBar.home')}</button>
+        <button onClick={() => handleAgeSelect(false)} className="px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors">{t('devBar.modeMinor')}</button>
+        <button onClick={() => { handleAgeSelect(true); handleAuth('Demo'); }} className="px-3 py-1.5 text-xs rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors">{t('devBar.modeAdult')}</button>
+        <button
+          onClick={() => isPremium ? deactivatePremium() : navigateTo('premium')}
+          className={`px-3 py-1.5 text-xs rounded-full transition-colors ${isPremium ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}
+        >
+          {isPremium ? t('devBar.premiumOn') : t('devBar.premium')}
+        </button>
+        <button onClick={resetAllData} className="px-3 py-1.5 text-xs rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors">{t('devBar.reset')}</button>
+      </div>
+      <p className="text-center text-xs" style={{ color: theme.colors.textMuted }}>{t('devBar.demo')}</p>
+    </motion.div>
+  );
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
 export default function ConsentementApp() {
-  const appState = useAppState();
-  const { language, changeLanguage, isHydrated } = appState;
+  const isHydrated = useAuthStore((s) => s.isHydrated);
 
   if (!isHydrated) {
     return <div className="min-h-dvh" style={{ background: '#0a0a0f' }} />;
   }
 
   return (
-    <LanguageProvider language={language} changeLanguage={changeLanguage}>
-      <AppInner {...appState} />
-    </LanguageProvider>
+    <ErrorBoundary label="root">
+      <LanguageProvider>
+        <ThemeProvider>
+          <AppShell />
+        </ThemeProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }

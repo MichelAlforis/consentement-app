@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine } from 'lucide-react';
-import { Card, Button } from '../ui';
+import { Card } from '../ui';
 import { comfortCategories } from '../../data';
 import { CommonGround, PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 
 interface DuoSummaryStepProps {
   commonGround: CommonGround;
@@ -25,19 +26,17 @@ export function DuoSummaryStep({
   partnerSafeword,
 }: DuoSummaryStepProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>(['tenderness']);
   const [notes, setNotes] = useState('');
   const [showNotes, setShowNotes] = useState(false);
 
   const toggleCategory = (key: CategoryKey) => {
     setExpandedCategories(prev =>
-      prev.includes(key)
-        ? prev.filter(k => k !== key)
-        : [...prev, key]
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
     );
   };
 
-  // Compter les zones communes totales
   const totalCommon = categoryKeys.reduce((acc, key) => {
     const count = comfortCategories[key].items.filter(
       item => commonGround[key][item.id]?.compatible
@@ -51,7 +50,6 @@ export function DuoSummaryStep({
       animate={{ opacity: 1 }}
       className="px-5 py-6"
     >
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,14 +64,13 @@ export function DuoSummaryStep({
           <Heart size={32} className="text-purple-500" fill="#a855f7" />
         </motion.div>
         <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-          Votre espace commun
+          {t('duo.summary.title')}
         </h2>
         <p style={{ color: colors.textMuted }}>
-          {totalCommon} zone{totalCommon > 1 ? 's' : ''} de confort partagée{totalCommon > 1 ? 's' : ''}
+          {totalCommon} {totalCommon > 1 ? t('duo.summary.zones') : t('duo.summary.zone')}
         </p>
       </motion.div>
 
-      {/* Catégories accordéon */}
       <div className="space-y-3 mb-6">
         {categoryKeys.map((key, catIndex) => {
           const category = comfortCategories[key];
@@ -90,17 +87,16 @@ export function DuoSummaryStep({
               transition={{ delay: catIndex * 0.1 }}
             >
               <Card variant="elevated" padding="none" className="overflow-hidden">
-                {/* Header clickable */}
                 <button
                   onClick={() => toggleCategory(key)}
                   className="w-full px-4 py-3 flex items-center justify-between transition-colors"
-                  style={{
-                    background: `linear-gradient(135deg, ${category.color}10 0%, transparent 100%)`
-                  }}
+                  style={{ background: `linear-gradient(135deg, ${category.color}10 0%, transparent 100%)` }}
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{category.icon}</span>
-                    <span className="font-medium" style={{ color: colors.textPrimary }}>{category.title}</span>
+                    <span className="font-medium" style={{ color: colors.textPrimary }}>
+                      {t(`comfort.${key}.title`)}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm px-2 py-0.5 rounded-full" style={{ color: colors.textMuted, background: colors.bgCard }}>
@@ -114,7 +110,6 @@ export function DuoSummaryStep({
                   </div>
                 </button>
 
-                {/* Contenu */}
                 <motion.div
                   initial={false}
                   animate={{ height: isExpanded ? 'auto' : 0 }}
@@ -129,13 +124,15 @@ export function DuoSummaryStep({
                           style={{ borderBottom: `1px solid ${colors.border}` }}
                         >
                           <span className="text-lg">{item.icon}</span>
-                          <span className="flex-1 text-sm" style={{ color: colors.textSecondary }}>{item.label}</span>
+                          <span className="flex-1 text-sm" style={{ color: colors.textSecondary }}>
+                            {t(`comfort.${key}.items.${item.id}`)}
+                          </span>
                           <Check size={18} className="text-green-500" />
                         </div>
                       ))
                     ) : (
                       <p className="text-sm italic py-2" style={{ color: colors.textMuted }}>
-                        Pas de zones communes dans cette catégorie
+                        {t('duo.summary.noZones')}
                       </p>
                     )}
                   </div>
@@ -146,7 +143,6 @@ export function DuoSummaryStep({
         })}
       </div>
 
-      {/* Safewords */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -155,13 +151,13 @@ export function DuoSummaryStep({
         <Card variant="warning" padding="lg" className="mb-4">
           <h3 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textPrimary }}>
             <ShieldAlert size={20} className="text-amber-600" />
-            Vos mots d'alerte
+            {t('duo.summary.safewords')}
           </h3>
           <div className="flex gap-3">
             <div className="flex-1 rounded-xl p-3 text-center" style={{ background: colors.bgCard }}>
-              <p className="text-xs mb-1" style={{ color: colors.textMuted }}>Toi</p>
+              <p className="text-xs mb-1" style={{ color: colors.textMuted }}>{t('duo.you')}</p>
               <p className="font-semibold text-red-500">
-                {personalProfile.safeword || 'Non défini'}
+                {personalProfile.safeword || t('duo.summary.undefined')}
               </p>
             </div>
             <div className="flex-1 rounded-xl p-3 text-center" style={{ background: colors.bgCard }}>
@@ -172,7 +168,6 @@ export function DuoSummaryStep({
         </Card>
       </motion.div>
 
-      {/* Notes optionnelles */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -185,8 +180,8 @@ export function DuoSummaryStep({
           >
             <span className="flex items-center gap-2" style={{ color: colors.textSecondary }}>
               <PenLine size={18} className="text-purple-500" />
-              <span className="font-medium">Ajouter des notes</span>
-              <span className="text-xs" style={{ color: colors.textMuted }}>(optionnel)</span>
+              <span className="font-medium">{t('duo.summary.notes.title')}</span>
+              <span className="text-xs" style={{ color: colors.textMuted }}>{t('duo.summary.notes.optional')}</span>
             </span>
             {showNotes ? (
               <ChevronUp size={18} style={{ color: colors.textMuted }} />
@@ -204,7 +199,7 @@ export function DuoSummaryStep({
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Des précisions, des envies à explorer, des limites à clarifier..."
+                placeholder={t('duo.summary.notes.placeholder')}
                 className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none text-sm resize-none"
                 rows={3}
               />
@@ -213,7 +208,6 @@ export function DuoSummaryStep({
         </Card>
       </motion.div>
 
-      {/* Message final */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -226,16 +220,14 @@ export function DuoSummaryStep({
         >
           <p className="text-center flex items-center justify-center gap-2" style={{ color: colors.textSecondary }}>
             <MessageCircle size={18} className="text-purple-500" />
-            <em>Ceci est un début de conversation, pas une fin.</em>
+            <em>{t('duo.summary.message')}</em>
           </p>
         </Card>
 
         <Card variant="default" padding="md">
           <p className="text-xs text-center flex items-center justify-center gap-2" style={{ color: colors.textMuted }}>
             <AlertTriangle size={14} className="text-amber-500" />
-            Rappel : le consentement est révocable à tout moment.
-            <br />
-            Cette comparaison n'est pas un engagement.
+            {t('duo.summary.reminder')}
           </p>
         </Card>
       </motion.div>

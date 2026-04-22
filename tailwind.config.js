@@ -6,7 +6,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Palette principale
+        // ── Couleurs de thème dynamiques (CSS custom properties) ──────────────
+        // Usage : bg-theme-accent, text-theme-primary, border-theme, etc.
+        theme: {
+          accent: 'var(--color-accent)',
+          'accent-light': 'var(--color-accent-light)',
+          secondary: 'var(--color-secondary)',
+          'bg-primary': 'var(--color-bg-primary)',
+          'bg-secondary': 'var(--color-bg-secondary)',
+          'bg-card': 'var(--color-bg-card)',
+          'text-primary': 'var(--color-text-primary)',
+          'text-secondary': 'var(--color-text-secondary)',
+          'text-muted': 'var(--color-text-muted)',
+          border: 'var(--color-border)',
+          divider: 'var(--color-divider)',
+        },
+        // ── Niveaux de confort (CSS custom properties) ────────────────────────
+        // Usage : bg-comfort-no, text-comfort-ok, etc.
+        comfort: {
+          no: 'var(--color-comfort-no)',
+          wait: 'var(--color-comfort-wait)',
+          curious: 'var(--color-comfort-curious)',
+          ok: 'var(--color-comfort-ok)',
+          love: 'var(--color-comfort-love)',
+        },
+        // ── Palette statique (backward compat) ────────────────────────────────
         rose: {
           50: '#fef6f0',
           100: '#fdf2f8',
@@ -21,14 +45,6 @@ module.exports = {
           500: '#8b5cf6',
           600: '#6c5ce7',
         },
-        // Niveaux de confort
-        comfort: {
-          no: '#e74c3c',
-          later: '#e67e22',
-          curious: '#f1c40f',
-          ok: '#2ecc71',
-          love: '#9b59b6',
-        }
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
