@@ -6,12 +6,12 @@ import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CardData } from '../../../data';
 
-// Depth per deck: decks 5 & 6 are the most intimate (depth 3)
+// Depth per deck — used for foil intensity
 const DECK_DEPTH: Record<number, 1 | 2 | 3> = { 1: 1, 4: 1, 2: 2, 3: 2, 5: 3, 6: 3 };
 
 type Cat = { name: string; emoji: string; gradient: string; border: string };
 
-// ─── Ghost stack behind the active card ──────────────────────────────────────
+// ─── Ghost stack ──────────────────────────────────────────────────────────────
 
 function DeckStack({
   remaining,
@@ -27,7 +27,7 @@ function DeckStack({
   return (
     <>
       {Array.from({ length: layers }).map((_, i) => {
-        const depth = i + 1; // 1 = closest, 2 = farthest
+        const depth = i + 1;
         return (
           <motion.div
             key={i}
@@ -42,7 +42,7 @@ function DeckStack({
               borderRadius: 28,
               background: gradient,
               zIndex: -depth,
-              opacity: 1 - depth * 0.2,
+              opacity: 1 - depth * 0.22,
             }}
           />
         );
@@ -79,7 +79,6 @@ export function PlayingCard({
   const dragX = useMotionValue(0);
   const [isExiting, setIsExiting] = useState(false);
 
-  // Reset & snap in when a new card is drawn
   useEffect(() => {
     setIsExiting(false);
     dragX.set(0);
@@ -87,24 +86,28 @@ export function PlayingCard({
   }, [card.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canDrag = !isAnimating && !isExiting;
-  const dragRotate = useTransform(dragX, [-200, 200], [-12, 12]);
-  const dragOpacity = useTransform(dragX, [-120, 0, 120], [0.4, 1, 0.4]);
+  const dragRotate = useTransform(dragX, [-200, 200], [-10, 10]);
+  const dragOpacity = useTransform(dragX, [-120, 0, 120], [0.5, 1, 0.5]);
 
-  // Tilt from pointer position
-  const tiltRotateX = useTransform(tiltY, [-1, 1], [12, -12]);
-  const tiltRotateY = useTransform(tiltX, [-1, 1], [-12, 12]);
+  // Subtle tilt — ±6° feels natural, like a card held in hand
+  const tiltRotateX = useTransform(tiltY, [-1, 1], [6, -6]);
+  const tiltRotateY = useTransform(tiltX, [-1, 1], [-6, 6]);
 
-  // Foil holographic gradient follows the pointer
+  // Foil: soft pastel rainbow with screen blend — works on light AND dark bgCard
   const hue = useTransform(tiltX, [-1, 1], [0, 360]);
   const foilBg = useTransform(
     [tiltX, tiltY, hue] as MotionValue<number>[],
     ([xv, yv, h]: number[]) =>
-      `radial-gradient(ellipse at ${(xv + 1) * 50}% ${(yv + 1) * 50}%, hsl(${h}, 100%, 70%) 0%, hsl(${h + 60}, 100%, 60%) 25%, hsl(${h + 120}, 100%, 65%) 50%, transparent 70%)`,
+      `radial-gradient(ellipse at ${(xv + 1) * 50}% ${(yv + 1) * 50}%,
+        hsl(${h}, 55%, 78%) 0%,
+        hsl(${h + 60}, 55%, 75%) 35%,
+        hsl(${h + 120}, 55%, 78%) 65%,
+        transparent 80%)`,
   );
 
   const depth = DECK_DEPTH[card.deck] ?? 1;
-  // Youth theme: foil disabled (too adult). Depth 1 decks: no foil.
-  const foilTargetOpacity = themeId === 'youth' ? 0 : depth === 3 ? 0.45 : depth === 2 ? 0.28 : 0;
+  // screen blend on a near-black background adds soft colour, not a void
+  const foilTargetOpacity = themeId === 'youth' ? 0 : depth === 3 ? 0.18 : depth === 2 ? 0.12 : 0;
 
   const handleDragEnd = async (
     _: unknown,
@@ -112,18 +115,14 @@ export function PlayingCard({
   ) => {
     const shouldSwipe = Math.abs(info.offset.x) > 90 || Math.abs(info.velocity.x) > 350;
     if (!shouldSwipe || !canDrag) {
-      controls.start({
-        x: 0,
-        rotate: 0,
-        transition: { type: 'spring', stiffness: 300, damping: 25 },
-      });
+      controls.start({ x: 0, rotate: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
       return;
     }
     setIsExiting(true);
     const dir = info.offset.x > 0 ? 1 : -1;
     await controls.start({
       x: dir * 500,
-      rotate: dir * 18,
+      rotate: dir * 15,
       opacity: 0,
       transition: { duration: 0.28, ease: 'easeIn' },
     });
@@ -131,7 +130,6 @@ export function PlayingCard({
   };
 
   return (
-    // Sizing container — DeckStack is positioned relative to this
     <div
       style={{
         maxWidth: 290,
@@ -143,7 +141,7 @@ export function PlayingCard({
     >
       <DeckStack remaining={deckRemaining} gradient={cat.gradient} isAnimating={isAnimating} />
 
-      {/* Drag wrapper — handles swipe + visual feedback */}
+      {/* Drag wrapper */}
       <motion.div
         ref={cardRef}
         drag={canDrag ? 'x' : false}
@@ -160,31 +158,35 @@ export function PlayingCard({
           willChange: 'transform',
         }}
       >
-        {/* Perspective context — isolated so drag translate stays flat 2D */}
+        {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
         <div style={{ perspective: '1200px', width: '100%', height: '100%' }}>
-          {/* Tilt wrapper — rotates with pointer position */}
+          {/* Tilt wrapper */}
           <motion.div
             style={{
               rotateX: tiltRotateX,
               rotateY: tiltRotateY,
               transformStyle: 'preserve-3d',
+              WebkitTransformStyle: 'preserve-3d',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
               width: '100%',
               height: '100%',
               willChange: 'transform',
             }}
           >
-            {/* Flip container — rotates 0→180 on reveal */}
+            {/* Flip container */}
             <motion.div
               animate={{ rotateY: isRevealed ? 180 : 0 }}
               transition={{ duration: 0.52, ease: [0.22, 0.61, 0.36, 1] }}
               style={{
                 transformStyle: 'preserve-3d',
+                WebkitTransformStyle: 'preserve-3d',
                 width: '100%',
                 height: '100%',
                 position: 'relative',
               }}
             >
-              {/* ── DOS ─────────────────────────────────────── */}
+              {/* ── DOS ──────────────────────────────────────── */}
               <div
                 style={{
                   position: 'absolute',
@@ -197,28 +199,31 @@ export function PlayingCard({
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 12,
+                  gap: 10,
                   overflow: 'hidden',
-                  boxShadow: `0 24px 64px ${cat.border}55, 0 6px 20px rgba(0,0,0,0.15)`,
+                  boxShadow: `0 20px 56px ${cat.border}44, 0 4px 16px rgba(0,0,0,0.12)`,
                 }}
               >
+                {/* Dot texture */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
                     backgroundImage:
-                      'radial-gradient(circle, rgba(255,255,255,0.22) 2px, transparent 2px)',
-                    backgroundSize: '20px 20px',
+                      'radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px)',
+                    backgroundSize: '18px 18px',
                   }}
                 />
+                {/* Corner marks — classic card convention */}
                 <span
                   style={{
                     position: 'absolute',
-                    top: 20,
-                    left: 20,
-                    fontSize: 20,
-                    color: 'rgba(255,255,255,0.35)',
+                    top: 16,
+                    left: 16,
+                    fontSize: 15,
+                    color: 'rgba(255,255,255,0.25)',
                     fontWeight: 900,
+                    lineHeight: 1,
                   }}
                 >
                   {cat.emoji}
@@ -226,33 +231,39 @@ export function PlayingCard({
                 <span
                   style={{
                     position: 'absolute',
-                    bottom: 20,
-                    right: 20,
-                    fontSize: 20,
-                    color: 'rgba(255,255,255,0.35)',
+                    bottom: 16,
+                    right: 16,
+                    fontSize: 15,
+                    color: 'rgba(255,255,255,0.25)',
                     fontWeight: 900,
+                    lineHeight: 1,
                     transform: 'rotate(180deg)',
                   }}
                 >
                   {cat.emoji}
                 </span>
-                <span style={{ fontSize: 72, position: 'relative', zIndex: 1 }}>{cat.emoji}</span>
+
+                {/* Center content */}
+                <span style={{ fontSize: 56, position: 'relative', zIndex: 1, lineHeight: 1 }}>
+                  {cat.emoji}
+                </span>
                 <p
                   style={{
-                    color: 'rgba(255,255,255,0.45)',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    letterSpacing: '0.2em',
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: 13,
+                    fontWeight: 800,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
                     position: 'relative',
                     zIndex: 1,
+                    margin: 0,
                   }}
                 >
-                  ← Glisser →
+                  {cat.name}
                 </p>
               </div>
 
-              {/* ── FACE ────────────────────────────────────── */}
+              {/* ── FACE ─────────────────────────────────────── */}
               <div
                 style={{
                   position: 'absolute',
@@ -265,63 +276,75 @@ export function PlayingCard({
                   display: 'flex',
                   flexDirection: 'column',
                   overflow: 'hidden',
-                  boxShadow:
-                    '0 24px 64px rgba(0,0,0,0.12), 0 6px 20px rgba(0,0,0,0.08)',
+                  boxShadow: '0 20px 56px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.07)',
                   border: `1.5px solid ${colors.border}`,
                 }}
               >
-                {/* Top gradient stripe */}
-                <div style={{ height: 10, background: cat.gradient, flexShrink: 0 }} />
+                {/* Top stripe */}
+                <div style={{ height: 8, background: cat.gradient, flexShrink: 0 }} />
 
-                {/* Content */}
+                {/* Card content */}
                 <div
                   style={{
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
                     justifyContent: 'center',
-                    padding: '20px 28px',
-                    gap: 20,
+                    padding: '20px 22px',
+                    gap: 14,
                   }}
                 >
+                  {/* Category label */}
                   <div
                     style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 16,
-                      background: cat.gradient,
-                      display: 'flex',
+                      display: 'inline-flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                      gap: 6,
+                      alignSelf: 'flex-start',
+                      padding: '4px 10px',
+                      borderRadius: 20,
+                      background: cat.gradient,
                     }}
                   >
-                    <span style={{ fontSize: 22 }}>{cat.emoji}</span>
+                    <span style={{ fontSize: 12 }}>{cat.emoji}</span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#fff',
+                        letterSpacing: '0.06em',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                      }}
+                    >
+                      {cat.name}
+                    </span>
                   </div>
+
+                  {/* Card text — left-aligned for readability */}
                   <p
                     style={{
                       color: colors.textPrimary,
                       fontSize: 15,
-                      fontWeight: 600,
-                      textAlign: 'center',
-                      lineHeight: 1.6,
+                      fontWeight: 500,
+                      lineHeight: 1.65,
                       margin: 0,
+                      textAlign: 'left',
                     }}
                   >
                     {card.text}
                   </p>
+
+                  {/* Depth indicator */}
                   {depth > 1 && (
                     <div style={{ display: 'flex', gap: 4 }}>
                       {[1, 2, 3].map((d) => (
                         <div
                           key={d}
                           style={{
-                            width: 6,
-                            height: 6,
+                            width: 5,
+                            height: 5,
                             borderRadius: 3,
-                            background: d <= depth ? cat.border : 'rgba(0,0,0,0.1)',
+                            background: d <= depth ? cat.border : `${colors.border}`,
                           }}
                         />
                       ))}
@@ -329,34 +352,35 @@ export function PlayingCard({
                   )}
                 </div>
 
-                {/* Bottom gradient stripe */}
-                <div style={{ height: 6, background: cat.gradient, flexShrink: 0 }} />
+                {/* Bottom stripe */}
+                <div style={{ height: 5, background: cat.gradient, flexShrink: 0 }} />
 
                 {card.ageGate === 'adult' && (
                   <span
                     style={{
                       position: 'absolute',
                       bottom: 12,
-                      right: 16,
-                      fontSize: 10,
+                      right: 14,
+                      fontSize: 9,
                       fontWeight: 900,
-                      color: '#d1d5db',
+                      color: colors.textMuted,
                       userSelect: 'none',
+                      opacity: 0.4,
                     }}
                   >
                     ✦
                   </span>
                 )}
 
-                {/* Foil holographic overlay */}
+                {/* Foil — screen blend works on any bgCard colour */}
                 <motion.div
                   animate={{ opacity: isRevealed ? foilTargetOpacity : 0 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.5 }}
                   style={{
                     position: 'absolute',
                     inset: 0,
                     background: foilBg,
-                    mixBlendMode: 'color-dodge',
+                    mixBlendMode: 'screen',
                     pointerEvents: 'none',
                   }}
                 />
