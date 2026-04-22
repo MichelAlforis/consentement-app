@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Check, ArrowLeft, CreditCard, Lock, Sparkles, Dices, Palette } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface PremiumScreenProps {
   onActivate: () => void;
@@ -20,6 +21,7 @@ const FEATURES = [
 type Step = 'offer' | 'processing' | 'success';
 
 export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
+  const { colors } = useTheme();
   const [step, setStep] = useState<Step>('offer');
 
   function handlePayment() {
@@ -52,11 +54,11 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={onBack}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
               >
-                <ArrowLeft size={20} className="text-gray-600" />
+                <ArrowLeft size={20} style={{ color: colors.textSecondary }} />
               </button>
-              <h1 className="text-xl font-bold text-gray-800">Passer à Premium</h1>
+              <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Passer à Premium</h1>
             </div>
 
             {/* Hero */}
@@ -87,9 +89,10 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="rounded-2xl border border-gray-100 bg-white p-5 mb-6 space-y-3"
+              className="rounded-2xl p-5 mb-6 space-y-3"
+              style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
             >
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: colors.textMuted }}>
                 Inclus dans Premium
               </p>
               {FEATURES.map((f, i) => (
@@ -103,7 +106,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
                   <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
                     <Check size={13} className="text-green-600" strokeWidth={2.5} />
                   </div>
-                  <span className="text-sm text-gray-700">{f.label}</span>
+                  <span className="text-sm" style={{ color: colors.textSecondary }}>{f.label}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -122,7 +125,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               Simuler le paiement
             </motion.button>
 
-            <p className="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1">
+            <p className="text-center text-xs mt-3 flex items-center justify-center gap-1" style={{ color: colors.textMuted }}>
               <Lock size={11} />
               Mode démo — aucun paiement réel
             </p>
@@ -151,8 +154,8 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               </div>
             </div>
             <div className="text-center">
-              <p className="font-semibold text-gray-800 mb-1">Traitement en cours…</p>
-              <p className="text-sm text-gray-500">Simulation du paiement sécurisé</p>
+              <p className="font-semibold mb-1" style={{ color: colors.textPrimary }}>Traitement en cours…</p>
+              <p className="text-sm" style={{ color: colors.textMuted }}>Simulation du paiement sécurisé</p>
             </div>
             <div className="flex gap-1.5">
               {[0, 1, 2].map(i => (
@@ -189,8 +192,8 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Bienvenue Premium !</h2>
-              <p className="text-gray-500 text-sm max-w-xs">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>Bienvenue Premium !</h2>
+              <p className="text-sm max-w-xs" style={{ color: colors.textMuted }}>
                 Ton accès Premium est activé. Profite de toutes les fonctionnalités exclusives.
               </p>
             </motion.div>

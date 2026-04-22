@@ -94,15 +94,35 @@ Ces écrans s'affichent avant que l'utilisateur choisisse son thème — les cou
 
 ---
 
-## Écrans non encore thématisés (priorité basse)
+## Passe 3 — Contraste dark-luxury (2026-04-22)
+
+### Problème résolu
+`text-gray-800/700/600/500/400` sur fond `#0f0d0e` (dark-luxury) = contraste 1.5–4:1 → quasi-invisible.
+`textMuted` du thème dark-luxury `#7a7068` = contraste ~4:1, sous le seuil WCAG AA (4.5:1).
+
+### Corrigés
+
+**`app/types/theme.ts`**
+- `textMuted` dark-luxury : `#7a7068` → `#8a8078` (contraste ~5:1)
+
+**Écrans de contenu (tous thématisés) :**
+- `HelpScreen.tsx` — textes + boutons urgence `bg-white/80` → `colors.bgCard`
+- `LearnScreen.tsx` — tous les textes
+- `PremiumScreen.tsx` — textes + feature list container `bg-white` → `colors.bgCard`
+- `QuizConsentementScreen.tsx` — textes + progress bars + options quiz (états sémantiques conservés)
+- `LoiConsentementScreen.tsx` — textes + cards loi `bg-white` → `colors.bgCard`
+- `PornoVsRealiteScreen.tsx` — textes + cards comparaison + explication dépliable
+
+**Composants Duo (tous thématisés) :**
+- `DuoBumpStep.tsx`, `DuoConnectedStep.tsx`, `DuoFillingStep.tsx`, `DuoReadyStep.tsx`
+- `DuoPactStep.tsx`, `DuoRevealStep.tsx`, `DuoSummaryStep.tsx`, `DuoWaitingStep.tsx`
+
+### Écrans non encore thématisés (priorité basse)
 
 | Fichier | Problème principal | Priorité |
 |---------|--------------------|----------|
 | `HomeMinorScreen.tsx` | `text-gray-800/500`, `bg-white/80` | Basse (thème youth fixe) |
 | `DiceGameScreen.tsx` | Cartes de sélection `bg-white border-amber-200` | Basse (jeu interactif) |
-| `LearnScreen.tsx` | `text-gray-800/600`, `from-pink-100` | Basse |
-| `HelpScreen.tsx` | `text-gray-800/500/600` (hors urgences) | Basse |
-| `DuoSpaceScreen.tsx` | Non audité au-delà de 100 lignes | À faire |
 
 ---
 

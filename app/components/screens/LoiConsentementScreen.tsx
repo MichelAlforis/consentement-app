@@ -3,8 +3,10 @@
 import { motion } from 'framer-motion';
 import { Scale, AlertTriangle } from 'lucide-react';
 import { loiPoints } from '../../data';
+import { useTheme } from '../../context/ThemeContext';
 
 export function LoiConsentementScreen() {
+  const { colors } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -21,8 +23,8 @@ export function LoiConsentementScreen() {
           <Scale size={22} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-800">La loi & le consentement</h2>
-          <p className="text-sm text-gray-500">Ce que tu risques. Ce qui te protège.</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>La loi & le consentement</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>Ce que tu risques. Ce qui te protège.</p>
         </div>
       </motion.div>
 
@@ -50,13 +52,14 @@ export function LoiConsentementScreen() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 + i * 0.08 }}
-            className={`p-4 rounded-2xl bg-white shadow-sm border ${point.important ? 'border-amber-200' : 'border-gray-100'}`}
+            className={`p-4 rounded-2xl shadow-sm border ${point.important ? 'border-amber-200' : ''}`}
+            style={{ background: colors.bgCard, ...(!point.important ? { borderColor: colors.border } : {}) }}
           >
             <div className="flex items-start gap-3">
               <span className="text-2xl shrink-0">{point.emoji}</span>
               <div>
-                <h3 className="font-semibold text-gray-800 mb-1 text-sm">{point.titre}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{point.contenu}</p>
+                <h3 className="font-semibold mb-1 text-sm" style={{ color: colors.textPrimary }}>{point.titre}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>{point.contenu}</p>
               </div>
             </div>
           </motion.div>
@@ -70,10 +73,10 @@ export function LoiConsentementScreen() {
         transition={{ delay: 0.9 }}
         className="mt-6 text-center"
       >
-        <p className="text-xs text-gray-400">
+        <p className="text-xs" style={{ color: colors.textMuted }}>
           Contenu validé par notre co-fondateur juriste en droit pénal.
         </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs mt-1" style={{ color: colors.textMuted }}>
           Code pénal français — Articles 222-22 et suivants
         </p>
       </motion.div>

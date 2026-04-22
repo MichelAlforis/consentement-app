@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Card } from '../ui';
 import { consentPrinciples } from '../../data';
+import { useTheme } from '../../context/ThemeContext';
 
 // Map des icônes pour les principes
 const principleIcons = [
@@ -18,6 +19,7 @@ const principleIcons = [
 ];
 
 export function LearnScreen() {
+  const { colors } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -32,10 +34,10 @@ export function LearnScreen() {
       >
         <BookOpen size={28} className="text-pink-500 mt-1 shrink-0" />
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
             Comprendre le consentement
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: colors.textMuted }}>
             Les piliers d'une relation saine et respectueuse
           </p>
         </div>
@@ -59,10 +61,10 @@ export function LearnScreen() {
                   {principleIcons[index]}
                 </motion.div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">
+                  <h3 className="font-semibold mb-1" style={{ color: colors.textPrimary }}>
                     {principle.title}
                   </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
                     {principle.text}
                   </p>
                 </div>
@@ -82,11 +84,11 @@ export function LearnScreen() {
         <Card variant="success" padding="lg" className="text-center">
           <div className="flex items-center justify-center gap-2 mb-1">
             <Lightbulb size={20} className="text-emerald-600" />
-            <p className="font-semibold text-gray-800">
+            <p className="font-semibold" style={{ color: colors.textPrimary }}>
               Le consentement n'est pas un contrat
             </p>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm mt-2" style={{ color: colors.textSecondary }}>
             C'est une conversation continue, basée sur le respect mutuel.
           </p>
         </Card>
@@ -100,11 +102,11 @@ export function LearnScreen() {
         className="mt-4"
       >
         <Card variant="default" padding="lg">
-          <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-            <GraduationCap size={18} className="text-gray-600" />
+          <h4 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textSecondary }}>
+            <GraduationCap size={18} style={{ color: colors.textSecondary }} />
             Pour aller plus loin
           </h4>
-          <ul className="space-y-2 text-sm text-gray-600">
+          <ul className="space-y-2 text-sm" style={{ color: colors.textSecondary }}>
             {[
               'Le consentement s\'applique à chaque situation',
               'Ton corps t\'appartient, toujours',

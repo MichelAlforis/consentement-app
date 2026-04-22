@@ -141,7 +141,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <Wifi size={18} />
                 Simuler le bump (démo)
               </Button>
-              <Button onClick={handleSimulateFail} fullWidth variant="ghost" className="!text-gray-400">
+              <Button onClick={handleSimulateFail} fullWidth variant="ghost" className="opacity-50">
                 Simuler un échec
               </Button>
             </div>

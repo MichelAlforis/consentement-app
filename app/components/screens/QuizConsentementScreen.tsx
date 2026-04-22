@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Gamepad2, ChevronRight, RotateCcw, Trophy } from 'lucide-react';
 import { quizQuestions } from '../../data';
 import { Button } from '../ui';
+import { useTheme } from '../../context/ThemeContext';
 
 export function QuizConsentementScreen() {
+  const { colors } = useTheme();
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -69,11 +71,11 @@ export function QuizConsentementScreen() {
         >
           {result.emoji}
         </motion.div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">{result.label}</h2>
-        <p className="text-gray-500 mb-6">
+        <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{result.label}</h2>
+        <p className="mb-6" style={{ color: colors.textMuted }}>
           {score} bonne{score > 1 ? 's' : ''} réponse{score > 1 ? 's' : ''} sur {total}
         </p>
-        <div className="w-48 h-3 bg-gray-100 rounded-full mb-8 overflow-hidden">
+        <div className="w-48 h-3 rounded-full mb-8 overflow-hidden" style={{ background: colors.bgSecondary }}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${(score / total) * 100}%` }}
@@ -83,7 +85,7 @@ export function QuizConsentementScreen() {
           />
         </div>
         {score < 7 && (
-          <p className="text-sm text-gray-500 text-center max-w-xs mb-6">
+          <p className="text-sm text-center max-w-xs mb-6" style={{ color: colors.textMuted }}>
             Relis les modules <strong>Porno vs. Réalité</strong> et <strong>La Loi</strong> pour mieux comprendre.
           </p>
         )}
@@ -107,17 +109,17 @@ export function QuizConsentementScreen() {
           <Gamepad2 size={22} className="text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Quiz</h2>
-          <p className="text-sm text-gray-500">Question {current + 1} sur {total}</p>
+          <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Quiz</h2>
+          <p className="text-sm" style={{ color: colors.textMuted }}>Question {current + 1} sur {total}</p>
         </div>
         <div className="ml-auto">
           <Trophy size={16} className="text-amber-400 inline mr-1" />
-          <span className="text-sm font-bold text-gray-700">{score}</span>
+          <span className="text-sm font-bold" style={{ color: colors.textSecondary }}>{score}</span>
         </div>
       </div>
 
       {/* Barre de progression */}
-      <div className="w-full h-2 bg-gray-100 rounded-full mb-6 overflow-hidden">
+      <div className="w-full h-2 rounded-full mb-6 overflow-hidden" style={{ background: colors.bgSecondary }}>
         <motion.div
           animate={{ width: `${((current) / total) * 100}%` }}
           transition={{ duration: 0.4 }}
@@ -134,22 +136,23 @@ export function QuizConsentementScreen() {
           exit={{ opacity: 0, x: -30 }}
           transition={{ duration: 0.25 }}
         >
-          <div className="mb-6 p-4 rounded-2xl bg-white shadow-sm border border-gray-100">
-            <p className="text-base font-semibold text-gray-800 leading-snug">{question.question}</p>
+          <div className="mb-6 p-4 rounded-2xl shadow-sm border" style={{ background: colors.bgCard, borderColor: colors.border }}>
+            <p className="text-base font-semibold leading-snug" style={{ color: colors.textPrimary }}>{question.question}</p>
           </div>
 
           {/* Options */}
           <div className="space-y-2.5 mb-5">
             {question.options.map((option, i) => {
-              let bg = 'bg-white border-gray-100';
-              let text = 'text-gray-700';
+              let bgClass = '';
+              let borderClass = '';
+              let textColor = colors.textSecondary;
+              let optionStyle: React.CSSProperties = { background: colors.bgCard, borderColor: colors.border };
               if (confirmed) {
-                if (i === question.correctIndex) { bg = 'bg-green-50 border-green-300'; text = 'text-green-800'; }
-                else if (i === selected && selected !== question.correctIndex) { bg = 'bg-red-50 border-red-300'; text = 'text-red-700'; }
-                else { bg = 'bg-white border-gray-100'; text = 'text-gray-400'; }
+                if (i === question.correctIndex) { bgClass = 'bg-green-50'; borderClass = 'border-green-300'; textColor = '#166534'; optionStyle = {}; }
+                else if (i === selected && selected !== question.correctIndex) { bgClass = 'bg-red-50'; borderClass = 'border-red-300'; textColor = '#991b1b'; optionStyle = {}; }
+                else { textColor = colors.textMuted; }
               } else if (selected === i) {
-                bg = 'bg-blue-50 border-blue-300';
-                text = 'text-blue-800';
+                bgClass = 'bg-blue-50'; borderClass = 'border-blue-300'; textColor = '#1e40af'; optionStyle = {};
               }
 
               return (
@@ -157,9 +160,10 @@ export function QuizConsentementScreen() {
                   key={i}
                   whileTap={confirmed ? {} : { scale: 0.98 }}
                   onClick={() => handleSelect(i)}
-                  className={`w-full text-left p-3.5 rounded-xl border shadow-sm transition-all duration-200 ${bg}`}
+                  className={`w-full text-left p-3.5 rounded-xl border shadow-sm transition-all duration-200 ${bgClass} ${borderClass}`}
+                  style={optionStyle}
                 >
-                  <span className={`text-sm font-medium ${text}`}>{option}</span>
+                  <span className="text-sm font-medium" style={{ color: textColor }}>{option}</span>
                 </motion.button>
               );
             })}

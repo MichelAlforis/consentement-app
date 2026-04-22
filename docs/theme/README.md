@@ -35,10 +35,25 @@ app/
     │   ├── Button.tsx               # useTheme() — gradients via thème
     │   ├── ComfortSlider.tsx        # useTheme() — couleurs inactives via bgSecondary
     │   └── Header.tsx               # theme via prop (au-dessus du Provider)
+    ├── duo/
+    │   ├── DuoBumpStep.tsx          # useTheme()
+    │   ├── DuoConnectedStep.tsx     # useTheme()
+    │   ├── DuoFillingStep.tsx       # useTheme()
+    │   ├── DuoReadyStep.tsx         # useTheme()
+    │   ├── DuoPactStep.tsx          # useTheme()
+    │   ├── DuoRevealStep.tsx        # useTheme()
+    │   ├── DuoSummaryStep.tsx       # useTheme()
+    │   └── DuoWaitingStep.tsx       # useTheme()
     └── screens/
         ├── HomeAdultScreen.tsx      # useTheme()
         ├── PersonalSpaceScreen.tsx  # useTheme()
         ├── GamesHubScreen.tsx       # useTheme()
+        ├── HelpScreen.tsx           # useTheme()
+        ├── LearnScreen.tsx          # useTheme()
+        ├── PremiumScreen.tsx        # useTheme()
+        ├── QuizConsentementScreen.tsx # useTheme()
+        ├── LoiConsentementScreen.tsx  # useTheme()
+        ├── PornoVsRealiteScreen.tsx   # useTheme()
         └── ThemeSelectScreen.tsx    # Previews animées pour thèmes premium
 ```
 
@@ -121,6 +136,7 @@ interface ThemeEffects {
 | bgGradient | `#0f0d0e` → `#1e1520` Noir |
 | bgCard | `rgba(30,24,28,0.95)` Noir chaud |
 | textPrimary | `#f0ece4` Crème |
+| textMuted | `#8a8078` Gris chaud — contraste 5:1 sur `#0f0d0e` (WCAG AA ✓) |
 
 ### Nude 🤍 (Premium)
 | Rôle | Valeur |
