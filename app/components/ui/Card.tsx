@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { ShimmerLayer } from './ThemeEffects';
 
 interface CardProps {
   children: ReactNode;
@@ -20,20 +21,24 @@ const paddingStyles = {
   lg: 'p-6',
 };
 
-export function Card({
-  children,
-  onClick,
-  variant = 'default',
-  padding = 'md',
-  className = '',
-  delay = 0,
-}: CardProps) {
-  const { colors } = useTheme();
+export function Card({ children, onClick, variant = 'default', padding = 'md', className = '', delay = 0 }: CardProps) {
+  const { colors, effects } = useTheme();
+
+  const premiumInnerBorder = effects.cardInnerBorder
+    ? `inset 0 1px 0 ${effects.cardInnerBorder}, inset 0 -1px 0 ${effects.cardInnerBorder}55`
+    : '';
+  const premiumGlow = effects.cardGlow ? `0 0 28px ${effects.cardGlow}` : '';
+
+  const combineShadows = (...s: string[]) => s.filter(Boolean).join(', ');
 
   const getStyle = () => {
     switch (variant) {
       case 'elevated':
-        return { background: colors.bgCard, border: `1px solid ${colors.border}`, boxShadow: `0 8px 32px rgba(0,0,0,0.08)` };
+        return {
+          background: colors.bgCard,
+          border: `1px solid ${colors.border}`,
+          boxShadow: combineShadows('0 8px 32px rgba(0,0,0,0.08)', premiumGlow, premiumInnerBorder),
+        };
       case 'accent':
         return { background: colors.accentGradient };
       case 'secondary':
@@ -43,7 +48,11 @@ export function Card({
       case 'warning':
         return { background: `${colors.warning}18`, border: `1px solid ${colors.warning}30` };
       default:
-        return { background: colors.bgCard, border: `1px solid ${colors.border}` };
+        return {
+          background: colors.bgCard,
+          border: `1px solid ${colors.border}`,
+          boxShadow: combineShadows(premiumGlow, premiumInnerBorder) || undefined,
+        };
     }
   };
 
@@ -57,6 +66,7 @@ export function Card({
       onClick={onClick}
       style={getStyle()}
       className={`
+        relative overflow-hidden
         ${paddingStyles[padding]}
         rounded-3xl
         ${onClick ? 'cursor-pointer active:brightness-95' : ''}
@@ -64,7 +74,12 @@ export function Card({
         ${className}
       `}
     >
-      {children}
+      {effects.shimmer && (variant === 'elevated' || variant === 'default') && (
+        <ShimmerLayer color={effects.shimmerColor} />
+      )}
+      <div className="relative" style={{ zIndex: 2 }}>
+        {children}
+      </div>
     </motion.div>
   );
 }

@@ -43,20 +43,40 @@ export interface ThemeColors {
   comfortLove: string;
 }
 
+export interface ThemeEffects {
+  shimmer: boolean;
+  shimmerColor: string;
+  grain: boolean;
+  pageTransition: 'slide' | 'fade' | 'drift';
+  cardGlow: string | null;
+  cardInnerBorder: string | null;
+}
+
 export interface Theme {
   id: ThemeMode;
   name: string;
   emoji: string;
   description: string;
   colors: ThemeColors;
+  effects: ThemeEffects;
 }
 
 // Thème WARM - Tons chauds, terracotta, pêche, corail (tendance 2024-2025)
+const freeEffects: ThemeEffects = {
+  shimmer: false,
+  shimmerColor: 'transparent',
+  grain: false,
+  pageTransition: 'slide',
+  cardGlow: null,
+  cardInnerBorder: null,
+};
+
 export const warmTheme: Theme = {
   id: 'warm',
   name: 'Chaleureux',
   emoji: '🌅',
   description: 'Tons chauds et doux',
+  effects: freeEffects,
   colors: {
     // Backgrounds
     bgPrimary: '#fef7f0',
@@ -105,6 +125,7 @@ export const calmTheme: Theme = {
   name: 'Apaisant',
   emoji: '🌙',
   description: 'Tons sombres et sereins',
+  effects: freeEffects,
   colors: {
     // Backgrounds
     bgPrimary: '#f5f6f8',
@@ -153,6 +174,14 @@ export const darkLuxuryTheme: Theme = {
   name: 'Sombre & Luxe',
   emoji: '✨',
   description: 'Intimiste et sophistiqué',
+  effects: {
+    shimmer: true,
+    shimmerColor: '#c9a84c',
+    grain: false,
+    pageTransition: 'fade',
+    cardGlow: 'rgba(201, 168, 76, 0.07)',
+    cardInnerBorder: 'rgba(201, 168, 76, 0.22)',
+  },
   colors: {
     bgPrimary: '#0f0d0e',
     bgSecondary: '#1a1518',
@@ -194,6 +223,14 @@ export const nudeTheme: Theme = {
   name: 'Nude & Doux',
   emoji: '🤍',
   description: 'Élégant et épuré',
+  effects: {
+    shimmer: false,
+    shimmerColor: 'transparent',
+    grain: true,
+    pageTransition: 'drift',
+    cardGlow: null,
+    cardInnerBorder: 'rgba(176, 125, 106, 0.18)',
+  },
   colors: {
     bgPrimary: '#faf7f4',
     bgSecondary: '#f2ede8',
@@ -235,6 +272,7 @@ export const youthTheme: Theme = {
   name: 'Jeunesse',
   emoji: '🌈',
   description: 'Coloré et bienveillant',
+  effects: freeEffects,
   colors: {
     bgPrimary: '#f0f7ff',
     bgSecondary: '#e8f4ff',

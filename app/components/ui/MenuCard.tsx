@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { ShimmerLayer } from './ThemeEffects';
 
 interface MenuCardProps {
   icon: ReactNode;
@@ -14,27 +15,24 @@ interface MenuCardProps {
   delay?: number;
 }
 
-export function MenuCard({
-  icon,
-  title,
-  description,
-  onClick,
-  variant = 'default',
-  delay = 0,
-}: MenuCardProps) {
-  const { colors } = useTheme();
+export function MenuCard({ icon, title, description, onClick, variant = 'default', delay = 0 }: MenuCardProps) {
+  const { colors, effects } = useTheme();
+
+  const premiumInnerBorder = effects.cardInnerBorder
+    ? `inset 0 1px 0 ${effects.cardInnerBorder}`
+    : '';
 
   const getCardStyle = () => {
     switch (variant) {
       case 'accent':
         return {
           background: colors.accentGradient,
-          boxShadow: `0 8px 24px ${colors.accentShadow}`,
+          boxShadow: `0 8px 24px ${colors.accentShadow}${premiumInnerBorder ? `, ${premiumInnerBorder}` : ''}`,
         };
       case 'secondary':
         return {
           background: colors.secondaryGradient,
-          boxShadow: `0 8px 24px rgba(0,0,0,0.15)`,
+          boxShadow: `0 8px 24px rgba(0,0,0,0.15)${premiumInnerBorder ? `, ${premiumInnerBorder}` : ''}`,
         };
       case 'green':
         return {
@@ -50,12 +48,13 @@ export function MenuCard({
         return {
           background: colors.bgCard,
           border: `1px solid ${colors.border}`,
-          boxShadow: 'none',
+          boxShadow: premiumInnerBorder || undefined,
         };
     }
   };
 
   const isColored = variant !== 'default';
+  const showShimmer = effects.shimmer && isColored;
 
   return (
     <motion.button
@@ -66,32 +65,28 @@ export function MenuCard({
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       style={getCardStyle()}
-      className="w-full rounded-3xl p-5 text-left flex items-center gap-4 transition-all duration-300 active:brightness-95"
+      className="relative overflow-hidden w-full rounded-3xl p-5 text-left flex items-center gap-4 transition-all duration-300 active:brightness-95"
     >
+      {showShimmer && <ShimmerLayer color={effects.shimmerColor} />}
+
       <div
-        className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0"
-        style={{ background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient }}
+        className="relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0"
+        style={{ background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient, zIndex: 2 }}
       >
         {icon}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <h3
-          className="font-semibold text-base"
-          style={{ color: isColored ? '#ffffff' : colors.textPrimary }}
-        >
+      <div className="relative flex-1 min-w-0" style={{ zIndex: 2 }}>
+        <h3 className="font-semibold text-base" style={{ color: isColored ? '#ffffff' : colors.textPrimary }}>
           {title}
         </h3>
-        <p
-          className="text-sm mt-0.5"
-          style={{ color: isColored ? 'rgba(255,255,255,0.82)' : colors.textSecondary }}
-        >
+        <p className="text-sm mt-0.5" style={{ color: isColored ? 'rgba(255,255,255,0.82)' : colors.textSecondary }}>
           {description}
         </p>
       </div>
 
       {!isColored && (
-        <ChevronRight size={24} style={{ color: colors.textMuted }} />
+        <ChevronRight size={24} style={{ color: colors.textMuted, zIndex: 2, position: 'relative' }} />
       )}
     </motion.button>
   );

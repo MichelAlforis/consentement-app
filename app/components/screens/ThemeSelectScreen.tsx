@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Crown, Lock } from 'lucide-react';
 import { ThemeMode, themes } from '../../types/theme';
+import { PreviewShimmer } from '../ui/ThemeEffects';
 
 interface ThemeSelectScreenProps {
   onSelectTheme: (theme: ThemeMode) => void;
@@ -113,31 +114,62 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         {premiumThemes.map((mode, i) => {
           const t = themes[mode];
           const locked = !isPremium;
+          const isDarkLuxury = mode === 'dark-luxury';
+          const isNude = mode === 'nude';
+
           return (
             <motion.button
               key={mode}
               initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 + i * 0.1 }}
-              whileHover={{ scale: locked ? 1 : 1.02, y: locked ? 0 : -3 }}
-              whileTap={{ scale: locked ? 1 : 0.98 }}
+              animate={isNude && locked
+                ? { opacity: 1, x: 0, scale: [1, 1.008, 1] }
+                : { opacity: 1, x: 0 }
+              }
+              transition={isNude && locked
+                ? { delay: 0.6 + i * 0.1, scale: { duration: 4, repeat: Infinity, ease: 'easeInOut', repeatType: 'mirror' } }
+                : { delay: 0.6 + i * 0.1 }
+              }
+              whileHover={{ scale: locked ? 1.01 : 1.02, y: -3 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => locked ? onGoPremium?.() : onSelectTheme(mode)}
               className="relative overflow-hidden rounded-3xl p-5 text-left w-full"
               style={{
                 background: themeGradients[mode],
-                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                opacity: locked ? 0.7 : 1,
+                boxShadow: isDarkLuxury
+                  ? '0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(201,168,76,0.3)'
+                  : isNude
+                    ? '0 8px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(176,125,106,0.2)'
+                    : '0 8px 30px rgba(0,0,0,0.12)',
               }}
             >
+              {/* Shimmer animé — dark-luxury */}
+              {isDarkLuxury && locked && <PreviewShimmer color="#c9a84c" />}
+
+              {/* Overlay + badge lock */}
               {locked && (
-                <div className="absolute inset-0 rounded-3xl bg-black/20 flex items-center justify-center z-10">
-                  <div className="bg-white/90 rounded-2xl px-4 py-2 flex items-center gap-2 shadow">
-                    <Lock size={14} className="text-gray-600" />
-                    <span className="text-sm font-semibold text-gray-700">Premium</span>
+                <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-2"
+                  style={{ background: isDarkLuxury ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.18)', zIndex: 10 }}
+                >
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl"
+                    style={{
+                      background: isDarkLuxury ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.85)',
+                      border: isDarkLuxury ? '1px solid rgba(201,168,76,0.4)' : '1px solid rgba(176,125,106,0.3)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    <Crown size={14} style={{ color: isDarkLuxury ? '#c9a84c' : '#8c7860' }} />
+                    <span className="text-sm font-semibold" style={{ color: isDarkLuxury ? '#c9a84c' : '#5c4a40' }}>
+                      Premium
+                    </span>
                   </div>
+                  <p className="text-xs" style={{ color: isDarkLuxury ? 'rgba(201,168,76,0.7)' : 'rgba(92,74,64,0.7)' }}>
+                    Appuie pour débloquer
+                  </p>
                 </div>
               )}
-              <div className="flex items-center gap-4 mb-3">
+
+              <div className="flex items-center gap-4 mb-3" style={{ position: 'relative', zIndex: 5 }}>
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
                   style={{ background: t.colors.accentGradient }}>
                   <span className="text-2xl">{t.emoji}</span>
@@ -147,7 +179,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
                   <p className="text-sm" style={{ color: t.colors.textSecondary }}>{t.description}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2" style={{ position: 'relative', zIndex: 5 }}>
                 {themePreviewColors[mode].map((color) => (
                   <div key={color} className="w-7 h-7 rounded-lg shadow-sm" style={{ backgroundColor: color }} />
                 ))}

@@ -1,7 +1,7 @@
 # Cartes à tirer
 
 **Statut :** ✅ Livré  
-**Version :** 1.0  
+**Version :** 2.0  
 **Accès :** Premium — adultes et tous âges (contenu adulte filtré par âge)  
 **Date :** 2026-04-22
 
@@ -13,7 +13,7 @@ Jeu de tirage de cartes solo ou à deux. Le joueur choisit un paquet (ou laisse 
 
 Contrairement au dé, il n'y a pas de vote : le jeu déclenche une **conversation**, pas une action. La carte est un prétexte au dialogue. L'autre réagit librement, à son rythme.
 
-Le premium se justifie par le volume de contenu (84 cartes), la profondeur des questions, et les cartes adultes qui nécessitent un contexte de confiance établie.
+Le premium se justifie par le volume de contenu (84 cartes), la profondeur des questions, les cartes adultes, et les fonctionnalités de séance (anti-répétition, progression émotionnelle, favoris, écran de fin).
 
 ---
 
@@ -21,7 +21,7 @@ Le premium se justifie par le volume de contenu (84 cartes), la profondeur des q
 
 ### Mode Solo
 1. Choisir "Solo" + un paquet (ou aléatoire)
-2. Appuyer sur "Tirer une carte"
+2. Appuyer sur "Tirer une carte" / "Commencer · N cartes"
 3. La carte apparaît face cachée (dos coloré) → flip 3D automatique → texte révélé
 4. Lire, réfléchir, noter — à son propre rythme
 5. "Nouvelle carte" → flip retour + nouvelle carte → flip révélation
@@ -37,18 +37,80 @@ Le premium se justifie par le volume de contenu (84 cartes), la profondeur des q
 
 ---
 
+## Modes de session
+
+### Mode Séance (✦ Séance)
+- Taille choisie : **5 cartes** ou **10 cartes**
+- **Anti-répétition complet** : aucune carte ne revient dans la même session
+- **Progression émotionnelle** en mode aléatoire (voir ci-dessous)
+- **Barre de progression** : points animés indiquant la position dans la séance
+- Sur la dernière carte, le bouton "Nouvelle carte" se transforme en **"Terminer la séance"** (vert)
+- Mène à un **écran de fin** avec récap des paquets explorés et message d'insight
+
+### Mode Libre (∞ Libre)
+- Tirage infini sans limite de cartes
+- Anti-répétition sur les 10 dernières cartes (pool de `drawnIds`, reset au redémarrage)
+- Pas d'écran de fin — le joueur s'arrête quand il le souhaite
+- Disponible directement, ou via "Continuer en mode libre" depuis l'écran de fin
+
+---
+
+## Progression émotionnelle
+
+En mode **Séance aléatoire**, les cartes sont sélectionnées selon une progression en trois temps :
+
+| Phase | Position dans la séance | Paquets favorisés |
+|-------|------------------------|-------------------|
+| Entrée en matière | 0 → 35 % | Profondeur 1–2 (Osez, Défi, Parlez, Et si…) |
+| Milieu | 35 → 65 % | Tous les paquets |
+| Profondeur | 65 → 100 % | Profondeur 2–3 (Parlez, Et si…, Vérité, Douceur) |
+
+```ts
+const DECK_DEPTH: Record<number, 1 | 2 | 3> = { 1: 1, 4: 1, 2: 2, 3: 2, 5: 3, 6: 3 };
+```
+
+La progression ne s'applique qu'en mode aléatoire (si un paquet spécifique est choisi, toutes les profondeurs sont disponibles dès le départ).
+
+---
+
+## Favoris
+
+Le bouton ❤️ apparaît sous chaque carte révélée. Il permet de marquer la carte comme favorite.
+
+- Persisté en **localStorage** sous la clé `consentement_card_favorites` (tableau d'IDs)
+- Le compteur de favoris s'affiche dans le header de l'écran de sélection
+- L'écran de fin affiche le nombre de favoris accumulés sur la session
+
+---
+
+## Écran de fin (mode Séance)
+
+Affiché après la dernière carte de la séance :
+
+1. Emoji ✨ animé (spring bounce)
+2. Titre "Belle séance !" + ligne de stats (N cartes, paquets explorés, favoris)
+3. **Badges paquets explorés** : affiche les catégories effectivement rencontrées avec leur gradient couleur
+4. **Message d'insight contextuel** :
+   - Si Vérité ou Douceur explorés → message sur la profondeur atteinte
+   - Si Parlez ou Et si… → invitation à aller vers Vérité/Douceur
+   - Sinon → invitation à essayer le mode aléatoire
+5. "Nouvelle séance" → retour à l'écran de sélection (reset complet)
+6. "Continuer en mode libre" → continue avec la même carte sans recommencer
+
+---
+
 ## Les 6 paquets
 
 Les paquets partagent exactement le même système de catégories que le dé (`DICE_CATEGORIES`) : même nom, même emoji, même gradient couleur.
 
-| Paquet | Emoji | Couleur | Ton |
-|--------|-------|---------|-----|
-| Osez | 🎭 | Amber `#f59e0b → #d97706` | Actions légères à faire sur le moment |
-| Parlez | 💬 | Violet `#8b5cf6 → #7c3aed` | Questions sur soi, l'autre, la relation |
-| Et si… | 🤔 | Rose `#ec4899 → #db2777` | Scénarios imaginaires à débattre |
-| Défi | 🎯 | Bleu `#3b82f6 → #2563eb` | Mini-challenges créatifs ou rigolos |
-| Vérité | ✨ | Vert `#10b981 → #059669` | Questions honnêtes sur les limites et besoins |
-| Douceur | ❤️ | Bordeaux `#be123c → #9f1239` | Moments de tendresse guidés |
+| Paquet | Emoji | Couleur | Ton | Profondeur |
+|--------|-------|---------|-----|------------|
+| Osez | 🎭 | Amber `#f59e0b → #d97706` | Actions légères à faire sur le moment | 1 |
+| Parlez | 💬 | Violet `#8b5cf6 → #7c3aed` | Questions sur soi, l'autre, la relation | 2 |
+| Et si… | 🤔 | Rose `#ec4899 → #db2777` | Scénarios imaginaires à débattre | 2 |
+| Défi | 🎯 | Bleu `#3b82f6 → #2563eb` | Mini-challenges créatifs ou rigolos | 1 |
+| Vérité | ✨ | Vert `#10b981 → #059669` | Questions honnêtes sur les limites et besoins | 3 |
+| Douceur | ❤️ | Bordeaux `#be123c → #9f1239` | Moments de tendresse guidés | 3 |
 
 Un 7ème choix **"Aléatoire"** mélange toutes les cartes disponibles — identifié par un dégradé arc-en-ciel et l'icône Shuffle.
 
@@ -62,6 +124,8 @@ Un 7ème choix **"Aléatoire"** mélange toutes les cartes disponibles — ident
 |----------|------------------|-------|
 | Tous âges (`ageGate: 'all'`) | 10 | 60 |
 | Adultes (`ageGate: 'adult'`) | 4 | 24 |
+
+Les cartes adultes sont signalées discrètement sur la face révélée par un badge `✦` en bas-droite.
 
 ### Exemples par paquet
 
@@ -109,7 +173,7 @@ Un 7ème choix **"Aléatoire"** mélange toutes les cartes disponibles — ident
 
 | Fichier | Rôle |
 |---------|------|
-| `app/components/screens/CardGameScreen.tsx` | Écran de jeu complet — 2 étapes, flip 3D |
+| `app/components/screens/CardGameScreen.tsx` | Écran de jeu complet — 3 étapes, flip 3D, séance, favoris |
 | `app/data/index.ts` | `CardData` interface + `cardData` (84 entrées) |
 | `app/types/index.ts` | `'jeu-cartes'` ajouté au type `Screen` |
 
@@ -120,10 +184,12 @@ pick → playing
          ↓
     drawNewCard (boucle interne — pas de changement d'étape)
          ↓
+    end (séance uniquement) → pick (reset)
+         ↓
     reset → pick
 ```
 
-Pas d'états intermédiaires complexes : le jeu n'a que deux écrans. Le flip est géré par un booléen `isRevealed` + des `setTimeout` synchronisés.
+Pas d'états intermédiaires complexes : le jeu n'a que trois écrans. Le flip est géré par un booléen `isRevealed` + des `setTimeout` synchronisés.
 
 ### Animation flip 3D — points clés
 
@@ -150,6 +216,18 @@ isRevealed = false          → rotateY revient à 0 (flip dos, 480ms)
 ```
 
 Le contenu est toujours swappé **pendant** que le dos est visible, jamais pendant la transition — l'utilisateur ne voit jamais le changement de texte.
+
+Le swap utilise un pattern de mise à jour fonctionnelle pour éviter les closures périmées :
+
+```ts
+setDrawnIds(prev => {
+  const newCard = pickCard(cardCount, prev, sessionMode);
+  setCurrentCard(newCard);
+  setDrawnIds([...prev, newCard.id]);
+  // ...
+  return prev;
+});
+```
 
 #### Séquence "Première carte"
 
@@ -178,6 +256,7 @@ Le délai de 350ms laisse l'animation d'entrée de l'écran (`playing`) se termi
 - Bande de couleur catégorie en haut (2.5px) et en bas (1.5px)
 - Badge catégorie : carré arrondi avec gradient + emoji (11×11, rounded-2xl)
 - Texte de la carte : `text-gray-800`, `font-semibold`, `text-[15px]`, centré
+- Badge adulte `✦` discret en bas-droite si `ageGate === 'adult'`
 
 ### Filtrage du contenu
 
@@ -191,7 +270,17 @@ const available = useMemo(() => cardData.filter(c => {
 
 Le paquet "Aléatoire" tire dans tout `available`. Un paquet spécifique filtre en plus par `c.deck === selectedDeck`. Si le pool est vide (ne devrait pas arriver), fallback sur tout `available`.
 
-La carte précédente est exclue du pool via `exclude?: string` (comparaison par `id`) pour éviter deux fois de suite la même carte.
+La carte précédente est exclue du pool via le tableau `drawnIds` (comparaison par `id`) — anti-répétition complet sur toute la séance.
+
+### Favoris
+
+```ts
+const FAV_KEY = 'consentement_card_favorites';
+function loadFavs(): string[] { /* localStorage.getItem */ }
+function saveFavs(ids: string[]) { /* localStorage.setItem */ }
+```
+
+Le state `favorites` est initialisé depuis localStorage au montage (`useState(loadFavs)`). La sauvegarde est synchrone à chaque toggle pour éviter la perte en cas de fermeture brutale.
 
 ### Gestion des timers
 
@@ -211,6 +300,15 @@ Les cartes déclenchent des questions et des conversations, pas des actions à e
 **Pourquoi la carte reste affichée jusqu'à ce que le joueur la ferme ?**
 Insight UX fondateur : une question sur les limites ou les besoins peut prendre 2 minutes comme 20. Un timer crée exactement la pression que le jeu cherche à éliminer. Le joueur est maître du rythme.
 
+**Pourquoi deux modes (Séance / Libre) ?**
+La Séance structure l'expérience pour les utilisateurs qui veulent une soirée cadencée — un début, un rythme progressif, une fin. Le mode Libre répond au besoin opposé : tirer des cartes au fil de la conversation, sans s'engager sur un nombre. Les deux usages sont légitimes.
+
+**Pourquoi la progression émotionnelle en mode aléatoire ?**
+Commencer par Vérité adulte avec des inconnus crée de la résistance. La progression light → profond reproduit la dynamique naturelle d'une vraie conversation — on se chauffe avant d'aller au fond des choses. C'est invisible pour l'utilisateur, mais il le ressent.
+
+**Pourquoi les favoris en localStorage et non en base ?**
+Pas de compte requis pour jouer — l'app est utilisable sans auth. localStorage est suffisant pour une utilisation personnelle sur un seul appareil. Une sync cloud serait une évolution post-v1.
+
 **Pourquoi réutiliser `DICE_CATEGORIES` plutôt que créer un nouveau système ?**
 Les 6 catégories sont déjà connues des joueurs du dé. Réutiliser les mêmes noms, emojis et couleurs crée une cohérence de langage dans toute l'app. Le Jeu de l'oie utilise le même code couleur pour la même raison.
 
@@ -218,14 +316,16 @@ Les 6 catégories sont déjà connues des joueurs du dé. Réutiliser les mêmes
 Réduire la friction d'entrée. Un utilisateur qui veut juste jouer n'a pas à choisir un paquet. Choisir un paquet est une décision intentionnelle — utile quand on veut orienter la soirée vers un ton précis (Douceur vs. Défi).
 
 **Pourquoi premium (et non gratuit comme le dé) ?**
-Volume et profondeur : 84 cartes dont 24 adultes représentent un contenu éditorial significatif. La barrière premium filtre aussi naturellement vers des utilisateurs qui ont une intention de jeu sérieuse — contexte dans lequel les cartes Vérité et Douceur adultes ont leur pleine valeur.
+Volume et profondeur : 84 cartes dont 24 adultes représentent un contenu éditorial significatif. La séance structurée avec progression, favoris et écran de fin offre une expérience complète qui justifie l'abonnement. La barrière premium filtre aussi naturellement vers des utilisateurs qui ont une intention de jeu sérieuse — contexte dans lequel les cartes Vérité et Douceur adultes ont leur pleine valeur.
 
 ---
 
 ## Évolutions prévues
 
 - [ ] Mode "soirée" : plusieurs joueurs à tour de rôle — chaque joueur pioche sa propre carte
+- [ ] Vue favoris : revoir les cartes marquées ❤️ en dehors d'une séance
 - [ ] Historique de session : voir les cartes tirées (reset à la fermeture)
 - [ ] Paquets thématiques supplémentaires (ex: "Première fois", "Après une dispute", "Anniversaire")
 - [ ] Cartes personnalisées : les utilisateurs créent leurs propres cartes dans un paquet privé
 - [ ] Export PDF : imprimer un paquet pour jouer hors-ligne
+- [ ] Sync favoris sur le compte utilisateur (post-auth)
