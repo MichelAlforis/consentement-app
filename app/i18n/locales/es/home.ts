@@ -19,7 +19,7 @@ export const home = {
       },
       games: {
         title: 'Juegos',
-        desc: 'Explorar el consentimiento jugando',
+        desc: '1 gratis · 2 juegos premium',
       },
     },
     resources: {
@@ -47,7 +47,7 @@ export const home = {
     menu: {
       personal: { title: 'Mi Espacio', desc: 'Explorar mis zonas de comodidad' },
       duo: { title: 'Nuestro Espacio', desc: 'Dialogar con mi pareja' },
-      games: { title: 'Juegos', desc: 'Explorar el consentimiento jugando' },
+      games: { title: 'Juegos', desc: '1 gratis · 2 juegos premium' },
       resources: { title: 'Recursos', desc: 'Guías e información' },
     },
     privacy: 'Tus datos están cifrados y puedes eliminarlos en cualquier momento.',
