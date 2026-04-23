@@ -92,29 +92,102 @@ Le déplacement case par case à 210ms/case (`usePawnAnimation`) reste actif en 
 
 ---
 
-## Niveau 3 — React Three Fiber (avancé)
+## Niveau 3 ✅ livré — React Three Fiber
+
+### Architecture
+
+`BoardGrid` est un wrapper conditionnel : WebGL détecté → `BoardGridR3F`, sinon → `BoardGridCSS` (fallback CSS intact).
+
+```ts
+function useWebGLSupport(): boolean | null  // null = SSR, false = pas de WebGL
+```
+
+### Caméra orthographique isométrique
+
+```ts
+// elevation 58°, azimuth 45° — identique au CSS rotateX(58°) rotateZ(45°)
+const CAM_POS = [7.5, 16.96, 7.5]  // distance 20, sphérique
+<OrthographicCamera zoom={38} onUpdate={self => self.lookAt(0, 0.1, 0)} />
+```
+
+Pas de transform CSS sur le Canvas — la caméra gère la perspective.
+
+### Géométrie 3D
+
+- Socle acajou : `BoxGeometry` — `#8a3418`, roughness=0.82.
+- Cases : `BoxGeometry(1.0, 0.25, 1.0)`, `MeshStandardMaterial`, couleur par type.
+- Gap entre cases : 0.08 world units.
+- Case active : `emissiveIntensity` animé via `useFrame` (pulse lent ou flash).
+
+### Couleurs par type de case (MeshStandardMaterial)
+
+```ts
+depart:#4ade80  normal:#7a6248  chance:#fbbf24
+pause:#f87171   accord:#60a5fa  complicite:#c084fc  arrivee:#34d399
+```
+
+### Lumières
+
+```tsx
+<ambientLight intensity={0.55} />
+<directionalLight position={[5, 10, 5]} intensity={1.4} />       // lumière principale
+<directionalLight position={[-4, 6, -4]} intensity={0.35} color="#ffd0a0" />  // chaud fill
+```
+
+### Ombres
+
+```tsx
+// Ombres des cases sur le socle acajou
+<ContactShadows position={[0, -0.01, 0]} far={0.4} frames={1} resolution={128} />
+// Ombre du plateau sur le sol virtuel
+<ContactShadows position={[0, -0.32, 0]} far={5} frames={1} resolution={128} />
+// Disque blob sous chaque pion (mesh circle, opacity 0.28)
+<PawnShadowDisc squareIndex={...} />
+```
+
+`frames={1}` : ombres calculées une seule fois (scène statique) → mobile-safe.
+
+### Pions (DOM overlay)
+
+`PawnOverlayR3F` : projection 3D → 2D via `THREE.Vector3.project(camera)` au premier frame.
+Même logique d'arc Framer Motion que la version CSS. `PawnSvg` identique (réutilisé).
+
+### Fallback WebGL
+
+```
+iOS 13+ / Android API 22+ via Capacitor → WebGL disponible dans 99% des cas.
+null (SSR) → CSS, false (WebGL absent) → CSS. Pas de flash : CSS rendu immédiatement.
+```
+
+### Tuning sandbox
+
+Paramètres à ajuster dans `Board.tsx` :
+- `CANVAS_H = 450` : hauteur du canvas en px.
+- `zoom={38}` sur `OrthographicCamera` : zoom — plus grand = plateau plus grand.
+- `CAM_POS` : position caméra (distance 20, élévation 58°, azimut 45°).
 
 | Feature | CSS iso actuel | R3F |
 |---------|---------------|-----|
 | Lumière sur les cases | Absente (faces CSS abandonnées) | Réelle (ambiant + directionnel) |
-| Ombre des pions | Absente | ContactShadows |
+| Ombre des pions | Absente | ContactShadows + PawnShadowDisc |
 | Cases avec matière | Gradient CSS | MeshStandardMaterial |
 | Faces latérales | Abandonnées (z-order) | Automatiques (géométrie 3D) |
-| Brouillard de distance | Impossible | `<fog attach="fog" />` |
+| Brouillard de distance | Impossible | `<fog attach="fog" />` (non branché) |
 
 ---
 
 ## Tableau récap
 
-| Feature | Avant | Niveau 1 ✅ | Niveau 2 ✅ | Niveau 3 |
+| Feature | Avant | Niveau 1 ✅ | Niveau 2 ✅ | Niveau 3 ✅ |
 |---------|-------|-----------|---------|---------|
-| Vue isométrique | ❌ | ✅ CSS 58°+perspective | ✅ | ✅ WebGL |
-| Surface plateau | ❌ | ✅ acajou basique | ✅ grain bois + glow | ✅ PBR |
+| Vue isométrique | ❌ | ✅ CSS 58°+perspective | ✅ | ✅ caméra ortho R3F |
+| Surface plateau | ❌ | ✅ acajou basique | ✅ grain bois + glow | ✅ MeshStandardMaterial |
 | Sens Sonic (départ bas) | ❌ | ✅ rangées inversées | ✅ | ✅ |
-| Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto R3F |
+| Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto BoxGeometry |
 | Trail de progression | ❌ | ❌ | ❌ inutile | — |
-| Arc de déplacement | ❌ | ❌ | 🔄 feature pion | ✅ physique |
-| Pions SVG | ❌ | token basique | ✅ SVG radialGradient | ✅ mesh 3D |
+| Ombres pions | ❌ | ❌ | ❌ | ✅ ContactShadows + disc |
+| Pions SVG | ❌ | token basique | ✅ SVG cylindrique | ✅ overlay DOM (R3F projection) |
+| Fallback CSS (WebGL absent) | — | — | — | ✅ automatique |
 | Légende | ✅ | ✅ | ✅ | ✅ |
 
 ---
