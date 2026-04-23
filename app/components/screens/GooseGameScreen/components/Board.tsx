@@ -118,7 +118,6 @@ function BoardCell({
         border: isActive
           ? '2px solid rgba(255,255,255,0.95)'
           : '1.5px solid rgba(255,255,255,0.1)',
-        boxShadow: isActive ? undefined : `inset 0 -3px 6px rgba(0,0,0,0.35), inset 3px 0 6px rgba(0,0,0,0.2)`,
       }}
       className="flex flex-col items-center justify-center gap-0.5"
     >
