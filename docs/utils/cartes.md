@@ -1,7 +1,7 @@
 # Rendu des cartes — État actuel (2026-04-23)
 
 **Fichiers clés :**
-- `app/components/screens/CardGame/PlayingCard.tsx` — composant carte (tilt, foil, swipe, DeckStack)
+- `app/components/screens/CardGame/PlayingCard.tsx` — composant carte (tilt, foil, swipe, DeckStack, nudge)
 - `app/components/screens/CardGame/hooks/useNormalizedPointer.ts` — tracking pointeur normalisé
 - `app/components/screens/CardGame/hooks/useCardSession.ts` — logique de session (pioche, favoris, séance)
 - `app/components/screens/CardGame/index.tsx` — écran de jeu (pick / playing / end)
@@ -13,9 +13,9 @@
 ## Architecture du composant `PlayingCard`
 
 ```
-div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative)
+div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: none)
   ├── DeckStack (motion.div × 2, position: absolute, z-index: -1/-2)
-  └── motion.div.drag (drag="x", x, rotate: dragRotate, opacity: dragOpacity)
+  └── motion.div.drag (drag="x", cursor: grab, x, rotate: dragRotate, opacity: dragOpacity)
         └── div.perspective (perspective: 1200px — isolé du drag, swipe reste 2D plat)
               └── motion.div.tilt (rotateX/Y ±6°, preserve-3d, will-change)
                     └── motion.div.flip (rotateY 0→180, preserve-3d)
@@ -28,96 +28,101 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative)
 
 ---
 
-## Ce qui tourne (Niveau 1 ✅)
+## Ce qui tourne (Niveau 1 ✅ + polish ✅)
 
 ### DeckStack — pile fantôme
 
 - 2 couches `motion.div` absolues (`Math.min(remaining, 2)`)
 - Au repos : `translateY(depth × 5px)` + `scale(1 - depth × 0.03)` + `opacity: 1 - depth × 0.22`
-- Pendant `isAnimating` : couches montent à mi-hauteur (`y × 0.5`, `scale × 0.5`) via spring `stiffness: 280, damping: 22`
+- Pendant `isAnimating` : couches montent à mi-hauteur via spring `stiffness: 280, damping: 22`
 - `deckRemaining` dans `index.tsx` : `seanceSize - cardCount` (séance) ou `3` fixe (libre)
 
 ### Swipe pour piocher
 
 - `drag="x"`, `dragConstraints={{ left: 0, right: 0 }}`, `dragElastic: 0.2`
 - Seuil : `|offset.x| > 90` ou `|velocity.x| > 350`
-- Exit : `translateX(±500px)` + `rotate(±15deg)` + `opacity: 0` en 280ms
+- Exit : `translateX(±500px)` + `rotate(±15deg)` + `opacity: 0` en 280ms, puis `setHideAll(true)`
+- `hideAll` masque toute la carte (opacity 0, pointerEvents none) entre l'exit et l'apparition de la suivante — élimine le flash résiduel
 - Snap si seuil non atteint : spring `stiffness: 300, damping: 25`
 - `dragRotate ±10°` + `dragOpacity 0.5→1→0.5` via `useTransform` sans re-render
 - `isExiting` local bloque le double-swipe pendant l'animation de sortie
+- `cursor: grab` / `cursor: grabbing` (desktop)
+
+### Entrée de chaque carte
+
+- Dans `index.tsx` : `AnimatePresence mode="wait"` + `motion.div key={card.id}` autour de `PlayingCard`
+- `initial={{ opacity: 0, y: 22 }}` → `animate={{ opacity: 1, y: 0 }}` en 350ms, ease `[0.22, 0.61, 0.36, 1]`
+- Reset interne (`setHideAll(false)`, `dragX.set(0)`, `controls.set(...)`) via `useEffect([card.id])`
+
+### Nudge swipe (one-shot)
+
+- Déclenché **une seule fois** au premier montage du composant (`hasNudged` ref)
+- Délai 950ms (laisse l'entrée se terminer + pause de lecture)
+- `animate(dragX, [0, -20, 15, -8, 0], { duration: 0.9 })` — oscillation via la MotionValue directement
+- Apprend le geste à l'utilisateur sans texte
 
 ### Flip dos→face
 
 - `rotateY: 0 → 180`, durée 520ms, ease `[0.22, 0.61, 0.36, 1]`
 - Auto-reveal géré par `useCardSession` (350ms après `startPlaying`, immédiat après `drawNewCard`)
-- Reset via `useEffect([card.id])` : `dragX.set(0)` + `controls.set({ rotate: 0, opacity: 1 })`
-- `WebkitBackfaceVisibility: 'hidden'` + `WebkitTransformStyle: 'preserve-3d'` sur tous les éléments 3D (fix iOS Safari)
+- `WebkitBackfaceVisibility: 'hidden'` + `WebkitTransformStyle: 'preserve-3d'` sur tous les éléments 3D
 
 ### Tilt parallax
 
 - `useNormalizedPointer(cardRef)` → deux `MotionValue<number>` (-1 → +1) depuis `pointermove`
 - Throttlé via `requestAnimationFrame`, reset à 0 sur `pointerleave`
-- **±6°** (naturel, comme une carte tenue en main — ±12° était trop agressif)
-
-```tsx
-const tiltRotateX = useTransform(tiltY, [-1, 1], [6, -6]);
-const tiltRotateY = useTransform(tiltX, [-1, 1], [-6, 6]);
-```
+- **±6°** (naturel, comme une carte tenue en main)
 
 ### Foil holographique
 
-- **`mix-blend-mode: screen`** (et non `color-dodge`) — fonctionne sur fond clair ET sombre, pas de fond noir
-- Gradient pastel désaturé qui suit le pointeur (zéro re-render via `useTransform`) :
+- **`mix-blend-mode: screen`** — fonctionne sur fond clair ET sombre
+- Gradient pastel désaturé `hsl(h, 55%, 78%)` qui suit le pointeur via `useTransform`
+- Opacité cible par profondeur :
+  - Depth 1 (Osez, Défi) : 0
+  - Depth 2 (Parlez, Et si…) : 0.12
+  - Depth 3 (Vérité, Douceur) : 0.18
+- Désactivé si `theme.id === 'youth'`
 
-```tsx
-const hue = useTransform(tiltX, [-1, 1], [0, 360]);
-const foilBg = useTransform(
-  [tiltX, tiltY, hue],
-  ([xv, yv, h]) =>
-    `radial-gradient(ellipse at ${(xv+1)*50}% ${(yv+1)*50}%,
-      hsl(${h}, 55%, 78%) 0%,
-      hsl(${h+60}, 55%, 75%) 35%,
-      hsl(${h+120}, 55%, 78%) 65%,
-      transparent 80%)`,
-);
+---
+
+## Flow UX du step playing
+
+```
+1. Carte monte depuis y+22 (350ms)
+2. [si première carte] nudge oscillation à t=950ms
+3. Flip dos→face auto (350ms après startPlaying)
+4. À la révélation, AnimatePresence fait apparaître les actions (delay 200ms) :
+   ├── Hint (hintSolo / hintDuo) + bouton ❤️ favori
+   ├── CTA "Nouvelle carte" / "Terminer la séance"
+   └── "Changer de deck" (lien texte discret, pas de bouton)
+5. Swipe ou bouton → exit (280ms) → hideAll → nouvelle carte arrive
 ```
 
-- Opacité par profondeur (`DECK_DEPTH: { 1:1, 4:1, 2:2, 3:2, 5:3, 6:3 }`) :
-  - Depth 1 (Osez, Défi) : 0 — pas de foil
-  - Depth 2 (Parlez, Et si…) : **0.12**
-  - Depth 3 (Vérité, Douceur) : **0.18**
-- Transition `animate={{ opacity }}` 0.5s à la révélation
-- Désactivé si `theme.id === 'youth'`
+**Moment de lecture garanti :** les actions sont masquées tant que `isRevealed = false`, ce qui encourage l'utilisateur à lire la carte avant d'agir.
 
 ---
 
 ## Contenu des faces
 
-### DOS (dos de carte)
+### DOS
 
 ```
-gradient catégorie (couleur du deck)
-  dot pattern (rgba blanc 18%, grille 18px)
-  corner emoji top-left     (15px, opacity 25%)
-  corner emoji bottom-right (15px, opacity 25%, rotate 180°)
-  emoji central             (56px)
-  nom de catégorie          (13px, bold, uppercase, tracking 0.18em, opacity 70%)
+gradient catégorie + dot pattern (rgba blanc 18%, grille 18px)
+  corner emoji × 2 (15px, opacity 25%)
+  emoji central (56px)
+  nom de catégorie (13px, bold, uppercase, tracking 0.18em, opacity 70%)
 ```
 
-Pas de texte d'instruction — le geste de swipe est intuitif.
-
-### FACE (face révélée)
+### FACE
 
 ```
 stripe gradient top (8px)
-  pill catégorie  "🎭 Osez"  (gradient bg, 11px, bold)
+  pill catégorie  "🎭 Osez"  (gradient bg, 11px, bold, alignSelf: flex-start)
   texte de la carte           (15px, weight 500, left-aligned, lineHeight 1.65)
   depth dots                  (si depth > 1 : 3 points, remplis jusqu'à depth)
 stripe gradient bottom (5px)
-foil overlay (screen, opacity 0 → 0.12/0.18 à la révélation)
+foil overlay (screen, opacity 0 → 0.12/0.18 à la révélation, transition 0.5s)
 ```
-
-**Texte left-aligned** (pas centré) — meilleure lisibilité sur les phrases longues.
 
 ---
 
@@ -130,6 +135,9 @@ foil overlay (screen, opacity 0 → 0.12/0.18 à la révélation)
 | Swipe pour piocher | ✅ seuil 90px / 350px·s⁻¹ |
 | Tilt parallax ±6° | ✅ useNormalizedPointer |
 | Foil holographique CSS | ✅ screen, depth-aware |
+| Entrée animée (slide-up) | ✅ AnimatePresence key={card.id} |
+| Nudge swipe one-shot | ✅ animate(dragX, keyframes) |
+| Moment de lecture (actions masquées) | ✅ AnimatePresence isRevealed |
 | iOS Safari stable | ✅ Webkit prefixes |
 | Spring physique (suivi doigt) | ❌ Niveau 2 — @react-spring/web |
 | Matière de surface WebGL | ❌ Niveau 3 — Three.js |
