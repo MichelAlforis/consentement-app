@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, animate, useAnimation, useMotionValue, useTransform, MotionValue } from 'framer-motion';
+import { useSpring, animated, to } from '@react-spring/web';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CardData } from '../../../data';
@@ -74,6 +75,7 @@ export function PlayingCard({
 }: PlayingCardProps) {
   const { colors } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
+  // useNormalizedPointer still drives the foil gradient (Framer MotionValues)
   const { x: tiltX, y: tiltY } = useNormalizedPointer(cardRef);
   const controls = useAnimation();
   const dragX = useMotionValue(0);
@@ -81,12 +83,39 @@ export function PlayingCard({
   const [hideAll, setHideAll] = useState(false);
   const hasNudged = useRef(false);
 
+  // React Spring physical spring for tilt — tension:400/friction:30 feels like a card held in hand
+  const [tiltSpring, tiltApi] = useSpring(() => ({
+    rotX: 0,
+    rotY: 0,
+    config: { tension: 400, friction: 30 },
+  }));
+
+  // Raw pointer handlers feed spring directly (no rAF layer — spring handles smoothing)
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const nx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
+      const ny = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1));
+      tiltApi.start({ rotX: ny * -6, rotY: nx * 6 });
+    };
+    const onLeave = () => tiltApi.start({ rotX: 0, rotY: 0 });
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerleave', onLeave);
+    return () => {
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerleave', onLeave);
+    };
+  }, [tiltApi]);
+
   // Reset on new card
   useEffect(() => {
     setIsExiting(false);
     setHideAll(false);
     dragX.set(0);
     controls.set({ rotate: 0, opacity: 1 });
+    tiltApi.set({ rotX: 0, rotY: 0 });
   }, [card.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // One-time swipe nudge — teaches the gesture on the first card
@@ -102,10 +131,6 @@ export function PlayingCard({
   const canDrag = !isAnimating && !isExiting;
   const dragRotate = useTransform(dragX, [-200, 200], [-10, 10]);
   const dragOpacity = useTransform(dragX, [-120, 0, 120], [0.5, 1, 0.5]);
-
-  // Subtle tilt — ±6° feels natural, like a card held in hand
-  const tiltRotateX = useTransform(tiltY, [-1, 1], [6, -6]);
-  const tiltRotateY = useTransform(tiltX, [-1, 1], [-6, 6]);
 
   // Foil: soft pastel rainbow with screen blend — works on light AND dark bgCard
   const hue = useTransform(tiltX, [-1, 1], [0, 360]);
@@ -180,15 +205,17 @@ export function PlayingCard({
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
         <div style={{ perspective: '1200px', width: '100%', height: '100%' }}>
-          {/* Tilt wrapper */}
-          <motion.div
+          {/* Tilt wrapper — React Spring physical spring for zero-latency response */}
+          <animated.div
             style={{
-              rotateX: tiltRotateX,
-              rotateY: tiltRotateY,
+              transform: to(
+                [tiltSpring.rotX, tiltSpring.rotY],
+                (rx, ry) => `rotateX(${rx}deg) rotateY(${ry}deg)`,
+              ),
               transformStyle: 'preserve-3d',
-              WebkitTransformStyle: 'preserve-3d',
+              WebkitTransformStyle: 'preserve-3d' as never,
               backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden' as never,
               width: '100%',
               height: '100%',
               willChange: 'transform',
@@ -406,7 +433,7 @@ export function PlayingCard({
                 />
               </div>
             </motion.div>
-          </motion.div>
+          </animated.div>
         </div>
       </motion.div>
     </div>
