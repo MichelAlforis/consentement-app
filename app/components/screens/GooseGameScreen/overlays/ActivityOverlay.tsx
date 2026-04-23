@@ -1,7 +1,8 @@
 'use client';
 import { DICE_CATEGORIES } from '../../../../data';
-import { getSquareEmoji, BoardSquare } from '../../../../data/goose-game';
+import { getSquareIconName, BoardSquare } from '../../../../data/goose-game';
 import { Zone } from '../../../../data/goose-game';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 import { Overlay } from '../components/Overlay';
 import { TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
@@ -24,7 +25,7 @@ export function ActivityOverlay({
   const isPause      = step === 'pause';
   const isComplicite = step === 'complicite';
 
-  const emoji = isPause ? '⏸️' : isComplicite ? '💜' : getSquareEmoji(currentSquare);
+  const iconName = isPause ? 'Pause' : isComplicite ? 'Heart' : getSquareIconName(currentSquare);
   const label = isPause
     ? t('gooseGame.activity.pause')
     : isComplicite
@@ -35,7 +36,7 @@ export function ActivityOverlay({
     <Overlay key="activity" color={squareBg || '#1e293b'}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <span style={{ fontSize: 26 }}>{emoji}</span>
+          <DynamicIcon name={iconName} size={26} color="rgba(255,255,255,0.85)" />
           <div>
             <p className="text-white/55 text-xs uppercase tracking-widest font-bold">{label}</p>
             <p className="text-white font-bold text-sm">{activeName}</p>
@@ -47,7 +48,7 @@ export function ActivityOverlay({
           color: currentZone.color,
           border: `1px solid ${currentZone.color}44`,
         }}>
-          {currentZone.emoji} {currentZone.name}
+          <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {currentZone.name}
         </span>
       </div>
 

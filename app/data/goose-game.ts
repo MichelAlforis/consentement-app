@@ -48,18 +48,18 @@ export const BOARD_LAYOUT: number[][] = [
 
 export interface SquareVisual {
   bg: string;
-  emoji: string;
+  iconName: string;
   label: string;
 }
 
 export const SQUARE_VISUAL: Record<SquareType, SquareVisual> = {
-  depart:     { bg: 'linear-gradient(135deg, #4ade80, #16a34a)', emoji: '🚀', label: 'Départ' },
-  normal:     { bg: '', emoji: '', label: '' },
-  chance:     { bg: 'linear-gradient(135deg, #fbbf24, #d97706)', emoji: '⭐', label: 'Chance' },
-  pause:      { bg: 'linear-gradient(135deg, #f87171, #dc2626)', emoji: '⏸️', label: 'Pause' },
-  accord:     { bg: 'linear-gradient(135deg, #60a5fa, #2563eb)', emoji: '🤝', label: 'Accord' },
-  complicite: { bg: 'linear-gradient(135deg, #c084fc, #9333ea)', emoji: '💜', label: 'Complicité' },
-  arrivee:    { bg: 'linear-gradient(135deg, #34d399, #059669)', emoji: '🏁', label: 'Arrivée' },
+  depart:     { bg: 'linear-gradient(135deg, #4ade80, #16a34a)', iconName: 'Rocket',    label: 'Départ' },
+  normal:     { bg: '', iconName: '', label: '' },
+  chance:     { bg: 'linear-gradient(135deg, #fbbf24, #d97706)', iconName: 'Star',      label: 'Chance' },
+  pause:      { bg: 'linear-gradient(135deg, #f87171, #dc2626)', iconName: 'Pause',     label: 'Pause' },
+  accord:     { bg: 'linear-gradient(135deg, #60a5fa, #2563eb)', iconName: 'Handshake', label: 'Accord' },
+  complicite: { bg: 'linear-gradient(135deg, #c084fc, #9333ea)', iconName: 'Heart',     label: 'Complicité' },
+  arrivee:    { bg: 'linear-gradient(135deg, #34d399, #059669)', iconName: 'Flag',      label: 'Arrivée' },
 };
 
 export const PAWN_EMOJIS = ['🦊', '🐼', '🦋', '🌙', '🌟', '🎲'];
@@ -68,15 +68,15 @@ export const PAWN_EMOJIS = ['🦊', '🐼', '🦋', '🌙', '🌟', '🎲'];
 
 export interface Zone {
   name: string;
-  emoji: string;
+  iconName: string;
   desc: string;
   color: string;
 }
 
 export const ZONES: Zone[] = [
-  { name: 'Découverte',  emoji: '🌱', desc: 'cases 1–7',   color: '#4ade80' },
-  { name: 'Intimité',    emoji: '🌊', desc: 'cases 8–15',  color: '#60a5fa' },
-  { name: 'Connexion',   emoji: '✨', desc: 'cases 16–23', color: '#c084fc' },
+  { name: 'Découverte',  iconName: 'Leaf',     desc: 'cases 1–7',   color: '#4ade80' },
+  { name: 'Intimité',    iconName: 'Waves',    desc: 'cases 8–15',  color: '#60a5fa' },
+  { name: 'Connexion',   iconName: 'Sparkles', desc: 'cases 16–23', color: '#c084fc' },
 ];
 
 export function getZone(pos: number): Zone {
@@ -217,11 +217,11 @@ export function getSquareBg(square: BoardSquare): string {
   return SQUARE_VISUAL[square.type].bg;
 }
 
-export function getSquareEmoji(square: BoardSquare): string {
+export function getSquareIconName(square: BoardSquare): string {
   if (square.type === 'normal' && square.face) {
-    return DICE_CATEGORIES[square.face].emoji;
+    return DICE_CATEGORIES[square.face].iconName;
   }
-  return SQUARE_VISUAL[square.type].emoji;
+  return SQUARE_VISUAL[square.type].iconName;
 }
 
 export interface SavedGooseGame {

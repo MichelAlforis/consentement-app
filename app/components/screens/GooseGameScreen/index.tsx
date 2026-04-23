@@ -11,6 +11,7 @@ import { BoardGrid, Legend } from './components/Board';
 import { ConfettiParticles } from './components/ConfettiParticles';
 import { ZoneIndicator } from './components/ZoneIndicator';
 
+import { Lock, Handshake } from 'lucide-react';
 import { useTranslation } from '../../../i18n';
 import { IntroScreen } from './phases/IntroScreen';
 import { SetupPlayer } from './phases/SetupPlayer';
@@ -27,7 +28,7 @@ const DICE_CONFIG: DiceConfig = {
   faces: ([1, 2, 3, 4, 5, 6] as const).map(n => ({
     id: n,
     label: DICE_CATEGORIES[n].name,
-    emoji: DICE_CATEGORIES[n].emoji,
+    iconName: DICE_CATEGORIES[n].iconName,
     gradient: DICE_CATEGORIES[n].gradient,
     border: DICE_CATEGORIES[n].border,
     color: DICE_CATEGORIES[n].border,
@@ -51,7 +52,7 @@ export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
         className="flex flex-col items-center justify-center p-8 gap-5 min-h-[60vh] text-center"
         style={{ color: 'white' }}
       >
-        <div className="text-5xl">🔒</div>
+        <Lock size={48} className="text-white/60" />
         <div>
           <h2 className="text-xl font-black mb-2">{t('gooseGame.premium')}</h2>
           <p className="text-white/60 text-sm leading-relaxed max-w-[260px] mx-auto">
@@ -222,7 +223,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
         {accordsCount > 0 && (
           <div className="flex items-center gap-2 rounded-xl px-3 py-1.5"
             style={{ background: 'rgba(96,165,250,0.18)', border: '1px solid rgba(96,165,250,0.3)' }}>
-            <span style={{ fontSize: 14 }}>🤝</span>
+            <Handshake size={14} className="text-blue-300" />
             <span className="text-blue-300 text-sm font-semibold">
               {accordsCount} {accordsCount > 1 ? t('gooseGame.accordBadgePlural') : t('gooseGame.accordBadge')}
             </span>

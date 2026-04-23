@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff, PartyPopper, Handshake } from 'lucide-react';
+import { DynamicIcon } from '../../../utils/iconFromName';
 import { diePractices, DICE_CATEGORIES } from '../../../data';
 import { Button } from '../../ui';
 import { useDiceEngine } from '../../../game-engine/dice/useDiceEngine';
@@ -20,7 +21,7 @@ const DICE_CONFIG: DiceConfig = {
   faces: ([1, 2, 3, 4, 5, 6] as const).map((n) => ({
     id: n,
     label: DICE_CATEGORIES[n].name,
-    emoji: DICE_CATEGORIES[n].emoji,
+    iconName: DICE_CATEGORIES[n].iconName,
     gradient: DICE_CATEGORIES[n].gradient,
     border: DICE_CATEGORIES[n].border,
     color: DICE_CATEGORIES[n].border,
@@ -135,7 +136,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(DICE_CATEGORIES).map(([face, c]) => (
                   <div key={face} className="rounded-2xl p-2.5 text-center" style={{ background: c.gradient }}>
-                    <div className="text-lg">{c.emoji}</div>
+                    <div className="flex justify-center"><DynamicIcon name={c.iconName} size={20} color="rgba(255,255,255,0.9)" /></div>
                     <div className="text-xs font-bold text-white mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
                       {t(`diceCategories.${face}`)}
                     </div>
@@ -175,7 +176,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     className="mt-5 px-5 py-2 rounded-2xl flex items-center gap-2"
                     style={{ background: currentCat.gradient, boxShadow: `0 4px 20px ${currentCat.border}80` }}
                   >
-                    <span className="text-2xl">{currentCat.emoji}</span>
+                    <DynamicIcon name={currentCat.iconName} size={24} color="white" />
                     <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
@@ -225,7 +226,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person1')}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
-              <span className="text-3xl">{currentCat.emoji}</span>
+              <div className="flex justify-center mb-1"><DynamicIcon name={currentCat.iconName} size={32} color="rgba(255,255,255,0.9)" /></div>
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
@@ -284,7 +285,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
               <p className="font-semibold" style={{ color: colors.textPrimary }}>{t('diceGame.person2')}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
-              <span className="text-3xl">{currentCat.emoji}</span>
+              <div className="flex justify-center mb-1"><DynamicIcon name={currentCat.iconName} size={32} color="rgba(255,255,255,0.9)" /></div>
               <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>

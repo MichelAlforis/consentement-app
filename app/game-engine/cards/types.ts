@@ -1,7 +1,7 @@
 export interface CardConfig {
   id: string;
   label: string;
-  emoji: string;
+  iconName: string;
   gradient: string;
   backGradient: string;
   color: string;

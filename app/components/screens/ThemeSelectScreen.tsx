@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Crown, Lock } from 'lucide-react';
+import { Crown, Lock, Heart } from 'lucide-react';
 import { ThemeMode, themes } from '../../types/theme';
 import { PreviewShimmer } from '../ui/ThemeEffects';
 import { useTranslation } from '../../i18n';
@@ -47,7 +47,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         className="mx-auto mt-10 mb-6"
       >
         <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-600 to-purple-800 flex items-center justify-center shadow-2xl">
-          <span className="text-4xl">💜</span>
+          <Heart size={40} className="text-white" />
         </div>
       </motion.div>
 

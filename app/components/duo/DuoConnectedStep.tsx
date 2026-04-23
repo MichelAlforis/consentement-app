@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Heart } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 
@@ -83,9 +84,9 @@ export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepPr
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 1.5, type: 'spring', stiffness: 200 }}
-            className="absolute inset-0 flex items-center justify-center text-4xl"
+            className="absolute inset-0 flex items-center justify-center"
           >
-            💜
+            <Heart size={36} className="text-purple-400" />
           </motion.div>
         </motion.div>
       </div>

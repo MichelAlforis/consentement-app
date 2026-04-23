@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import { Dices } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { ShimmerLayer } from '../../components/ui/ThemeEffects';
 import { DiceCanvas } from './DiceCanvas';
+import { DynamicIcon } from '../../utils/iconFromName';
 import type { DiceConfig, DiceFace } from './types';
 
 // ─── 6-face 3D cube ───────────────────────────────────────────────────────────
@@ -53,7 +55,7 @@ function CubeFace({ face, transform }: { face: DiceFace; transform: string }) {
         background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
         pointerEvents: 'none',
       }} />
-      <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.emoji}</span>
+      <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}><DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" /></span>
       <span style={{
         fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
         textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',
@@ -221,7 +223,7 @@ function FlatTile({
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontSize: 28, opacity: 0.4 }}>🎲</span>
+          <Dices size={28} color="rgba(255,255,255,0.4)" />
         </div>
         {/* Face */}
         <div style={{
@@ -240,7 +242,7 @@ function FlatTile({
             background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
             pointerEvents: 'none',
           }} />
-          <span style={{ fontSize: 34, lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.emoji}</span>
+          <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}><DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" /></span>
           <span style={{
             fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
             textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',

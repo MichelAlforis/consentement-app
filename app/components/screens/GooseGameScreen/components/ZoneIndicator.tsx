@@ -1,5 +1,6 @@
 'use client';
 import { Zone } from '../../../../data/goose-game';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 
 interface ZoneIndicatorProps {
   currentZone: Zone;
@@ -28,7 +29,7 @@ export function ZoneIndicator({ currentZone, zoneIndex }: ZoneIndicatorProps) {
         marginLeft: 4,
         transition: 'color 0.6s ease',
       }}>
-        {currentZone.emoji} {currentZone.name}
+        <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {currentZone.name}
       </span>
     </div>
   );

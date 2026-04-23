@@ -3,7 +3,7 @@ export interface DiceFace {
    *  et aux clés de FACE_ROTATIONS dans les renderers CSS 3D. */
   id: number;
   label: string;
-  emoji: string;
+  iconName: string;
   gradient: string;
   border: string;
   color: string;

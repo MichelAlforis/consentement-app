@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Dices, Pause, Star, Handshake, Heart } from 'lucide-react';
 import { SavedGooseGame } from '../../../../data/goose-game';
 import { clearSavedGame } from '../../../../data/goose-game';
 import { useTranslation } from '../../../../i18n';
@@ -15,10 +15,10 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
   const { t } = useTranslation();
 
   const cells = [
-    { emoji: '⏸️', bg: '#f87171', label: t('gooseGame.intro.cellPause'),      desc: t('gooseGame.intro.cellPauseDesc') },
-    { emoji: '⭐', bg: '#fbbf24', label: t('gooseGame.intro.cellChance'),     desc: t('gooseGame.intro.cellChanceDesc') },
-    { emoji: '🤝', bg: '#60a5fa', label: t('gooseGame.intro.cellAccord'),     desc: t('gooseGame.intro.cellAccordDesc') },
-    { emoji: '💜', bg: '#c084fc', label: t('gooseGame.intro.cellComplicite'), desc: t('gooseGame.intro.cellCompliciteDesc') },
+    { Icon: Pause,     bg: '#f87171', label: t('gooseGame.intro.cellPause'),      desc: t('gooseGame.intro.cellPauseDesc') },
+    { Icon: Star,      bg: '#fbbf24', label: t('gooseGame.intro.cellChance'),     desc: t('gooseGame.intro.cellChanceDesc') },
+    { Icon: Handshake, bg: '#60a5fa', label: t('gooseGame.intro.cellAccord'),     desc: t('gooseGame.intro.cellAccordDesc') },
+    { Icon: Heart,     bg: '#c084fc', label: t('gooseGame.intro.cellComplicite'), desc: t('gooseGame.intro.cellCompliciteDesc') },
   ];
 
   return (
@@ -29,7 +29,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
       style={{ color: 'white' }}
     >
       <div className="text-center mt-4">
-        <div className="text-6xl mb-3">🎲</div>
+        <Dices size={60} className="mb-3 mx-auto" />
         <h1 className="text-2xl font-black mb-2">{t('gooseGame.intro.title')}</h1>
         <p className="text-white/65 text-sm leading-relaxed max-w-[280px] mx-auto">
           {t('gooseGame.intro.sub1')}<br />
@@ -44,11 +44,11 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         {cells.map(item => (
           <div key={item.label} className="flex items-center gap-3">
             <span style={{
-              fontSize: 17, width: 32, height: 32,
+              width: 32, height: 32,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: item.bg + '28', borderRadius: 8,
             }}>
-              {item.emoji}
+              <item.Icon size={16} color={item.bg} />
             </span>
             <span className="text-white font-semibold text-sm">{item.label}</span>
             <span className="text-white/45 text-xs">{item.desc}</span>

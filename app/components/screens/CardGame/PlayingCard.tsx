@@ -5,11 +5,12 @@ import { motion, animate, useAnimation, useMotionValue, useTransform, useSpring,
 import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CardData } from '../../../data';
+import { DynamicIcon } from '../../../utils/iconFromName';
 
 // Depth per deck — used for foil intensity
 const DECK_DEPTH: Record<number, 1 | 2 | 3> = { 1: 1, 4: 1, 2: 2, 3: 2, 5: 3, 6: 3 };
 
-type Cat = { name: string; emoji: string; gradient: string; border: string };
+type Cat = { name: string; iconName: string; gradient: string; border: string };
 
 // ─── Ghost stack ──────────────────────────────────────────────────────────────
 
@@ -238,8 +239,8 @@ export function PlayingCard({
                   }}
                 />
                 {/* Center content */}
-                <span style={{ fontSize: 56, position: 'relative', zIndex: 1, lineHeight: 1 }}>
-                  {cat.emoji}
+                <span style={{ position: 'relative', zIndex: 1, lineHeight: 1 }}>
+                  <DynamicIcon name={cat.iconName} size={56} color="rgba(255,255,255,0.85)" />
                 </span>
                 <p
                   style={{
@@ -300,7 +301,7 @@ export function PlayingCard({
                       background: cat.gradient,
                     }}
                   >
-                    <span style={{ fontSize: 12 }}>{cat.emoji}</span>
+                    <DynamicIcon name={cat.iconName} size={12} color="white" />
                     <span
                       style={{
                         fontSize: 11,

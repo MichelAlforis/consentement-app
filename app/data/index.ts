@@ -13,14 +13,14 @@ export interface PornoVsRealite {
   porno: string;
   realite: string;
   explication: string;
-  emoji: string;
+  iconName: string;
 }
 
 export interface LoiPoint {
   id: string;
   titre: string;
   contenu: string;
-  emoji: string;
+  iconName: string;
   important?: boolean;
 }
 
@@ -28,16 +28,16 @@ export type AgeGate = 'all' | 'adult' | 'explicit' | 'premium';
 
 export const DICE_CATEGORIES: Record<number, {
   name: string;
-  emoji: string;
+  iconName: string;
   gradient: string;
   border: string;
 }> = {
-  1: { name: 'Osez',     emoji: '🎭', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', border: '#fbbf24' },
-  2: { name: 'Parlez',   emoji: '💬', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', border: '#a78bfa' },
-  3: { name: 'Et si…',   emoji: '🤔', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', border: '#f9a8d4' },
-  4: { name: 'Défi',     emoji: '🎯', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', border: '#93c5fd' },
-  5: { name: 'Vérité',   emoji: '✨', gradient: 'linear-gradient(135deg, #10b981, #059669)', border: '#6ee7b7' },
-  6: { name: 'Douceur',  emoji: '❤️', gradient: 'linear-gradient(135deg, #be123c, #9f1239)', border: '#fda4af' },
+  1: { name: 'Osez',     iconName: 'Layers',        gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', border: '#fbbf24' },
+  2: { name: 'Parlez',   iconName: 'MessageCircle',  gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', border: '#a78bfa' },
+  3: { name: 'Et si…',   iconName: 'HelpCircle',     gradient: 'linear-gradient(135deg, #ec4899, #db2777)', border: '#f9a8d4' },
+  4: { name: 'Défi',     iconName: 'Target',         gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', border: '#93c5fd' },
+  5: { name: 'Vérité',   iconName: 'Sparkles',       gradient: 'linear-gradient(135deg, #10b981, #059669)', border: '#6ee7b7' },
+  6: { name: 'Douceur',  iconName: 'Heart',          gradient: 'linear-gradient(135deg, #be123c, #9f1239)', border: '#fda4af' },
 };
 
 export interface DiePractice {
@@ -49,63 +49,63 @@ export interface DiePractice {
 
 export const comfortCategories: ComfortCategories = {
   tenderness: {
-    icon: '🌸',
+    iconName: 'Heart',
     title: 'Tendresse',
     description: 'Intimité émotionnelle et contact doux',
     color: '#f8a5c2',
     items: [
-      { id: 'kisses', label: 'Baisers', icon: '💋' },
-      { id: 'cuddles', label: 'Câlins', icon: '🤗' },
-      { id: 'massage', label: 'Massages', icon: '✨' },
-      { id: 'words', label: 'Mots doux', icon: '💬' },
-      { id: 'holding', label: 'Se tenir la main', icon: '🤝' },
-      { id: 'sleeping', label: 'Dormir ensemble', icon: '😴' }
+      { id: 'kisses', label: 'Baisers', iconName: 'Heart' },
+      { id: 'cuddles', label: 'Câlins', iconName: 'Smile' },
+      { id: 'massage', label: 'Massages', iconName: 'Sparkles' },
+      { id: 'words', label: 'Mots doux', iconName: 'MessageCircle' },
+      { id: 'holding', label: 'Se tenir la main', iconName: 'Handshake' },
+      { id: 'sleeping', label: 'Dormir ensemble', iconName: 'Moon' }
     ]
   },
   intensity: {
-    icon: '🔥',
+    iconName: 'Flame',
     title: 'Intensité',
     description: "Rythme et niveau d'intimité",
     color: '#ff7675',
     items: [
-      { id: 'slow', label: 'Prendre son temps', icon: '🐢' },
-      { id: 'spontaneous', label: 'Spontanéité', icon: '⚡' },
-      { id: 'lights', label: 'Lumières allumées', icon: '💡' },
-      { id: 'talking', label: 'Parler pendant', icon: '🗣️' },
-      { id: 'eye-contact', label: 'Contact visuel', icon: '👁️' },
-      { id: 'guidance', label: "Guider l'autre", icon: '🧭' }
+      { id: 'slow', label: 'Prendre son temps', iconName: 'Clock' },
+      { id: 'spontaneous', label: 'Spontanéité', iconName: 'Zap' },
+      { id: 'lights', label: 'Lumières allumées', iconName: 'Lightbulb' },
+      { id: 'talking', label: 'Parler pendant', iconName: 'MessageSquare' },
+      { id: 'eye-contact', label: 'Contact visuel', iconName: 'Eye' },
+      { id: 'guidance', label: "Guider l'autre", iconName: 'Compass' }
     ]
   },
   trust: {
-    icon: '⛓️',
+    iconName: 'ShieldCheck',
     title: 'Confiance',
     description: 'Pratiques nécessitant une communication renforcée',
     color: '#a29bfe',
     items: [
-      { id: 'blindfold', label: 'Yeux bandés', icon: '🙈' },
-      { id: 'restraint', label: 'Immobilisation douce', icon: '🎀' },
-      { id: 'roleplay', label: 'Jeux de rôle', icon: '🎭' },
-      { id: 'power', label: 'Dynamique de pouvoir', icon: '👑' },
-      { id: 'toys', label: 'Accessoires', icon: '🎁' },
-      { id: 'filming', label: 'Photos/Vidéos', icon: '📵' }
+      { id: 'blindfold', label: 'Yeux bandés', iconName: 'EyeOff' },
+      { id: 'restraint', label: 'Immobilisation douce', iconName: 'Link2' },
+      { id: 'roleplay', label: 'Jeux de rôle', iconName: 'Layers' },
+      { id: 'power', label: 'Dynamique de pouvoir', iconName: 'Crown' },
+      { id: 'toys', label: 'Accessoires', iconName: 'Gift' },
+      { id: 'filming', label: 'Photos/Vidéos', iconName: 'PhoneOff' }
     ]
   }
 };
 
 export const comfortLevels: ComfortLevel[] = [
-  { value: 0, label: 'Non', color: '#e74c3c', emoji: '🚫' },
-  { value: 1, label: 'Pas maintenant', color: '#e67e22', emoji: '⏸️' },
-  { value: 2, label: 'Curieux·se', color: '#f1c40f', emoji: '🤔' },
-  { value: 3, label: "À l'aise", color: '#2ecc71', emoji: '✅' },
-  { value: 4, label: "J'adore", color: '#9b59b6', emoji: '💜' }
+  { value: 0, label: 'Non', color: '#e74c3c', iconName: 'XCircle' },
+  { value: 1, label: 'Pas maintenant', color: '#e67e22', iconName: 'Pause' },
+  { value: 2, label: 'Curieux·se', color: '#f1c40f', iconName: 'HelpCircle' },
+  { value: 3, label: "À l'aise", color: '#2ecc71', iconName: 'CheckCircle' },
+  { value: 4, label: "J'adore", color: '#9b59b6', iconName: 'Heart' }
 ];
 
 export const consentPrinciples: ConsentPrinciple[] = [
-  { emoji: '🔄', title: 'Continu', text: 'Il peut être retiré à tout moment. Un "oui" peut devenir un "non".' },
-  { emoji: '🗣️', title: 'Explicite', text: 'Le silence ou l\'absence de "non" ne signifie pas "oui".' },
-  { emoji: '🎯', title: 'Spécifique', text: 'Accepter une chose ne veut pas dire accepter tout.' },
-  { emoji: '💚', title: 'Libre', text: 'Sans pression, sans chantage, sans manipulation.' },
-  { emoji: '🧠', title: 'Éclairé', text: 'On doit comprendre ce à quoi on consent.' }
+  { title: 'Continu', text: 'Il peut être retiré à tout moment. Un "oui" peut devenir un "non".' },
+  { title: 'Explicite', text: 'Le silence ou l\'absence de "non" ne signifie pas "oui".' },
+  { title: 'Spécifique', text: 'Accepter une chose ne veut pas dire accepter tout.' },
+  { title: 'Libre', text: 'Sans pression, sans chantage, sans manipulation.' },
+  { title: 'Éclairé', text: 'On doit comprendre ce à quoi on consent.' }
 ];
 
 export const helpResources: HelpResource[] = [
@@ -183,42 +183,42 @@ export const quizQuestions: QuizQuestion[] = [
 export const pornoVsRealite: PornoVsRealite[] = [
   {
     id: 'p1',
-    emoji: '🎬',
+    iconName: 'Film',
     porno: 'Les acteurs font des choses sans jamais en parler avant',
     realite: 'Les vraies relations commencent par une communication, des questions, un accord mutuel',
     explication: 'Dans la vraie vie, parler avant, pendant et après est normal et nécessaire. Ce n\'est pas bizarre, c\'est du respect.',
   },
   {
     id: 'p2',
-    emoji: '🎭',
+    iconName: 'Layers',
     porno: 'Tout le monde semble adorer tout, tout le temps',
     realite: 'Chaque personne a des limites, des préférences, des choses qu\'elle n\'aime pas',
     explication: 'Les acteurs jouent un rôle. Dans la réalité, on peut aimer certaines choses et pas d\'autres. Dire non à quelque chose c\'est tout à fait normal.',
   },
   {
     id: 'p3',
-    emoji: '💪',
+    iconName: 'ShieldAlert',
     porno: 'Le refus ou l\'hésitation est souvent ignoré',
     realite: 'Un non ou une hésitation doit toujours être respecté, immédiatement',
     explication: 'Ignorer un refus est une agression. Dans la vraie vie, la moindre hésitation doit faire arrêter tout de suite.',
   },
   {
     id: 'p4',
-    emoji: '🧴',
+    iconName: 'AlertCircle',
     porno: 'Certains actes semblent faciles et sans douleur',
     realite: 'Certains actes demandent préparation, douceur et peuvent faire mal si mal faits',
     explication: 'La pornographie ne montre pas la préparation, les produits nécessaires ni la douleur possible. Mal imiter ce qu\'on voit peut blesser.',
   },
   {
     id: 'p5',
-    emoji: '⚖️',
+    iconName: 'Scale',
     porno: 'Certaines scènes semblent normales à l\'écran',
     realite: 'Certains actes reproduits hors d\'un cadre consenti sont des crimes',
     explication: 'Ce qui est filmé avec des acteurs adultes consentants dans un contexte légal n\'est pas reproductible librement. Forcer quelqu\'un est un crime, peu importe ce qu\'on a vu dans un film.',
   },
   {
     id: 'p6',
-    emoji: '💬',
+    iconName: 'MessageCircle',
     porno: 'Pas besoin de parler, tout se comprend',
     realite: 'La communication est la base de toute relation sexuelle saine',
     explication: 'Dans la réalité, vérifier que l\'autre est ok, poser des questions, demander ce qu\'il ou elle aime — c\'est ce qui fait que c\'est bien pour les deux.',
@@ -431,42 +431,42 @@ export const cardData: CardData[] = [
 export const loiPoints: LoiPoint[] = [
   {
     id: 'l1',
-    emoji: '📅',
+    iconName: 'Calendar',
     titre: 'L\'âge légal du consentement',
     contenu: 'En France, l\'âge légal du consentement sexuel est fixé à 15 ans. En dessous de cet âge, aucun acte sexuel avec un adulte ne peut être légal, même si le ou la jeune dit qu\'il ou elle est d\'accord.',
     important: true,
   },
   {
     id: 'l2',
-    emoji: '⚠️',
+    iconName: 'AlertTriangle',
     titre: 'Ce que risque l\'adulte',
     contenu: 'Un adulte qui a un rapport sexuel avec un mineur de moins de 15 ans risque jusqu\'à 20 ans de prison. Si l\'adulte est un parent, professeur ou figure d\'autorité, les peines sont encore plus lourdes.',
     important: true,
   },
   {
     id: 'l3',
-    emoji: '👥',
+    iconName: 'Users',
     titre: 'Et entre adolescents ?',
     contenu: 'Quand les deux personnes ont moins de 18 ans et un écart d\'âge raisonnable, la loi est plus souple. Mais le consentement reste obligatoire. Forcer quelqu\'un ou ignorer un refus est une infraction, peu importe l\'âge.',
     important: false,
   },
   {
     id: 'l4',
-    emoji: '📱',
+    iconName: 'Smartphone',
     titre: 'Photos et vidéos',
     contenu: 'Prendre, partager ou posséder des photos ou vidéos à caractère sexuel d\'un mineur est un crime grave — même si le mineur a dit oui, même si c\'est lui qui a envoyé la photo. C\'est la loi.',
     important: true,
   },
   {
     id: 'l5',
-    emoji: '🔕',
+    iconName: 'BellOff',
     titre: 'Le silence n\'est pas un oui',
     contenu: 'La loi française est claire : l\'absence de résistance ne constitue pas un consentement. Une personne qui ne dit rien, qui est sous pression, intimidée ou sous l\'emprise d\'alcool ne peut pas consentir.',
     important: false,
   },
   {
     id: 'l6',
-    emoji: '🆘',
+    iconName: 'LifeBuoy',
     titre: 'Si tu as vécu quelque chose',
     contenu: 'Si tu as vécu quelque chose qui t\'a mis mal à l\'aise ou que tu penses être une agression, tu peux en parler. Ce n\'est jamais ta faute. Des professionnels sont là pour t\'écouter sans te juger.',
     important: false,

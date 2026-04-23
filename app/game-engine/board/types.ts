@@ -4,7 +4,7 @@ export interface SquareConfig {
   id: string;
   kind: SquareKind;
   label: string;
-  emoji: string;
+  iconName: string;
   gradient: string;
   action?: 'activity' | 'bonus-move' | 'vote' | 'forced' | 'end';
   bonusMoves?: number;

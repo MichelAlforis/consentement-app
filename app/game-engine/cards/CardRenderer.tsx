@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import type { Card, CardConfig } from './types';
+import { DynamicIcon } from '../../utils/iconFromName';
 
 // ─── Pile de cartes fantômes derrière la carte active ────────────────────────
 
@@ -130,7 +131,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
                 alignItems: 'center', justifyContent: 'center', gap: 8,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
               }}>
-                <span style={{ fontSize: 48 }}>{deckConfig.emoji}</span>
+                <DynamicIcon name={deckConfig.iconName} size={48} color="rgba(255,255,255,0.85)" />
                 <span style={{
                   fontSize: 11, fontWeight: 800, color: 'rgba(255,255,255,0.6)',
                   textTransform: 'uppercase', letterSpacing: '0.12em',
@@ -163,7 +164,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
                 gap: 12, padding: 24,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
               }}>
-                <span style={{ fontSize: 32 }}>{deckConfig.emoji}</span>
+                <DynamicIcon name={deckConfig.iconName} size={32} color="rgba(255,255,255,0.85)" />
                 <p style={{
                   fontSize: 15, fontWeight: 600, color: '#fff',
                   textAlign: 'center', lineHeight: 1.55, margin: 0,

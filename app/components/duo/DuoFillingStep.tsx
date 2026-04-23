@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Check } from 'lucide-react';
 import { Button, Card, ComfortSlider } from '../ui';
 import { comfortCategories } from '../../data';
+import { DynamicIcon } from '../../utils/iconFromName';
 import { PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -119,7 +120,7 @@ export function DuoFillingStep({
 
             <Card variant="elevated" padding="lg" className="mb-4">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl">{currentCategory.icon}</span>
+                <DynamicIcon name={currentCategory.iconName} size={28} />
                 <div>
                   <h3 className="font-bold text-lg" style={{ color: colors.textPrimary }}>
                     {t(`comfort.${currentCategoryKey}.title`)}
@@ -139,7 +140,7 @@ export function DuoFillingStep({
                     transition={{ delay: idx * 0.05 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">{item.icon}</span>
+                      <DynamicIcon name={item.iconName} size={18} />
                       <span className="font-medium" style={{ color: colors.textSecondary }}>
                         {t(`comfort.${currentCategoryKey}.items.${item.id}`)}
                       </span>
@@ -173,7 +174,7 @@ export function DuoFillingStep({
 
             <Card variant="elevated" padding="lg" className="mb-4">
               <div className="text-center mb-6">
-                <span className="text-4xl mb-3 block">🛡️</span>
+                <div className="flex justify-center mb-3"><DynamicIcon name="Shield" size={40} /></div>
                 <h3 className="font-bold text-lg mb-2" style={{ color: colors.textPrimary }}>
                   {t('duo.filling.safeword.title')}
                 </h3>

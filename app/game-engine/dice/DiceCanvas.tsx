@@ -79,20 +79,14 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   ctx.fillStyle = spec;
   ctx.fillRect(0, 0, size, size);
 
-  // Emoji
-  ctx.font = `${size * 0.42}px serif`;
+  // Label (centré, police large)
+  ctx.font = `900 ${size * 0.18}px system-ui, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
   ctx.shadowColor = 'rgba(0,0,0,0.4)';
   ctx.shadowBlur = size * 0.04;
-  ctx.fillText(face.emoji, size / 2, size * 0.43);
-
-  // Label
-  ctx.shadowBlur = size * 0.02;
-  ctx.font = `900 ${size * 0.11}px system-ui, sans-serif`;
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.fillText(face.label.toUpperCase(), size / 2, size * 0.74);
+  ctx.fillText(face.label.toUpperCase(), size / 2, size * 0.5);
   ctx.shadowBlur = 0;
 
   const tex = new THREE.CanvasTexture(canvas);

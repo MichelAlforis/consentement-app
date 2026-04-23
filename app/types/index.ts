@@ -34,11 +34,11 @@ export type AgeGroup = 'minor' | 'adult';
 export interface ComfortItem {
   id: string;
   label: string;
-  icon: string;
+  iconName: string;
 }
 
 export interface ComfortCategory {
-  icon: string;
+  iconName: string;
   title: string;
   description: string;
   color: string;
@@ -55,7 +55,7 @@ export interface ComfortLevel {
   value: number;
   label: string;
   color: string;
-  emoji: string;
+  iconName: string;
 }
 
 export interface PersonalProfile {
@@ -90,7 +90,6 @@ export interface HelpResource {
 }
 
 export interface ConsentPrinciple {
-  emoji: string;
   title: string;
   text: string;
 }

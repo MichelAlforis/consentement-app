@@ -5,6 +5,7 @@ import { Scale, AlertTriangle } from 'lucide-react';
 import { loiPoints } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { DynamicIcon } from '../../utils/iconFromName';
 
 export function LoiConsentementScreen() {
   const { colors } = useTheme();
@@ -57,7 +58,7 @@ export function LoiConsentementScreen() {
             style={{ background: colors.bgCard, ...(!point.important ? { borderColor: colors.border } : {}) }}
           >
             <div className="flex items-start gap-3">
-              <span className="text-2xl shrink-0">{point.emoji}</span>
+              <DynamicIcon name={point.iconName} size={22} className="shrink-0 mt-0.5" color={colors.textMuted} />
               <div>
                 <h3 className="font-semibold mb-1 text-sm" style={{ color: colors.textPrimary }}>
                   {t(`loi.${i}.titre`)}

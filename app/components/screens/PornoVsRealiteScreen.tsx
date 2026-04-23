@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Film, ChevronDown, ChevronUp } from 'lucide-react';
+import { Film, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
 import { pornoVsRealite } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { DynamicIcon } from '../../utils/iconFromName';
 
 interface PornoVsRealiteScreenProps {
   onBack: () => void;
@@ -65,7 +66,7 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                 className="w-full p-4 text-left"
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl shrink-0">{item.emoji}</span>
+                  <DynamicIcon name={item.iconName} size={22} className="shrink-0" color={colors.textMuted} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-2 mb-2">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 shrink-0 mt-0.5">
@@ -100,8 +101,9 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
                     className="overflow-hidden"
                   >
                     <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: colors.divider }}>
-                      <p className="text-sm leading-relaxed rounded-xl p-3" style={{ color: colors.textSecondary, background: colors.bgSecondary }}>
-                        💡 {t(`pornoVsRealite.${i}.explication`)}
+                      <p className="text-sm leading-relaxed rounded-xl p-3 flex items-start gap-1.5" style={{ color: colors.textSecondary, background: colors.bgSecondary }}>
+                        <Lightbulb size={14} className="shrink-0 mt-0.5" />
+                        {t(`pornoVsRealite.${i}.explication`)}
                       </p>
                     </div>
                   </motion.div>

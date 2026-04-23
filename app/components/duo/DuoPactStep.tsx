@@ -110,9 +110,9 @@ export function DuoPactStep({ partnerName, onAccept }: DuoPactStepProps) {
           <div className="flex items-center">
             <motion.div
               animate={bothAccepted ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0.3 }}
-              className="text-2xl"
+              className="flex items-center justify-center"
             >
-              🤝
+              <Handshake size={24} />
             </motion.div>
           </div>
 

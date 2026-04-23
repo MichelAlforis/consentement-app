@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Check } from 'lucide-react';
+import { Sparkles, Check, Heart } from 'lucide-react';
 import { Button } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -109,9 +109,9 @@ export function DuoReadyStep({ partnerName, onReveal }: DuoReadyStepProps) {
 
             <motion.div
               animate={bothReady ? { scale: [1, 1.3, 1], opacity: 1 } : { opacity: 0.3 }}
-              className="text-3xl"
+              className="flex items-center justify-center"
             >
-              💜
+              <Heart size={28} className="text-purple-400" />
             </motion.div>
 
             <div className="text-center">

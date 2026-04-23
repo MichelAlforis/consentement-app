@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Heart } from 'lucide-react';
 import { comfortCategories } from '../../data';
+import { DynamicIcon } from '../../utils/iconFromName';
 import { CommonGround } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -16,10 +17,10 @@ interface DuoRevealStepProps {
 type CategoryKey = 'tenderness' | 'intensity' | 'trust';
 const categoryKeys: CategoryKey[] = ['tenderness', 'intensity', 'trust'];
 
-const categoryEmoji: Record<CategoryKey, string> = {
-  tenderness: '🌸',
-  intensity: '🔥',
-  trust: '⛓️',
+const categoryIconName: Record<CategoryKey, string> = {
+  tenderness: 'Heart',
+  intensity: 'Flame',
+  trust: 'ShieldCheck',
 };
 
 export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) {
@@ -100,9 +101,9 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-6xl mb-6"
+          className="mb-6"
         >
-          ✨
+          <DynamicIcon name="Sparkles" size={60} />
         </motion.div>
         <h2 className="text-2xl font-bold text-center" style={{ color: colors.textPrimary }}>
           {t('duo.reveal.intro')}
@@ -159,13 +160,13 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
             animate={{ scale: 1 }}
             className="text-center mb-8"
           >
-            <motion.span
+            <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.5 }}
-              className="text-5xl block mb-3"
+              className="flex justify-center mb-3"
             >
-              {categoryEmoji[currentCategoryKey]}
-            </motion.span>
+              <DynamicIcon name={categoryIconName[currentCategoryKey]} size={56} />
+            </motion.div>
             <h3 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
               {t(`comfort.${currentCategoryKey}.title`)}
             </h3>
@@ -185,7 +186,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                       className="rounded-xl p-4 shadow-sm border flex items-center gap-3"
                       style={{ background: colors.bgCard, borderColor: colors.border }}
                     >
-                      <span className="text-2xl">{item.icon}</span>
+                      <DynamicIcon name={item.iconName} size={22} />
                       <span className="flex-1 font-medium" style={{ color: colors.textSecondary }}>
                         {t(`comfort.${currentCategoryKey}.items.${item.id}`)}
                       </span>

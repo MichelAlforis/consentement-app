@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { comfortLevels } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { DynamicIcon } from '../../utils/iconFromName';
 
 interface ComfortSliderProps {
   value: number;
@@ -39,9 +40,8 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="text-base"
               >
-                {level.emoji}
+                <DynamicIcon name={level.iconName} size={16} color="white" />
               </motion.span>
             )}
 

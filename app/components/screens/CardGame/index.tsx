@@ -1,8 +1,9 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy } from 'lucide-react';
+import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy, Dices } from 'lucide-react';
 import { DICE_CATEGORIES } from '../../../data';
+import { DynamicIcon } from '../../../utils/iconFromName';
 import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { useCardSession } from './hooks/useCardSession';
@@ -45,7 +46,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
                   {s.available.length} {t('cardGame.cardUnit')}
                   {s.favorites.length > 0 && (
-                    <span className="ml-2 text-rose-400">· ❤️ {s.favorites.length} {s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}</span>
+                    <span className="ml-2 text-rose-400 inline-flex items-center gap-1">· <Heart size={12} className="inline" /> {s.favorites.length} {s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}</span>
                   )}
                 </p>
               </div>
@@ -150,9 +151,9 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                     }}
                   >
                     <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px)', backgroundSize: '12px 12px' }} />
-                    <span className="absolute top-2 left-2.5 text-xs text-white/40 font-black leading-none">{c.emoji}</span>
-                    <span className="absolute bottom-10 right-2.5 text-xs text-white/40 font-black leading-none" style={{ transform: 'rotate(180deg)' }}>{c.emoji}</span>
-                    <span className="text-2xl relative z-10 mb-0.5">{c.emoji}</span>
+                    <span className="absolute top-2 left-2.5 text-white/30"><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
+                    <span className="absolute bottom-10 right-2.5 text-white/30" style={{ transform: 'rotate(180deg)' }}><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
+                    <span className="relative z-10 mb-0.5"><DynamicIcon name={c.iconName} size={28} color="white" /></span>
                     <p className="text-white font-black text-xs text-center leading-tight relative z-10 px-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{t(`diceCategories.${d}`)}</p>
                     <p className="text-white/55 text-xs relative z-10">{count}</p>
                   </motion.button>
@@ -180,7 +181,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
           >
             <div className="flex items-center gap-2 mb-5">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm" style={{ background: s.cat.gradient }}>
-                <span className="text-sm leading-none">{s.cat.emoji}</span>
+                <DynamicIcon name={s.cat.iconName} size={14} color="white" />
                 <span className="text-white font-bold text-xs tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.25)' }}>{t(`diceCategories.${s.currentCard.deck}`)}</span>
               </div>
               <span className="text-xs font-semibold" style={{ color: colors.textMuted }}>
@@ -313,7 +314,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             <h3 className="text-2xl font-black mb-2 text-white">{t('cardGame.endTitle')}</h3>
             <p className="text-sm mb-7 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
               {s.seanceSize} {t('cardGame.cardUnit')} · {s.sessionDecks.length} {s.sessionDecks.length > 1 ? t('cardGame.decksExplored') : t('cardGame.deckExplored')}
-              {s.favorites.length > 0 && ` · ❤️ ${s.favorites.length} ${s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}`}
+              {s.favorites.length > 0 && <> · <Heart size={12} className="inline align-middle" /> {s.favorites.length} {s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}</>}
             </p>
 
             {s.sessionDecks.length > 0 && (
@@ -324,7 +325,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                     const c = DICE_CATEGORIES[d];
                     return (
                       <div key={d} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: c.gradient }}>
-                        <span>{c.emoji}</span>
+                        <DynamicIcon name={c.iconName} size={12} color="white" />
                         <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>{t(`diceCategories.${d}`)}</span>
                       </div>
                     );

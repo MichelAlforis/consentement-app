@@ -7,6 +7,7 @@ import { comfortCategories } from '../../data';
 import { PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { DynamicIcon } from '../../utils/iconFromName';
 
 interface PersonalSpaceScreenProps {
   profile: PersonalProfile;
@@ -55,8 +56,8 @@ export function PersonalSpaceScreen({ profile, onUpdateLevel, onUpdateSafeword, 
                 }}
               >
                 <div className="flex items-center gap-3">
-                  <motion.span className="text-2xl" whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}>
-                    {category.icon}
+                  <motion.span whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}>
+                    <DynamicIcon name={category.iconName} size={24} color={category.color} />
                   </motion.span>
                   <div>
                     <h3 className="font-semibold" style={{ color: colors.textPrimary }}>
@@ -78,7 +79,7 @@ export function PersonalSpaceScreen({ profile, onUpdateLevel, onUpdateSafeword, 
                     transition={{ delay: catIndex * 0.15 + itemIndex * 0.05 }}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{item.icon}</span>
+                      <DynamicIcon name={item.iconName} size={18} color={colors.textMuted} />
                       <span className="text-sm font-medium" style={{ color: colors.textPrimary }}>
                         {t(`comfort.${key}.items.${item.id}`)}
                       </span>

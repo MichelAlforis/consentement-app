@@ -1,6 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { Check, X, EyeOff, Sparkles, Smile, Handshake } from 'lucide-react';
 import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
@@ -36,7 +36,7 @@ export function AccordFlow({
       {step === 'accord-intro' && (
         <Overlay key="acc-intro" color="linear-gradient(160deg, #1d4ed8, #1e40af)">
           <div className="text-center mb-5">
-            <div className="text-4xl mb-2">🤝</div>
+            <div className="flex justify-center mb-2"><Handshake size={40} /></div>
             <h3 className="text-white text-xl font-black">{t('gooseGame.accord.title')}</h3>
             <p className="text-white/65 text-sm mt-1">{t('gooseGame.accord.sub')}</p>
           </div>
@@ -68,7 +68,7 @@ export function AccordFlow({
       {step === 'accord-hidden' && (
         <Overlay key="acc-hidden" color="#060912">
           <div className="text-center py-6">
-            <div className="text-5xl mb-4">🙈</div>
+            <div className="flex justify-center mb-4"><EyeOff size={48} className="text-white/60" /></div>
             <h3 className="text-white text-xl font-bold mb-2">
               {t('gooseGame.accord.passPhone', { name: player2.name })}
             </h3>
@@ -111,9 +111,9 @@ export function AccordFlow({
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-              className="text-5xl mb-3"
+              className="flex justify-center mb-3"
             >
-              {bothYes ? '🎉' : '🤗'}
+              {bothYes ? <Sparkles size={48} /> : <Smile size={48} />}
             </motion.div>
             <h3 className="text-white text-xl font-black mb-2">
               {bothYes ? t('gooseGame.accord.success') : t('gooseGame.accord.noWorry')}

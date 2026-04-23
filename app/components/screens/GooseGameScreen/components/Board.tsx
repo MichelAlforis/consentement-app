@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import { BOARD, BOARD_LAYOUT, getSquareBg, getSquareEmoji, SQUARE_VISUAL } from '../../../../data/goose-game';
+import { BOARD, BOARD_LAYOUT, getSquareBg, getSquareIconName, SQUARE_VISUAL } from '../../../../data/goose-game';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 
 // Sens de parcours par rangée (serpentin 6 lignes, alternance →/←)
 const ROW_DIRECTIONS = ['→', '←', '→', '←', '→', '←'] as const;
@@ -20,7 +21,7 @@ interface BoardCellProps {
 function BoardCell({ squareIndex, displayPos0, displayPos1, p0Emoji, p1Emoji, isActive, isAnimating }: BoardCellProps) {
   const square = BOARD[squareIndex];
   const bg     = getSquareBg(square);
-  const emoji  = getSquareEmoji(square);
+  const iconName = getSquareIconName(square);
   const hasP0  = displayPos0 === squareIndex;
   const hasP1  = displayPos1 === squareIndex;
 
@@ -50,8 +51,8 @@ function BoardCell({ squareIndex, displayPos0, displayPos1, p0Emoji, p1Emoji, is
       }}
       className="flex flex-col items-center justify-center gap-0.5"
     >
-      {/* Emoji catégorie / type */}
-      <span style={{ fontSize: 20, lineHeight: 1 }}>{emoji}</span>
+      {/* Icon catégorie / type */}
+      {iconName && <DynamicIcon name={iconName} size={20} color="rgba(255,255,255,0.85)" />}
 
       {/* Pions */}
       {(hasP0 || hasP1) && (
@@ -156,8 +157,8 @@ export function Legend() {
             borderRadius: 3,
             background: SQUARE_VISUAL[type].bg,
           }} />
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 600 }}>
-            {SQUARE_VISUAL[type].emoji} {SQUARE_VISUAL[type].label}
+          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
+            {SQUARE_VISUAL[type].iconName && <DynamicIcon name={SQUARE_VISUAL[type].iconName} size={9} color="rgba(255,255,255,0.45)" />} {SQUARE_VISUAL[type].label}
           </span>
         </div>
       ))}
