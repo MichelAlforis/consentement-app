@@ -38,13 +38,15 @@ export default function PlateauTestPage() {
         displayPos1={pos1}
         p0Emoji="🦊"
         p1Emoji="🐻"
+        p0Color="#fb923c"
+        p1Color="#38bdf8"
         activeSquare={active}
         isAnimating={animating}
+        animatingPos={animating ? active : null}
       />
 
       <Legend />
 
-      {/* Contrôles */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', padding: '0 20px' }}>
         <button onClick={() => step(0)} style={btn('#7c3aed')}>🦊 +1</button>
         <button onClick={() => step(1)} style={btn('#0891b2')}>🐻 +1</button>

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
+import { PAWN_COLORS } from '../../../data/goose-game';
 import { DICE_CATEGORIES } from '../../../data';
 import type { DiceConfig } from '../../../game-engine/dice/types';
 import { useGooseGame } from './hooks/useGooseGame';
@@ -162,8 +163,11 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
           displayPos1={displayPos1}
           p0Emoji={player1.emoji}
           p1Emoji={player2.emoji}
+          p0Color={PAWN_COLORS[0]}
+          p1Color={PAWN_COLORS[1]}
           activeSquare={activeSquare}
           isAnimating={animatingPos !== null}
+          animatingPos={animatingPos}
         />
         <Legend />
       </div>
