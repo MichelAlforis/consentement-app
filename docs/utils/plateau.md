@@ -160,16 +160,26 @@ gl={{ toneMappingExposure: 1.1 }}
 // Disque blob par pion (mesh circle, opacity dynamique selon hauteur d'arc)
 ```
 
-### Icônes sur les cases
+### Icônes sur les cases (pipeline 3D pur)
 
 ```tsx
-<Html transform occlude position={[0, CELL_H3/2+0.005, 0]} rotation={[-Math.PI/2, 0, 0]} center>
-  <DynamicIcon ... />
-</Html>
+<mesh position={[0, CELL_H3/2+0.002, 0]} rotation={[-Math.PI/2, 0, 0]}>
+  <planeGeometry args={[0.55, 0.55]} />
+  <meshBasicMaterial map={getIconTexture(iconName)} transparent depthWrite={false} />
+</mesh>
 ```
 
-- `transform` : l'icône est couchée à plat sur la face supérieure de la case (inclinée avec le plateau)
-- `occlude` : drei cache l'icône automatiquement quand la géométrie du pion la couvre
+Zéro DOM overlay, zéro fichier externe. Chaque icône est une `THREE.CanvasTexture` 64×64 générée via `Path2D` + Canvas API au premier render, mise en cache au niveau module.
+
+**`buildIconTexture(iconName)`** :
+- Dessine les nodes SVG Lucide (path/polygon/rect/circle/line) en canvas 24→64px
+- `lineWidth = 2.8 / scale` — traits épais lisibles à toute taille
+- Cercles avec `fill:'true'` → remplis (ex: point du `?` dans HelpCircle)
+- `getIconTexture` : cache `Map<string, CanvasTexture>` — texture construite une seule fois par icône
+
+**Icônes supportées** : Rocket, Star, Pause, Handshake, Heart, Flag, Layers, MessageCircle, HelpCircle, Target, Sparkles
+
+Le plane est à `depthWrite:false` + légèrement au-dessus de la case (`+0.002`) — pas de z-fighting. La géométrie 3D des pions occlut naturellement les icônes par depth testing.
 
 ### Pions (Pawn3D — géométrie WebGL native)
 
@@ -204,7 +214,7 @@ null (SSR) → CSS, false (WebGL absent) → CSS. Pas de flash.
 | Faces latérales | Abandonnées | Automatiques (RoundedBox) |
 | Texture bois socle | CSS stries | CanvasTexture procédurale |
 | Couleurs cases normales | Par face dé | Par face dé (DICE_FACE_COLOR) |
-| Icônes sur cases | Toujours face caméra | Couchées à plat + occlude pions |
+| Icônes sur cases | Toujours face caméra | Pipeline 3D pur — CanvasTexture + plane mesh |
 | Bloom | Impossible | EffectComposer + Bloom ciblé emissives |
 
 ---
