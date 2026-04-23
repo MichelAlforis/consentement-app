@@ -388,33 +388,28 @@ function Cell3D({ squareIndex, isActive, isAnimating }: BoardCellR3FProps) {
   const [x, y, z] = getCellPos3D(squareIndex);
   const color = getSquareColor3D(square);
   const iconName = getSquareIconName(square);
-  const matRef = useRef<THREE.MeshStandardMaterial>(null);
+  const matRef = useRef<THREE.MeshBasicMaterial>(null);
+  const baseColor = useMemo(() => new THREE.Color(color), [color]);
   const tRef = useRef(0);
-  const roughness = useRef(0.46 + Math.random() * 0.04).current;
 
   useFrame((_, delta) => {
     if (!matRef.current) return;
     if (isActive && !isAnimating) {
       tRef.current += delta;
-      matRef.current.emissiveIntensity = 0.18 + 0.14 * Math.sin(tRef.current * 3);
+      const f = 1 + 0.22 * Math.sin(tRef.current * 3);
+      matRef.current.color.setRGB(Math.min(baseColor.r * f, 1), Math.min(baseColor.g * f, 1), Math.min(baseColor.b * f, 1));
     } else if (isActive && isAnimating) {
       tRef.current += delta;
-      matRef.current.emissiveIntensity = 0.55 * Math.abs(Math.sin(tRef.current * 10));
+      const f = 1 + 0.55 * Math.abs(Math.sin(tRef.current * 10));
+      matRef.current.color.setRGB(Math.min(baseColor.r * f, 1), Math.min(baseColor.g * f, 1), Math.min(baseColor.b * f, 1));
     } else {
-      matRef.current.emissiveIntensity = 0.0;
+      matRef.current.color.copy(baseColor);
     }
   });
 
   return (
-    <RoundedBox args={[CELL_S, CELL_H3, CELL_S]} radius={0.07} smoothness={5} position={[x, y, z]} receiveShadow castShadow>
-      <meshStandardMaterial
-        ref={matRef}
-        color={color}
-        roughness={roughness}
-        metalness={0.0}
-        emissive={color}
-        emissiveIntensity={0.0}
-      />
+    <RoundedBox args={[CELL_S, CELL_H3, CELL_S]} radius={0.07} smoothness={5} position={[x, y, z]}>
+      <meshBasicMaterial ref={matRef} color={color} />
       {iconName && (
         <Html
           transform

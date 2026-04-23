@@ -118,10 +118,10 @@ Le losange vient du `<group rotation={[0, Math.PI/4, 0]}>` qui englobe tout le c
 ### Géométrie 3D
 
 - Socle acajou : `BoxGeometry`, texture procédurale `CanvasTexture` (grain bois baked, même stries que CSS), roughness=0.75.
-- Cases : `RoundedBox(1.0, 0.14, 1.0)`, radius=0.07, `MeshStandardMaterial`.
+- Cases : `RoundedBox(1.0, 0.14, 1.0)`, radius=0.07, **`meshBasicMaterial`** — couleur plate, zéro lumière, rendu carton imprimé.
 - Gap entre cases : 0.12 world units.
-- Case active : `emissiveIntensity` animé via `useFrame` (pulse lent ou flash). Inactives : emissive=0.
-- `roughness` par case : `useRef(0.46 + Math.random() * 0.04).current` — micro-variation stable.
+- Case active : modulation directe de `color` via `useFrame` (pulse lent ou flash) — pas d'emissive.
+- `meshBasicMaterial` intentionnel : contraste voulu entre cases flat (print-like) et socle réaliste (PBR).
 
 ### Couleurs par type de case
 
