@@ -85,10 +85,10 @@ Double glow externe (halo proche + halo diffus) + inset sombre pour la profondeu
 **Acajou visible**
 Gradient corrigé : `#c45628 → #8a3418 → #582210` (+40% luminosité vs version initiale quasi-noire).
 
-### Ce qui a été délégué
+### Repris par la feature pion
 
-**Animation arc pion** — délégué à l'agent dédié modélisation pion.
-Le pion saute case par case à 210ms/case (via `usePawnAnimation`) en attendant.
+**Animation arc pion** — intégré dans la feature modélisation pion (agent dédié).
+Le déplacement case par case à 210ms/case (`usePawnAnimation`) reste actif en attendant la livraison.
 
 ---
 
@@ -113,7 +113,7 @@ Le pion saute case par case à 210ms/case (via `usePawnAnimation`) en attendant.
 | Sens Sonic (départ bas) | ❌ | ✅ rangées inversées | ✅ | ✅ |
 | Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto R3F |
 | Trail de progression | ❌ | ❌ | ❌ inutile | — |
-| Arc de déplacement | ❌ | ❌ | 🔄 agent pion | ✅ physique |
+| Arc de déplacement | ❌ | ❌ | 🔄 feature pion | ✅ physique |
 | Pions SVG | ❌ | token basique | ✅ SVG radialGradient | ✅ mesh 3D |
 | Légende | ✅ | ✅ | ✅ | ✅ |
 
