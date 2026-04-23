@@ -1,4 +1,4 @@
-# Rendu des cartes — État actuel (2026-04-23)
+# Rendu des cartes — État actuel (2026-04-23, màj 2026-04-23)
 
 **Fichiers clés :**
 - `app/components/screens/CardGame/PlayingCard.tsx` — composant carte (tilt, foil, swipe, DeckStack, nudge)
@@ -17,7 +17,8 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
   ├── DeckStack (motion.div × 2, position: absolute, z-index: -1/-2)
   └── motion.div.drag (drag="x", cursor: grab, x, rotate: dragRotate, opacity: dragOpacity)
         └── div.perspective (perspective: 1200px — isolé du drag, swipe reste 2D plat)
-              └── motion.div.tilt (rotateX/Y ±6°, preserve-3d, will-change)
+              └── animated.div.tilt  ← React Spring (@react-spring/web)
+                    (transform: rotateX/Y ±6°, preserve-3d, will-change)
                     └── motion.div.flip (rotateY 0→180, preserve-3d)
                           ├── div.dos (backfaceVisibility: hidden)
                           └── div.face (rotateY(180deg), backfaceVisibility: hidden)
@@ -28,7 +29,7 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
 
 ---
 
-## Ce qui tourne (Niveau 1 ✅ + polish ✅)
+## Ce qui tourne (Niveau 1 ✅ + polish ✅ + Niveau 2 ✅)
 
 ### DeckStack — pile fantôme
 
@@ -46,17 +47,19 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
 - Snap si seuil non atteint : spring `stiffness: 300, damping: 25`
 - `dragRotate ±10°` + `dragOpacity 0.5→1→0.5` via `useTransform` sans re-render
 - `isExiting` local bloque le double-swipe pendant l'animation de sortie
+- `canDrag = !isExiting` — `isAnimating` retiré de `canDrag` : la nouvelle carte est swipeable dès son apparition
 - `cursor: grab` / `cursor: grabbing` (desktop)
 
 ### Entrée de chaque carte
 
 - Dans `index.tsx` : `AnimatePresence mode="wait"` + `motion.div key={card.id}` autour de `PlayingCard`
 - `initial={{ opacity: 0, y: 22 }}` → `animate={{ opacity: 1, y: 0 }}` en 350ms, ease `[0.22, 0.61, 0.36, 1]`
-- Reset interne (`setHideAll(false)`, `dragX.set(0)`, `controls.set(...)`) via `useEffect([card.id])`
+- Reset interne (`setHideAll(false)`, `dragX.set(0)`, `controls.set(...)`, `tiltApi.set(0,0)`) via `useEffect([card.id])`
+- Avec `key={card.id}`, `PlayingCard` remonte à chaque nouvelle carte → reset naturel par remontage
 
-### Nudge swipe (one-shot)
+### Nudge swipe
 
-- Déclenché **une seule fois** au premier montage du composant (`hasNudged` ref)
+- Déclenché à chaque nouvelle carte (le composant remonte via `key={card.id}`, `hasNudged` repart à `false`)
 - Délai 950ms (laisse l'entrée se terminer + pause de lecture)
 - `animate(dragX, [0, -20, 15, -8, 0], { duration: 0.9 })` — oscillation via la MotionValue directement
 - Apprend le geste à l'utilisateur sans texte
@@ -64,14 +67,18 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
 ### Flip dos→face
 
 - `rotateY: 0 → 180`, durée 520ms, ease `[0.22, 0.61, 0.36, 1]`
-- Auto-reveal géré par `useCardSession` (350ms après `startPlaying`, immédiat après `drawNewCard`)
+- Auto-reveal géré par `useCardSession` (350ms après `startPlaying`, immédiat au moment où `drawNewCard` pose la carte à 480ms)
 - `WebkitBackfaceVisibility: 'hidden'` + `WebkitTransformStyle: 'preserve-3d'` sur tous les éléments 3D
 
-### Tilt parallax
+### Tilt — React Spring physique (Niveau 2 ✅)
 
-- `useNormalizedPointer(cardRef)` → deux `MotionValue<number>` (-1 → +1) depuis `pointermove`
-- Throttlé via `requestAnimationFrame`, reset à 0 sur `pointerleave`
-- **±6°** (naturel, comme une carte tenue en main)
+- `useSpring({ rotX: 0, rotY: 0, config: { tension: 400, friction: 30 } })` via `@react-spring/web`
+- Handlers `pointermove` / `pointerleave` bruts (pas de rAF) → `tiltApi.start({ rotX, rotY })`
+- `animated.div` avec `to([rotX, rotY], (rx, ry) => \`rotateX(${rx}deg) rotateY(${ry}deg)\`)` dans la chaîne `preserve-3d`
+- **±6°**, suivi temps réel sans délai perceptible (vs ease Framer Motion Niveau 1)
+- Retour à plat naturel via decay spring sur `pointerleave`
+- `useNormalizedPointer(cardRef)` conservé pour piloter le foil (Framer MotionValues) — les deux libs coexistent sans conflit
+- `tiltApi.set({ rotX: 0, rotY: 0 })` dans le reset on new card
 
 ### Foil holographique
 
@@ -108,7 +115,6 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
 
 ```
 gradient catégorie + dot pattern (rgba blanc 18%, grille 18px)
-  corner emoji × 2 (15px, opacity 25%)
   emoji central (56px)
   nom de catégorie (13px, bold, uppercase, tracking 0.18em, opacity 70%)
 ```
@@ -133,24 +139,33 @@ foil overlay (screen, opacity 0 → 0.12/0.18 à la révélation, transition 0.5
 | Flip dos→face | ✅ rotateY 520ms |
 | Pile fantôme (DeckStack) | ✅ 2 couches animées |
 | Swipe pour piocher | ✅ seuil 90px / 350px·s⁻¹ |
-| Tilt parallax ±6° | ✅ useNormalizedPointer |
+| Tilt React Spring ±6° | ✅ Niveau 2 — tension:400/friction:30 |
 | Foil holographique CSS | ✅ screen, depth-aware |
 | Entrée animée (slide-up) | ✅ AnimatePresence key={card.id} |
-| Nudge swipe one-shot | ✅ animate(dragX, keyframes) |
+| Nudge swipe | ✅ animate(dragX, keyframes) |
 | Moment de lecture (actions masquées) | ✅ AnimatePresence isRevealed |
 | iOS Safari stable | ✅ Webkit prefixes |
-| Spring physique (suivi doigt) | ❌ Niveau 2 — @react-spring/web |
 | Matière de surface WebGL | ❌ Niveau 3 — Three.js |
 
 ---
 
-## Niveau 2 — Carte physique avec React Spring
+## Timing `drawNewCard` (useCardSession)
 
-`@react-spring/web` pour un tilt sans délai perceptible.
+```
+0ms   → isAnimating=true, isRevealed=false
+        swipe exit animation joue dans PlayingCard (280ms)
+        hideAll=true, onDraw() appelé
 
-- Spring `tension: 400, friction: 30` — tilt temps réel vs ease Framer
-- Retour à plat naturel par decay sur `pointerleave`
-- Coexiste avec Framer Motion — pas de migration du flip/swipe
+480ms → batch React : nouvelle carte, isRevealed=true, isAnimating=false
+        AnimatePresence key change → ancien PlayingCard démonté → nouveau monté
+        canDrag=true dès l'apparition (isAnimating retiré de canDrag)
+
+480ms+350ms → nouvelle carte pleinement visible (entrance animation)
+```
+
+**Guard double-draw :** `if (isAnimating) return` dans `drawNewCard` — valide pendant les 480ms de transition.
+
+---
 
 ## Niveau 3 — Canvas WebGL
 
