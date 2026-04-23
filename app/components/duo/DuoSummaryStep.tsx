@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Heart, ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine } from 'lucide-react';
 import { Card } from '../ui';
 import { comfortCategories } from '../../data';
+import { DynamicIcon } from '../../utils/iconFromName';
 import { CommonGround, PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -93,7 +94,7 @@ export function DuoSummaryStep({
                   style={{ background: `linear-gradient(135deg, ${category.color}10 0%, transparent 100%)` }}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xl">{category.icon}</span>
+                    <DynamicIcon name={category.iconName} size={20} />
                     <span className="font-medium" style={{ color: colors.textPrimary }}>
                       {t(`comfort.${key}.title`)}
                     </span>
@@ -123,7 +124,7 @@ export function DuoSummaryStep({
                           className="flex items-center gap-3 py-2 last:border-0"
                           style={{ borderBottom: `1px solid ${colors.border}` }}
                         >
-                          <span className="text-lg">{item.icon}</span>
+                          <DynamicIcon name={item.iconName} size={18} />
                           <span className="flex-1 text-sm" style={{ color: colors.textSecondary }}>
                             {t(`comfort.${key}.items.${item.id}`)}
                           </span>
