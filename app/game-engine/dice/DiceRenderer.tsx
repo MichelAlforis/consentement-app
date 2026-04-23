@@ -77,6 +77,7 @@ function Cube6({
   const theme = useTheme();
   const cubeControls = useAnimation();
   const wrapControls = useAnimation();
+  const arcControls  = useAnimation();
   const cumulative = useRef({ x: 0, y: 0 });
   const [landed, setLanded] = useState(false);
 
@@ -88,9 +89,13 @@ function Cube6({
     const baseY = Math.round(cumulative.current.y / 360) * 360;
     const finalX = baseX + 1080 + tx;
     const finalY = baseY + 720 + ty;
-    // Instabilité Z aléatoire ±5° — revient à 0 en fin d'animation
     const zWobble = (Math.random() - 0.5) * 10;
     cumulative.current = { x: finalX, y: finalY };
+    // Arc de lancer : monte puis retombe avant l'atterrissage
+    arcControls.start({
+      y: [0, -46, 0],
+      transition: { duration: 1.62, times: [0, 0.42, 1], ease: ['easeOut', 'easeIn'] },
+    });
     cubeControls.start({
       rotateX: finalX,
       rotateY: finalY,
@@ -99,11 +104,11 @@ function Cube6({
     }).then(() => {
       setLanded(true);
       onRollComplete?.();
-      // Shake + micro-rebond à l'atterrissage (cosmétique, non-bloquant)
       wrapControls.start({
-        x: [0, -4, 4, -2, 2, 0],
-        scale: [1, 1.05, 0.97, 1.02, 0.99, 1],
-        transition: { duration: 0.35, ease: 'easeOut' },
+        scaleY: [1, 0.66, 1.18, 0.94, 1.03, 1],
+        scaleX: [1, 1.20, 0.88, 1.04, 0.99, 1],
+        y:      [0, 0,    -22,  -6,   -1,   0],
+        transition: { duration: 0.44, ease: 'easeOut' },
       });
     });
   }, [isRolling, targetFaceIndex]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -150,19 +155,22 @@ function Cube6({
         )}
       </AnimatePresence>
 
-      {/* Wrapper — reçoit le shake/scale post-atterrissage */}
-      <motion.div animate={wrapControls} style={{ position: 'relative', zIndex: 1 }}>
-        {/* drop-shadow sur le conteneur extérieur — jamais sur preserve-3d */}
-        <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))' }}>
-          <motion.div
-            animate={cubeControls}
-            style={{ width: 100, height: 100, position: 'relative', transformStyle: 'preserve-3d' }}
-          >
-            {faces.map((face, i) => (
-              <CubeFace key={face.id} face={face} transform={FACE_TRANSFORMS_6[i]} />
-            ))}
-          </motion.div>
-        </div>
+      {/* Arc de lancer — translation verticale pendant le vol */}
+      <motion.div animate={arcControls} initial={{ y: 0 }} style={{ position: 'relative', zIndex: 1 }}>
+        {/* Shake/scale post-atterrissage */}
+        <motion.div animate={wrapControls}>
+          {/* drop-shadow sur le conteneur extérieur — jamais sur preserve-3d */}
+          <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))' }}>
+            <motion.div
+              animate={cubeControls}
+              style={{ width: 100, height: 100, position: 'relative', transformStyle: 'preserve-3d' }}
+            >
+              {faces.map((face, i) => (
+                <CubeFace key={face.id} face={face} transform={FACE_TRANSFORMS_6[i]} />
+              ))}
+            </motion.div>
+          </div>
+        </motion.div>
       </motion.div>
 
       {/* Shimmer thème sur la face avant — uniquement quand posé */}
@@ -265,9 +273,11 @@ export interface DiceRendererProps {
   /** 'css' (défaut) : cube CSS 3D Level 1 | 'webgl' : R3F PBR */
   renderer?: 'css' | 'webgl';
   size?: number;
+  /** 'category' (défaut) : faces gradients + icône | 'numeric' : dé classique à points */
+  mode?: 'category' | 'numeric';
 }
 
-export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size }: DiceRendererProps) {
+export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size, mode = 'category' }: DiceRendererProps) {
   if (renderer === 'webgl') {
     return (
       <DiceCanvas
@@ -276,6 +286,7 @@ export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, r
         isRolling={isRolling}
         onRollComplete={onRollComplete}
         size={size ?? 200}
+        mode={mode}
       />
     );
   }

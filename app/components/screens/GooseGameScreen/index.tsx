@@ -1,10 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
 import { PAWN_COLORS } from '../../../data/goose-game';
-import { DICE_CATEGORIES } from '../../../data';
-import type { DiceConfig } from '../../../game-engine/dice/types';
 import { useGooseGame } from './hooks/useGooseGame';
 import { ZONE_BG } from './utils';
 
@@ -22,19 +19,6 @@ import { EndScreen } from './phases/EndScreen';
 import { ActivityOverlay } from './overlays/ActivityOverlay';
 import { ChanceOverlay } from './overlays/ChanceOverlay';
 import { AccordFlow } from './overlays/AccordFlow';
-
-// ─── Config dé (identique à DiceGameScreen) ──────────────────────────────────
-
-const DICE_CONFIG: DiceConfig = {
-  faces: ([1, 2, 3, 4, 5, 6] as const).map(n => ({
-    id: n,
-    label: DICE_CATEGORIES[n].name,
-    iconName: DICE_CATEGORIES[n].iconName,
-    gradient: DICE_CATEGORIES[n].gradient,
-    border: DICE_CATEGORIES[n].border,
-    color: DICE_CATEGORIES[n].border,
-  })),
-};
 
 // ─── Guard premium ────────────────────────────────────────────────────────────
 
@@ -168,6 +152,10 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
           activeSquare={activeSquare}
           isAnimating={animatingPos !== null}
           animatingPos={animatingPos}
+          diceResult={diceResult}
+          isDiceRolling={isRolling}
+          onDiceRollComplete={handleRollComplete}
+          showDice={step === 'roll' || step === 'rolling'}
         />
         <Legend />
       </div>
@@ -193,15 +181,6 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
         </motion.div>
 
         <div className="flex flex-col items-center gap-3">
-          <DiceRenderer
-            config={DICE_CONFIG}
-            currentFace={DICE_CONFIG.faces.find(f => f.id === diceResult) ?? null}
-            isRolling={isRolling}
-            onRollComplete={handleRollComplete}
-            renderer="webgl"
-            size={200}
-          />
-
           {step === 'roll' && (
             <motion.button
               initial={{ opacity: 0, scale: 0.9 }}

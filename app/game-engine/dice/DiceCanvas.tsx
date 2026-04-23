@@ -94,6 +94,54 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   return tex;
 }
 
+// ─── Textures numériques (points style dé classique) ──────────────────────────
+
+const DOT_LAYOUTS: Record<number, [number, number][]> = {
+  1: [[0.5,  0.5]],
+  2: [[0.72, 0.28], [0.28, 0.72]],
+  3: [[0.72, 0.28], [0.5,  0.5],  [0.28, 0.72]],
+  4: [[0.28, 0.28], [0.72, 0.28], [0.28, 0.72], [0.72, 0.72]],
+  5: [[0.28, 0.28], [0.72, 0.28], [0.5,  0.5],  [0.28, 0.72], [0.72, 0.72]],
+  6: [[0.28, 0.25], [0.72, 0.25], [0.28, 0.5],  [0.72, 0.5],  [0.28, 0.75], [0.72, 0.75]],
+};
+
+export function makeNumericFaceTexture(n: number, size = 512): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+
+  ctx.fillStyle = '#f0ebe0';
+  ctx.fillRect(0, 0, size, size);
+
+  const vig = ctx.createRadialGradient(size / 2, size / 2, size * 0.32, size / 2, size / 2, size * 0.76);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.10)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, size, size);
+
+  const spec = ctx.createRadialGradient(size * 0.28, size * 0.22, 0, size * 0.28, size * 0.22, size * 0.42);
+  spec.addColorStop(0, 'rgba(255,255,255,0.45)');
+  spec.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = spec;
+  ctx.fillRect(0, 0, size, size);
+
+  const dotR = size * 0.088;
+  for (const [nx, ny] of (DOT_LAYOUTS[n] ?? [])) {
+    ctx.fillStyle = n === 1 ? '#c0392b' : '#1a1208';
+    ctx.beginPath();
+    ctx.arc(nx * size, ny * size, dotR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    ctx.beginPath();
+    ctx.arc(nx * size - dotR * 0.28, ny * size - dotR * 0.28, dotR * 0.44, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
 // ─── Cube animé ───────────────────────────────────────────────────────────────
 
 // three-stdlib RoundedBoxGeometry étend BoxGeometry → 6 groupes identiques.
@@ -103,18 +151,22 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
 // matArray[materialIndex] = texture index : [1, 4, 2, 3, 0, 5]
 
 function AnimatedCube({
-  faces, targetFaceId, isRolling, onRollComplete,
+  faces, targetFaceId, isRolling, onRollComplete, mode = 'category',
 }: {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
+  mode?: 'category' | 'numeric';
 }) {
   const groupRef = useRef<THREE.Group>(null);
 
   const textures = useMemo(
-    () => faces.map(face => makeFaceTexture(face)),
-    [], // eslint-disable-line react-hooks/exhaustive-deps
+    () =>
+      mode === 'numeric'
+        ? ([1, 2, 3, 4, 5, 6] as const).map(n => makeNumericFaceTexture(n))
+        : faces.map(face => makeFaceTexture(face)),
+    [mode], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   // RoundedBoxGeometry de three-stdlib : coins arrondis + 6 groupes BoxGeometry
@@ -148,6 +200,7 @@ function AnimatedCube({
     wobbleFreq: 0,
   });
 
+  const bounce = useRef({ active: false, elapsed: 0 });
   const cumulative = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -187,12 +240,38 @@ function AnimatedCube({
     group.rotation.x = a.startX + (a.targetX - a.startX) * eased;
     group.rotation.y = a.startY + (a.targetY - a.startY) * eased;
     group.rotation.z = a.wobbleAmplitude * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
+    group.position.y = Math.sin(Math.PI * t) * 0.38; // arc de lancer
 
     if (t >= 1 && !a.done) {
       a.done = true;
       a.rolling = false;
       group.rotation.z = 0;
+      group.position.y = 0;
+      bounce.current = { active: true, elapsed: 0 };
       a.onComplete?.();
+    }
+  });
+
+  // Bump à l'atterrissage — squash + rebond position
+  useFrame((_, delta) => {
+    const b = bounce.current;
+    const group = groupRef.current;
+    if (!group || !b.active) return;
+    b.elapsed = Math.min(b.elapsed + delta, 0.44);
+    const t = b.elapsed / 0.44;
+    // Scale : squash → stretch → retour
+    const sy = t < 0.22 ? 1 - 0.32 * (t / 0.22)
+      : t < 0.52 ? 0.68 + 0.46 * ((t - 0.22) / 0.30)
+      : t < 0.78 ? 1.14 - 0.20 * ((t - 0.52) / 0.26)
+      : 0.94 + 0.06 * ((t - 0.78) / 0.22);
+    // Position : rebond amorti
+    const py = 0.18 * Math.sin(Math.PI * t * 1.9) * Math.exp(-t * 2.8);
+    group.scale.set(1, Math.max(0.5, sy), 1);
+    group.position.y = Math.max(0, py);
+    if (t >= 1) {
+      b.active = false;
+      group.scale.set(1, 1, 1);
+      group.position.y = 0;
     }
   });
 
@@ -206,12 +285,13 @@ function AnimatedCube({
 // ─── Scène complète ───────────────────────────────────────────────────────────
 
 function DiceScene({
-  faces, targetFaceId, isRolling, onRollComplete,
+  faces, targetFaceId, isRolling, onRollComplete, mode,
 }: {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
+  mode?: 'category' | 'numeric';
 }) {
   const { gl } = useThree();
   useEffect(() => {
@@ -229,6 +309,7 @@ function DiceScene({
           targetFaceId={targetFaceId}
           isRolling={isRolling}
           onRollComplete={onRollComplete}
+          mode={mode}
         />
         <ContactShadows
           position={[0, -0.62, 0]}
@@ -250,9 +331,10 @@ export interface DiceCanvasProps {
   isRolling: boolean;
   onRollComplete?: () => void;
   size?: number;
+  mode?: 'category' | 'numeric';
 }
 
-export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 180 }: DiceCanvasProps) {
+export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 180, mode = 'category' }: DiceCanvasProps) {
   const targetFaceId = currentFace?.id ?? 1;
 
   return (
@@ -268,6 +350,7 @@ export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, siz
           targetFaceId={targetFaceId}
           isRolling={isRolling}
           onRollComplete={onRollComplete}
+          mode={mode}
         />
       </Canvas>
     </div>

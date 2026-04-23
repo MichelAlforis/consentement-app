@@ -3,13 +3,14 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrthographicCamera, ContactShadows, Html, RoundedBox, Environment, Billboard, Text } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
 import { makeNumericFaceTexture } from '../../../../game-engine/dice/DiceCanvas';
 import { BOARD, BOARD_LAYOUT, getSquareBg, getSquareIconName, SQUARE_VISUAL } from '../../../../data/goose-game';
 import type { SquareType } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
+import { useTheme } from '../../../../context/ThemeContext';
 
 // ─── CSS constants ────────────────────────────────────────────────────────────
 
@@ -30,13 +31,27 @@ const BASE_PAD = 0.28;  // base extends beyond cells
 const CANVAS_H = 660;   // canvas px height
 
 // ─── Dé sur plateau ────────────────────────────────────────────────────────────
-const BOARD_DICE_S      = 0.9;
-const BOARD_DICE_REST_Y = CELL_H3 + BOARD_DICE_S / 2 + 0.04;
-const BOARD_DICE_START_Y = 5.5; // démarre hors-champ au-dessus
+const BOARD_DICE_S       = 0.675;
+const BOARD_DICE_REST_Y  = CELL_H3 + BOARD_DICE_S / 2 + 0.04;
+const BOARD_DICE_THROW_H = 1.5;   // hauteur du dé à la main avant le lancé
+const BOARD_DICE_ARC_H   = 2.5;   // amplitude de l'arc (pic au-dessus de THROW_H)
 const BOARD_DICE_FACE_ROT: Record<number, [number, number]> = {
   1: [0, 0], 2: [0, -Math.PI / 2], 3: [Math.PI / 2, 0],
   4: [-Math.PI / 2, 0], 5: [0, Math.PI / 2], 6: [0, Math.PI],
 };
+// Origines de lancer — en dehors des bords du plateau
+const THROW_ORIGINS: [number, number][] = [
+  [-4.5,  0.0], [ 4.5,  0.0],
+  [ 0.0,  5.5], [ 0.0, -5.5],
+  [-4.5,  4.5], [ 4.5,  4.5],
+  [-4.5, -4.5], [ 4.5, -4.5],
+];
+// Zones d'atterrissage — entre les cases, jamais sur un chemin de pion
+const DICE_LANDING_ZONES: [number, number][] = [
+  [-1.95,  3.55], [ 1.95,  3.55],  // coins avant
+  [-1.95, -3.55], [ 1.95, -3.55],  // coins arrière
+  [-1.95,  0.00], [ 1.95,  0.00],  // milieu des bords
+];
 
 const CAM_DIST = 20;
 const CAM_ELEV = (40 * Math.PI) / 180;
@@ -578,7 +593,7 @@ function useMahoganyTexture() {
   }, []);
 }
 
-function BoardBase3D() {
+function BoardBase3D({ accentColor }: { accentColor: string }) {
   const totalW = 4 * STEP_3 - GAP_3 + BASE_PAD * 2;
   const totalD = ROWS * STEP_3 - GAP_3 + BASE_PAD * 2;
   const woodTex = useMahoganyTexture();
@@ -588,10 +603,10 @@ function BoardBase3D() {
         <boxGeometry args={[totalW, BASE_H, totalD]} />
         <meshStandardMaterial map={woodTex} roughness={0.75} metalness={0.04} />
       </mesh>
-      {/* Glow ring ambré sous le socle — reproduit le boxShadow CSS */}
+      {/* Glow ring sous le socle — reproduit le boxShadow CSS, couleur accent du thème */}
       <mesh position={[0, -(BASE_H + 0.03), 0]}>
         <boxGeometry args={[totalW + 0.35, 0.04, totalD + 0.35]} />
-        <meshStandardMaterial color="#f0a020" emissive="#f0a020" emissiveIntensity={0.6} roughness={0.4} toneMapped={false} />
+        <meshStandardMaterial color={accentColor} emissive={accentColor} emissiveIntensity={0.8} roughness={0.4} toneMapped={false} />
       </mesh>
     </>
   );
@@ -745,13 +760,7 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
 
 // ─── R3F: BoardDice3D ────────────────────────────────────────────────────────
 
-function cbEaseBoard(t: number): number {
-  const cx = 3*0.22, bx = 3*(0.36-0.22)-cx, ax = 1-cx-bx;
-  const cy = 3*0.61, by = 3*(1-0.61)-cy, ay = 1-cy-by;
-  let x = t;
-  for (let i = 0; i < 8; i++) { const e = ((ax*x+bx)*x+cx)*x-t, d = (3*ax*x+2*bx)*x+cx; x -= e/d; }
-  return ((ay*x+by)*x+cy)*x;
-}
+
 
 function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
   isRolling: boolean;
@@ -762,6 +771,8 @@ function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
   const groupRef   = useRef<THREE.Group>(null);
   const cumulative = useRef({ x: 0, y: 0 });
   const bounceRef  = useRef(1);
+  const landingRef = useRef({ x: 0, z: 0 });
+  const throwRef   = useRef({ x: 0, z: 0 });
 
   const textures = useMemo(
     () => ([1, 2, 3, 4, 5, 6] as const).map(n => makeNumericFaceTexture(n)),
@@ -772,9 +783,8 @@ function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
     [],
   );
   const matArray = useMemo(() => {
-    const mat = (ti: number) => new THREE.MeshPhysicalMaterial({
-      map: textures[ti], roughness: 0.22, metalness: 0,
-      clearcoat: 0.85, clearcoatRoughness: 0.08, envMapIntensity: 1.4,
+    const mat = (ti: number) => new THREE.MeshStandardMaterial({
+      map: textures[ti], roughness: 0.95, metalness: 0,
     });
     return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
   }, [textures]);
@@ -788,19 +798,30 @@ function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
   });
 
   useEffect(() => {
-    groupRef.current?.position.set(0, BOARD_DICE_REST_Y, 0);
+    if (!groupRef.current) return;
+    groupRef.current.position.set(0, BOARD_DICE_REST_Y, 0);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isRolling || !groupRef.current) return;
     const g = groupRef.current;
+    const zone = DICE_LANDING_ZONES[Math.floor(Math.random() * DICE_LANDING_ZONES.length)];
+    landingRef.current = {
+      x: zone[0] + (Math.random() - 0.5) * 0.3,
+      z: zone[1] + (Math.random() - 0.5) * 0.3,
+    };
+    const origin = THROW_ORIGINS[Math.floor(Math.random() * THROW_ORIGINS.length)];
+    throwRef.current = {
+      x: origin[0] + (Math.random() - 0.5) * 0.5,
+      z: origin[1] + (Math.random() - 0.5) * 0.5,
+    };
     const [tx, ty] = BOARD_DICE_FACE_ROT[targetFace] ?? [0, 0];
     const baseX = Math.round(cumulative.current.x / (Math.PI * 2)) * Math.PI * 2;
     const baseY = Math.round(cumulative.current.y / (Math.PI * 2)) * Math.PI * 2;
     const finalX = baseX + Math.PI * 6 + tx;
     const finalY = baseY + Math.PI * 4 + ty;
     cumulative.current = { x: finalX, y: finalY };
-    g.position.y = BOARD_DICE_START_Y;
+    g.position.set(throwRef.current.x, BOARD_DICE_THROW_H, throwRef.current.z);
     anim.current = {
       rolling: true,
       startX: g.rotation.x, startY: g.rotation.y,
@@ -821,26 +842,33 @@ function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
     if (a.rolling && !a.done) {
       a.elapsed = Math.min(a.elapsed + delta, a.duration);
       const t = a.elapsed / a.duration;
-      const eased = cbEaseBoard(t);
-      g.rotation.x = a.startX + (a.targetX - a.startX) * eased;
-      g.rotation.y = a.startY + (a.targetY - a.startY) * eased;
+      const rotEase   = t * t * (3 - 2 * t); // smoothstep : 50% à mi-vol, rotation visible tout le trajet
+      const horizEase = 1 - Math.pow(1 - t, 2); // ease out quadratic pour XZ
+      g.rotation.x = a.startX + (a.targetX - a.startX) * rotEase;
+      g.rotation.y = a.startY + (a.targetY - a.startY) * rotEase;
       g.rotation.z = a.wobbleAmp * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
-      g.position.y = BOARD_DICE_START_Y + (BOARD_DICE_REST_Y - BOARD_DICE_START_Y) * eased;
+      g.position.x = throwRef.current.x + (landingRef.current.x - throwRef.current.x) * horizEase;
+      g.position.z = throwRef.current.z + (landingRef.current.z - throwRef.current.z) * horizEase;
+      // Arc parabolique : part à THROW_H, monte puis descend jusqu'à REST_Y
+      g.position.y = BOARD_DICE_THROW_H + (BOARD_DICE_REST_Y - BOARD_DICE_THROW_H) * t
+                   + BOARD_DICE_ARC_H * Math.sin(Math.PI * t);
       if (t >= 1 && !a.done) {
         a.done = true; a.rolling = false;
-        g.rotation.z = 0; g.position.y = BOARD_DICE_REST_Y;
+        g.rotation.z = 0;
+        g.position.set(landingRef.current.x, BOARD_DICE_REST_Y, landingRef.current.z);
         bounceRef.current = 0;
         a.onComplete?.();
       }
     }
 
     if (bounceRef.current < 1) {
-      bounceRef.current = Math.min(bounceRef.current + delta / 0.28, 1);
+      bounceRef.current = Math.min(bounceRef.current + delta / 0.60, 1);
       const b = bounceRef.current;
-      const sy = b < 0.35 ? 1 - 0.30*(b/0.35)
-        : b < 0.70  ? 0.70 + 0.42*((b-0.35)/0.35)
-        : 1.12 - 0.12*((b-0.70)/0.30);
-      g.scale.set(1, sy, 1);
+      const decay = Math.exp(-b * 3);
+      // Multi-rebond visible + tilt Z pour simuler le roulement au sol
+      g.position.y = BOARD_DICE_REST_Y + Math.abs(Math.sin(Math.PI * b * 2.5)) * decay;
+      g.rotation.z  = Math.sin(Math.PI * b * 2.5) * decay * 0.35;
+      if (bounceRef.current >= 1) { g.position.y = BOARD_DICE_REST_Y; g.rotation.z = 0; }
     }
   });
 
@@ -863,6 +891,7 @@ function BoardGridR3F({
   activeSquare, isAnimating,
   diceResult, isDiceRolling, onDiceRollComplete, showDice,
 }: BoardGridProps) {
+  const { colors } = useTheme();
 
   return (
     <div style={{ overflowX: 'hidden', width: '100%' }}>
@@ -874,7 +903,7 @@ function BoardGridR3F({
             gl={{ antialias: true, powerPreference: 'low-power', toneMappingExposure: 1.1 }}
             dpr={[1, 2]}
           >
-            <color attach="background" args={['#f7f3ee']} />
+            <color attach="background" args={[colors.bgPrimary]} />
             <OrthographicCamera makeDefault position={CAM_POS} zoom={68} near={0.1} far={100} />
             <CameraLookAt />
 
@@ -892,7 +921,7 @@ function BoardGridR3F({
 
             {/* rotateY 45° = même effet que CSS rotateZ(45°) — donne la vue losange */}
             <group rotation={[0, Math.PI / 4, 0]}>
-              <BoardBase3D />
+              <BoardBase3D accentColor={colors.accent} />
 
               {BOARD.map(sq => (
                 <Cell3D
@@ -928,7 +957,8 @@ function BoardGridR3F({
 
 
             <EffectComposer>
-              <Bloom intensity={0.15} luminanceThreshold={0.6} luminanceSmoothing={0.9} />
+              <Bloom intensity={0.25} luminanceThreshold={0.5} luminanceSmoothing={0.9} />
+              <Vignette eskil={false} offset={0.45} darkness={0.4} />
             </EffectComposer>
           </Canvas>
         </div>
