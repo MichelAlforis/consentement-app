@@ -7,6 +7,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { useCardSession } from './hooks/useCardSession';
 import { PlayingCard } from './PlayingCard';
+import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 
 interface CardGameScreenProps {
   isPremium: boolean;
@@ -297,8 +298,10 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
         {s.step === 'end' && (
           <motion.div key="end"
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col items-center px-6 pt-8 pb-10 text-center"
+            className="relative"
           >
+            <GameEndCinematic primaryColor={colors.accent} secondaryColor="#60a5fa" intensity="medium" />
+            <div className="relative z-10 flex flex-col items-center px-6 pt-8 pb-10 text-center">
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 14, delay: 0.1 }}
@@ -352,6 +355,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               >
                 <Shuffle size={14} />{t('cardGame.continueLibre')}
               </motion.button>
+            </div>
             </div>
           </motion.div>
         )}

@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { Player } from '../types';
 import { useTranslation } from '../../../../i18n';
+import { GameEndCinematic } from '../../../../game-engine/shared/GameEndCinematic';
 
 interface EndScreenProps {
   player1: Player;
@@ -12,6 +13,7 @@ interface EndScreenProps {
 
 export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScreenProps) {
   const { t } = useTranslation();
+  const cinematicIntensity = accordsCount >= 4 ? 'high' : accordsCount >= 2 ? 'medium' : 'low' as const;
 
   const endMessages = [
     { threshold: 0,        text: t('gooseGame.end.msg0'), icon: '🌱' },
@@ -32,9 +34,11 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-6 flex flex-col items-center gap-5 text-center"
+      className="relative"
       style={{ color: 'white', minHeight: '100%', background: 'linear-gradient(180deg, #1a0838 0%, #060512 100%)' }}
     >
+      <GameEndCinematic primaryColor="#c084fc" secondaryColor="#60a5fa" intensity={cinematicIntensity} />
+      <div className="relative z-10 p-6 flex flex-col items-center gap-5 text-center">
       <motion.div
         initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="pt-4"
@@ -103,6 +107,7 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
       >
         {t('gooseGame.end.replay')}
       </motion.button>
+      </div>
     </motion.div>
   );
 }

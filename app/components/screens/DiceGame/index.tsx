@@ -10,6 +10,7 @@ import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
 import type { DiceConfig, DiceItem } from '../../../game-engine/dice/types';
 import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
+import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { useSettingsStore } from '../../../stores/settingsStore';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
@@ -314,8 +315,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
         {mode === 'duo-reveal' && currentCat && (
           <motion.div key="duo-reveal"
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center text-center"
+            className="relative flex-1"
           >
+            <GameEndCinematic
+              primaryColor={bothYes ? '#22c55e' : '#94a3b8'}
+              secondaryColor={bothYes ? '#60a5fa' : '#64748b'}
+              intensity={bothYes ? 'high' : 'low'}
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center text-center h-full">
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 12, delay: 0.1 }}
@@ -339,6 +346,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <div className="space-y-3 w-full max-w-xs mt-6">
               <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
               <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
+            </div>
             </div>
           </motion.div>
         )}
