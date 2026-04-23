@@ -146,14 +146,14 @@ export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSq
   return (
     <div className="mx-auto" style={{ maxWidth: 420, padding: '8px 8px 48px' }}>
       <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative' }}>
-        {/* Surface du plateau */}
+        {/* Surface du plateau — bois chaud pour contraster avec les fonds froids de zone */}
         <div style={{
           position: 'absolute',
           inset: -22,
-          background: 'linear-gradient(145deg, #3b1078 0%, #1e0a4a 40%, #130730 100%)',
+          background: 'linear-gradient(145deg, #4a2010 0%, #2e1208 55%, #1c0a05 100%)',
           borderRadius: 18,
-          border: '1.5px solid rgba(160,100,255,0.3)',
-          boxShadow: '0 0 32px rgba(120,50,220,0.4), inset 0 0 40px rgba(0,0,0,0.5)',
+          border: '1.5px solid rgba(200,130,50,0.45)',
+          boxShadow: '0 0 28px rgba(160,80,20,0.45), inset 0 0 40px rgba(0,0,0,0.5)',
         }} />
         {BOARD_LAYOUT.map((row, rowIndex) => (
           <div key={rowIndex} style={{ marginBottom: 5, transformStyle: 'preserve-3d' }}>
