@@ -1,8 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, animate, useAnimation, useMotionValue, useTransform, MotionValue } from 'framer-motion';
-import { useSpring, animated, to } from '@react-spring/web';
+import { motion, animate, useAnimation, useMotionValue, useTransform, useSpring, MotionValue } from 'framer-motion';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CardData } from '../../../data';
@@ -83,31 +82,11 @@ export function PlayingCard({
   const [hideAll, setHideAll] = useState(false);
   const hasNudged = useRef(false);
 
-  // React Spring physical spring for tilt — tension:400/friction:30 feels like a card held in hand
-  const [tiltSpring, tiltApi] = useSpring(() => ({
-    rotX: 0,
-    rotY: 0,
-    config: { tension: 400, friction: 30 },
-  }));
-
-  // Raw pointer handlers feed spring directly (no rAF layer — spring handles smoothing)
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      const nx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
-      const ny = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1));
-      tiltApi.start({ rotX: ny * -6, rotY: nx * 6 });
-    };
-    const onLeave = () => tiltApi.start({ rotX: 0, rotY: 0 });
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerleave', onLeave);
-    return () => {
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerleave', onLeave);
-    };
-  }, [tiltApi]);
+  // Framer Motion spring tracks pointer — physical decay on pointerleave
+  const rawRotateX = useTransform(tiltY, [-1, 1], [6, -6]);
+  const rawRotateY = useTransform(tiltX, [-1, 1], [-6, 6]);
+  const tiltRotateX = useSpring(rawRotateX, { stiffness: 400, damping: 30 });
+  const tiltRotateY = useSpring(rawRotateY, { stiffness: 400, damping: 30 });
 
   // Reset on new card
   useEffect(() => {
@@ -115,7 +94,6 @@ export function PlayingCard({
     setHideAll(false);
     dragX.set(0);
     controls.set({ rotate: 0, opacity: 1 });
-    tiltApi.set({ rotX: 0, rotY: 0 });
   }, [card.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // One-time swipe nudge — teaches the gesture on the first card
@@ -205,17 +183,15 @@ export function PlayingCard({
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
         <div style={{ perspective: '1200px', width: '100%', height: '100%' }}>
-          {/* Tilt wrapper — React Spring physical spring for zero-latency response */}
-          <animated.div
+          {/* Tilt wrapper — Framer useSpring tracks pointer with physical decay */}
+          <motion.div
             style={{
-              transform: to(
-                [tiltSpring.rotX, tiltSpring.rotY],
-                (rx, ry) => `rotateX(${rx}deg) rotateY(${ry}deg)`,
-              ),
+              rotateX: tiltRotateX,
+              rotateY: tiltRotateY,
               transformStyle: 'preserve-3d',
-              WebkitTransformStyle: 'preserve-3d' as never,
+              WebkitTransformStyle: 'preserve-3d',
               backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden' as never,
+              WebkitBackfaceVisibility: 'hidden',
               width: '100%',
               height: '100%',
               willChange: 'transform',
@@ -404,7 +380,7 @@ export function PlayingCard({
                 />
               </div>
             </motion.div>
-          </animated.div>
+          </motion.div>
         </div>
       </motion.div>
     </div>

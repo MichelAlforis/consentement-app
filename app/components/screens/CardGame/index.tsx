@@ -209,11 +209,12 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
 
             {/* Card — AnimatePresence by card.id triggers entrance animation */}
             <div className="flex items-center justify-center mb-4">
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 <motion.div
                   key={s.currentCard.id}
                   initial={{ opacity: 0, y: 22 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, transition: { duration: 0 } }}
                   transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
                   style={{ width: '100%' }}
                 >
