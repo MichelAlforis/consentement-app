@@ -13,6 +13,7 @@ export type Screen =
   | 'scenarios-minor'
   | 'feelings'
   // Modules éducatifs
+  | 'resources-minor'
   | 'porno-vs-realite'
   | 'loi-consentement'
   | 'quiz-consentement'

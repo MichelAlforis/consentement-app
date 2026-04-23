@@ -39,6 +39,7 @@ const PornoVsRealiteScreen = lazy(() => import('./components/screens/PornoVsReal
 const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen').then(m => ({ default: m.LoiConsentementScreen })));
 const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen').then(m => ({ default: m.QuizConsentementScreen })));
 const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen').then(m => ({ default: m.AccompagnementMineurScreen })));
+const ResourcesMinorScreen = lazy(() => import('./components/screens/ResourcesMinorScreen').then(m => ({ default: m.ResourcesMinorScreen })));
 const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen').then(m => ({ default: m.GamesHubScreen })));
 const DiceGameScreen = lazy(() => import('./components/screens/DiceGame').then(m => ({ default: m.DiceGameScreen })));
 const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen').then(m => ({ default: m.GooseGameScreen })));
@@ -49,7 +50,7 @@ const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').th
 // Screens affichant une bannière publicitaire (freemium uniquement)
 const AD_SCREENS: Screen[] = [
   'learn', 'scenarios-minor', 'feelings',
-  'porno-vs-realite', 'loi-consentement', 'quiz-consentement', 'accompagnement-mineur',
+  'resources-minor', 'porno-vs-realite', 'loi-consentement', 'quiz-consentement', 'accompagnement-mineur',
   'jeux',
 ];
 
@@ -179,6 +180,9 @@ function AppShell() {
       case 'help':
         return <HelpScreen />;
 
+      case 'resources-minor':
+        return <ResourcesMinorScreen onNavigate={navigateTo} />;
+
       case 'porno-vs-realite':
         return <PornoVsRealiteScreen onBack={() => goBack()} />;
 
@@ -235,6 +239,7 @@ function AppShell() {
   const getHeaderTitle = () => {
     switch (currentScreen) {
       case 'settings': return t('headers.settings');
+      case 'resources-minor': return t('headers.resourcesMinor');
       case 'personal-space': return t('headers.personalSpace');
       case 'duo-space': return t('headers.duoSpace');
       case 'learn':

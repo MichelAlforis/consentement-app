@@ -3,38 +3,40 @@ export const home = {
     badge: 'Youth Space',
     title: "What they don't teach you at school",
     subtitle: 'No taboo. No judgment. Just real info.',
-    section1: 'Understand what you see',
-    section2: 'What the law says',
-    section3: 'Do you have questions?',
     privacy: 'This space is 100% private',
-    modules: {
+    cards: {
+      learn: {
+        title: 'Understand',
+        desc: 'Porn, quiz and the law — real information',
+      },
+      guide: {
+        title: 'I have questions',
+        desc: 'Questions to ask yourself. No judgment.',
+      },
+      help: {
+        title: 'Help & Emergencies',
+        desc: 'Free, anonymous numbers, available 24/7',
+      },
+      games: {
+        title: 'Games',
+        desc: 'Explore consent through play',
+      },
+    },
+    resources: {
       porno: {
         title: 'Porn vs. Reality',
-        desc: 'What porn shows and what it really is',
+        desc: "What movies don't show you",
         tag: 'Essential',
       },
       quiz: {
-        title: 'Quiz — I understand consent',
+        title: 'Consent Quiz',
         desc: '8 questions to test what you really know',
-        tag: 'Free',
-      },
-      dice: {
-        title: 'The Consent Die',
-        desc: 'Draw a random activity and discover what consent means',
-        tag: 'Game',
+        tag: 'Quiz',
       },
       loi: {
-        title: 'The law and consent',
-        desc: 'Legal age, what is a crime, your rights',
+        title: 'The law & consent',
+        desc: 'Your rights, legal age, what is a crime',
         tag: 'Important',
-      },
-      guide: {
-        title: 'I want to have sex',
-        desc: 'Questions to ask yourself first. No judgment.',
-      },
-      help: {
-        title: 'Help & Resources',
-        desc: 'Free, anonymous numbers, available 24/7',
       },
     },
   },

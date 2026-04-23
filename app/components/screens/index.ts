@@ -12,6 +12,7 @@ export { PornoVsRealiteScreen } from './PornoVsRealiteScreen';
 export { LoiConsentementScreen } from './LoiConsentementScreen';
 export { QuizConsentementScreen } from './QuizConsentementScreen';
 export { AccompagnementMineurScreen } from './AccompagnementMineurScreen';
+export { ResourcesMinorScreen } from './ResourcesMinorScreen';
 export { GamesHubScreen } from './GamesHubScreen';
 export { DiceGameScreen } from './DiceGame';
 export { GooseGameScreen } from './GooseGameScreen';

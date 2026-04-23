@@ -3,38 +3,40 @@ export const home = {
     badge: 'Espace Jeune',
     title: "Ce qu'on ne t'apprend pas à l'école",
     subtitle: 'Sans tabou. Sans jugement. Juste les vraies infos.',
-    section1: 'Comprendre ce que tu vois',
-    section2: 'Ce que dit la loi',
-    section3: 'Tu te poses des questions ?',
     privacy: 'Cet espace est 100% privé',
-    modules: {
+    cards: {
+      learn: {
+        title: 'Comprendre',
+        desc: 'Porno, quiz et la loi — les vraies infos',
+      },
+      guide: {
+        title: 'Je me questionne',
+        desc: 'Des questions à se poser. Sans jugement.',
+      },
+      help: {
+        title: 'Aide & Urgences',
+        desc: 'Numéros gratuits, anonymes, disponibles 24h/24',
+      },
+      games: {
+        title: 'Jeux',
+        desc: 'Explorer le consentement en jouant',
+      },
+    },
+    resources: {
       porno: {
         title: 'Porno vs. Réalité',
-        desc: "Ce que le porno montre et ce que c'est vraiment",
+        desc: "Ce que les films ne te montrent pas",
         tag: 'Essentiel',
       },
       quiz: {
-        title: 'Quiz — Je comprends le consentement',
+        title: 'Quiz Consentement',
         desc: '8 questions pour tester ce que tu sais vraiment',
-        tag: 'Gratuit',
-      },
-      dice: {
-        title: 'Le Dé du Consentement',
-        desc: 'Tire une pratique au hasard et découvre ce que le consentement implique',
-        tag: 'Jeu',
+        tag: 'Quiz',
       },
       loi: {
-        title: 'La loi et le consentement',
-        desc: "L'âge légal, ce qui est un crime, tes droits",
+        title: 'La loi & le consentement',
+        desc: "Tes droits, l'âge légal, ce qui est un crime",
         tag: 'Important',
-      },
-      guide: {
-        title: 'Je veux avoir un rapport',
-        desc: 'Des questions à se poser avant. Sans jugement.',
-      },
-      help: {
-        title: 'Aide & Ressources',
-        desc: 'Numéros gratuits, anonymes, disponibles 24h/24',
       },
     },
   },

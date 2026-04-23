@@ -3,38 +3,40 @@ export const home = {
     badge: 'Espacio Joven',
     title: 'Lo que no te enseñan en la escuela',
     subtitle: 'Sin tabúes. Sin juicios. Solo información real.',
-    section1: 'Entiende lo que ves',
-    section2: 'Lo que dice la ley',
-    section3: '¿Tienes preguntas?',
     privacy: 'Este espacio es 100% privado',
-    modules: {
+    cards: {
+      learn: {
+        title: 'Comprender',
+        desc: 'Porno, quiz y la ley — información real',
+      },
+      guide: {
+        title: 'Tengo preguntas',
+        desc: 'Preguntas para hacerte. Sin juicios.',
+      },
+      help: {
+        title: 'Ayuda y Urgencias',
+        desc: 'Números gratuitos, anónimos, 24h/24',
+      },
+      games: {
+        title: 'Juegos',
+        desc: 'Explorar el consentimiento jugando',
+      },
+    },
+    resources: {
       porno: {
         title: 'Porno vs. Realidad',
-        desc: 'Lo que muestra el porno y lo que es realmente',
+        desc: 'Lo que las películas no te muestran',
         tag: 'Esencial',
       },
       quiz: {
-        title: 'Quiz — Entiendo el consentimiento',
-        desc: '8 preguntas para comprobar lo que sabes de verdad',
-        tag: 'Gratis',
-      },
-      dice: {
-        title: 'El Dado del Consentimiento',
-        desc: 'Saca una actividad al azar y descubre qué implica el consentimiento',
-        tag: 'Juego',
+        title: 'Quiz Consentimiento',
+        desc: '8 preguntas para comprobar lo que sabes',
+        tag: 'Quiz',
       },
       loi: {
         title: 'La ley y el consentimiento',
-        desc: 'Edad legal, qué es un delito, tus derechos',
+        desc: 'Tus derechos, edad legal, qué es un delito',
         tag: 'Importante',
-      },
-      guide: {
-        title: 'Quiero tener relaciones',
-        desc: 'Preguntas para hacerte antes. Sin juicios.',
-      },
-      help: {
-        title: 'Ayuda y Recursos',
-        desc: 'Números gratuitos, anónimos, disponibles 24h/24',
       },
     },
   },

@@ -11,6 +11,7 @@ export const ui = {
     learn: 'Learn',
     help: 'Help',
     settings: 'Settings',
+    resourcesMinor: 'Understand',
     pornoVsRealite: 'Porn vs. Reality',
     loi: 'The Law',
     quiz: 'Quiz',
