@@ -1,12 +1,12 @@
 'use client';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BOARD, BOARD_LAYOUT, getSquareBg, getSquareIconName, SQUARE_VISUAL } from '../../../../data/goose-game';
 import type { SquareType } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
 
 const ROW_DIRECTIONS = ['→', '←', '→', '←', '→', '←'] as const;
 
-const ISO_TRANSFORM = 'rotateX(68deg) rotateZ(45deg) scale(0.78)';
+const ISO_TRANSFORM = 'rotateX(58deg) rotateZ(45deg) scale(0.78)';
 
 const SQUARE_DEPTH: Record<SquareType, number> = {
   normal:     8,
@@ -18,6 +18,55 @@ const SQUARE_DEPTH: Record<SquareType, number> = {
   pause:     10,
 };
 
+// ─── PawnToken ────────────────────────────────────────────────────────────────
+
+interface PawnTokenProps {
+  emoji: string;
+  color: string;
+  isAnimating: boolean;
+  isActive: boolean;
+  pawnKey: string;
+}
+
+function PawnToken({ emoji, color, isAnimating, isActive, pawnKey }: PawnTokenProps) {
+  return (
+    <AnimatePresence mode="popLayout">
+      <motion.div
+        key={pawnKey}
+        initial={{ y: isAnimating ? -12 : 0, scale: 0.5, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ scale: 0.4, opacity: 0, transition: { duration: 0.07 } }}
+        transition={{ type: 'spring', stiffness: 500, damping: 26 }}
+        style={{ display: 'flex' }}
+      >
+        {/* Pulse au repos sur la case active */}
+        <motion.div
+          animate={!isAnimating && isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+          transition={!isAnimating && isActive
+            ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.2 }
+            : { duration: 0.15 }
+          }
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            background: color,
+            boxShadow: '0 3px 8px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,255,255,0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12,
+            lineHeight: 1,
+            transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)',
+          }}
+        >
+          {emoji}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 // ─── BoardCell ────────────────────────────────────────────────────────────────
 
 interface BoardCellProps {
@@ -26,17 +75,27 @@ interface BoardCellProps {
   displayPos1: number;
   p0Emoji: string;
   p1Emoji: string;
+  p0Color: string;
+  p1Color: string;
   isActive: boolean;
   isAnimating: boolean;
+  animatingPos: number | null;
 }
 
-function BoardCell({ squareIndex, displayPos0, displayPos1, p0Emoji, p1Emoji, isActive, isAnimating }: BoardCellProps) {
-  const square  = BOARD[squareIndex];
-  const bg      = getSquareBg(square);
+function BoardCell({
+  squareIndex, displayPos0, displayPos1,
+  p0Emoji, p1Emoji, p0Color, p1Color,
+  isActive, isAnimating, animatingPos,
+}: BoardCellProps) {
+  const square   = BOARD[squareIndex];
+  const bg       = getSquareBg(square);
   const iconName = getSquareIconName(square);
-  const hasP0   = displayPos0 === squareIndex;
-  const hasP1   = displayPos1 === squareIndex;
-  const depth   = SQUARE_DEPTH[square.type];
+  const hasP0    = displayPos0 === squareIndex;
+  const hasP1    = displayPos1 === squareIndex;
+  const depth    = SQUARE_DEPTH[square.type];
+
+  const p0Key = `p0-${squareIndex}-${animatingPos ?? 'rest'}`;
+  const p1Key = `p1-${squareIndex}-${animatingPos ?? 'rest'}`;
 
   return (
     <div style={{ position: 'relative', transformStyle: 'preserve-3d' }}>
@@ -64,41 +123,27 @@ function BoardCell({ squareIndex, displayPos0, displayPos1, p0Emoji, p1Emoji, is
         }}
         className="flex flex-col items-center justify-center gap-0.5"
       >
-        {iconName && <DynamicIcon name={iconName} size={20} color="rgba(255,255,255,0.85)" />}
+        {iconName && <DynamicIcon name={iconName} size={18} color="rgba(255,255,255,0.85)" />}
 
         {(hasP0 || hasP1) && (
-          <div style={{ display: 'flex', gap: 2, marginTop: 2 }}>
+          <div style={{ display: 'flex', gap: 3, marginTop: iconName ? 2 : 0 }}>
             {hasP0 && (
-              <motion.span
-                layoutId="pawn-0"
-                style={{
-                  fontSize: 14,
-                  background: 'rgba(255,255,255,0.22)',
-                  borderRadius: 6,
-                  padding: '1px 3px',
-                  lineHeight: 1,
-                  display: 'block',
-                  transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)',
-                }}
-              >
-                {p0Emoji}
-              </motion.span>
+              <PawnToken
+                emoji={p0Emoji}
+                color={p0Color}
+                isAnimating={isAnimating}
+                isActive={isActive}
+                pawnKey={p0Key}
+              />
             )}
             {hasP1 && (
-              <motion.span
-                layoutId="pawn-1"
-                style={{
-                  fontSize: 14,
-                  background: 'rgba(255,255,255,0.22)',
-                  borderRadius: 6,
-                  padding: '1px 3px',
-                  lineHeight: 1,
-                  display: 'block',
-                  transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)',
-                }}
-              >
-                {p1Emoji}
-              </motion.span>
+              <PawnToken
+                emoji={p1Emoji}
+                color={p1Color}
+                isAnimating={isAnimating}
+                isActive={isActive}
+                pawnKey={p1Key}
+              />
             )}
           </div>
         )}
@@ -138,16 +183,22 @@ interface BoardGridProps {
   displayPos1: number;
   p0Emoji: string;
   p1Emoji: string;
+  p0Color: string;
+  p1Color: string;
   activeSquare: number;
   isAnimating: boolean;
+  animatingPos: number | null;
 }
 
-export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSquare, isAnimating }: BoardGridProps) {
+export function BoardGrid({
+  displayPos0, displayPos1,
+  p0Emoji, p1Emoji, p0Color, p1Color,
+  activeSquare, isAnimating, animatingPos,
+}: BoardGridProps) {
   return (
     <div style={{ overflowX: 'hidden', width: '100%', perspective: '800px' }}>
     <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px' }}>
       <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative' }}>
-        {/* Surface du plateau — bois chaud pour contraster avec les fonds froids de zone */}
         <div style={{
           position: 'absolute',
           inset: -22,
@@ -156,7 +207,9 @@ export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSq
           border: '1.5px solid rgba(200,130,50,0.45)',
           boxShadow: '0 0 28px rgba(160,80,20,0.45), inset 0 0 40px rgba(0,0,0,0.5)',
         }} />
-        {BOARD_LAYOUT.map((row, rowIndex) => (
+        {[...BOARD_LAYOUT].reverse().map((row, rowIndex) => {
+          const origRowIndex = BOARD_LAYOUT.length - 1 - rowIndex;
+          return (
           <div key={rowIndex} style={{ marginBottom: 5, transformStyle: 'preserve-3d' }}>
             <div
               style={{
@@ -165,12 +218,12 @@ export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSq
                 fontWeight: 700,
                 letterSpacing: 2,
                 marginBottom: 3,
-                textAlign: ROW_DIRECTIONS[rowIndex] === '→' ? 'right' : 'left',
-                paddingRight: ROW_DIRECTIONS[rowIndex] === '→' ? 4 : 0,
-                paddingLeft: ROW_DIRECTIONS[rowIndex] === '←' ? 4 : 0,
+                textAlign: ROW_DIRECTIONS[origRowIndex] === '→' ? 'right' : 'left',
+                paddingRight: ROW_DIRECTIONS[origRowIndex] === '→' ? 4 : 0,
+                paddingLeft: ROW_DIRECTIONS[origRowIndex] === '←' ? 4 : 0,
               }}
             >
-              {ROW_DIRECTIONS[rowIndex]}
+              {ROW_DIRECTIONS[origRowIndex]}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, transformStyle: 'preserve-3d' }}>
@@ -182,13 +235,17 @@ export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSq
                   displayPos1={displayPos1}
                   p0Emoji={p0Emoji}
                   p1Emoji={p1Emoji}
+                  p0Color={p0Color}
+                  p1Color={p1Color}
                   isActive={squareIndex === activeSquare}
                   isAnimating={isAnimating}
+                  animatingPos={animatingPos}
                 />
               ))}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
     </div>
