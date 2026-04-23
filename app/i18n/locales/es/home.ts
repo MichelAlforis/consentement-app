@@ -49,7 +49,6 @@ export const home = {
       duo: { title: 'Nuestro Espacio', desc: 'Dialogar con mi pareja' },
       games: { title: 'Juegos', desc: '1 gratis · 2 juegos premium' },
       resources: { title: 'Recursos', desc: 'Guías e información' },
-      consentCheck: { title: 'Antes de empezar', desc: 'Aseguraros de que los dos estáis listos' },
     },
     privacy: 'Tus datos están cifrados y puedes eliminarlos en cualquier momento.',
   },

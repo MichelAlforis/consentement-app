@@ -140,8 +140,8 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Tâche | Statut | Notes |
 |---|---|---|
 | Refonte `WelcomeScreen` Option A | ✅ | `HeartHandshake`, gradient violet→rose, badge juriste, stagger progressif |
-| CTA principal vers le processus de consentement | ✅ | Carte "Avant de se lancer" dans `AdultHome` → `consent-check` |
-| Messages clés : "Je consens / Je ne consens pas / J'ai des questions" | ✅ | `ConsentCheckScreen` — 3 panneaux accordéon (checklist, doutes, questions) |
+| CTA principal vers le processus de consentement | 🔲 | À définir avec le juriste — pas de doublon avec DuoSpace/HelpScreen |
+| Messages clés : "Je consens / Je ne consens pas / J'ai des questions" | 🔲 | Reporté — contenu à rédiger par le juriste |
 
 ---
 

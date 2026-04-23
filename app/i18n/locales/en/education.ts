@@ -116,33 +116,4 @@ export const education = {
     },
     backHome: 'Back',
   },
-
-  consentCheck: {
-    title: 'Before you start',
-    subtitle: 'Take a moment to make sure you\'re both truly there.',
-    yes: {
-      label: 'I consent — and so does my partner',
-      desc: 'Check together',
-      item1: 'We can both say no at any time',
-      item2: 'Neither of us is under pressure or affected by alcohol or drugs',
-      item3: "We've talked about what we want and don't want",
-      item4: "We can change our minds during — and the other will respect that",
-      item5: "Tomorrow, we'll both be comfortable with this decision",
-      allChecked: "Everything is in place. Take care of yourself and each other. 💜",
-    },
-    doubt: {
-      label: "I have doubts or I don't want to",
-      desc: 'This matters',
-      text: 'Saying no — or "not now" — is always the right decision if it\'s not truly what you want. No pressure, no obligation.',
-      tipsTitle: 'Phrases to use:',
-      tip1: '"I don\'t feel ready tonight."',
-      tip2: '"I need a little more time."',
-      tip3: '"Can we do something else?"',
-      resource: 'Sexual violence helpline: available 24/7 — free and anonymous',
-    },
-    questions: {
-      label: 'I have questions',
-      desc: 'Porn, law, rights — the real information',
-    },
-  },
 } as const;

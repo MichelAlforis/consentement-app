@@ -46,7 +46,6 @@ const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen'
 const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
 const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
-const ConsentCheckScreen = lazy(() => import('./components/screens/ConsentCheckScreen').then(m => ({ default: m.ConsentCheckScreen })));
 
 // Screens affichant une bannière publicitaire (freemium uniquement)
 const AD_SCREENS: Screen[] = [
@@ -204,9 +203,6 @@ function AppShell() {
       case 'accompagnement-mineur':
         return <AccompagnementMineurScreen onNavigate={navigateTo} />;
 
-      case 'consent-check':
-        return <ConsentCheckScreen onNavigate={navigateTo} />;
-
       case 'jeux':
         return (
           <GamesHubScreen
@@ -262,7 +258,6 @@ function AppShell() {
       case 'loi-consentement': return t('headers.loi');
       case 'quiz-consentement': return t('headers.quiz');
       case 'accompagnement-mineur': return t('headers.accompagnement');
-      case 'consent-check': return t('headers.consentCheck');
       case 'jeux': return t('headers.games');
       case 'jeu-des': return t('headers.jeuDes');
       case 'jeu-oie': return t('headers.jeuOie');

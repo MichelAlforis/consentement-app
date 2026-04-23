@@ -116,33 +116,4 @@ export const education = {
     },
     backHome: 'Retour',
   },
-
-  consentCheck: {
-    title: 'Avant de se lancer',
-    subtitle: "Un moment pour s'assurer que les deux sont vraiment là.",
-    yes: {
-      label: 'Je consens — et mon/ma partenaire aussi',
-      desc: 'Vérifier ensemble',
-      item1: 'Nous pouvons tous les deux dire non à tout moment',
-      item2: "Aucun de nous n'est sous pression, ni sous l'effet de l'alcool ou de drogues",
-      item3: "Nous avons parlé de ce que nous voulons et ne voulons pas",
-      item4: "Nous pouvons changer d'avis pendant — et l'autre respectera ça",
-      item5: 'Le lendemain, nous serons tous les deux à l\'aise avec cette décision',
-      allChecked: "Tout est là. Prends soin de toi et de l'autre. 💜",
-    },
-    doubt: {
-      label: "J'ai des doutes ou je ne veux pas",
-      desc: "C'est important",
-      text: "Dire non — ou \"pas maintenant\" — est toujours la bonne décision si ce n'est pas ce que tu veux vraiment. Aucune pression, aucune obligation.",
-      tipsTitle: 'Phrases pour le dire :',
-      tip1: '"Je ne me sens pas prêt·e ce soir."',
-      tip2: '"J\'ai besoin d\'un peu plus de temps."',
-      tip3: '"On peut faire autre chose ?"',
-      resource: 'Violences sexuelles : 0 800 05 95 95 — Gratuit, anonyme, 24h/24',
-    },
-    questions: {
-      label: 'J\'ai des questions',
-      desc: 'Porno, loi, droits — les vraies infos',
-    },
-  },
 } as const;

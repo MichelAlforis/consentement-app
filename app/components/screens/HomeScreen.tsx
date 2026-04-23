@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, Heart, CheckCircle2 } from 'lucide-react';
+import { HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, Heart } from 'lucide-react';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { MenuCard } from '../ui';
 import { Screen } from '../../types';
@@ -136,7 +136,6 @@ function AdultHome({ userName, onNavigate }: { userName: string; onNavigate: (sc
         <MenuCard icon={<Users size={26} className="text-white" />} title={t('homeAdult.menu.duo.title')} description={t('homeAdult.menu.duo.desc')} onClick={() => onNavigate('duo-space')} variant="secondary" delay={2} />
         <MenuCard icon={<Gamepad2 size={26} className="text-white" />} title={t('homeAdult.menu.games.title')} description={t('homeAdult.menu.games.desc')} onClick={() => onNavigate('jeux')} variant="amber" delay={3} />
         <MenuCard icon={<BookOpen size={26} style={{ color: colors.accent }} />} title={t('homeAdult.menu.resources.title')} description={t('homeAdult.menu.resources.desc')} onClick={() => onNavigate('learn')} delay={4} />
-        <MenuCard icon={<CheckCircle2 size={26} className="text-white" />} title={t('homeAdult.menu.consentCheck.title')} description={t('homeAdult.menu.consentCheck.desc')} onClick={() => onNavigate('consent-check')} variant="secondary" delay={5} />
       </div>
 
       <div className="mt-4">
