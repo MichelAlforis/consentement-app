@@ -62,7 +62,8 @@ export const SQUARE_VISUAL: Record<SquareType, SquareVisual> = {
   arrivee:    { bg: 'linear-gradient(135deg, #34d399, #059669)', iconName: 'Flag',      label: 'Arrivée' },
 };
 
-export const PAWN_EMOJIS = ['🦊', '🐼', '🦋', '🌙', '🌟', '🎲'];
+export const PAWN_EMOJIS  = ['🦊', '🐼', '🦋', '🌙', '🌟', '🎲'];
+export const PAWN_COLORS  = ['#ff6b00', '#00aaff'] as const; // J1 orange vif · J2 bleu vif
 
 // ─── Zones narratives ─────────────────────────────────────────────────────────
 

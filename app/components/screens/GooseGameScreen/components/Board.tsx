@@ -14,9 +14,13 @@ interface PawnTokenProps {
   isAnimating: boolean;
   isActive: boolean;
   pawnKey: string;
+  pawnId: string;
 }
 
-function PawnToken({ emoji, color, isAnimating, isActive, pawnKey }: PawnTokenProps) {
+function PawnToken({ emoji, color, isAnimating, pawnKey, pawnId }: PawnTokenProps) {
+  const gId = `pg-${pawnId}`;
+  const hId = `ph-${pawnId}`;
+  const sId = `ps-${pawnId}`;
   return (
     <AnimatePresence mode="popLayout">
       <motion.div
@@ -25,24 +29,31 @@ function PawnToken({ emoji, color, isAnimating, isActive, pawnKey }: PawnTokenPr
         animate={{ y: 0, scale: 1, opacity: 1 }}
         exit={{ scale: 0.4, opacity: 0, transition: { duration: 0.07 } }}
         transition={{ type: 'spring', stiffness: 500, damping: 26 }}
-        style={{ display: 'flex' }}
+        style={{ display: 'flex', filter: 'drop-shadow(0 4px 7px rgba(0,0,0,0.75))' }}
       >
-        <div
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: '50%',
-            background: `radial-gradient(circle at 32% 28%, #ffffff 0%, ${color} 42%, #050505 100%)`,
-            boxShadow: '0 4px 10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 28,
-            lineHeight: 1,
-          }}
-        >
-          {emoji}
-        </div>
+        <svg width="75" height="75" viewBox="0 0 75 75">
+          <defs>
+            <radialGradient id={gId} cx="38%" cy="32%" r="65%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="40%" stopColor={color} />
+              <stop offset="100%" stopColor="#3d1800" />
+            </radialGradient>
+            <radialGradient id={hId} cx="33%" cy="26%" r="32%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id={sId} cx="50%" cy="88%" r="42%">
+              <stop offset="0%" stopColor="#000000" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx="37.5" cy="37.5" r="35" fill={`url(#${gId})`} />
+          <circle cx="37.5" cy="37.5" r="35" fill={`url(#${sId})`} />
+          <circle cx="37.5" cy="37.5" r="35" fill={`url(#${hId})`} />
+          <text x="37.5" y="38.5" textAnchor="middle" dominantBaseline="middle" fontSize="26">
+            {emoji}
+          </text>
+        </svg>
       </motion.div>
     </AnimatePresence>
   );
@@ -118,6 +129,7 @@ function BoardCell({
                 isAnimating={isAnimating}
                 isActive={isActive}
                 pawnKey={p0Key}
+                pawnId={`p0-${squareIndex}`}
               />
             </div>
           )}
@@ -129,6 +141,7 @@ function BoardCell({
                 isAnimating={isAnimating}
                 isActive={isActive}
                 pawnKey={p1Key}
+                pawnId={`p1-${squareIndex}`}
               />
             </div>
           )}
@@ -168,17 +181,17 @@ export function BoardGrid({
             repeating-linear-gradient(
               89deg,
               transparent 0px, transparent 3px,
-              rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
+              rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px
             ),
             repeating-linear-gradient(
               86deg,
               transparent 0px, transparent 9px,
-              rgba(255,255,255,0.04) 9px, rgba(255,255,255,0.04) 11px
+              rgba(255,255,255,0.14) 9px, rgba(255,255,255,0.14) 11px
             ),
             repeating-linear-gradient(
               91deg,
               transparent 0px, transparent 18px,
-              rgba(0,0,0,0.05) 18px, rgba(0,0,0,0.05) 20px
+              rgba(0,0,0,0.18) 18px, rgba(0,0,0,0.18) 20px
             ),
             linear-gradient(145deg, #c45628 0%, #8a3418 50%, #582210 100%)
           `.replace(/\s+/g, ' '),

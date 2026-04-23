@@ -307,9 +307,45 @@ Le jeu suppose que les deux joueurs sont en contexte intime et adulte. Les activ
 
 ---
 
-## Évolutions prévues
+## Roadmap — 3 niveaux (→ 2026)
 
-- [ ] Plateau avancé — 36 cases avec zones et cases adultes supplémentaires
+### Niveau 1 — Livré ✅ (2026-04-22)
+
+État actuel : 24 cases, 2D serpentin, dé R3F WebGL PBR, 2 joueurs local, pacte, anti-répétition, localStorage, haptiques, confetti, 3 zones narratives.
+
+---
+
+### Niveau 2 — Plateau ISO + contenu étendu
+
+**Rendu** (→ `docs/utils/plateau.md` Niveaux 1 & 2)
+- Vue isométrique CSS (`rotateX(28deg) rotateZ(45deg) scale(0.72)`)
+- Cases avec volume pseudo-3D (profondeur selon type : normal 8px → spéciale 14px → arrivée 16px)
+- Trail SVG de progression par joueur (polyline dégradée superposée à la grille)
+- Animation pion en arc case par case (`y: [from, mid-24, to]` en 180 ms/case) au lieu d'un saut de position
+
+**Mécanique + contenu**
+- [ ] Plateau 36 cases — 3 zones étendues, cases adultes supplémentaires
 - [ ] Historique de la partie affiché sur l'écran de fin
 - [ ] Lien "Rejouer avec le Dé" depuis l'écran de fin
-- [ ] Mode "soirée" à tour de rôle (3+ joueurs)
+- [ ] Mode soirée — 3+ joueurs tour à tour sur le même appareil
+
+---
+
+### Niveau 3 — R3F 3D + online (2026)
+
+**Rendu** (→ `docs/utils/plateau.md` Niveau 3)
+- Canvas WebGL R3F — cases `MeshStandardMaterial` avec éclairage réel (AmbientLight + DirectionalLight)
+- `ContactShadows` drei sous les pions
+- Ambiance lumineuse par zone (température couleur qui change avec la zone narrative)
+
+**Pions 3D**
+```tsx
+<mesh position={[x, y, 0.6]}>
+  <sphereGeometry args={[0.28, 32, 32]} />
+  <MeshPhysicalMaterial color={player.color} clearcoat={1} clearcoatRoughness={0} metalness={0.1} />
+</mesh>
+```
+
+**Online**
+- Duo temps réel (V3 backend Supabase) — chaque joueur sur son propre appareil
+- Vote Accord en temps réel (même mécanique anonyme, résultat synchronisé)
