@@ -6,7 +6,7 @@ import { DynamicIcon } from '../../../../utils/iconFromName';
 
 const ROW_DIRECTIONS = ['→', '←', '→', '←', '→', '←'] as const;
 
-const ISO_TRANSFORM = 'rotateX(45deg) rotateZ(45deg) scale(0.74)';
+const ISO_TRANSFORM = 'rotateX(28deg) rotateZ(45deg) scale(0.78)';
 
 const SQUARE_DEPTH: Record<SquareType, number> = {
   normal:     8,
