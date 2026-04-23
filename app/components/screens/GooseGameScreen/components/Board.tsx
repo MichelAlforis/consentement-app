@@ -6,7 +6,7 @@ import { DynamicIcon } from '../../../../utils/iconFromName';
 
 const ROW_DIRECTIONS = ['→', '←', '→', '←', '→', '←'] as const;
 
-const ISO_TRANSFORM = 'rotateX(45deg) rotateZ(45deg) scale(0.82)';
+const ISO_TRANSFORM = 'rotateX(45deg) rotateZ(45deg) scale(0.74)';
 
 const SQUARE_DEPTH: Record<SquareType, number> = {
   normal:     8,
@@ -144,7 +144,8 @@ interface BoardGridProps {
 
 export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSquare, isAnimating }: BoardGridProps) {
   return (
-    <div className="mx-auto" style={{ maxWidth: 420, padding: '8px 8px 48px' }}>
+    <div style={{ overflowX: 'hidden', width: '100%' }}>
+    <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px' }}>
       <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative' }}>
         {/* Surface du plateau — bois chaud pour contraster avec les fonds froids de zone */}
         <div style={{
@@ -189,6 +190,7 @@ export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSq
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }
