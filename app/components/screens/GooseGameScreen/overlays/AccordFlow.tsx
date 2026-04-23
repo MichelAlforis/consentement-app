@@ -1,5 +1,6 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Check, X } from 'lucide-react';
 import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
@@ -119,8 +120,10 @@ export function AccordFlow({
             </h3>
             {bothYes ? (
               <>
-                <p className="text-white/70 text-sm mb-2">
+                <p className="text-white/70 text-sm mb-2 flex items-center justify-center gap-2">
+                  <Check size={14} className="text-green-400 shrink-0" />
                   {t('gooseGame.accord.bothYesPlayers', { p1: player1.name, p2: player2.name })}
+                  <Check size={14} className="text-green-400 shrink-0" />
                 </p>
                 <p className="text-white/55 text-sm mb-7">
                   {t('gooseGame.accord.accordNum', { count: accordsCount + 1 })}
@@ -155,13 +158,15 @@ function VoteButtons({ onVote }: { onVote: (v: boolean) => void }) {
   return (
     <div className="flex gap-3">
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(false)}
-        className="flex-1 py-4 rounded-2xl font-bold text-lg"
+        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2"
         style={{ background: 'rgba(239,68,68,0.18)', color: '#fca5a5', border: '1.5px solid rgba(239,68,68,0.35)' }}>
+        <X size={18} />
         {t('gooseGame.accord.no')}
       </motion.button>
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(true)}
-        className="flex-1 py-4 rounded-2xl font-bold text-lg"
+        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2"
         style={{ background: 'rgba(34,197,94,0.18)', color: '#86efac', border: '1.5px solid rgba(34,197,94,0.35)' }}>
+        <Check size={18} />
         {t('gooseGame.accord.yes')}
       </motion.button>
     </div>

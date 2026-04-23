@@ -76,9 +76,9 @@ export const ui = {
     home: 'Home',
     modeMinor: 'Teen Mode',
     modeAdult: 'Adult Mode',
-    premiumOn: '★ Premium ON',
+    premiumOn: 'Premium ON',
     premium: 'Premium',
     reset: 'Reset',
-    demo: '🎭 Demo mode — Free navigation',
+    demo: 'Demo mode — Free navigation',
   },
 } as const;

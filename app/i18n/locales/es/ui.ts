@@ -76,9 +76,9 @@ export const ui = {
     home: 'Inicio',
     modeMinor: 'Modo Joven',
     modeAdult: 'Modo Adulto',
-    premiumOn: '★ Premium ON',
+    premiumOn: 'Premium ON',
     premium: 'Premium',
     reset: 'Restablecer',
-    demo: '🎭 Modo demo — Navegación libre',
+    demo: 'Modo demo — Navegación libre',
   },
 } as const;

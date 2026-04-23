@@ -90,7 +90,7 @@ export const spaces = {
         revocable: 'Le consentement reste révocable à tout moment',
         zones: 'Seules vos zones communes seront révélées',
       },
-      acceptBtn: 'On a compris 💜',
+      acceptBtn: 'On a compris',
       waitingPartner: 'En attente de {name}...',
       bothAccepted: "Vous êtes d'accord tous les deux",
     },
@@ -106,7 +106,7 @@ export const spaces = {
       partnerDone: '{name} a terminé',
       next: 'Continuer',
       safewordBtn: "Définir mon mot d'alerte",
-      done: 'J\'ai terminé 💜',
+      done: 'J\'ai terminé',
       sharedWith: 'Ce mot sera partagé avec {name}',
       safeword: {
         title: "Ton mot d'alerte",
@@ -115,7 +115,7 @@ export const spaces = {
       },
     },
     waiting: {
-      done: 'Tu as terminé 💜',
+      done: 'Tu as terminé',
       waitingPartner: 'En attente de {name}',
       poem: "Chacun avance à son rythme.\nC'est ce qui rend ce moment précieux.",
     },
@@ -127,7 +127,7 @@ export const spaces = {
       waitingStatus: 'En attente',
       revealBtn: 'Révéler ensemble',
       waitingPartner: 'En attente de {name}...',
-      goBtn: "C'est parti ! ✨",
+      goBtn: "C'est parti !",
     },
     reveal: {
       intro: 'Découvrons vos zones communes...',

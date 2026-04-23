@@ -54,8 +54,8 @@ export const education = {
   quizScreen: {
     title: 'Quiz',
     question: 'Pregunta {current} de {total}',
-    correct: '✅ ¡Correcto!',
-    incorrect: '❌ No del todo',
+    correct: '¡Correcto!',
+    incorrect: 'No del todo',
     validate: 'Validar',
     next: 'Siguiente pregunta',
     finish: 'Ver mi puntuación',
@@ -84,7 +84,7 @@ export const education = {
       between: { title: '15, 16 o 17 años', desc: "Tengo entre 15 y 17 años" },
     },
     under15Alert: {
-      title: '⚠️ Importante saber',
+      title: 'Importante saber',
       text: "En Francia, la edad legal del consentimiento es <strong>15 años</strong>. Por debajo, cualquier relación sexual con un adulto es un delito — aunque digas que sí. Esta ley existe para protegerte.",
       sub: "Si tienes preguntas sobre tu sexualidad, tus sentimientos o una situación que te puso incómodo/a, hablar con un profesional puede ayudar mucho.",
     },
@@ -106,7 +106,7 @@ export const education = {
     resourcesNote: "Hablar con un profesional no te compromete a nada — es solo una conversación.",
     continueAnyway: 'Continuar de todas formas',
     guide: {
-      ready: '✅ Pareces listo/a',
+      ready: 'Pareces listo/a',
       readyDesc: "Has marcado las casillas importantes. Recuerda que el consentimiento es continuo — ambas personas deben sentirse cómodas en todo momento.",
       tip1: 'Podéis parar en cualquier momento',
       tip2: 'Decir no o "stop" debe respetarse de inmediato',

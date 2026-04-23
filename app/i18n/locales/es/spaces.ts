@@ -90,7 +90,7 @@ export const spaces = {
         revocable: 'El consentimiento sigue siendo revocable en cualquier momento',
         zones: 'Solo vuestras zonas comunes serán reveladas',
       },
-      acceptBtn: 'Lo entendemos 💜',
+      acceptBtn: 'Lo entendemos',
       waitingPartner: 'Esperando a {name}...',
       bothAccepted: 'Estáis de acuerdo los dos',
     },
@@ -106,7 +106,7 @@ export const spaces = {
       partnerDone: '{name} ha terminado',
       next: 'Continuar',
       safewordBtn: 'Definir mi palabra de seguridad',
-      done: 'He terminado 💜',
+      done: 'He terminado',
       sharedWith: 'Esta palabra se compartirá con {name}',
       safeword: {
         title: 'Tu palabra de seguridad',
@@ -115,7 +115,7 @@ export const spaces = {
       },
     },
     waiting: {
-      done: 'Has terminado 💜',
+      done: 'Has terminado',
       waitingPartner: 'Esperando a {name}',
       poem: "Cada uno avanza a su ritmo.\nEso es lo que hace este momento precioso.",
     },
@@ -127,7 +127,7 @@ export const spaces = {
       waitingStatus: 'Esperando',
       revealBtn: 'Revelar juntos',
       waitingPartner: 'Esperando a {name}...',
-      goBtn: '¡Vamos! ✨',
+      goBtn: '¡Vamos!',
     },
     reveal: {
       intro: 'Descubriendo vuestras zonas comunes...',

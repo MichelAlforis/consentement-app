@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import { RotateCcw } from 'lucide-react';
 import { SavedGooseGame } from '../../../../data/goose-game';
 import { clearSavedGame } from '../../../../data/goose-game';
 import { useTranslation } from '../../../../i18n';
@@ -59,9 +60,10 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onResume}
-          className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm"
+          className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2"
           style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.25)' }}
         >
+          <RotateCcw size={15} />
           {t('gooseGame.intro.resume')}
         </motion.button>
       )}

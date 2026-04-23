@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HeartHandshake, ChevronRight, Phone } from 'lucide-react';
+import { HeartHandshake, ChevronRight, Phone, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Button } from '../ui';
 import { Screen } from '../../types';
 import { useTranslation } from '../../i18n';
@@ -93,7 +93,10 @@ export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurS
         {step === 'resources' && state.age === 'under15' && (
           <motion.div key="resources-under15" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 mb-5">
-              <p className="text-sm font-semibold text-amber-800 mb-2">{t('accompagnement.under15Alert.title')}</p>
+              <p className="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-1.5">
+                <AlertTriangle size={15} className="shrink-0" />
+                {t('accompagnement.under15Alert.title')}
+              </p>
               <p
                 className="text-sm text-amber-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: t('accompagnement.under15Alert.text') }}
@@ -207,7 +210,10 @@ export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurS
         {step === 'guide' && (
           <motion.div key="guide" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <div className="p-4 rounded-2xl bg-green-50 border border-green-200 mb-5">
-              <p className="text-sm font-semibold text-green-800 mb-2">{t('accompagnement.guide.ready')}</p>
+              <p className="text-sm font-semibold text-green-800 mb-2 flex items-center gap-1.5">
+                <CheckCircle size={15} className="shrink-0" />
+                {t('accompagnement.guide.ready')}
+              </p>
               <p className="text-sm text-green-700 leading-relaxed">
                 {t('accompagnement.guide.readyDesc')}
               </p>

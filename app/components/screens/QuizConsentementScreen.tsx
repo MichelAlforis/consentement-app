@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, ChevronRight, RotateCcw, Trophy } from 'lucide-react';
+import { Gamepad2, ChevronRight, RotateCcw, Trophy, ThumbsUp, BookOpen, Flame, CheckCircle, XCircle } from 'lucide-react';
 import { quizQuestions } from '../../data';
 import { Button } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
@@ -56,10 +56,10 @@ export function QuizConsentementScreen() {
 
   const getScoreLabel = () => {
     const plural = score > 1 ? 's' : '';
-    if (score >= 7) return { label: t('quizScreen.scoreLabels.excellent'), color: '#22c55e', emoji: '🏆' };
-    if (score >= 5) return { label: t('quizScreen.scoreLabels.good'), color: '#3b82f6', emoji: '👍' };
-    if (score >= 3) return { label: t('quizScreen.scoreLabels.notBad'), color: '#f59e0b', emoji: '📚' };
-    return { label: t('quizScreen.scoreLabels.retry'), color: '#ef4444', emoji: '💪' };
+    if (score >= 7) return { label: t('quizScreen.scoreLabels.excellent'), color: '#22c55e', Icon: Trophy };
+    if (score >= 5) return { label: t('quizScreen.scoreLabels.good'), color: '#3b82f6', Icon: ThumbsUp };
+    if (score >= 3) return { label: t('quizScreen.scoreLabels.notBad'), color: '#f59e0b', Icon: BookOpen };
+    return { label: t('quizScreen.scoreLabels.retry'), color: '#ef4444', Icon: Flame };
   };
 
   if (finished) {
@@ -75,9 +75,9 @@ export function QuizConsentementScreen() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 12 }}
-          className="text-6xl mb-4"
+          className="mb-4"
         >
-          {result.emoji}
+          <result.Icon size={64} color={result.color} />
         </motion.div>
         <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{result.label}</h2>
         <p className="mb-6" style={{ color: colors.textMuted }}>
@@ -183,7 +183,8 @@ export function QuizConsentementScreen() {
                 exit={{ opacity: 0, height: 0 }}
                 className={`mb-4 p-4 rounded-2xl ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}
               >
-                <p className="text-sm font-semibold mb-1" style={{ color: isCorrect ? '#166534' : '#991b1b' }}>
+                <p className="text-sm font-semibold mb-1 flex items-center gap-1.5" style={{ color: isCorrect ? '#166534' : '#991b1b' }}>
+                  {isCorrect ? <CheckCircle size={15} className="shrink-0" /> : <XCircle size={15} className="shrink-0" />}
                   {isCorrect ? t('quizScreen.correct') : t('quizScreen.incorrect')}
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: isCorrect ? '#14532d' : '#7f1d1d' }}>

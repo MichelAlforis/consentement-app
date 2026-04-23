@@ -54,8 +54,8 @@ export const education = {
   quizScreen: {
     title: 'Quiz',
     question: 'Question {current} sur {total}',
-    correct: '✅ Bonne réponse !',
-    incorrect: '❌ Pas tout à fait',
+    correct: 'Bonne réponse !',
+    incorrect: 'Pas tout à fait',
     validate: 'Valider',
     next: 'Question suivante',
     finish: 'Voir mon score',
@@ -84,7 +84,7 @@ export const education = {
       between: { title: '15, 16 ou 17 ans', desc: "J'ai entre 15 et 17 ans" },
     },
     under15Alert: {
-      title: '⚠️ Important à savoir',
+      title: 'Important à savoir',
       text: "En France, l'âge légal du consentement est <strong>15 ans</strong>. En dessous, tout rapport sexuel avec un adulte est un crime — même si tu dis oui. C'est la loi pour te protéger.",
       sub: "Si tu te poses des questions sur ta sexualité, sur ce que tu ressens ou sur une situation qui t'a mis·e mal à l'aise, parler à un professionnel peut vraiment aider.",
     },
@@ -106,7 +106,7 @@ export const education = {
     resourcesNote: "Parler à un professionnel ne t'engage à rien — c'est juste une conversation.",
     continueAnyway: 'Continuer quand même',
     guide: {
-      ready: '✅ Tu sembles prêt·e',
+      ready: 'Tu sembles prêt·e',
       readyDesc: "Tu as coché les cases importantes. Rappelle-toi que le consentement est continu — les deux personnes doivent rester à l'aise tout au long.",
       tip1: "Vous pouvez vous arrêter à n'importe quel moment",
       tip2: 'Dire non ou "stop" doit être respecté immédiatement',

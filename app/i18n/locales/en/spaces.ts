@@ -90,7 +90,7 @@ export const spaces = {
         revocable: 'Consent remains revocable at any time',
         zones: 'Only your common zones will be revealed',
       },
-      acceptBtn: 'We got it 💜',
+      acceptBtn: 'We got it',
       waitingPartner: 'Waiting for {name}...',
       bothAccepted: 'You both agree',
     },
@@ -106,7 +106,7 @@ export const spaces = {
       partnerDone: '{name} is done',
       next: 'Continue',
       safewordBtn: 'Set my safeword',
-      done: "I'm done 💜",
+      done: "I'm done",
       sharedWith: 'This word will be shared with {name}',
       safeword: {
         title: 'Your safeword',
@@ -115,7 +115,7 @@ export const spaces = {
       },
     },
     waiting: {
-      done: "You're done 💜",
+      done: "You're done",
       waitingPartner: 'Waiting for {name}',
       poem: "Everyone goes at their own pace.\nThat's what makes this moment precious.",
     },
@@ -127,7 +127,7 @@ export const spaces = {
       waitingStatus: 'Waiting',
       revealBtn: 'Reveal together',
       waitingPartner: 'Waiting for {name}...',
-      goBtn: "Let's go! ✨",
+      goBtn: "Let's go!",
     },
     reveal: {
       intro: "Discovering your common zones...",

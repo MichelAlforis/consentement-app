@@ -54,8 +54,8 @@ export const education = {
   quizScreen: {
     title: 'Quiz',
     question: 'Question {current} of {total}',
-    correct: '✅ Correct!',
-    incorrect: '❌ Not quite',
+    correct: 'Correct!',
+    incorrect: 'Not quite',
     validate: 'Validate',
     next: 'Next question',
     finish: 'See my score',
@@ -84,7 +84,7 @@ export const education = {
       between: { title: '15, 16 or 17', desc: "I'm between 15 and 17" },
     },
     under15Alert: {
-      title: '⚠️ Important to know',
+      title: 'Important to know',
       text: "In France, the legal age of consent is <strong>15 years old</strong>. Below this age, any sexual act with an adult is a crime — even if you say yes. This law is here to protect you.",
       sub: "If you have questions about your sexuality, your feelings, or a situation that made you uncomfortable, talking to a professional can really help.",
     },
@@ -106,7 +106,7 @@ export const education = {
     resourcesNote: "Talking to a professional doesn't commit you to anything — it's just a conversation.",
     continueAnyway: 'Continue anyway',
     guide: {
-      ready: '✅ You seem ready',
+      ready: 'You seem ready',
       readyDesc: "You've checked the important boxes. Remember that consent is ongoing — both people must stay comfortable throughout.",
       tip1: 'You can stop at any time',
       tip2: 'Saying no or "stop" must be respected immediately',
