@@ -169,8 +169,8 @@ export function BoardGrid({
   activeSquare, isAnimating, animatingPos,
 }: BoardGridProps) {
   return (
-    <div style={{ overflowX: 'hidden', width: '100%', perspective: '800px' }}>
-    <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px' }}>
+    <div style={{ overflowX: 'hidden', width: '100%' }}>
+    <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px', perspective: '800px' }}>
       <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative' }}>
         <div style={{
           position: 'absolute',
