@@ -92,87 +92,61 @@ function BoardCell({
   const iconName = getSquareIconName(square);
   const hasP0    = displayPos0 === squareIndex;
   const hasP1    = displayPos1 === squareIndex;
-  const depth    = SQUARE_DEPTH[square.type];
 
   const p0Key = `p0-${squareIndex}-${animatingPos ?? 'rest'}`;
   const p1Key = `p1-${squareIndex}-${animatingPos ?? 'rest'}`;
 
   return (
-    <div style={{ position: 'relative', transformStyle: 'preserve-3d' }}>
-      <motion.div
-        animate={
-          isAnimating && isActive
-            ? { scale: [1, 1.2, 1], boxShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 20px rgba(255,255,255,0.85)', '0 0 0px rgba(255,255,255,0)'] }
-            : isActive
-            ? { scale: [1, 1.07, 1] }
-            : { scale: 1 }
-        }
-        transition={
-          isActive
-            ? { duration: isAnimating ? 0.28 : 0.8, repeat: isAnimating ? 0 : Infinity, repeatType: 'loop' }
-            : {}
-        }
-        style={{
-          background: bg || 'rgba(255,255,255,0.06)',
-          borderRadius: 10,
-          height: 68,
-          position: 'relative',
-          border: isActive
-            ? '2px solid rgba(255,255,255,0.95)'
-            : '1.5px solid rgba(255,255,255,0.1)',
-        }}
-        className="flex flex-col items-center justify-center gap-0.5"
-      >
-        {iconName && <DynamicIcon name={iconName} size={18} color="rgba(255,255,255,0.85)" />}
+    <motion.div
+      animate={
+        isAnimating && isActive
+          ? { scale: [1, 1.2, 1], boxShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 20px rgba(255,255,255,0.85)', '0 0 0px rgba(255,255,255,0)'] }
+          : isActive
+          ? { scale: [1, 1.07, 1] }
+          : { scale: 1 }
+      }
+      transition={
+        isActive
+          ? { duration: isAnimating ? 0.28 : 0.8, repeat: isAnimating ? 0 : Infinity, repeatType: 'loop' }
+          : {}
+      }
+      style={{
+        background: bg || 'rgba(255,255,255,0.06)',
+        borderRadius: 10,
+        height: 68,
+        position: 'relative',
+        border: isActive
+          ? '2px solid rgba(255,255,255,0.95)'
+          : '1.5px solid rgba(255,255,255,0.1)',
+        boxShadow: isActive ? undefined : `inset 0 -3px 6px rgba(0,0,0,0.35), inset 3px 0 6px rgba(0,0,0,0.2)`,
+      }}
+      className="flex flex-col items-center justify-center gap-0.5"
+    >
+      {iconName && <DynamicIcon name={iconName} size={18} color="rgba(255,255,255,0.85)" />}
 
-        {(hasP0 || hasP1) && (
-          <div style={{ display: 'flex', gap: 3, marginTop: iconName ? 2 : 0 }}>
-            {hasP0 && (
-              <PawnToken
-                emoji={p0Emoji}
-                color={p0Color}
-                isAnimating={isAnimating}
-                isActive={isActive}
-                pawnKey={p0Key}
-              />
-            )}
-            {hasP1 && (
-              <PawnToken
-                emoji={p1Emoji}
-                color={p1Color}
-                isAnimating={isAnimating}
-                isActive={isActive}
-                pawnKey={p1Key}
-              />
-            )}
-          </div>
-        )}
-      </motion.div>
-
-      {/* Face inférieure — ombre */}
-      <div style={{
-        position: 'absolute',
-        left: 0,
-        bottom: -depth,
-        width: '100%',
-        height: depth,
-        background: 'rgba(0,0,0,0.4)',
-        transform: 'rotateX(-90deg)',
-        transformOrigin: 'bottom center',
-      }} />
-
-      {/* Face droite — reflet */}
-      <div style={{
-        position: 'absolute',
-        right: -depth,
-        top: 0,
-        width: depth,
-        height: '100%',
-        background: 'rgba(255,255,255,0.12)',
-        transform: 'rotateY(90deg)',
-        transformOrigin: 'right center',
-      }} />
-    </div>
+      {(hasP0 || hasP1) && (
+        <div style={{ display: 'flex', gap: 3, marginTop: iconName ? 2 : 0 }}>
+          {hasP0 && (
+            <PawnToken
+              emoji={p0Emoji}
+              color={p0Color}
+              isAnimating={isAnimating}
+              isActive={isActive}
+              pawnKey={p0Key}
+            />
+          )}
+          {hasP1 && (
+            <PawnToken
+              emoji={p1Emoji}
+              color={p1Color}
+              isAnimating={isAnimating}
+              isActive={isActive}
+              pawnKey={p1Key}
+            />
+          )}
+        </div>
+      )}
+    </motion.div>
   );
 }
 
