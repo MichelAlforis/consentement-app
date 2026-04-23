@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, useAnimation, useMotionValue, useTransform, MotionValue } from 'framer-motion';
+import { motion, animate, useAnimation, useMotionValue, useTransform, MotionValue } from 'framer-motion';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CardData } from '../../../data';
@@ -78,12 +78,26 @@ export function PlayingCard({
   const controls = useAnimation();
   const dragX = useMotionValue(0);
   const [isExiting, setIsExiting] = useState(false);
+  const [hideAll, setHideAll] = useState(false);
+  const hasNudged = useRef(false);
 
+  // Reset on new card
   useEffect(() => {
     setIsExiting(false);
+    setHideAll(false);
     dragX.set(0);
     controls.set({ rotate: 0, opacity: 1 });
   }, [card.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // One-time swipe nudge — teaches the gesture on the first card
+  useEffect(() => {
+    if (hasNudged.current) return;
+    hasNudged.current = true;
+    const t = setTimeout(() => {
+      animate(dragX, [0, -20, 15, -8, 0], { duration: 0.9, ease: 'easeInOut' });
+    }, 950);
+    return () => clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canDrag = !isAnimating && !isExiting;
   const dragRotate = useTransform(dragX, [-200, 200], [-10, 10]);
@@ -126,6 +140,7 @@ export function PlayingCard({
       opacity: 0,
       transition: { duration: 0.28, ease: 'easeIn' },
     });
+    setHideAll(true);
     onDraw();
   };
 
@@ -137,6 +152,9 @@ export function PlayingCard({
         aspectRatio: '2 / 3',
         margin: '0 auto',
         position: 'relative',
+        userSelect: 'none',
+        opacity: hideAll ? 0 : undefined,
+        pointerEvents: hideAll ? 'none' : undefined,
       }}
     >
       <DeckStack remaining={deckRemaining} gradient={cat.gradient} isAnimating={isAnimating} />
@@ -149,6 +167,7 @@ export function PlayingCard({
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
         animate={controls}
+        whileDrag={{ cursor: 'grabbing' }}
         style={{
           x: dragX,
           rotate: dragRotate,
@@ -156,6 +175,7 @@ export function PlayingCard({
           position: 'absolute',
           inset: 0,
           willChange: 'transform',
+          cursor: canDrag ? 'grab' : 'default',
         }}
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
