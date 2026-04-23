@@ -261,35 +261,6 @@ export function PlayingCard({
                     backgroundSize: '18px 18px',
                   }}
                 />
-                {/* Corner marks — classic card convention */}
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    fontSize: 15,
-                    color: 'rgba(255,255,255,0.25)',
-                    fontWeight: 900,
-                    lineHeight: 1,
-                  }}
-                >
-                  {cat.emoji}
-                </span>
-                <span
-                  style={{
-                    position: 'absolute',
-                    bottom: 16,
-                    right: 16,
-                    fontSize: 15,
-                    color: 'rgba(255,255,255,0.25)',
-                    fontWeight: 900,
-                    lineHeight: 1,
-                    transform: 'rotate(180deg)',
-                  }}
-                >
-                  {cat.emoji}
-                </span>
-
                 {/* Center content */}
                 <span style={{ fontSize: 56, position: 'relative', zIndex: 1, lineHeight: 1 }}>
                   {cat.emoji}

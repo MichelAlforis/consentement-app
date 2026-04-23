@@ -110,14 +110,12 @@ export function useCardSession(isAdult: boolean): CardSession {
       setDrawnIds((prev) => {
         const newCard = pickCard(cardCount, prev, sessionMode);
         setCurrentCard(newCard);
-        setDrawnIds([...prev, newCard.id]);
         setCardCount((c) => c + 1);
         setSessionDecks((d) => d.includes(newCard.deck) ? d : [...d, newCard.deck]);
         setIsRevealed(true);
-        return prev;
+        setIsAnimating(false);
+        return [...prev, newCard.id];
       });
-      const t2 = setTimeout(() => setIsAnimating(false), 550);
-      animTimers.current.push(t2);
     }, 480);
     animTimers.current.push(t1);
   }, [isAnimating, pickCard, cardCount, sessionMode]);
