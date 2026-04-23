@@ -92,7 +92,7 @@ Le déplacement case par case à 210ms/case (`usePawnAnimation`) reste actif en 
 
 ---
 
-## Niveau 3 ✅ livré — React Three Fiber
+## Niveau 3 ✅ livré — React Three Fiber (finalisé)
 
 ### Architecture
 
@@ -105,74 +105,107 @@ function useWebGLSupport(): boolean | null  // null = SSR, false = pas de WebGL
 ### Caméra orthographique isométrique
 
 ```ts
-// elevation 58°, azimuth 45° — identique au CSS rotateX(58°) rotateZ(45°)
-const CAM_POS = [7.5, 16.96, 7.5]  // distance 20, sphérique
-<OrthographicCamera zoom={38} onUpdate={self => self.lookAt(0, 0.1, 0)} />
+// Azimut 0° + group rotationY 45° = même effet que CSS rotateX(58°) rotateZ(45°)
+const CAM_DIST = 20
+const CAM_ELEV = 40 * Math.PI / 180
+const CAM_POS = [0, CAM_DIST * sin(CAM_ELEV), CAM_DIST * cos(CAM_ELEV)]
+<OrthographicCamera zoom={68} />
+// CameraLookAt : useFrame(() => camera.lookAt(0,0,0)) — stable à chaque frame
 ```
 
-Pas de transform CSS sur le Canvas — la caméra gère la perspective.
+Le losange vient du `<group rotation={[0, Math.PI/4, 0]}>` qui englobe tout le contenu du plateau.
 
 ### Géométrie 3D
 
-- Socle acajou : `BoxGeometry` — `#8a3418`, roughness=0.82.
-- Cases : `BoxGeometry(1.0, 0.25, 1.0)`, `MeshStandardMaterial`, couleur par type.
-- Gap entre cases : 0.08 world units.
-- Case active : `emissiveIntensity` animé via `useFrame` (pulse lent ou flash).
+- Socle acajou : `BoxGeometry`, texture procédurale `CanvasTexture` (grain bois baked, même stries que CSS), roughness=0.75.
+- Cases : `RoundedBox(1.0, 0.14, 1.0)`, radius=0.07, `MeshStandardMaterial`.
+- Gap entre cases : 0.12 world units.
+- Case active : `emissiveIntensity` animé via `useFrame` (pulse lent ou flash). Inactives : emissive=0.
+- `roughness` par case : `useRef(0.46 + Math.random() * 0.04).current` — micro-variation stable.
 
-### Couleurs par type de case (MeshStandardMaterial)
+### Couleurs par type de case
+
+Cases spéciales : couleurs fixes.
+Cases `normal` : couleur par face de dé via `DICE_FACE_COLOR` (miroir de `DICE_CATEGORIES.gradient`).
 
 ```ts
-depart:#4ade80  normal:#7a6248  chance:#fbbf24
-pause:#f87171   accord:#60a5fa  complicite:#c084fc  arrivee:#34d399
+// Spéciales
+depart:#4ade80  chance:#fbbf24  pause:#f87171
+accord:#60a5fa  complicite:#c084fc  arrivee:#34d399
+
+// Normales par face
+1:#f59e0b  2:#8b5cf6  3:#ec4899  4:#3b82f6  5:#10b981  6:#be123c
 ```
 
-### Lumières
+### Pipeline lumière (ordre critique en PBR)
 
 ```tsx
-<ambientLight intensity={0.55} />
-<directionalLight position={[5, 10, 5]} intensity={1.4} />       // lumière principale
-<directionalLight position={[-4, 6, -4]} intensity={0.35} color="#ffd0a0" />  // chaud fill
+// 1. Directionnel principal (forme + ombres)
+<directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
+// 2. IBL ambiance
+<Environment preset="sunset" intensity={0.5} />
+// 3. Ambient fill
+<ambientLight intensity={0.35} />
+// 4. Fill secondaire
+<directionalLight position={[-4, 4, -4]} intensity={0.2} />
+// Exposition globale
+gl={{ toneMappingExposure: 1.1 }}
 ```
 
 ### Ombres
 
 ```tsx
-// Ombres des cases sur le socle acajou
-<ContactShadows position={[0, -0.01, 0]} far={0.4} frames={1} resolution={128} />
-// Ombre du plateau sur le sol virtuel
-<ContactShadows position={[0, -0.32, 0]} far={5} frames={1} resolution={128} />
-// Disque blob sous chaque pion (mesh circle, opacity 0.28)
-<PawnShadowDisc squareIndex={...} />
+// Une seule ContactShadows (fusionnées) — frames={1} mobile-safe
+<ContactShadows position={[0, -(BASE_H+0.02), 0]} opacity={0.28} scale={14} blur={3.5} frames={1} />
+// Disque blob par pion (mesh circle, opacity dynamique selon hauteur d'arc)
 ```
 
-`frames={1}` : ombres calculées une seule fois (scène statique) → mobile-safe.
+### Icônes sur les cases
 
-### Pions (DOM overlay)
+```tsx
+<Html transform occlude position={[0, CELL_H3/2+0.005, 0]} rotation={[-Math.PI/2, 0, 0]} center>
+  <DynamicIcon ... />
+</Html>
+```
 
-`PawnOverlayR3F` : projection 3D → 2D via `THREE.Vector3.project(camera)` au premier frame.
-Même logique d'arc Framer Motion que la version CSS. `PawnSvg` identique (réutilisé).
+- `transform` : l'icône est couchée à plat sur la face supérieure de la case (inclinée avec le plateau)
+- `occlude` : drei cache l'icône automatiquement quand la géométrie du pion la couvre
+
+### Pions (Pawn3D — géométrie WebGL native)
+
+Cylindres + sphère `meshPhysicalMaterial` (clearcoat, iridescence). Animation arc via `useFrame` (pas de Framer Motion). Ombre blob dynamique dont l'opacité suit la hauteur.
+
+### Texture bois (procédurale)
+
+`useMahoganyTexture()` génère un `THREE.CanvasTexture` 512×512 au premier render :
+- Gradient acajou baked (`#c45628 → #8a3418 → #582210`)
+- 3 couches de stries (spacing 4/10/19, slant 0.02/-0.07/0.04) — identiques aux CSS `repeating-linear-gradient`
+- Aucun fichier externe requis
 
 ### Fallback WebGL
 
 ```
 iOS 13+ / Android API 22+ via Capacitor → WebGL disponible dans 99% des cas.
-null (SSR) → CSS, false (WebGL absent) → CSS. Pas de flash : CSS rendu immédiatement.
+null (SSR) → CSS, false (WebGL absent) → CSS. Pas de flash.
 ```
 
-### Tuning sandbox
+### Tuning sandbox (`/plateau-test`)
 
-Paramètres à ajuster dans `Board.tsx` :
-- `CANVAS_H = 450` : hauteur du canvas en px.
-- `zoom={38}` sur `OrthographicCamera` : zoom — plus grand = plateau plus grand.
-- `CAM_POS` : position caméra (distance 20, élévation 58°, azimut 45°).
+- `CANVAS_H = 660` : hauteur canvas px.
+- `zoom={68}` sur `OrthographicCamera` : taille du plateau.
+- `CAM_ELEV = 40°` : élévation caméra.
+- `CAM_DIST = 20` : distance caméra.
 
-| Feature | CSS iso actuel | R3F |
-|---------|---------------|-----|
-| Lumière sur les cases | Absente (faces CSS abandonnées) | Réelle (ambiant + directionnel) |
-| Ombre des pions | Absente | ContactShadows + PawnShadowDisc |
-| Cases avec matière | Gradient CSS | MeshStandardMaterial |
-| Faces latérales | Abandonnées (z-order) | Automatiques (géométrie 3D) |
-| Brouillard de distance | Impossible | `<fog attach="fog" />` (non branché) |
+| Feature | CSS iso actuel | R3F finalisé |
+|---------|---------------|-------------|
+| Lumière sur les cases | Absente | Réelle (PBR pipeline) |
+| Ombre des pions | Absente | ContactShadows + blob dynamique |
+| Cases avec matière | Gradient CSS | MeshStandardMaterial + micro-roughness |
+| Faces latérales | Abandonnées | Automatiques (RoundedBox) |
+| Texture bois socle | CSS stries | CanvasTexture procédurale |
+| Couleurs cases normales | Par face dé | Par face dé (DICE_FACE_COLOR) |
+| Icônes sur cases | Toujours face caméra | Couchées à plat + occlude pions |
+| Bloom | Impossible | EffectComposer + Bloom ciblé emissives |
 
 ---
 
@@ -181,12 +214,15 @@ Paramètres à ajuster dans `Board.tsx` :
 | Feature | Avant | Niveau 1 ✅ | Niveau 2 ✅ | Niveau 3 ✅ |
 |---------|-------|-----------|---------|---------|
 | Vue isométrique | ❌ | ✅ CSS 58°+perspective | ✅ | ✅ caméra ortho R3F |
-| Surface plateau | ❌ | ✅ acajou basique | ✅ grain bois + glow | ✅ MeshStandardMaterial |
+| Surface plateau | ❌ | ✅ acajou basique | ✅ grain bois + glow | ✅ MeshStandardMaterial + CanvasTexture |
 | Sens Sonic (départ bas) | ❌ | ✅ rangées inversées | ✅ | ✅ |
-| Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto BoxGeometry |
+| Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto RoundedBox |
 | Trail de progression | ❌ | ❌ | ❌ inutile | — |
-| Ombres pions | ❌ | ❌ | ❌ | ✅ ContactShadows + disc |
-| Pions SVG | ❌ | token basique | ✅ SVG cylindrique | ✅ overlay DOM (R3F projection) |
+| Ombres pions | ❌ | ❌ | ❌ | ✅ ContactShadows + blob dynamique |
+| Pions | ❌ | token basique | ✅ SVG cylindrique (CSS) | ✅ géométrie WebGL native (meshPhysical) |
+| Couleurs cases normales | ❌ | ❌ | ❌ | ✅ DICE_FACE_COLOR par face |
+| Icônes sur cases | ❌ | ❌ | ❌ | ✅ Html transform+occlude (à plat sur case) |
+| Bloom | ❌ | ❌ | ❌ | ✅ EffectComposer ciblé emissives |
 | Fallback CSS (WebGL absent) | — | — | — | ✅ automatique |
 | Légende | ✅ | ✅ | ✅ | ✅ |
 

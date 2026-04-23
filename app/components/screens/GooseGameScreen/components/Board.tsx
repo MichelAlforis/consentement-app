@@ -381,10 +381,9 @@ interface BoardCellR3FProps {
   squareIndex: number;
   isActive: boolean;
   isAnimating: boolean;
-  hideIcon?: boolean;
 }
 
-function Cell3D({ squareIndex, isActive, isAnimating, hideIcon }: BoardCellR3FProps) {
+function Cell3D({ squareIndex, isActive, isAnimating }: BoardCellR3FProps) {
   const square = BOARD[squareIndex];
   const [x, y, z] = getCellPos3D(squareIndex);
   const color = getSquareColor3D(square);
@@ -416,12 +415,17 @@ function Cell3D({ squareIndex, isActive, isAnimating, hideIcon }: BoardCellR3FPr
         emissive={color}
         emissiveIntensity={0.0}
       />
-      {iconName && !hideIcon && (
-        <Billboard position={[0, CELL_H3 / 2 + 0.08, 0]}>
-          <Html center style={{ pointerEvents: 'none' }}>
-            <DynamicIcon name={iconName} size={14} color="rgba(255,255,255,0.95)" />
-          </Html>
-        </Billboard>
+      {iconName && (
+        <Html
+          transform
+          occlude
+          position={[0, CELL_H3 / 2 + 0.005, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          center
+          style={{ pointerEvents: 'none' }}
+        >
+          <DynamicIcon name={iconName} size={22} color="rgba(255,255,255,0.92)" />
+        </Html>
       )}
     </RoundedBox>
   );
@@ -668,7 +672,6 @@ function BoardGridR3F({
                   squareIndex={sq.index}
                   isActive={sq.index === activeSquare}
                   isAnimating={isAnimating}
-                  hideIcon={sq.index === displayPos0 || sq.index === displayPos1}
                 />
               ))}
 
