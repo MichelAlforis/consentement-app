@@ -144,7 +144,7 @@ interface BoardGridProps {
 
 export function BoardGrid({ displayPos0, displayPos1, p0Emoji, p1Emoji, activeSquare, isAnimating }: BoardGridProps) {
   return (
-    <div style={{ overflowX: 'hidden', width: '100%' }}>
+    <div style={{ overflowX: 'hidden', width: '100%', perspective: '800px' }}>
     <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px' }}>
       <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative' }}>
         {/* Surface du plateau — bois chaud pour contraster avec les fonds froids de zone */}
