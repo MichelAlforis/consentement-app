@@ -70,15 +70,13 @@ div.sizing (maxWidth: 290, aspectRatio: 2/3, position: relative, userSelect: non
 - Auto-reveal géré par `useCardSession` (350ms après `startPlaying`, immédiat au moment où `drawNewCard` pose la carte à 480ms)
 - `WebkitBackfaceVisibility: 'hidden'` + `WebkitTransformStyle: 'preserve-3d'` sur tous les éléments 3D
 
-### Tilt — React Spring physique (Niveau 2 ✅)
+### Tilt — Framer Motion useSpring (Niveau 2 ✅)
 
-- `useSpring({ rotX: 0, rotY: 0, config: { tension: 400, friction: 30 } })` via `@react-spring/web`
-- Handlers `pointermove` / `pointerleave` bruts (pas de rAF) → `tiltApi.start({ rotX, rotY })`
-- `animated.div` avec `to([rotX, rotY], (rx, ry) => \`rotateX(${rx}deg) rotateY(${ry}deg)\`)` dans la chaîne `preserve-3d`
-- **±6°**, suivi temps réel sans délai perceptible (vs ease Framer Motion Niveau 1)
-- Retour à plat naturel via decay spring sur `pointerleave`
-- `useNormalizedPointer(cardRef)` conservé pour piloter le foil (Framer MotionValues) — les deux libs coexistent sans conflit
-- `tiltApi.set({ rotX: 0, rotY: 0 })` dans le reset on new card
+- `useSpring(sourceMotionValue, { stiffness: 400, damping: 30 })` — Framer Motion natif, pas de lib externe
+- `rawRotateX = useTransform(tiltY, [-1,1], [6,-6])` → `tiltRotateX = useSpring(rawRotateX, config)`
+- `motion.div` standard dans la chaîne `preserve-3d` — `backfaceVisibility: hidden` intact
+- **±6°**, suivi temps réel avec decay spring sur `pointerleave` (useNormalizedPointer reset à 0)
+- `useNormalizedPointer` pilote aussi le foil (même hook, deux usages)
 
 ### Foil holographique
 
@@ -139,7 +137,7 @@ foil overlay (screen, opacity 0 → 0.12/0.18 à la révélation, transition 0.5
 | Flip dos→face | ✅ rotateY 520ms |
 | Pile fantôme (DeckStack) | ✅ 2 couches animées |
 | Swipe pour piocher | ✅ seuil 90px / 350px·s⁻¹ |
-| Tilt React Spring ±6° | ✅ Niveau 2 — tension:400/friction:30 |
+| Tilt Framer useSpring ±6° | ✅ Niveau 2 — stiffness:400/damping:30 |
 | Foil holographique CSS | ✅ screen, depth-aware |
 | Entrée animée (slide-up) | ✅ AnimatePresence key={card.id} |
 | Nudge swipe | ✅ animate(dragX, keyframes) |
