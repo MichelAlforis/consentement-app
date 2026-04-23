@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, Component, ReactNode } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Sparkles, Float, MeshDistortMaterial, AdaptiveDpr } from '@react-three/drei';
 
@@ -80,6 +80,13 @@ function CinematicScene({ primaryColor, secondaryColor, intensity }: CinematicSc
   );
 }
 
+// Silently swallows WebGL init failures so the UI stays visible without the cinematic.
+class CanvasBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+  state = { crashed: false };
+  static getDerivedStateFromError() { return { crashed: true }; }
+  render() { return this.state.crashed ? null : this.props.children; }
+}
+
 export interface GameEndCinematicProps {
   primaryColor: string;
   secondaryColor: string;
@@ -88,6 +95,14 @@ export interface GameEndCinematicProps {
 }
 
 export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'medium', darkOverlay = false }: GameEndCinematicProps) {
+  // Defer Canvas mount: AnimatePresence swaps views synchronously on iOS —
+  // the parent has no dimensions yet at that instant. 60ms lets layout settle.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
       {darkOverlay && (
@@ -96,15 +111,19 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
           background: 'linear-gradient(180deg, rgba(10,5,20,0.74) 0%, rgba(4,2,10,0.86) 100%)',
         }} />
       )}
-      <Canvas
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
-        frameloop="always"
-        style={{ background: 'transparent' }}
-        camera={{ position: [0, 0, 5], fov: 60 }}
-      >
-        <CinematicScene primaryColor={primaryColor} secondaryColor={secondaryColor} intensity={intensity} />
-      </Canvas>
+      {mounted && (
+        <CanvasBoundary>
+          <Canvas
+            dpr={[1, 1.5]}
+            gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
+            frameloop="always"
+            style={{ background: 'transparent' }}
+            camera={{ position: [0, 0, 5], fov: 60 }}
+          >
+            <CinematicScene primaryColor={primaryColor} secondaryColor={secondaryColor} intensity={intensity} />
+          </Canvas>
+        </CanvasBoundary>
+      )}
     </div>
   );
 }
