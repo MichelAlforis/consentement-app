@@ -1,168 +1,110 @@
 # Rendu du plateau — État actuel → 2026
 
 **Fichiers clés :**
-- `app/game-engine/board/BoardRenderer.tsx` — rendu configurable (moteur générique)
-- `app/game-engine/board/useBoardEngine.ts` — logique de déplacement, activités
-- `app/components/screens/GooseGameScreen/components/Board.tsx` — implémentation Jeu de l'Oie (ne pas modifier)
+- `app/components/screens/GooseGameScreen/components/Board.tsx` — implémentation Jeu de l'Oie (**c'est ici que tout se passe**)
+- `app/game-engine/board/BoardRenderer.tsx` — moteur générique (non branché au Jeu de l'Oie pour l'instant)
+- `app/game-engine/board/useBoardEngine.ts` — logique déplacement générique
+- `app/plateau-test/page.tsx` — sandbox `/plateau-test` pour itérer sans passer par le flow jeu
 
 ---
 
-## État actuel
+## État actuel — Niveau 1 ✅ livré
 
 ### Ce qui tourne
 
-**Grille 2D**
-- Layout calculé dynamiquement : `buildLayout(totalSquares, columns, snake)` → tableau 2D d'indices
-- Serpentin : lignes impaires inversées
-- Cellules en `aspectRatio: '1 / 1'` + `minHeight: 44px` — s'adaptent à la largeur du conteneur
-- `maxWidth: columns × 85px` — limite la taille sur grands écrans
+**Vue isométrique CSS**
+```ts
+// Board.tsx
+const ISO_TRANSFORM = 'rotateX(68deg) rotateZ(45deg) scale(0.78)';
+```
+- `rotateX(68deg)` — angle mobile games (Unity/Godot standard ~30°, mais 68° donne l'effet "sol qui s'éloigne" voulu)
+- `rotateZ(45deg)` — orientation diamant classique
+- `scale(0.78)` — compression pour tenir dans un écran portrait 390px
+- `perspective: 800px` sur le conteneur `mx-auto` — point de fuite centré sur le plateau, effet tunnel léger
+- `transformStyle: 'preserve-3d'` sur les divs intermédiaires
 
-**Cellules**
-- Fond : `gradient` de `SquareConfig` ou `rgba(255,255,255,0.06)` si absent
-- Bordure : blanche `0.95` si case active, blanche `0.10` sinon
-- Emoji type en `fontSize: 18`
-- Animation active : scale pulse `[1, 1.07, 1]` en boucle Infinity / scale flash `[1, 1.2, 1]` + glow blanc pendant l'animation de déplacement
+**Rangées inversées**
+```ts
+[...BOARD_LAYOUT].reverse().map((row, rowIndex) => {
+  const origRowIndex = BOARD_LAYOUT.length - 1 - rowIndex;
+  // ...
+})
+```
+Case 0 (Départ) en bas/proche du joueur → case 23 (Arrivée) en haut/loin. Sens Sonic 3D Blast.
 
-**Pions**
-- `AnimatePresence` + `layoutId` sur chaque pion → animation spring d'entrée/sortie sur chaque case
-- Entrée : `scale: 0.4, opacity: 0` → `scale: 1, opacity: 1` (spring stiffness 400, damping 22)
-- N pions sur la même case s'affichent côte à côte
+**Surface du plateau**
+```ts
+background: 'linear-gradient(145deg, #4a2010 0%, #2e1208 55%, #1c0a05 100%)'
+border: '1.5px solid rgba(200,130,50,0.45)'
+boxShadow: '0 0 28px rgba(160,80,20,0.45), inset 0 0 40px rgba(0,0,0,0.5)'
+inset: -22   // dépasse les cases de 22px tout autour
+```
+Acajou chaud — contraste thermique garanti contre les fonds de zone froids (vert/bleu/violet).
 
-**Flèches de direction**
-- Optionnelles (`layout.snake === true`)
-- `→` ou `←` selon la parité de la ligne, aligné à droite/gauche
+**Pions (PawnToken)**
+- Token circulaire 22px coloré (`p0Color` / `p1Color`) avec emoji
+- Anti-transform : `rotateZ(-45deg) rotateX(-45deg) scale(1.4)` → lisible en vue ISO
+- Pulse au repos sur case active, spring stiffness 500 damping 26
 
-**Légende**
-- `BoardLegend` exporté séparément, passé via prop `legend?: LegendEntry[]`
-- Chaque entrée : carré coloré (10px, borderRadius 3) + emoji + label
+**Overflow mobile**
+- `overflowX: hidden` sur le wrapper externe
+- `maxWidth: 380, padding: '8px 16px 48px'`
 
-### Limitations actuelles
+### Ce qui a été tenté et abandonné
+
+**Faces CSS 3D** (`rotateX(-90deg)` / `rotateY(90deg)`) — trop fragiles :
+- Z-ordering cassé avec `preserve-3d` + Framer Motion
+- Ombres qui "remontent vers le ciel" après inversion des rangées + rotateX élevé
+- Remplacées par `inset box-shadow` → puis supprimées (artefacts directionnels)
+- **Résolution prévue** : Niveau 3 R3F (lumière réelle, ContactShadows)
+
+### Limitations restantes
 
 | Problème | Impact |
 |----------|--------|
-| Vue de dessus, projection orthographique | Pas de profondeur — c'est une feuille de papier |
-| Cases toutes de la même forme (rectangles) | Pas de distinction visuelle forte entre les types |
-| Le chemin parcouru n'est pas tracé | On ne voit pas d'où on vient |
-| Les pions sont des emojis dans un carré arrondi | Peu de présence physique |
-| Le déplacement du pion est une mise à jour de position | Pas d'animation de "vol" entre cases (le pion n'existe pas entre les cases) |
-| La grille ne communique pas l'intensité croissante | Toutes les zones ont le même visuel |
+| Pas de trail de progression | On ne voit pas le chemin parcouru |
+| Déplacement pion = téléportation | Pas de saut visuel entre cases |
+| Pas de distinction visuelle par zone | Toutes les cases ont le même poids |
 
 ---
 
-## Vers 2026
+## Niveau 2 — Chemin lumineux + animation arc ← **EN COURS**
 
-### Niveau 1 — Vue isométrique CSS (zéro nouvelle dép, 3–5 jours)
+### Trail de progression
 
-La projection isométrique transforme une grille plate en monde 2.5D. Chaque case "se soulève" du plan — on passe d'un tableur à un jeu de plateau physique.
-
-**Transformation CSS globale**
+Un SVG superposé en `position: absolute` sur le conteneur ISO trace le chemin parcouru. Les cases visitées s'allument progressivement.
 
 ```tsx
-// Appliquée au conteneur de la grille
-const ISO_TRANSFORM = `
-  rotateX(45deg)
-  rotateZ(45deg)
-  scale(0.72)
-`;
-
-// Les cellules gardent leur forme — la projection iso est portée par le parent
-<div style={{ transform: ISO_TRANSFORM, transformOrigin: 'center center' }}>
-  {/* grille normale */}
-</div>
-```
-
-**Faces latérales des cases**
-
-Pour créer l'illusion de volume sur chaque case, deux pseudo-éléments (ou `<div>`) simulent les faces gauche et basse :
-
-```tsx
-// Face gauche (ombre)
-<div style={{
-  position: 'absolute',
-  left: 0, bottom: -depth,
-  width: '100%', height: depth,
-  background: 'rgba(0,0,0,0.35)',
-  transform: 'rotateX(-90deg)',
-  transformOrigin: 'bottom center',
-}} />
-
-// Face droite (lumière)
-<div style={{
-  position: 'absolute',
-  right: -depth, top: 0,
-  width: depth, height: '100%',
-  background: 'rgba(255,255,255,0.12)',
-  transform: 'rotateY(90deg)',
-  transformOrigin: 'right center',
-}} />
-```
-
-**Cases spéciales surélevées**
-
-Les cases Accord, Complicité et Arrivée ont une `depth` plus grande → elles ressortent du plan, attirant l'œil naturellement.
-
-```ts
-const SQUARE_DEPTH: Record<SquareKind, number> = {
-  normal:  8,
-  start:  12,
-  end:    16,
-  special: 14,
-};
-```
-
-**Pions**
-
-En vue iso, les pions doivent être "anti-transformés" pour rester lisibles :
-
-```tsx
-<motion.span style={{
-  display: 'inline-block',
-  transform: `rotateZ(-45deg) rotateX(-45deg) scale(1.4)`,
-  fontSize: 18,
-}}>
-  {pion.emoji}
-</motion.span>
-```
-
----
-
-### Niveau 2 — Chemin lumineux + animation de déplacement (1–2 jours)
-
-**Trail de progression**
-
-Un SVG superposé à la grille trace le chemin parcouru par chaque joueur. Les cases visitées ont un gradient de couleur qui s'estompe vers le présent.
-
-```tsx
-// SVG overlay — même dimensions que la grille
-// Polyline calculée depuis les positions visitées (history)
-<svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+// Overlay SVG — position absolute sur le conteneur ISO, pointerEvents: none
+<svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible' }}>
   <polyline
-    points={visitedSquares.map(idx => `${centerX(idx)},${centerY(idx)}`).join(' ')}
-    stroke={`url(#trail-gradient)`}
+    points={history.map(idx => `${centerX(idx)},${centerY(idx)}`).join(' ')}
+    stroke={`url(#trail-${playerId})`}
     strokeWidth={3}
     fill="none"
     strokeLinecap="round"
     strokeDasharray="4 8"
-    opacity={0.45}
+    opacity={0.5}
   />
   <defs>
-    <linearGradient id="trail-gradient">
+    <linearGradient id={`trail-${playerId}`}>
       <stop offset="0%" stopColor="transparent" />
-      <stop offset="100%" stopColor={player.color} />
+      <stop offset="100%" stopColor={playerColor} />
     </linearGradient>
   </defs>
 </svg>
 ```
 
-**Animation de déplacement "arc"**
+**Calcul des centres** : chaque case a une position dans la grille. `centerX(idx)` et `centerY(idx)` se calculent depuis l'index, le nombre de colonnes et la taille des cases.
 
-Plutôt qu'un simple changement de position, le pion décrit un arc entre les cases — comme un vrai pion qui saute.
+### Animation arc
+
+Le pion saute d'une case à l'autre via `useAnimationControls` de Framer Motion :
 
 ```tsx
-// Pour chaque case franchie (hop)
 await controls.start({
-  x: [fromX, midX, toX],   // position interpolée
-  y: [fromY, midY - 24, toY], // arc : monte au milieu du saut
+  x: [fromX, midX, toX],
+  y: [fromY, midY - 28, toY],  // arc : monte au milieu
   scale: [1, 1.3, 1],
   transition: { duration: 0.18, ease: 'easeInOut' },
 });
@@ -171,83 +113,43 @@ vibrate(30);
 
 ---
 
-### Niveau 3 — React Three Fiber isométrique (avancé)
+## Niveau 3 — React Three Fiber (avancé)
 
-Même approche que le dé — un canvas WebGL pour le plateau.
-
-**Ce que R3F apporte**
-
-| Feature | CSS iso | R3F |
-|---------|---------|-----|
-| Lumière sur les cases | Simulée (gradient) | Réelle (ambiant + directionnel) |
+| Feature | CSS iso actuel | R3F |
+|---------|---------------|-----|
+| Lumière sur les cases | Absente (faces CSS abandonnées) | Réelle (ambiant + directionnel) |
 | Ombre des pions | Absente | ContactShadows |
 | Cases avec matière | Gradient CSS | MeshStandardMaterial |
-| Hover 3D | Scale CSS | Elevation + glow dynamique |
+| Faces latérales | Abandonnées (z-order) | Automatiques (géométrie 3D) |
 | Brouillard de distance | Impossible | `<fog attach="fog" />` |
-
-**Matière des cases**
-
-```tsx
-// Case normale
-<MeshStandardMaterial color={squareColor} roughness={0.6} metalness={0.1} />
-
-// Case Accord (spéciale)
-<MeshStandardMaterial
-  color="#60a5fa"
-  roughness={0.2}
-  metalness={0.4}
-  emissive="#1a3a6a"
-  emissiveIntensity={0.3}
-/>
-```
-
-**Pions 3D**
-
-Remplacer l'emoji par une sphère coloriée ou un token rond avec le prénom gravé :
-```tsx
-<mesh position={[x, y, 0.6]}>
-  <sphereGeometry args={[0.28, 32, 32]} />
-  <MeshPhysicalMaterial
-    color={player.color}
-    clearcoat={1}
-    clearcoatRoughness={0}
-    metalness={0.1}
-  />
-</mesh>
-```
 
 ---
 
-### Tableau récap
+## Tableau récap
 
-| Feature | Maintenant | Niveau 1 | Niveau 2 | Niveau 3 |
-|---------|-----------|---------|---------|---------|
-| Grille serpentin | ✅ | ✅ | ✅ | ✅ |
-| Vue isométrique | ❌ | ✅ CSS | ✅ | ✅ WebGL |
-| Cases avec volume | ❌ | ✅ pseudo-3D | ✅ | ✅ vrai 3D |
-| Cases surélevées selon type | ❌ | ✅ | ✅ | ✅ |
+| Feature | Avant | Niveau 1 ✅ | Niveau 2 | Niveau 3 |
+|---------|-------|-----------|---------|---------|
+| Vue isométrique | ❌ | ✅ CSS 68°+perspective | ✅ | ✅ WebGL |
+| Surface plateau | ❌ | ✅ acajou | ✅ | ✅ PBR |
+| Sens Sonic (départ bas) | ❌ | ✅ rangées inversées | ✅ | ✅ |
+| Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto R3F |
 | Trail de progression | ❌ | ❌ | ✅ SVG | ✅ |
-| Arc de déplacement pion | ❌ | ❌ | ✅ | ✅ physique |
-| Matière + lumière | ❌ | simulée | simulée | ✅ PBR |
-| Pions 3D | ❌ | emoji iso | emoji iso | ✅ mesh |
+| Arc de déplacement | ❌ | ❌ | ✅ | ✅ physique |
+| Pions 3D | ❌ | token circulaire | token + arc | ✅ mesh |
 | Légende | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
 ## Notes d'implémentation
 
-**Ordre des transformations CSS iso**
+**Angle rotateX**
+L'angle 68° a été trouvé empiriquement. Les standards jeux mobiles (Unity/Godot) utilisent 30°, mais 30° donne un "panneau en biais" sans perspective. La combinaison `rotateX(68deg) + perspective: 800px` donne l'effet sol voulu.
 
-L'ordre `rotateX` → `rotateZ` est critique. L'inverser donne un résultat différent. Toujours tester avec un conteneur carré parfait au début.
+**Perspective**
+Sans `perspective` sur le parent, la projection est orthographique — le plateau flotte comme un panneau. `800px` donne un effet tunnel léger. Valeurs de référence : `500px` = fort, `1200px` = subtil.
 
-**Clipping en vue iso**
+**Overflow mobile**
+`rotateX(68deg) rotateZ(45deg)` crée un losange plus large que le rectangle d'origine. `overflowX: hidden` + `maxWidth: 380` + `scale(0.78)` résout le dépassement sur iPhone 15 (390px).
 
-La projection iso peut faire "sortir" le plateau du viewport. Prévoir `overflow: hidden` sur le parent avec un padding compensatoire, ou ajuster le `scale()` dynamiquement (`useContainerSize` hook).
-
-**Accessibilité**
-
-En vue iso, les lecteurs d'écran ne voient pas la disposition visuelle. Maintenir un tableau HTML caché (`aria-hidden="false"`, visuellement `hidden`) avec les positions des joueurs pour Screen Reader.
-
-**Désactivation sur petits écrans**
-
-Sous 360px de largeur, la vue iso peut être trop comprimée. Fallback sur la vue 2D actuelle via `useMediaQuery('(max-width: 360px)')`.
+**Faces CSS 3D**
+`transformStyle: preserve-3d` + faces `rotateX(-90deg)` / `rotateY(90deg)` : instable à rotateX élevé + rangées inversées. Reporter au Niveau 3 R3F où la géométrie gère ça automatiquement.
