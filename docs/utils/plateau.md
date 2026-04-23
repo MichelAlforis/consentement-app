@@ -8,43 +8,38 @@
 
 ---
 
-## État actuel — Niveau 1 ✅ livré
+## Niveau 1 ✅ livré
 
 ### Ce qui tourne
 
 **Vue isométrique CSS**
 ```ts
-// Board.tsx
-const ISO_TRANSFORM = 'rotateX(68deg) rotateZ(45deg) scale(0.78)';
+const ISO_TRANSFORM = 'rotateX(58deg) rotateZ(45deg) scale(0.78)';
 ```
-- `rotateX(68deg)` — angle mobile games (Unity/Godot standard ~30°, mais 68° donne l'effet "sol qui s'éloigne" voulu)
+- `rotateX(58deg)` — angle empirique donnant l'effet "sol qui s'éloigne" (Sonic 3D Blast)
 - `rotateZ(45deg)` — orientation diamant classique
 - `scale(0.78)` — compression pour tenir dans un écran portrait 390px
-- `perspective: 800px` sur le conteneur `mx-auto` — point de fuite centré sur le plateau, effet tunnel léger
+- `perspective: 800px` sur le conteneur `mx-auto` — point de fuite centré, effet tunnel léger
 - `transformStyle: 'preserve-3d'` sur les divs intermédiaires
 
 **Rangées inversées**
 ```ts
-[...BOARD_LAYOUT].reverse().map((row, rowIndex) => {
-  const origRowIndex = BOARD_LAYOUT.length - 1 - rowIndex;
-  // ...
-})
+[...BOARD_LAYOUT].reverse().map((row, rowIndex) => { ... })
 ```
-Case 0 (Départ) en bas/proche du joueur → case 23 (Arrivée) en haut/loin. Sens Sonic 3D Blast.
+Case 0 (Départ) en bas/proche du joueur → case 23 (Arrivée) en haut/loin.
 
 **Surface du plateau**
 ```ts
-background: 'linear-gradient(145deg, #4a2010 0%, #2e1208 55%, #1c0a05 100%)'
-border: '1.5px solid rgba(200,130,50,0.45)'
-boxShadow: '0 0 28px rgba(160,80,20,0.45), inset 0 0 40px rgba(0,0,0,0.5)'
+background: texture grain bois + linear-gradient(145deg, #c45628, #8a3418, #582210)
+border: '2px solid rgba(240,170,60,0.85)'
+boxShadow: glow ambré externe + inset sombre
 inset: -22   // dépasse les cases de 22px tout autour
 ```
-Acajou chaud — contraste thermique garanti contre les fonds de zone froids (vert/bleu/violet).
 
 **Pions (PawnToken)**
-- Token circulaire 22px coloré (`p0Color` / `p1Color`) avec emoji
-- Anti-transform : `rotateZ(-45deg) rotateX(-45deg) scale(1.4)` → lisible en vue ISO
-- Pulse au repos sur case active, spring stiffness 500 damping 26
+- SVG 60px avec radialGradient (reflet + ombre) + emoji centré
+- Positionnés `position: absolute` hors du `motion.div` de la case — immunisés contre le scale de la case
+- Décalés en `translateX(±10px)` quand les deux joueurs sont sur la même case
 
 **Overflow mobile**
 - `overflowX: hidden` sur le wrapper externe
@@ -55,61 +50,45 @@ Acajou chaud — contraste thermique garanti contre les fonds de zone froids (ve
 **Faces CSS 3D** (`rotateX(-90deg)` / `rotateY(90deg)`) — trop fragiles :
 - Z-ordering cassé avec `preserve-3d` + Framer Motion
 - Ombres qui "remontent vers le ciel" après inversion des rangées + rotateX élevé
-- Remplacées par `inset box-shadow` → puis supprimées (artefacts directionnels)
 - **Résolution prévue** : Niveau 3 R3F (lumière réelle, ContactShadows)
 
-### Limitations restantes
-
-| Problème | Impact |
-|----------|--------|
-| Pas de trail de progression | On ne voit pas le chemin parcouru |
-| Déplacement pion = téléportation | Pas de saut visuel entre cases |
-| Pas de distinction visuelle par zone | Toutes les cases ont le même poids |
+**Trail SVG** — implémenté puis supprimé :
+- Polyline SVG reliant les centres des cases visitées
+- Dans un serpentin boustrophédon la ligne zigzague de façon illisible
+- Le trail n'apporte pas d'info stratégique en Jeu de l'Oie (position déjà visible via pion)
 
 ---
 
-## Niveau 2 — Chemin lumineux + animation arc ← **EN COURS**
+## Niveau 2 ✅ livré
 
-### Trail de progression
+### Améliorations visuelles plateau
 
-Un SVG superposé en `position: absolute` sur le conteneur ISO trace le chemin parcouru. Les cases visitées s'allument progressivement.
-
-```tsx
-// Overlay SVG — position absolute sur le conteneur ISO, pointerEvents: none
-<svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible' }}>
-  <polyline
-    points={history.map(idx => `${centerX(idx)},${centerY(idx)}`).join(' ')}
-    stroke={`url(#trail-${playerId})`}
-    strokeWidth={3}
-    fill="none"
-    strokeLinecap="round"
-    strokeDasharray="4 8"
-    opacity={0.5}
-  />
-  <defs>
-    <linearGradient id={`trail-${playerId}`}>
-      <stop offset="0%" stopColor="transparent" />
-      <stop offset="100%" stopColor={playerColor} />
-    </linearGradient>
-  </defs>
-</svg>
+**Texture grain bois sur le socle**
+```ts
+background: `
+  repeating-linear-gradient(89deg, transparent 0px, transparent 3px, rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px),
+  repeating-linear-gradient(86deg, transparent 0px, transparent 9px, rgba(255,255,255,0.14) 9px, rgba(255,255,255,0.14) 11px),
+  repeating-linear-gradient(91deg, transparent 0px, transparent 18px, rgba(0,0,0,0.18) 18px, rgba(0,0,0,0.18) 20px),
+  linear-gradient(145deg, #c45628 0%, #8a3418 50%, #582210 100%)
+`
 ```
+3 couches de stries à angles légèrement différents (89°, 86°, 91°) simulant fibres, reflets et cernes.
+La texture s'applique uniquement sur le socle — les cases ont leurs propres backgrounds opaques qui la masquent.
 
-**Calcul des centres** : chaque case a une position dans la grille. `centerX(idx)` et `centerY(idx)` se calculent depuis l'index, le nombre de colonnes et la taille des cases.
-
-### Animation arc
-
-Le pion saute d'une case à l'autre via `useAnimationControls` de Framer Motion :
-
-```tsx
-await controls.start({
-  x: [fromX, midX, toX],
-  y: [fromY, midY - 28, toY],  // arc : monte au milieu
-  scale: [1, 1.3, 1],
-  transition: { duration: 0.18, ease: 'easeInOut' },
-});
-vibrate(30);
+**Bordure lumineuse ambrée**
+```ts
+border: '2px solid rgba(240,170,60,0.85)'
+boxShadow: '0 0 18px rgba(240,160,40,0.55), 0 0 40px rgba(200,100,20,0.25), inset 0 0 30px rgba(0,0,0,0.45)'
 ```
+Double glow externe (halo proche + halo diffus) + inset sombre pour la profondeur.
+
+**Acajou visible**
+Gradient corrigé : `#c45628 → #8a3418 → #582210` (+40% luminosité vs version initiale quasi-noire).
+
+### Ce qui a été délégué
+
+**Animation arc pion** — délégué à l'agent dédié modélisation pion.
+Le pion saute case par case à 210ms/case (via `usePawnAnimation`) en attendant.
 
 ---
 
@@ -127,15 +106,15 @@ vibrate(30);
 
 ## Tableau récap
 
-| Feature | Avant | Niveau 1 ✅ | Niveau 2 | Niveau 3 |
+| Feature | Avant | Niveau 1 ✅ | Niveau 2 ✅ | Niveau 3 |
 |---------|-------|-----------|---------|---------|
-| Vue isométrique | ❌ | ✅ CSS 68°+perspective | ✅ | ✅ WebGL |
-| Surface plateau | ❌ | ✅ acajou | ✅ | ✅ PBR |
+| Vue isométrique | ❌ | ✅ CSS 58°+perspective | ✅ | ✅ WebGL |
+| Surface plateau | ❌ | ✅ acajou basique | ✅ grain bois + glow | ✅ PBR |
 | Sens Sonic (départ bas) | ❌ | ✅ rangées inversées | ✅ | ✅ |
 | Faces latérales | ❌ | ⚠️ abandonnées | — | ✅ auto R3F |
-| Trail de progression | ❌ | ❌ | ✅ SVG | ✅ |
-| Arc de déplacement | ❌ | ❌ | ✅ | ✅ physique |
-| Pions 3D | ❌ | token circulaire | token + arc | ✅ mesh |
+| Trail de progression | ❌ | ❌ | ❌ inutile | — |
+| Arc de déplacement | ❌ | ❌ | 🔄 agent pion | ✅ physique |
+| Pions SVG | ❌ | token basique | ✅ SVG radialGradient | ✅ mesh 3D |
 | Légende | ✅ | ✅ | ✅ | ✅ |
 
 ---
@@ -143,13 +122,16 @@ vibrate(30);
 ## Notes d'implémentation
 
 **Angle rotateX**
-L'angle 68° a été trouvé empiriquement. Les standards jeux mobiles (Unity/Godot) utilisent 30°, mais 30° donne un "panneau en biais" sans perspective. La combinaison `rotateX(68deg) + perspective: 800px` donne l'effet sol voulu.
+58° actuel (empirique). Les standards jeux mobiles (Unity/Godot) utilisent 30°, mais 30° donne un "panneau en biais" sans perspective. La combinaison `rotateX(58deg) + perspective: 800px` donne l'effet sol voulu.
 
 **Perspective**
 Sans `perspective` sur le parent, la projection est orthographique — le plateau flotte comme un panneau. `800px` donne un effet tunnel léger. Valeurs de référence : `500px` = fort, `1200px` = subtil.
 
 **Overflow mobile**
-`rotateX(68deg) rotateZ(45deg)` crée un losange plus large que le rectangle d'origine. `overflowX: hidden` + `maxWidth: 380` + `scale(0.78)` résout le dépassement sur iPhone 15 (390px).
+`rotateX(58deg) rotateZ(45deg)` crée un losange plus large que le rectangle d'origine. `overflowX: hidden` + `maxWidth: 380` + `scale(0.78)` résout le dépassement sur iPhone 15 (390px).
 
-**Faces CSS 3D**
-`transformStyle: preserve-3d` + faces `rotateX(-90deg)` / `rotateY(90deg)` : instable à rotateX élevé + rangées inversées. Reporter au Niveau 3 R3F où la géométrie gère ça automatiquement.
+**Texture grain bois**
+Uniquement visible dans les 22px de marge autour de la grille et les 5px de gap entre cases. Les cases ont des backgrounds opaques (gradients catégories dé) qui masquent complètement le bois en dessous. Opacités volontairement élevées (14–22%) car la zone visible est petite.
+
+**Trail SVG — pourquoi abandonné**
+En serpentin boustrophédon, une polyline reliant les centres des cases visitées zigzague de façon illisible (changement de direction brutal à chaque fin de rangée). Pas de valeur stratégique non plus : la position du pion suffit.
