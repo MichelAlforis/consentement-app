@@ -1,6 +1,6 @@
 # Roadmap — Consentement App
 
-> Dernière mise à jour : 22 avril 2026
+> Dernière mise à jour : 23 avril 2026
 > Légende : ✅ Fait · 🔄 En cours · 🔲 À faire · ⏸ Bloqué (backend uniquement)
 
 ---
@@ -40,6 +40,11 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Portage Capacitor (iOS / Android) | ✅ | Scripts, corrections bloquantes, haptics |
 | i18n FR / EN / ES | ✅ | React Context custom, 7 namespaces/locale |
 | Persistance localStorage | ✅ | Thème, profil, saves de partie |
+| `DynamicIcon` resolver (`iconFromName.tsx`) | ✅ | Résout `iconName: string` → composant Lucide dans Duo + PersonalSpace |
+| `WelcomeScreen` Option A | ✅ | `HeartHandshake`, gradient chaud, badge juriste, stagger progressif |
+| Tests critiques (Vitest) | ✅ | 25 tests — `useCardSession` (14) + `useGooseGame` (11) — 25/25 ✓ |
+| Hard block mineur (`personal-space`, `duo-space`) | ✅ | `useEffect` guard dans `AppShell` |
+| `ConsentCheckScreen` adulte | ✅ | 3 panneaux accordéon — checklist consentement, doutes/ressources, questions |
 
 ---
 
@@ -111,8 +116,8 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Quiz "Je sais reconnaître un consentement" | ✅ | 8 questions — `QuizConsentementScreen` |
 | Flux "Je veux avoir un rapport" | ✅ | `AccompagnementMineurScreen` |
 | Ressources d'aide (Fil Santé Jeunes) | ✅ | |
+| Hard block catégories adultes | ✅ | `useEffect` dans `AppShell` — redirige vers home si mineur accède à `personal-space` / `duo-space` |
 | Module "Ce qui peut arriver" (cas anonymisés) | 🔲 | Contenu à rédiger par le juriste |
-| Hard block catégories adultes | 🔲 | |
 
 ---
 
@@ -122,7 +127,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 | Tâche | Statut | Notes |
 |---|---|---|
-| Hub jeux avec lock premium | ✅ | `GamesHubScreen` |
+| Hub jeux avec lock premium | ✅ | `GamesHubScreen` — `FreeCard` (sobre) / `PremiumCard` (gradient riche) visuellement distincts |
 | Jeu 1 — Dé du consentement (gratuit) | ✅ | Solo + duo secret, niveau 3 premium, dé R3F Level 2 |
 | Jeu 2 — Cartes à tirer (premium) | ✅ | 84 cartes, 6 paquets, flip 3D, mode séance / libre |
 | Jeu 3 — Jeu de l'Oie (premium) | ✅ | 24 cases, 3 zones, accord à deux, sauvegarde locale |
@@ -130,13 +135,13 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ---
 
-## Bloc G — Page principale 🔲 À faire
+## Bloc G — Page principale ✅ Terminé
 
-| Tâche | Statut |
-|---|---|
-| Refonte `WelcomeScreen` — focus consentement sexuel explicite | 🔲 |
-| CTA principal vers le processus de consentement | 🔲 |
-| Messages clés : "Je consens / Je ne consens pas / J'ai des questions" | 🔲 |
+| Tâche | Statut | Notes |
+|---|---|---|
+| Refonte `WelcomeScreen` Option A | ✅ | `HeartHandshake`, gradient violet→rose, badge juriste, stagger progressif |
+| CTA principal vers le processus de consentement | ✅ | Carte "Avant de se lancer" dans `AdultHome` → `consent-check` |
+| Messages clés : "Je consens / Je ne consens pas / J'ai des questions" | ✅ | `ConsentCheckScreen` — 3 panneaux accordéon (checklist, doutes, questions) |
 
 ---
 
@@ -202,7 +207,10 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ---
 
-## V3 — Backend requis (post V2)
+## V3 — Backend requis ⛔ Conditionnel
+
+> **⚠️ Ce bloc ne démarre que si l'app est validée** : adoption suffisante sur les stores, retours utilisateurs positifs, décision go/no-go explicite.
+> Tant que la V2 n'est pas validée, ces fonctionnalités restent hors scope — pas de charge technique prématurée.
 
 | Fonctionnalité | Dépendances | Priorité |
 |---|---|---|
@@ -241,8 +249,11 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 ## Prochaines actions immédiates
 
 ```
-1. Sélecteur de langue (UI)     →  brancher sur LanguageContext.setLanguage()
-2. Refonte WelcomeScreen        →  Bloc G
-3. Build mobile                 →  npx cap add ios && npx cap add android
-4. Contenus juriste             →  Blocs D et E
+1. Sélecteur de langue (UI)     →  ✅ déjà en place (LanguagePicker dans SettingsScreen)
+2. Tests critiques              →  ✅ 25 tests — useCardSession (14) + useGooseGame (11)
+3. Bloc E hard block mineur     →  ✅ useEffect guard personal-space / duo-space
+4. Bloc G ConsentCheckScreen    →  ✅ écran adulte 3 panneaux + carte dans AdultHome
+5. Build mobile                 →  npx cap add ios && npx cap add android
+6. Contenus juriste             →  Blocs D et E
+7. Backend Supabase             →  ⛔ uniquement si validation V2 confirmée
 ```

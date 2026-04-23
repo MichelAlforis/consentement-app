@@ -16,6 +16,7 @@ export const ui = {
     loi: 'La Ley',
     quiz: 'Quiz',
     accompagnement: 'Tengo preguntas',
+    consentCheck: 'Antes de empezar',
     games: 'Juegos',
     jeuDes: 'El Dado del Consentimiento',
     jeuOie: 'Juego de la Oca',

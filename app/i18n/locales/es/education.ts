@@ -116,4 +116,33 @@ export const education = {
     },
     backHome: 'Volver',
   },
+
+  consentCheck: {
+    title: 'Antes de empezar',
+    subtitle: 'Tómate un momento para asegurarte de que los dos estáis realmente de acuerdo.',
+    yes: {
+      label: 'Consiento — y mi pareja también',
+      desc: 'Verificar juntos',
+      item1: 'Los dos podemos decir no en cualquier momento',
+      item2: 'Ninguno está bajo presión ni bajo efectos del alcohol o las drogas',
+      item3: 'Hemos hablado de lo que queremos y no queremos',
+      item4: 'Podemos cambiar de opinión durante — y el otro lo respetará',
+      item5: 'Mañana, los dos estaremos cómodos con esta decisión',
+      allChecked: 'Todo está en orden. Cuídate y cuida al otro. 💜',
+    },
+    doubt: {
+      label: 'Tengo dudas o no quiero',
+      desc: 'Esto es importante',
+      text: 'Decir no — o "ahora no" — es siempre la decisión correcta si no es lo que realmente quieres. Sin presión, sin obligación.',
+      tipsTitle: 'Frases para decirlo:',
+      tip1: '"Esta noche no me siento preparado/a."',
+      tip2: '"Necesito un poco más de tiempo."',
+      tip3: '"¿Podemos hacer otra cosa?"',
+      resource: 'Violencia sexual: línea de ayuda gratuita y anónima, disponible 24h/24',
+    },
+    questions: {
+      label: 'Tengo preguntas',
+      desc: 'Porno, ley, derechos — la información real',
+    },
+  },
 } as const;

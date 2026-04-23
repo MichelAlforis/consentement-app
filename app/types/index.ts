@@ -23,6 +23,8 @@ export type Screen =
   | 'jeu-des'
   | 'jeu-oie'
   | 'jeu-cartes'
+  // Accompagnement adulte
+  | 'consent-check'
   // Premium
   | 'premium'
   | 'theme-select';
