@@ -22,7 +22,7 @@ export default function PlateauTestPage() {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: 'linear-gradient(180deg, #082920 0%, #080f1f 100%)',
+      background: 'var(--color-bg-primary)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
