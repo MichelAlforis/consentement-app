@@ -76,8 +76,34 @@ Max 120 particules — seuil GPU mobile testé sur le dé Level 2.
 - `dpr={[1, 1.5]}` — jamais plus de 1.5× le DPR natif
 - `AdaptiveDpr pixelated` — réduit automatiquement si le GPU décroche (< 30 fps)
 - `frameloop="always"` — boucle continue nécessaire pour Float + Sparkles animés
+- `powerPreference: 'low-power'` — réduit la pression GPU sur iOS, évite le context loss sous charge thermique
 - Géométrie sphère centrale : 32×32 segments (blob) / 12×12 (orbes) — budget poly mobile
 - Même pattern que `DiceCanvas.tsx` — validé sur iOS 13+ / Android API 22+
+
+#### Correctif iOS — mount différé + CanvasBoundary (2026-04-23)
+
+**Symptôme :** sur iOS Capacitor, l'écran devenait vide après la dernière carte — aucune cinématique, aucune UI.
+
+**Cause :** AnimatePresence swap les vues de façon synchrone. Au moment du mount de `GameEndCinematic`, le parent `position: relative` n'a pas encore ses dimensions calculées par le moteur de layout WebKit. R3F recevait un Canvas 0×0, lançait une exception, et React démontait toute la branche faute d'error boundary → écran blanc.
+
+**Correction en deux couches :**
+
+```tsx
+// 1. Mount différé — 60ms pour laisser WebKit finir son layout
+const [mounted, setMounted] = useState(false);
+useEffect(() => {
+  const t = setTimeout(() => setMounted(true), 60);
+  return () => clearTimeout(t);
+}, []);
+
+// 2. Error boundary — WebGL failure → null, l'UI reste visible
+class CanvasBoundary extends Component<...> {
+  static getDerivedStateFromError() { return { crashed: true }; }
+  render() { return this.state.crashed ? null : this.props.children; }
+}
+```
+
+La cinématique est un bonus visuel : si WebGL est indisponible ou plante, l'overlay sombre et l'UI (stats, boutons) restent intacts.
 
 ---
 
