@@ -39,29 +39,31 @@ function PawnToken({ emoji, color, isAnimating, isActive, pawnKey }: PawnTokenPr
         transition={{ type: 'spring', stiffness: 500, damping: 26 }}
         style={{ display: 'flex' }}
       >
-        {/* Pulse au repos sur la case active */}
-        <motion.div
-          animate={!isAnimating && isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
-          transition={!isAnimating && isActive
-            ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.2 }
-            : { duration: 0.15 }
-          }
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: '50%',
-            background: color,
-            boxShadow: '0 3px 8px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,255,255,0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12,
-            lineHeight: 1,
-            transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)',
-          }}
-        >
-          {emoji}
-        </motion.div>
+        {/* div statique anti-ISO — jamais touché par Framer Motion */}
+        <div style={{ transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)', flexShrink: 0 }}>
+          {/* motion.div sans transform CSS — Framer Motion gère scale seul */}
+          <motion.div
+            animate={!isAnimating && isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+            transition={!isAnimating && isActive
+              ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.2 }
+              : { duration: 0.15 }
+            }
+            style={{
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: color,
+              boxShadow: '0 3px 8px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,255,255,0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              lineHeight: 1,
+            }}
+          >
+            {emoji}
+          </motion.div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
@@ -119,12 +121,13 @@ function BoardCell({
           ? '2px solid rgba(255,255,255,0.95)'
           : '1.5px solid rgba(255,255,255,0.1)',
       }}
-      className="flex flex-col items-center justify-center gap-0.5"
+      className="flex items-center justify-center"
     >
       {iconName && <DynamicIcon name={iconName} size={18} color="rgba(255,255,255,0.85)" />}
 
+      {/* Pions en absolu — n'affectent pas le centrage de l'icône */}
       {(hasP0 || hasP1) && (
-        <div style={{ display: 'flex', gap: 3, marginTop: iconName ? 2 : 0 }}>
+        <div style={{ position: 'absolute', bottom: 4, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 3 }}>
           {hasP0 && (
             <PawnToken
               emoji={p0Emoji}
