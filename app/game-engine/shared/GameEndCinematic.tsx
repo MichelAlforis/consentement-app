@@ -84,11 +84,18 @@ export interface GameEndCinematicProps {
   primaryColor: string;
   secondaryColor: string;
   intensity?: Intensity;
+  darkOverlay?: boolean;
 }
 
-export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'medium' }: GameEndCinematicProps) {
+export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'medium', darkOverlay = false }: GameEndCinematicProps) {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+      {darkOverlay && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(180deg, rgba(10,5,20,0.74) 0%, rgba(4,2,10,0.86) 100%)',
+        }} />
+      )}
       <Canvas
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}

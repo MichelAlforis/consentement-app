@@ -300,7 +300,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="relative"
           >
-            <GameEndCinematic primaryColor={colors.accent} secondaryColor="#60a5fa" intensity="medium" />
+            <GameEndCinematic primaryColor={colors.accent} secondaryColor="#60a5fa" intensity="medium" darkOverlay />
             <div className="relative z-10 flex flex-col items-center px-6 pt-8 pb-10 text-center">
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
@@ -308,15 +308,15 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
               className="text-6xl mb-5"
             >✨</motion.div>
 
-            <h3 className="text-2xl font-black mb-2" style={{ color: colors.textPrimary }}>{t('cardGame.endTitle')}</h3>
-            <p className="text-sm mb-7 leading-relaxed" style={{ color: colors.textMuted }}>
+            <h3 className="text-2xl font-black mb-2 text-white">{t('cardGame.endTitle')}</h3>
+            <p className="text-sm mb-7 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
               {s.seanceSize} {t('cardGame.cardUnit')} · {s.sessionDecks.length} {s.sessionDecks.length > 1 ? t('cardGame.decksExplored') : t('cardGame.deckExplored')}
               {s.favorites.length > 0 && ` · ❤️ ${s.favorites.length} ${s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}`}
             </p>
 
             {s.sessionDecks.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="w-full mb-6">
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>{t('cardGame.exploredDecksLabel')}</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>{t('cardGame.exploredDecksLabel')}</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {s.sessionDecks.map((d) => {
                     const c = DICE_CATEGORIES[d];
@@ -332,8 +332,9 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             )}
 
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-              className="w-full p-4 rounded-2xl bg-violet-50 border border-violet-100 mb-7">
-              <p className="text-sm text-violet-700 leading-relaxed">{endInsight}</p>
+              className="w-full p-4 rounded-2xl mb-7"
+              style={{ background: 'rgba(167,139,250,0.18)', border: '1px solid rgba(167,139,250,0.3)' }}>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>{endInsight}</p>
             </motion.div>
 
             <div className="w-full space-y-2.5">
@@ -351,7 +352,7 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 whileTap={{ scale: 0.97 }}
                 onClick={() => { s.setSessionMode('libre'); s.startPlaying(); }}
                 className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2"
-                style={{ border: `1px solid ${colors.border}`, background: colors.bgCard, color: colors.textSecondary }}
+                style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.75)' }}
               >
                 <Shuffle size={14} />{t('cardGame.continueLibre')}
               </motion.button>
