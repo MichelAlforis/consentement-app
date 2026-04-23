@@ -375,6 +375,114 @@ function BoardGridCSS({
   );
 }
 
+// ─── Icon textures (Path2D → CanvasTexture, zéro fichier externe) ────────────
+
+type SvgNode = ['path'|'polygon'|'rect'|'circle'|'line', Record<string, string>];
+
+const ICON_NODES: Record<string, SvgNode[]> = {
+  Rocket: [
+    ['path', { d: 'M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z' }],
+    ['path', { d: 'm12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z' }],
+    ['path', { d: 'M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0' }],
+    ['path', { d: 'M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5' }],
+  ],
+  Star: [['polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' }]],
+  Pause: [
+    ['rect', { x: '14', y: '4', width: '4', height: '16', rx: '1' }],
+    ['rect', { x: '6',  y: '4', width: '4', height: '16', rx: '1' }],
+  ],
+  Handshake: [
+    ['path', { d: 'm11 17 2 2a1 1 0 1 0 3-3' }],
+    ['path', { d: 'm14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4' }],
+    ['path', { d: 'm21 3 1 11h-2' }],
+    ['path', { d: 'M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3' }],
+    ['path', { d: 'M3 4h8' }],
+  ],
+  Heart: [['path', { d: 'M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z' }]],
+  Flag: [
+    ['path', { d: 'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z' }],
+    ['line', { x1: '4', x2: '4', y1: '22', y2: '15' }],
+  ],
+  Layers: [
+    ['path', { d: 'm12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z' }],
+    ['path', { d: 'm22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65' }],
+    ['path', { d: 'm22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65' }],
+  ],
+  MessageCircle: [['path', { d: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z' }]],
+  HelpCircle: [
+    ['circle', { cx: '12', cy: '12', r: '10' }],
+    ['path', { d: 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3' }],
+    ['circle', { cx: '12', cy: '17', r: '1', fill: 'true' }],
+  ],
+  Target: [
+    ['circle', { cx: '12', cy: '12', r: '10' }],
+    ['circle', { cx: '12', cy: '12', r: '6' }],
+    ['circle', { cx: '12', cy: '12', r: '2' }],
+  ],
+  Sparkles: [
+    ['path', { d: 'M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z' }],
+    ['path', { d: 'M20 3v4' }],
+    ['path', { d: 'M22 5h-4' }],
+    ['path', { d: 'M4 17v2' }],
+    ['path', { d: 'M5 18H3' }],
+  ],
+};
+
+function buildIconTexture(iconName: string): THREE.CanvasTexture | null {
+  const nodes = ICON_NODES[iconName];
+  if (!nodes) return null;
+  const S = 64;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = S;
+  const ctx = canvas.getContext('2d')!;
+  const scale = S / 24;
+  ctx.save();
+  ctx.scale(scale, scale);
+  ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillStyle   = 'rgba(255,255,255,0.92)';
+  ctx.lineWidth   = 2.8 / scale;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (const [tag, a] of nodes) {
+    ctx.beginPath();
+    if (tag === 'path')    { const p = new Path2D(a.d); ctx.stroke(p); }
+    else if (tag === 'polygon') {
+      const pts = a.points.trim().split(/[\s,]+/).map(Number);
+      pts.forEach((v, i) => i % 2 === 0 ? ctx.moveTo(v, pts[i+1]) : null);
+      ctx.moveTo(pts[0], pts[1]);
+      for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
+      ctx.closePath(); ctx.stroke();
+    }
+    else if (tag === 'rect') {
+      const rx = parseFloat(a.rx ?? '0');
+      const [x, y, w, h] = [a.x, a.y, a.width, a.height].map(parseFloat);
+      if (rx > 0 && (ctx as CanvasRenderingContext2D & { roundRect?: Function }).roundRect) {
+        (ctx as any).roundRect(x, y, w, h, rx);
+      } else { ctx.rect(x, y, w, h); }
+      ctx.fill();
+    }
+    else if (tag === 'circle') {
+      ctx.arc(parseFloat(a.cx), parseFloat(a.cy), parseFloat(a.r), 0, Math.PI * 2);
+      if (a.fill === 'true') ctx.fill(); else ctx.stroke();
+    }
+    else if (tag === 'line') {
+      ctx.moveTo(parseFloat(a.x1), parseFloat(a.y1));
+      ctx.lineTo(parseFloat(a.x2), parseFloat(a.y2));
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+const iconTextureCache = new Map<string, THREE.CanvasTexture | null>();
+function getIconTexture(name: string): THREE.CanvasTexture | null {
+  if (!iconTextureCache.has(name)) iconTextureCache.set(name, buildIconTexture(name));
+  return iconTextureCache.get(name) ?? null;
+}
+
 // ─── R3F: Cell3D ─────────────────────────────────────────────────────────────
 
 interface BoardCellR3FProps {
@@ -410,18 +518,15 @@ function Cell3D({ squareIndex, isActive, isAnimating }: BoardCellR3FProps) {
   return (
     <RoundedBox args={[CELL_S, CELL_H3, CELL_S]} radius={0.07} smoothness={5} position={[x, y, z]}>
       <meshBasicMaterial ref={matRef} color={color} />
-      {iconName && (
-        <Html
-          transform
-          occlude
-          position={[0, CELL_H3 / 2 + 0.005, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          center
-          style={{ pointerEvents: 'none' }}
-        >
-          <DynamicIcon name={iconName} size={22} color="rgba(255,255,255,0.92)" />
-        </Html>
-      )}
+      {iconName && (() => {
+        const tex = getIconTexture(iconName);
+        return tex ? (
+          <mesh position={[0, CELL_H3 / 2 + 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[0.55, 0.55]} />
+            <meshBasicMaterial map={tex} transparent depthWrite={false} />
+          </mesh>
+        ) : null;
+      })()}
     </RoundedBox>
   );
 }
@@ -645,7 +750,7 @@ function BoardGridR3F({
             <OrthographicCamera makeDefault position={CAM_POS} zoom={68} near={0.1} far={100} />
             <CameraLookAt />
 
-            <Environment preset="sunset" intensity={0.5} />
+            <Environment preset="sunset" />
             <ambientLight intensity={0.35} />
             <directionalLight
               position={[5, 8, 5]}
