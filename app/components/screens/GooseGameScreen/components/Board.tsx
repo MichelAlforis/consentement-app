@@ -5,6 +5,8 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrthographicCamera, ContactShadows, Html, RoundedBox, Environment, Billboard, Text } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three-stdlib';
+import { makeNumericFaceTexture } from '../../../../game-engine/dice/DiceCanvas';
 import { BOARD, BOARD_LAYOUT, getSquareBg, getSquareIconName, SQUARE_VISUAL } from '../../../../data/goose-game';
 import type { SquareType } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
@@ -26,6 +28,15 @@ const STEP_3   = CELL_S + GAP_3;
 const BASE_H   = 0.18;  // mahogany base height
 const BASE_PAD = 0.28;  // base extends beyond cells
 const CANVAS_H = 660;   // canvas px height
+
+// ─── Dé sur plateau ────────────────────────────────────────────────────────────
+const BOARD_DICE_S      = 0.9;
+const BOARD_DICE_REST_Y = CELL_H3 + BOARD_DICE_S / 2 + 0.04;
+const BOARD_DICE_START_Y = 5.5; // démarre hors-champ au-dessus
+const BOARD_DICE_FACE_ROT: Record<number, [number, number]> = {
+  1: [0, 0], 2: [0, -Math.PI / 2], 3: [Math.PI / 2, 0],
+  4: [-Math.PI / 2, 0], 5: [0, Math.PI / 2], 6: [0, Math.PI],
+};
 
 const CAM_DIST = 20;
 const CAM_ELEV = (40 * Math.PI) / 180;
@@ -273,6 +284,11 @@ interface BoardGridProps {
   activeSquare: number;
   isAnimating: boolean;
   animatingPos: number | null;
+  // Dé sur plateau — optionnel, uniquement R3F
+  diceResult?: number;
+  isDiceRolling?: boolean;
+  onDiceRollComplete?: () => void;
+  showDice?: boolean;
 }
 
 // ─── useWebGLSupport ──────────────────────────────────────────────────────────
@@ -702,7 +718,7 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
   const matHead = { color, roughness: 0.08, metalness: 0.10, clearcoat: 1.0,  clearcoatRoughness: 0.04, envMapIntensity: 2.0, iridescence: 0.28, iridescenceIOR: 1.5, transmission: 0.04, thickness: 0.3, emissive: color, emissiveIntensity: 0 };
 
   return (
-    <group ref={groupRef} scale={0.7}>
+    <group ref={groupRef} scale={0.65}>
       <mesh ref={shadowMeshRef} position={[0, CELL_H3 + 0.005 - PAWN_REST_Y, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.33, 20]} />
         <meshBasicMaterial ref={shadowMatRef} color="#000" transparent opacity={0.22} depthWrite={false} />
@@ -727,14 +743,126 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
   );
 }
 
+// ─── R3F: BoardDice3D ────────────────────────────────────────────────────────
+
+function cbEaseBoard(t: number): number {
+  const cx = 3*0.22, bx = 3*(0.36-0.22)-cx, ax = 1-cx-bx;
+  const cy = 3*0.61, by = 3*(1-0.61)-cy, ay = 1-cy-by;
+  let x = t;
+  for (let i = 0; i < 8; i++) { const e = ((ax*x+bx)*x+cx)*x-t, d = (3*ax*x+2*bx)*x+cx; x -= e/d; }
+  return ((ay*x+by)*x+cy)*x;
+}
+
+function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: {
+  isRolling: boolean;
+  targetFace: number;
+  onRollComplete?: () => void;
+  visible: boolean;
+}) {
+  const groupRef   = useRef<THREE.Group>(null);
+  const cumulative = useRef({ x: 0, y: 0 });
+  const bounceRef  = useRef(1);
+
+  const textures = useMemo(
+    () => ([1, 2, 3, 4, 5, 6] as const).map(n => makeNumericFaceTexture(n)),
+    [],
+  );
+  const geometry = useMemo(
+    () => new RoundedBoxGeometry(BOARD_DICE_S, BOARD_DICE_S, BOARD_DICE_S, 2, 0.08),
+    [],
+  );
+  const matArray = useMemo(() => {
+    const mat = (ti: number) => new THREE.MeshPhysicalMaterial({
+      map: textures[ti], roughness: 0.22, metalness: 0,
+      clearcoat: 0.85, clearcoatRoughness: 0.08, envMapIntensity: 1.4,
+    });
+    return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
+  }, [textures]);
+
+  const anim = useRef({
+    rolling: false,
+    startX: 0, startY: 0, targetX: 0, targetY: 0,
+    elapsed: 0, duration: 1.7, done: false,
+    onComplete: undefined as (() => void) | undefined,
+    wobbleAmp: 0, wobbleFreq: 0,
+  });
+
+  useEffect(() => {
+    groupRef.current?.position.set(0, BOARD_DICE_REST_Y, 0);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isRolling || !groupRef.current) return;
+    const g = groupRef.current;
+    const [tx, ty] = BOARD_DICE_FACE_ROT[targetFace] ?? [0, 0];
+    const baseX = Math.round(cumulative.current.x / (Math.PI * 2)) * Math.PI * 2;
+    const baseY = Math.round(cumulative.current.y / (Math.PI * 2)) * Math.PI * 2;
+    const finalX = baseX + Math.PI * 6 + tx;
+    const finalY = baseY + Math.PI * 4 + ty;
+    cumulative.current = { x: finalX, y: finalY };
+    g.position.y = BOARD_DICE_START_Y;
+    anim.current = {
+      rolling: true,
+      startX: g.rotation.x, startY: g.rotation.y,
+      targetX: finalX, targetY: finalY,
+      elapsed: 0, duration: 1.7, done: false,
+      onComplete: onRollComplete,
+      wobbleAmp: (Math.random() - 0.5) * 0.18,
+      wobbleFreq: 8 + Math.random() * 4,
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRolling, targetFace]);
+
+  useFrame((_, delta) => {
+    const a = anim.current;
+    const g = groupRef.current;
+    if (!g) return;
+
+    if (a.rolling && !a.done) {
+      a.elapsed = Math.min(a.elapsed + delta, a.duration);
+      const t = a.elapsed / a.duration;
+      const eased = cbEaseBoard(t);
+      g.rotation.x = a.startX + (a.targetX - a.startX) * eased;
+      g.rotation.y = a.startY + (a.targetY - a.startY) * eased;
+      g.rotation.z = a.wobbleAmp * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
+      g.position.y = BOARD_DICE_START_Y + (BOARD_DICE_REST_Y - BOARD_DICE_START_Y) * eased;
+      if (t >= 1 && !a.done) {
+        a.done = true; a.rolling = false;
+        g.rotation.z = 0; g.position.y = BOARD_DICE_REST_Y;
+        bounceRef.current = 0;
+        a.onComplete?.();
+      }
+    }
+
+    if (bounceRef.current < 1) {
+      bounceRef.current = Math.min(bounceRef.current + delta / 0.28, 1);
+      const b = bounceRef.current;
+      const sy = b < 0.35 ? 1 - 0.30*(b/0.35)
+        : b < 0.70  ? 0.70 + 0.42*((b-0.35)/0.35)
+        : 1.12 - 0.12*((b-0.70)/0.30);
+      g.scale.set(1, sy, 1);
+    }
+  });
+
+  return (
+    <group ref={groupRef} visible={visible}>
+      <mesh geometry={geometry} material={matArray} castShadow receiveShadow />
+      <mesh position={[0, CELL_H3 - BOARD_DICE_REST_Y + 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[BOARD_DICE_S * 0.42, 24]} />
+        <meshBasicMaterial color="#000" transparent opacity={0.18} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
 // ─── BoardGridR3F ─────────────────────────────────────────────────────────────
 
 function BoardGridR3F({
   displayPos0, displayPos1,
   p0Color, p1Color,
   activeSquare, isAnimating,
+  diceResult, isDiceRolling, onDiceRollComplete, showDice,
 }: BoardGridProps) {
-  // Fixed Z offset per pawn — évite le bug de double animation lors du same-cell
 
   return (
     <div style={{ overflowX: 'hidden', width: '100%' }}>
@@ -777,6 +905,15 @@ function BoardGridR3F({
 
               <Pawn3D squareIndex={displayPos0} color={p0Color} xOffset={-0.28} zOffset={0.28}  isActive={displayPos0 === activeSquare} />
               <Pawn3D squareIndex={displayPos1} color={p1Color} xOffset={ 0.28} zOffset={-0.28} isActive={displayPos1 === activeSquare} />
+
+              {diceResult !== undefined && (
+                <BoardDice3D
+                  isRolling={isDiceRolling ?? false}
+                  targetFace={diceResult}
+                  onRollComplete={onDiceRollComplete}
+                  visible={showDice ?? false}
+                />
+              )}
 
               <ContactShadows
                 position={[0, -(BASE_H + 0.02), 0]}
