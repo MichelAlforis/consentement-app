@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import { Trophy, Handshake, Leaf, Waves, Sparkles, Heart } from 'lucide-react';
 import { Player } from '../types';
 import { useTranslation } from '../../../../i18n';
 import { GameEndCinematic } from '../../../../game-engine/shared/GameEndCinematic';
@@ -16,10 +17,10 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
   const cinematicIntensity = accordsCount >= 4 ? 'high' : accordsCount >= 2 ? 'medium' : 'low' as const;
 
   const endMessages = [
-    { threshold: 0,        text: t('gooseGame.end.msg0'), icon: '🌱' },
-    { threshold: 2,        text: t('gooseGame.end.msg1'), icon: '🌊' },
-    { threshold: 4,        text: t('gooseGame.end.msg2'), icon: '✨' },
-    { threshold: Infinity, text: t('gooseGame.end.msg3'), icon: '💜' },
+    { threshold: 0,        text: t('gooseGame.end.msg0'), icon: <Leaf size={20} /> },
+    { threshold: 2,        text: t('gooseGame.end.msg1'), icon: <Waves size={20} /> },
+    { threshold: 4,        text: t('gooseGame.end.msg2'), icon: <Sparkles size={20} /> },
+    { threshold: Infinity, text: t('gooseGame.end.msg3'), icon: <Heart size={20} /> },
   ];
 
   const msg = endMessages.findLast(m => accordsCount > m.threshold) ?? endMessages[0];
@@ -43,7 +44,7 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
         initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="pt-4"
       >
-        <div className="text-5xl mb-3">🏁</div>
+        <div className="mb-3 text-white/90"><Trophy size={44} /></div>
         <h2 className="text-2xl font-black mb-1">{t('gooseGame.end.title')}</h2>
         <p className="text-white/55 text-sm">{t('gooseGame.end.sub')}</p>
       </motion.div>
@@ -71,7 +72,7 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
       >
         <div className="rounded-2xl px-5 py-4 flex items-center gap-4"
           style={{ background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)' }}>
-          <span className="text-3xl">🤝</span>
+          <Handshake size={28} className="text-blue-300 shrink-0" />
           <div className="text-left">
             <div className="text-2xl font-black text-blue-300">{accordsCount}</div>
             <div className="text-xs text-blue-200/75">{accordLabel}</div>
@@ -80,7 +81,7 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
 
         <div className="rounded-2xl px-5 py-4 flex items-start gap-3"
           style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span className="text-2xl mt-0.5">{msg.icon}</span>
+          <span className="mt-0.5 text-white/70 shrink-0">{msg.icon}</span>
           <p className="text-white/80 text-sm leading-relaxed text-left">{msg.text}</p>
         </div>
 

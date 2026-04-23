@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff } from 'lucide-react';
+import { Dices, User, Users, RotateCcw, ChevronRight, Check, X, Eye, EyeOff, PartyPopper, Handshake } from 'lucide-react';
 import { diePractices, DICE_CATEGORIES } from '../../../data';
 import { Button } from '../../ui';
 import { useDiceEngine } from '../../../game-engine/dice/useDiceEngine';
@@ -326,8 +326,13 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 12, delay: 0.1 }}
-              className="text-6xl mb-4"
-            >{bothYes ? '🎉' : '🤝'}</motion.div>
+              className="mb-4"
+            >
+              {bothYes
+                ? <PartyPopper size={52} className="text-green-400" />
+                : <Handshake size={52} className="text-slate-400" />
+              }
+            </motion.div>
 
             <h3 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
               {bothYes ? t('diceGame.bothYes') : t('diceGame.notThisTime')}

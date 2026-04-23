@@ -305,8 +305,10 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 14, delay: 0.1 }}
-              className="text-6xl mb-5"
-            >✨</motion.div>
+              className="mb-5 text-white/90"
+            >
+              <Sparkles size={52} />
+            </motion.div>
 
             <h3 className="text-2xl font-black mb-2 text-white">{t('cardGame.endTitle')}</h3>
             <p className="text-sm mb-7 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
