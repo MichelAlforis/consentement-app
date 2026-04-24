@@ -12,11 +12,21 @@ const BOARD_DICE_S       = 0.675;
 const BOARD_DICE_REST_Y  = CELL_H3 + BOARD_DICE_S / 2 + 0.04;
 const BOARD_DICE_THROW_H = 0.9;
 const BOARD_DICE_ARC_H   = 1.2;
-const BOARD_DICE_ROT_DUR = 2.1;   // rotation continue au-delà du vol, finit pendant le rebond
-const BOARD_DICE_FACE_ROT: Record<number, [number, number]> = {
-  1: [0, 0], 2: [0, -Math.PI / 2], 3: [Math.PI / 2, 0],
-  4: [-Math.PI / 2, 0], 5: [0, Math.PI / 2], 6: [0, Math.PI],
+const BOARD_DICE_ROT_DUR = 2.1;
+
+// Mapping face → [rx, ry, rz] pour que la face soit sur le dessus (+Y world).
+// Matériaux : Group0(+X)="2", Group1(-X)="5", Group2(+Y)="3",
+//             Group3(-Y)="4", Group4(+Z)="1", Group5(-Z)="6"
+// Vérification : n_local = Rx(-rx)*Ry(-ry)*Rz(-rz)*(0,1,0) doit pointer vers la face
+const BOARD_DICE_FACE_ROT: Record<number, [number, number, number]> = {
+  1: [-Math.PI / 2, 0, 0],   // +Z face on top
+  2: [0, 0,  Math.PI / 2],   // +X face on top — nécessite rz
+  3: [0, 0, 0],              // +Y face on top (default)
+  4: [Math.PI, 0, 0],        // -Y face on top
+  5: [0, 0, -Math.PI / 2],   // -X face on top — nécessite rz
+  6: [Math.PI / 2, 0, 0],    // -Z face on top
 };
+
 // Origines de lancer — en dehors des bords du plateau
 const THROW_ORIGINS: [number, number][] = [
   [-4.5,  0.0], [ 4.5,  0.0],
@@ -39,7 +49,7 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
 }) {
   const groupRef      = useRef<THREE.Group>(null);
   const dieGroupRef   = useRef<THREE.Group>(null);
-  const cumulative    = useRef({ x: 0, y: 0 });
+  const cumulative    = useRef({ x: 0, y: 0, z: 0 });
   const bounceRef     = useRef(1);
   const squashRef     = useRef(0);
   const landingRef    = useRef({ x: 0, z: 0 });
@@ -48,8 +58,8 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
   const slidingRef    = useRef(false);
   const slideTimeRef  = useRef(0);
   const rotElapsedRef = useRef(BOARD_DICE_ROT_DUR); // "done" par défaut
-  const rotStartRef   = useRef({ x: 0, y: 0 });
-  const rotTargetRef  = useRef({ x: 0, y: 0 });
+  const rotStartRef   = useRef({ x: 0, y: 0, z: 0 });
+  const rotTargetRef  = useRef({ x: 0, y: 0, z: 0 });
   const lockedRef     = useRef(false); // verrou explicite — actif après convergence
 
   const textures = useMemo(
@@ -65,6 +75,7 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
       map: textures[ti], roughness: 0.45, metalness: 0,
       clearcoat: 0.4, clearcoatRoughness: 0.25,
     });
+    // +X="2", -X="5", +Y="3", -Y="4", +Z="1", -Z="6"
     return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
   }, [textures]);
 
@@ -95,15 +106,17 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
       x: origin[0] + (Math.random() - 0.5) * 0.5,
       z: origin[1] + (Math.random() - 0.5) * 0.5,
     };
-    const [tx, ty] = BOARD_DICE_FACE_ROT[targetFace] ?? [0, 0];
+    const [tx, ty, tz] = BOARD_DICE_FACE_ROT[targetFace] ?? [0, 0, 0];
     const baseX = Math.round(cumulative.current.x / (Math.PI * 2)) * Math.PI * 2;
     const baseY = Math.round(cumulative.current.y / (Math.PI * 2)) * Math.PI * 2;
+    const baseZ = Math.round(cumulative.current.z / (Math.PI * 2)) * Math.PI * 2;
     const finalX = baseX + Math.PI * 6 + tx;
     const finalY = baseY + Math.PI * 4 + ty;
-    cumulative.current = { x: finalX, y: finalY };
+    const finalZ = baseZ + tz; // pas de spins additionnels en Z — le wobble fournit le chaos visuel
+    cumulative.current = { x: finalX, y: finalY, z: finalZ };
     rotElapsedRef.current = 0;
-    rotStartRef.current  = { x: g.rotation.x, y: g.rotation.y };
-    rotTargetRef.current = { x: finalX, y: finalY };
+    rotStartRef.current  = { x: g.rotation.x, y: g.rotation.y, z: g.rotation.z };
+    rotTargetRef.current = { x: finalX, y: finalY, z: finalZ };
     g.position.set(throwRef.current.x, BOARD_DICE_THROW_H, throwRef.current.z);
     anim.current = {
       rolling: true,
@@ -124,15 +137,16 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
       a.elapsed = Math.min(a.elapsed + delta, a.duration);
       const t = a.elapsed / a.duration;
       const horizEase = 1 - Math.pow(1 - t, 2);
-      g.rotation.z = a.wobbleAmp * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
+      // Wobble additif sur la cible Z — s'annule naturellement à t=1
+      g.rotation.z = rotTargetRef.current.z + a.wobbleAmp * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
       g.position.x = throwRef.current.x + (landingRef.current.x - throwRef.current.x) * horizEase;
       g.position.z = throwRef.current.z + (landingRef.current.z - throwRef.current.z) * horizEase;
       g.position.y = BOARD_DICE_THROW_H + (BOARD_DICE_REST_Y - BOARD_DICE_THROW_H) * t
                    + BOARD_DICE_ARC_H * Math.sin(Math.PI * t);
       if (t >= 1 && !a.done) {
         a.done = true; a.rolling = false;
-        g.rotation.z = 0;
         g.position.set(landingRef.current.x, BOARD_DICE_REST_Y, landingRef.current.z);
+        // z est déjà à rotTargetRef.z (wobble = 0 à t=1) — pas de reset forcé
         const dx = landingRef.current.x - throwRef.current.x;
         const dz = landingRef.current.z - throwRef.current.z;
         groundVelRef.current = { x: (dx / a.duration) * 0.8, z: (dz / a.duration) * 0.8 };
@@ -197,6 +211,7 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
           const bias = 1 - Math.exp(-8 * delta * (1 + spd));
           g.rotation.x += (rotTargetRef.current.x - g.rotation.x) * bias;
           g.rotation.y += (rotTargetRef.current.y - g.rotation.y) * bias;
+          g.rotation.z += (rotTargetRef.current.z - g.rotation.z) * bias;
         }
       } else if (rotElapsedRef.current < BOARD_DICE_ROT_DUR) {
         // Smoothstep vol — avant atterrissage uniquement
@@ -205,22 +220,24 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
         const rotEase = rt * rt * (3 - 2 * rt);
         g.rotation.x = rotStartRef.current.x + (rotTargetRef.current.x - rotStartRef.current.x) * rotEase;
         g.rotation.y = rotStartRef.current.y + (rotTargetRef.current.y - rotStartRef.current.y) * rotEase;
-        if (rt >= 1) g.rotation.z = 0;
+        // z géré par le wobble pendant le vol — pas d'interpolation ici
       } else {
         // Verrou discret — slide fini, slerp convergé
-        // Conditionné sur l'angle résiduel pour éviter tout snap visible
+        // Conditionné sur l'angle résiduel XYZ pour éviter tout snap visible
         const ex = rotTargetRef.current.x - g.rotation.x;
         const ey = rotTargetRef.current.y - g.rotation.y;
-        if (Math.sqrt(ex * ex + ey * ey) < 0.05) {
+        const ez = rotTargetRef.current.z - g.rotation.z;
+        if (Math.sqrt(ex * ex + ey * ey + ez * ez) < 0.05) {
           g.rotation.x = rotTargetRef.current.x;
           g.rotation.y = rotTargetRef.current.y;
-          g.rotation.z = 0;
+          g.rotation.z = rotTargetRef.current.z;
           lockedRef.current = true;
         } else {
           // Cas rare : angle résiduel > seuil → slerp de rattrapage
           const bias = 1 - Math.exp(-8 * delta);
           g.rotation.x += ex * bias;
           g.rotation.y += ey * bias;
+          g.rotation.z += ez * bias;
         }
       }
     }
