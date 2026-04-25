@@ -10,6 +10,7 @@ import { EffectComposer, SelectiveBloom, Vignette, Selection, Select } from '@re
 import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import { useHaptics } from '../shared/useHaptics';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -552,8 +553,11 @@ function CardMesh({
   const isUnique = card.rarity === 'unique';
   const isRare   = card.rarity === 'rare';
 
-  const glowMat2Ref = useRef<THREE.MeshBasicMaterial>(null);
-  const revealAnim  = useRef({ active: true, elapsed: 0, duration: 0.4 });
+  const glowMat2Ref    = useRef<THREE.MeshBasicMaterial>(null);
+  const uniqueGlowRef  = useRef<THREE.MeshBasicMaterial>(null);
+  const revealAnim     = useRef({ active: true, elapsed: 0, duration: 0.4 });
+
+  const { vibrate } = useHaptics();
 
   // MeshBasicMaterial — texture affichée exactement, aucune dépendance lumière, zéro hotspot
   const backMat = useMemo(
@@ -578,14 +582,15 @@ function CardMesh({
   const triggerFlip = useCallback((toFace: boolean, cb?: () => void) => {
     const flip = flipRef.current;
     if (!flip) return;
+    vibrate(48);
     anim.current = {
       active: true, startRot: flip.rotation.y,
       targetRot: toFace ? Math.PI : 0,
       elapsed: 0, duration: flipDuration, done: false,
       bouncing: false, bounceElapsed: 0,
-      onComplete: cb,
+      onComplete: () => { vibrate(18); cb?.(); },
     };
-  }, [flipDuration]);
+  }, [flipDuration, vibrate]);
 
   const prevFlipped = useRef(isFlipped);
   useEffect(() => {
@@ -620,6 +625,11 @@ function CardMesh({
     // Second glow ring rare — respiration continue indépendante du flip
     if (isRare && glowMat2Ref.current) {
       glowMat2Ref.current.opacity = 0.12 + Math.sin(clock.getElapsedTime() * 1.4) * 0.06;
+    }
+
+    // Unique glow — shift HSL arc-en-ciel (rotation lente 25°/s → tour complet en ~14s)
+    if (isUnique && uniqueGlowRef.current) {
+      uniqueGlowRef.current.color.setHSL((clock.getElapsedTime() * 25 % 360) / 360, 1.0, 0.65);
     }
 
     // Phase flip — Y sur flipRef, wobble Z + arc Y sur outerRef (axes séparés)
@@ -682,16 +692,20 @@ function CardMesh({
 
           {/* Face group — pré-roté PI → local +Z pointe caméra quand flipRef = PI */}
           <group rotation={[0, Math.PI, 0]}>
-            {/* Glow ring dans <Select> → SelectiveBloom ne bloome QUE ce mesh */}
-            {(isRare || isUnique) && (
+            {/* Glow ring rare dans <Select> → SelectiveBloom */}
+            {isRare && (
               <Select enabled>
                 <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
-                  <meshBasicMaterial
-                    color={card.border}
-                    toneMapped={false}
-                    transparent
-                    opacity={isUnique ? 0.55 : 0.38}
-                  />
+                  <meshBasicMaterial color={card.border} toneMapped={false} transparent opacity={0.38} />
+                </mesh>
+              </Select>
+            )}
+
+            {/* Glow ring unique — iridescent HSL shift, dans <Select> pour Bloom */}
+            {isUnique && (
+              <Select enabled>
+                <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
+                  <meshBasicMaterial ref={uniqueGlowRef} color={card.border} toneMapped={false} transparent opacity={0.55} />
                 </mesh>
               </Select>
             )}
