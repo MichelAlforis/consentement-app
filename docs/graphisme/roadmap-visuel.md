@@ -11,7 +11,7 @@
 
 **L1 — Polish**
 - ✅ Grain SVG : `feTurbulence fractalNoise` opacity 0.032 — aligne la texture avec le renderer Canvas 2D
-- ⬜ Fine-tune symbole : tester opacity 0.65 vs 0.82, ajuster zone de rendu pour centrage vertical exact
+- ✅ Fine-tune symbole : opacity 0.72 — plus subtil, plus premium
 - ✅ Grille diamants : cellule 10% au lieu de 8.8% — moins dense, plus aéré
 
 **L2 — Effet matière**
@@ -49,8 +49,8 @@
 - ⬜ Haptics à `triggerFlip()` via `useHaptics()` : medium impact départ, light à l'atterrissage
 
 **L2 — Entrée scène**
-- ⬜ Reveal animation : carte entre par le bas (`position.y = -3 → 0`), `easeOutCubic` 0.4s, au mount
-- ⬜ Idle float rare : ✅ **livré** — `sin(t * 0.8) * 0.015` sur `position.y`
+- ✅ Reveal animation : carte entre par le bas (`position.y = -3 → 0`), `easeOutCubic` 0.4s, au mount
+- ✅ Idle float rare : `sin(t * 0.8) * 0.015` sur `position.y`
 
 **L3 — Pack opening**
 - ⬜ Séquence cinématique booster : cartes dos caméra → flash lumière → flip en cascade avec delay index → particules burst R3F au flip unique
@@ -66,7 +66,7 @@
 - ✅ Unique : particles emitter (`THREE.Points`, 12 points dorés, rotation 0.22 rad/s, pulse opacity)
 
 **L2 — Aura et matière**
-- ⬜ Rare : second glow ring animé (opacity `0.12 + sin(t*1.4)*0.06`) — respiration
+- ✅ Rare : second glow ring animé (opacity `0.12 + sin(t*1.4)*0.06`) — respiration
 - ⬜ Unique : shader iridescent sur glow ring (gradient arc-en-ciel rotation lente)
 - ⬜ Badge rareté : fade-in au flip (scale 0.8 → 1.0, 0.3s)
 
@@ -115,9 +115,9 @@
 
 | Sujet | L1 | L2 | L3 |
 |---|---|---|---|
-| Dos de carte | 2/3 ✅ | ⬜ | ⬜ |
+| Dos de carte | 3/3 ✅ | ⬜ | ⬜ |
 | Face de carte | 4/4 ✅ | 3/3 ✅ | ⬜ |
-| Animation | 2/3 ✅ | 1/2 ✅ (idle rare) | ⬜ |
-| Rarités | 4/4 ✅ | ⬜ | ⬜ |
+| Animation | 2/3 ✅ | 2/2 ✅ | ⬜ |
+| Rarités | 4/4 ✅ | 1/3 ✅ | ⬜ |
 | Card Collector | ⬜ | ⬜ | ⬜ |
 | Assets stores | 2/3 ✅ | fonds ✅ · Figma ⬜ | ⬜ |
