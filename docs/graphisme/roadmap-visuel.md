@@ -1,6 +1,6 @@
 # Roadmap visuelle — Plan d'amélioration 3 niveaux
 
-> Màj 2026-04-25 · 6 sujets × 3 niveaux = 18 chantiers
+> Màj 2026-04-25 (v2) · 6 sujets × 3 niveaux = 18 chantiers
 > ✅ = livré · ⬜ = à faire
 
 > **L1** = polish/quick wins (1–4h) · **L2** = feature significative (demi-journée) · **L3** = effet signature (1–3 jours)
@@ -12,7 +12,7 @@
 **L1 — Polish**
 - ✅ Grain SVG : `feTurbulence fractalNoise` opacity 0.032 — aligne la texture avec le renderer Canvas 2D
 - ⬜ Fine-tune symbole : tester opacity 0.65 vs 0.82, ajuster zone de rendu pour centrage vertical exact
-- ⬜ Grille diamants : cellule 10% au lieu de 8.8% — moins dense, plus aéré
+- ✅ Grille diamants : cellule 10% au lieu de 8.8% — moins dense, plus aéré
 
 **L2 — Effet matière**
 - ⬜ Shimmer animé : `@keyframes` sur l'offset du dégradé shim (SVG) ou `useFrame` (R3F) — effet satin en mouvement lent
@@ -32,9 +32,9 @@
 - ✅ Common : overlay `rgba(20,30,60,0.08)` supprimé — couleur native respire
 
 **L2 — Background per-rarity**
-- ⬜ Common : motif vague géométrique (arcs `ctx.arc` en boucle, opacity très basse)
-- ⬜ Rare : nébuleuse radiale violet/indigo (3 cercles superposés, `source-over`)
-- ⬜ Unique : texture flamme Canvas 2D animée (update texture à chaque flip)
+- ✅ Common : arcs concentriques géométriques depuis bas-centre, opacity 0.04
+- ✅ Rare : nébuleuse radiale indigo/violet — 3 blobs superposés asymétriques
+- ✅ Unique : gradient flamme chaud bas + 5 tendrilles sinusoïdaux Canvas 2D
 
 **L3 — Illustration générative**
 - ⬜ Seed depuis le texte de la carte → dessin procédural Canvas 2D unique (Lissajous, fractale légère) — chaque carte visuellement unique dans la même rareté
@@ -63,7 +63,7 @@
 - ✅ Common : overlay `rgba(20,30,60,0.08)` supprimé
 - ✅ Rare : `pointLight` pulsé `useFrame` — intensité `0.26 ± 0.08 × sin(Date.now() * 0.0014)`
 - ✅ Rare : flottement vertical idle `sin(t * 0.8) * 0.015`
-- ⬜ Unique : particles emitter simple (`THREE.Points`, 12 points dorés orbitant)
+- ✅ Unique : particles emitter (`THREE.Points`, 12 points dorés, rotation 0.22 rad/s, pulse opacity)
 
 **L2 — Aura et matière**
 - ⬜ Rare : second glow ring animé (opacity `0.12 + sin(t*1.4)*0.06`) — respiration
@@ -115,9 +115,9 @@
 
 | Sujet | L1 | L2 | L3 |
 |---|---|---|---|
-| Dos de carte | 1/3 ✅ | ⬜ | ⬜ |
-| Face de carte | 4/4 ✅ | ⬜ | ⬜ |
+| Dos de carte | 2/3 ✅ | ⬜ | ⬜ |
+| Face de carte | 4/4 ✅ | 3/3 ✅ | ⬜ |
 | Animation | 2/3 ✅ | 1/2 ✅ (idle rare) | ⬜ |
-| Rarités | 3/4 ✅ | ⬜ | ⬜ |
+| Rarités | 4/4 ✅ | ⬜ | ⬜ |
 | Card Collector | ⬜ | ⬜ | ⬜ |
 | Assets stores | 2/3 ✅ | fonds ✅ · Figma ⬜ | ⬜ |
