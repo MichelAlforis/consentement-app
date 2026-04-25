@@ -1,7 +1,50 @@
 # Card Collector — Système d'acquisition de cartes
 
-> Créé : 24 avril 2026
+> Créé : 24 avril 2026, màj 2026-04-25
 > Légende : ✅ Fait · 🔄 En cours · 🔲 À faire
+
+---
+
+## Plan d'évolution — 3 niveaux
+
+```
+Level 1 ✅          Level 2 🔲              Level 3 🔲
+──────────────      ──────────────────      ────────────────────────
+Composant R3F       Acquisition + End       Méta-jeu complet
+──────────────      ──────────────────      ────────────────────────
+CollectorCard       unlockStore             Hall of Cards
+Canvas.tsx          localStorage            (grille CSS + zoom R3F)
+
+GainedCard          computeGained           Gain depuis modules
+type + interface    Cards() pure fn         éducatifs (quiz, duo…)
+
+GameEndCinematic    Remplacer CardFlip      drawCard filtre sur
+fond R3F (orbs      CSS par Canvas R3F      ownedCards en jeu
++ sparkles)         dans step='end'         de l'oie
+
+CardUnlockReveal    Séquence flip           Deck B explicite
+placeholder vide    animée séquentielle     (juriste, app adulte)
+```
+
+### Ce que débloque chaque niveau
+
+| | Jouable | Persisté | Beau |
+|---|---|---|---|
+| **Level 1** | Non | Non | ✅ Composant prêt |
+| **Level 2** | ✅ Gain réel à la fin de séance | ✅ localStorage | ✅ Flip R3F en jeu |
+| **Level 3** | ✅ + alimenté par l'éducatif | ✅ + historique | ✅ Hall complet |
+
+### Dépendances entre niveaux
+
+```
+Level 1 (fait)
+    └── Level 2 : unlockStore + computeGainedCards
+                      └── Level 3 : Hall of Cards + modules éducatifs
+                                        └── Deck B : juriste obligatoire
+```
+
+Level 2 est autosuffisant — il ne dépend pas du juriste.
+Level 3 nécessite le contenu depth 2–3 rédigé.
 
 ---
 
