@@ -1,7 +1,7 @@
 # Système de gain de cartes — Sessions de jeu
 
 > Créé : 25 avril 2026  
-> Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · 🔲 Sprint 4 (GooseGame)
+> Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · ✅ Sprint 4 (GooseGame) · 🔲 Sprint 5 (validation E2E)
 
 ---
 
@@ -253,26 +253,33 @@ const handleGoToEnd = useCallback(() => {
 Ces deux triggers n'utilisent **pas** `computeGainedCards` — ils sont déterministes (1 carte fixe).  
 Les helpers `pickOneRare` / `pickOneUnique` sont exportés depuis `app/lib/computeGainedCards.ts`.
 
+Implémentés directement dans `processSquare` de `useGooseGame.ts` via l'API impérative de Zustand (`getState()`) — pas de re-render, pas de stale closure.
+
 ```ts
-// GooseGameScreen — Sprint 4 🔲
-import { pickOneRare, pickOneUnique } from '@/lib/computeGainedCards';
+// app/components/screens/GooseGameScreen/hooks/useGooseGame.ts ✅
 
-const { ownedCards, unlockCards } = useUnlockStore();
-const ownedIds = new Set(ownedCards.map((c) => c.id));  // Set<string> requis
+// Case complicite
+case 'complicite': {
+  // ... setStep, triggerConfetti ...
+  const { ownedCards, unlockCards } = useUnlockStore.getState();
+  const ownedIds = new Set(ownedCards.map((c) => c.id));
+  const rareCard = pickOneRare(collectorCards, ownedIds);
+  if (rareCard) unlockCards([{ id: rareCard.id, rarity: 'rare', gainedOn: new Date().toISOString(), unlockedBy: 'goose-complicite' }]);
+  return;
+}
 
-// Case complicite atteinte
-const handleComplicite = () => {
-  const card = pickOneRare(collectorCards, ownedIds);
-  if (card) unlockCards([{ id: card.id, rarity: 'rare', gainedOn: new Date().toISOString(), unlockedBy: 'goose-complicite' }]);
-};
-
-// Fin de partie Slow (premium uniquement)
-const handleSlowEnd = () => {
-  if (!isPremium) return;
-  const card = pickOneUnique(collectorCards, ownedIds);
-  if (card) unlockCards([{ id: card.id, rarity: 'unique', gainedOn: new Date().toISOString(), unlockedBy: 'goose-slow' }]);
-};
+// Fin de partie (arrivée — GooseGame est déjà premium-gaté)
+case 'arrivee': {
+  // ... setPhase('end'), vibrate ...
+  const { ownedCards, unlockCards } = useUnlockStore.getState();
+  const ownedIds = new Set(ownedCards.map((c) => c.id));
+  const uniqueCard = pickOneUnique(collectorCards, ownedIds);
+  if (uniqueCard) unlockCards([{ id: uniqueCard.id, rarity: 'unique', gainedOn: new Date().toISOString(), unlockedBy: 'goose-slow' }]);
+  return;
+}
 ```
+
+> `GooseGameInner` n'est rendu que si `isPremium === true` — le guard dans `GooseGameScreen` garantit le contexte premium sans passer `isPremium` plus profond.
 
 ---
 
@@ -366,8 +373,8 @@ La déduplication dans `unlockCards` garantit qu'une carte ne peut apparaître q
 |---|---|
 | `app/components/screens/CardGame/index.tsx` | `handleGoToEnd` utilise `ComputeParams` + `collectorCards` — commit `a61af24` |
 
-### 🔲 Sprint 4 — GooseGame
+### ✅ Sprint 4 — GooseGame branché
 
 | Fichier | Modification |
 |---|---|
-| `app/components/screens/GooseGame/index.tsx` | Triggers `complicite` et `fin Slow` via `pickOneRare` / `pickOneUnique` |
+| `app/components/screens/GooseGameScreen/hooks/useGooseGame.ts` | `processSquare` — `case 'complicite'` → `pickOneRare` + `unlockCards` ; `case 'arrivee'` → `pickOneUnique` + `unlockCards` — commit `3eb9f7e` |

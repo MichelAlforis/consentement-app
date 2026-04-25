@@ -2,7 +2,7 @@
 
 > 25 avril 2026  
 > Référence technique : `card-gain-session.md`  
-> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 🔲 · Sprint 5 🔲
+> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 🔲
 
 ---
 
@@ -182,30 +182,32 @@ Flux visuel
 
 ---
 
-### Module E — Triggers `GooseGameScreen` 🔲
+### Module E — Triggers `GooseGameScreen` ✅
 
 **Responsabilité :** déclencher les gains depuis le jeu de l'oie  
-**Fichier cible :** `app/components/screens/GooseGame/index.tsx` (ou équivalent)
+**Fichier :** `app/components/screens/GooseGameScreen/hooks/useGooseGame.ts` — implémenté (commit `3eb9f7e`)
 
 ```
+Implémentation réelle — dans processSquare() via Zustand getState() impératif
+
 Trigger 1 — Case complicite
-  Condition : case.type === 'complicite'
-  Action    : pickOneRare(collectorCards, alreadyOwned)    (depuis computeGainedCards.ts)
-              → unlockCards([{ id, rarity: 'rare', gainedOn, unlockedBy: 'goose-complicite' }])
-  Affichage : toast ou CardUnlockReveal inline (à décider)
+  case 'complicite':
+    const { ownedCards, unlockCards } = useUnlockStore.getState();
+    const ownedIds = new Set(ownedCards.map(c => c.id));
+    const rareCard = pickOneRare(collectorCards, ownedIds);
+    if (rareCard) unlockCards([{ id, rarity: 'rare', gainedOn, unlockedBy: 'goose-complicite' }]);
 
-Trigger 2 — Fin de partie Slow
-  Condition : gameMode === 'slow' && isPremium
-  Action    : pickOneUnique(collectorCards, alreadyOwned)
-              → unlockCards([{ id, rarity: 'unique', gainedOn, unlockedBy: 'goose-slow' }])
-  Affichage : idem GameEndCinematic si disponible
+Trigger 2 — Fin de partie (arrivée)
+  case 'arrivee':
+    const { ownedCards, unlockCards } = useUnlockStore.getState();
+    const ownedIds = new Set(ownedCards.map(c => c.id));
+    const uniqueCard = pickOneUnique(collectorCards, ownedIds);
+    if (uniqueCard) unlockCards([{ id, rarity: 'unique', gainedOn, unlockedBy: 'goose-slow' }]);
 
-Note : ces triggers n'utilisent PAS computeGainedCards — pick déterministe, 1 carte fixe.
-       pickOneRare / pickOneUnique sont exportés depuis app/lib/computeGainedCards.ts.
+Note : GooseGameInner est rendu uniquement si isPremium === true (guard dans GooseGameScreen)
+       → pas besoin de passer isPremium plus profond dans le hook.
+       getState() impératif → pas de re-render, pas de stale closure.
 ```
-
-**Dépendances :** Module A + C  
-**Peut démarrer en parallèle** de Module D si Module A est prêt.
 
 ---
 
@@ -245,38 +247,29 @@ Sprint 2 se réduit donc aux **tests uniquement**.
 
 ---
 
-### Sprint 3 — Branchement `CardGameScreen` 🔲
+### Sprint 3 — Branchement `CardGameScreen` ✅ *(commit `a61af24`)*
 
-| # | Tâche | Fichier | Critère d'acceptation |
+| # | Tâche | Fichier | Résultat |
 |---|---|---|---|
-| 3.1 | Importer `useUnlockStore` | `CardGame/index.tsx` | Destructurer `ownedCards`, `sessionCount`, `unlockCards`, `incrementSessionCount` |
-| 3.2 | Importer `collectorCards` | idem | Données disponibles localement sans fetch |
-| 3.3 | Migrer `gainedCards` en state interne | idem | `useState<GainedCard[]>([])` — prop externe peut être retirée |
-| 3.4 | Créer `handleSeanceDone` | idem | compute → `incrementSessionCount` → `unlockCards(ownedCards)` → `setGainedCards(gained)` → `goToEnd` |
-| 3.5 | Brancher sur `isSeanceDone` | idem | Le bon handler déclenche `handleSeanceDone` et non `goToEnd` directement |
-| 3.6 | `gainedCards` passe à `GameEndCinematic` | idem | `CardUnlockReveal` reçoit le tableau non-vide |
+| 3.1 | Importer `useUnlockStore` | `CardGame/index.tsx` | ✅ `ownedCards`, `sessionCount`, `unlockCards`, `incrementSessionCount` |
+| 3.2 | Importer `collectorCards` | idem | ✅ depuis `data/cards-collector.ts` |
+| 3.3 | `gainedCards` en state interne | idem | ✅ `useState<GainedCard[]>([])` |
+| 3.4 | `handleGoToEnd` avec compute | idem | ✅ `nextSessionCount` post-increment, `computeGainedCards`, `unlockCards`, `setGainedCards`, `goToEnd` |
 | 3.7 | Test manuel — séance 5 cartes | App en dev | Flip reveal visible, `localStorage["consentement-unlocks"]` contient l'`OwnedCard` |
-| 3.8 | Test manuel — séance 10 cartes | App en dev | Idem, + vérifier `sessionCount` incrémenté |
-
-**Durée estimée :** 2h  
-**Bloquant pour :** sprint 5
 
 ---
 
-### Sprint 4 — Triggers `GooseGameScreen` 🔲 *(parallélisable avec sprint 3)*
+### Sprint 4 — Triggers `GooseGameScreen` ✅ *(commit `3eb9f7e`)*
 
-| # | Tâche | Fichier | Critère d'acceptation |
+| # | Tâche | Fichier | Résultat |
 |---|---|---|---|
-| 4.1 | Identifier handlers cibles | `GooseGameScreen` | Localiser le handler "case complicite" et "fin partie Slow" |
+| 4.1 | Identifier handlers cibles | `GooseGameScreen/hooks/useGooseGame.ts` | ✅ `processSquare` — `case 'complicite'` + `case 'arrivee'` |
 | ~~4.2~~ | ~~Helper `pickOneRare`~~ | ~~`lib/gooseUnlockHelpers.ts`~~ | ✅ Déjà dans `app/lib/computeGainedCards.ts` |
 | ~~4.3~~ | ~~Helper `pickOneUnique`~~ | idem | ✅ Idem |
-| 4.4 | Trigger `complicite` | `GooseGameScreen` | `unlockCards([OwnedCard])` avec `unlockedBy: 'goose-complicite'` |
-| 4.5 | Trigger `fin Slow` | idem | Conditionnel `isPremium` strict — `unlockedBy: 'goose-slow'` |
-| 4.6 | Affichage feedback | idem | Toast ou `CardUnlockReveal` inline (selon disponibilité composant) |
-| 4.7 | Test manuel | App en dev | Simuler case complicite → `ownedCards` enrichi sans doublon |
-
-**Durée estimée :** 2h  
-**Dépendances :** Sprint 1 uniquement (Module A + C)
+| 4.4 | Trigger `complicite` | `useGooseGame.ts` | ✅ `unlockCards([OwnedCard])` avec `unlockedBy: 'goose-complicite'` |
+| 4.5 | Trigger `arrivée` | idem | ✅ `unlockCards([OwnedCard])` avec `unlockedBy: 'goose-slow'` — GooseGame est premium-gaté |
+| ~~4.6~~ | ~~Affichage feedback~~ | — | Reporté sprint 5+ — store enrichi, UI révèle en Hall of Cards |
+| 4.7 | Test manuel | App en dev | Case complicite → `ownedCards` enrichi sans doublon |
 
 ---
 
