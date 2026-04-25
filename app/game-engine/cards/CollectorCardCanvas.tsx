@@ -286,7 +286,7 @@ function makeBackTexture(size = 512): THREE.CanvasTexture {
   ctx.translate(symOX, symOY);
   ctx.scale(symS, symS);
   ctx.fillStyle = symGrad;
-  ctx.globalAlpha = 0.78;
+  ctx.globalAlpha = 0.72;
   ctx.fill(new Path2D(BACK_SYMBOL_PATH), 'evenodd');
   ctx.globalAlpha = 1;
   ctx.restore();
@@ -543,13 +543,17 @@ function CardMesh({
   const iridAngle = useRef(0);
   const idleT     = useRef(0);
 
-  const geometry     = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
-  const glowGeometry = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
+  const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
+  const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
+  const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.098), []);
   const backTex  = useMemo(() => makeBackTexture(), []);
   const faceTex  = useMemo(() => makeFaceTexture(card), [card]);
 
   const isUnique = card.rarity === 'unique';
   const isRare   = card.rarity === 'rare';
+
+  const glowMat2Ref = useRef<THREE.MeshBasicMaterial>(null);
+  const revealAnim  = useRef({ active: true, elapsed: 0, duration: 0.4 });
 
   // MeshBasicMaterial — texture affichée exactement, aucune dépendance lumière, zéro hotspot
   const backMat = useMemo(
@@ -597,12 +601,26 @@ function CardMesh({
     return () => clearTimeout(t);
   }, [autoFlip, triggerFlip, onFlipComplete]);
 
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     const outer = outerRef.current;
     const flip  = flipRef.current;
     const style = styleRef.current;
     const a = anim.current;
+    const rv = revealAnim.current;
     if (!outer || !flip || !style) return;
+
+    // Reveal — entrée scène depuis le bas (priorité absolue, bloque flip + idle)
+    if (rv.active) {
+      rv.elapsed = Math.min(rv.elapsed + delta, rv.duration);
+      outer.position.y = -3 + 3 * easeOutCubic(rv.elapsed / rv.duration);
+      if (rv.elapsed >= rv.duration) { rv.active = false; outer.position.y = 0; }
+      return;
+    }
+
+    // Second glow ring rare — respiration continue indépendante du flip
+    if (isRare && glowMat2Ref.current) {
+      glowMat2Ref.current.opacity = 0.12 + Math.sin(clock.getElapsedTime() * 1.4) * 0.06;
+    }
 
     // Phase flip — Y sur flipRef, wobble Z + arc Y sur outerRef (axes séparés)
     if (a.active && !a.done) {
@@ -676,6 +694,13 @@ function CardMesh({
                   />
                 </mesh>
               </Select>
+            )}
+
+            {/* Second glow ring rare — respiration lente, hors Bloom */}
+            {isRare && (
+              <mesh geometry={glowGeometry2} position={[0, 0, -0.006]}>
+                <meshBasicMaterial ref={glowMat2Ref} color={card.border} toneMapped={false} transparent opacity={0.12} />
+              </mesh>
             )}
 
             <mesh geometry={geometry} material={faceMat} position={[0, 0, 0.001]} />
