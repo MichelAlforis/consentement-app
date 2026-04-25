@@ -117,6 +117,38 @@ describe('computeGainedCards', () => {
   });
 });
 
+// ── Sprint 5 — Pool épuisé (5.3) ─────────────────────────────────────────────
+
+describe('pool épuisé', () => {
+  it('15 — toutes cartes possédées → gained=[] sans erreur', () => {
+    const allOwned = new Set(CARDS.map((c) => c.id));
+    const { gained, ownedCards } = computeGainedCards({ ...BASE, ownedIds: allOwned }, CARDS);
+    expect(gained).toHaveLength(0);
+    expect(ownedCards).toHaveLength(0);
+  });
+
+  it('16 — pool vide sur milestone × 3 + deck profond → gained=[] sans erreur', () => {
+    const allOwned = new Set(CARDS.map((c) => c.id));
+    const { gained } = computeGainedCards(
+      { ...BASE, sessionCount: 3, sessionDecks: [3], ownedIds: allOwned },
+      CARDS
+    );
+    expect(gained).toHaveLength(0);
+  });
+
+  it('17 — pas de substitution de rareté quand la rareté cible est épuisée', () => {
+    // Toutes les rares possédées : la règle de milestone ne substitue pas avec une common
+    const raresOwned = new Set(['r1', 'r2']);
+    const { gained } = computeGainedCards(
+      { ...BASE, sessionCount: 3, sessionDecks: [3], ownedIds: raresOwned },
+      CARDS
+    );
+    // Doit avoir la common garantie (règle 1), mais pas de rare (pool vide)
+    expect(gained).toHaveLength(1);
+    expect(gained[0].rarity).toBe('common');
+  });
+});
+
 // ── Helpers GooseGame ─────────────────────────────────────────────────────────
 
 describe('pickOneRare', () => {

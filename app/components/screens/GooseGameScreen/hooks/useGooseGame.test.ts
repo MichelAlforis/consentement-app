@@ -2,6 +2,19 @@ import { renderHook, act } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useGooseGame } from './useGooseGame';
 
+const { mockUnlockCards, mockGetState } = vi.hoisted(() => {
+  const mockUnlockCards = vi.fn();
+  const mockGetState = vi.fn(() => ({ ownedCards: [], unlockCards: mockUnlockCards }));
+  return { mockUnlockCards, mockGetState };
+});
+
+vi.mock('../../../../stores', () => ({
+  useUnlockStore: Object.assign(
+    vi.fn(() => ({ ownedCards: [], unlockCards: mockUnlockCards })),
+    { getState: mockGetState }
+  ),
+}));
+
 // Capture le callback onDiceLanded pour simuler un lancer dans les tests
 let capturedOnDiceLanded: (face: 1 | 2 | 3 | 4 | 5 | 6) => void = () => {};
 
@@ -50,6 +63,7 @@ function setupPlaying() {
 describe('useGooseGame', () => {
   beforeEach(() => {
     capturedOnDiceLanded = () => {};
+    mockUnlockCards.mockClear();
   });
 
   // ── Setup ──────────────────────────────────────────────────────────────────
@@ -147,5 +161,58 @@ describe('useGooseGame', () => {
     act(() => { result.current.resetToIntro(); });
     expect(result.current.phase).toBe('intro');
     expect(result.current.savedGame).toBeNull();
+  });
+});
+
+// ── Sprint 5 — Triggers gain de cartes (5.7) ──────────────────────────────────
+
+describe('Triggers gain de cartes GooseGame', () => {
+  beforeEach(() => { mockUnlockCards.mockClear(); });
+
+  it('5.7a — case complicite (index 13) → unlockCards rarity:rare + goose-complicite', () => {
+    const { result } = setupPlaying();
+    // 0 → 6 → 12 → 13 (complicite) via trois lancers
+    act(() => { capturedOnDiceLanded(6); }); // pos0=6 (normal)
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(6); }); // pos0=12 (normal)
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(1); }); // pos0=13 → complicite
+    expect(mockUnlockCards).toHaveBeenCalledOnce();
+    expect(mockUnlockCards).toHaveBeenCalledWith([
+      expect.objectContaining({ rarity: 'rare', unlockedBy: 'goose-complicite' }),
+    ]);
+  });
+
+  it('5.7b — arrivée (index 23) → unlockCards rarity:unique + goose-slow', () => {
+    const { result } = setupPlaying();
+    // 0 → 6 → 12 → 18 → 23
+    act(() => { capturedOnDiceLanded(6); }); // pos0=6 (normal)
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(6); }); // pos0=12 (normal)
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(6); }); // pos0=18 (accord)
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(6); }); // 18+6=24 → capé 23 → arrivée
+    expect(mockUnlockCards).toHaveBeenCalledOnce();
+    expect(mockUnlockCards).toHaveBeenCalledWith([
+      expect.objectContaining({ rarity: 'unique', unlockedBy: 'goose-slow' }),
+    ]);
+  });
+
+  it('5.7c — complicite avec toutes rares possédées → unlockCards non appelé', () => {
+    // IDs réels des cartes rares dans cards-collector.ts (ca-005, ca-006, ca-007)
+    const allRaresOwned = [
+      { id: 'ca-005', rarity: 'rare' as const, gainedOn: '', unlockedBy: '' },
+      { id: 'ca-006', rarity: 'rare' as const, gainedOn: '', unlockedBy: '' },
+      { id: 'ca-007', rarity: 'rare' as const, gainedOn: '', unlockedBy: '' },
+    ];
+    mockGetState.mockReturnValueOnce({ ownedCards: allRaresOwned, unlockCards: mockUnlockCards });
+    const { result } = setupPlaying();
+    act(() => { capturedOnDiceLanded(6); });
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(6); });
+    act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });
+    act(() => { capturedOnDiceLanded(1); }); // pos0=13 → complicite, pool vide
+    expect(mockUnlockCards).not.toHaveBeenCalled();
   });
 });
