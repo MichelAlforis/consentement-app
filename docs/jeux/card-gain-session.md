@@ -1,7 +1,7 @@
 # Système de gain de cartes — Sessions de jeu
 
 > Créé : 25 avril 2026  
-> Statut : 🔄 Sprint 1 ✅ · Sprint 2 (tests) en cours
+> Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · 🔲 Sprint 4 (GooseGame)
 
 ---
 
@@ -54,17 +54,22 @@ export interface GainedCard {
 
 ---
 
-### `SessionGainInput` — input de `computeGainedCards`
+### `ComputeParams` — input de `computeGainedCards`
 
 ```ts
-export interface SessionGainInput {
-  sessionDecks: number[];    // ex: [2, 5] — decks explorés dans la session
-  favorites: string[];       // ids des cartes mises en favori pendant la session
-  seanceSize: 5 | 10;
+export interface ComputeParams {
+  sessionMode: 'seance' | 'libre';  // guard — retourne [] si 'libre'
+  cardCount: number;                // doit être >= seanceSize
+  seanceSize: number;
+  sessionDecks: number[];           // ex: [2, 5] — decks explorés dans la session
+  sessionCount: number;             // APRÈS increment — incrémenté avant l'appel
+  ownedIds: Set<string>;            // ids déjà possédées (Set pour O(1))
+  favorites: string[];              // ids des cartes mises en favori pendant la session
   isPremium: boolean;
-  sessionsPlayed: number;    // avant cette session (avant increment)
 }
 ```
+
+> ⚠️ `sessionCount` est la valeur **après** increment (contrairement à l'ancienne `sessionsPlayed` qui était avant). Milestone : `sessionCount % 3 === 0`.
 
 ---
 
@@ -98,9 +103,8 @@ Clé localStorage : `consentement-unlocks`
 ```ts
 // app/lib/computeGainedCards.ts
 function computeGainedCards(
-  input: SessionGainInput,
-  collectorCards: CollectorCard[],
-  alreadyOwned: string[]          // ownedCards.map(c => c.id)
+  p: ComputeParams,
+  collectorCards: CollectorCard[]
 ): { gained: GainedCard[]; ownedCards: OwnedCard[] }
 ```
 
@@ -113,16 +117,15 @@ Aucun effet de bord. Aucun import React. Testable en Node pur.
 ### Helpers internes
 
 ```ts
-excludeOwned(cards, alreadyOwned)                          → CollectorCard[]
+excludeOwned(cards, ownedIds: Set<string>)                 → CollectorCard[]
 pickRandom<T>(arr)                                         → T | null
-pickWeightedByFavoriteDecks(candidates, sessionDecks,
-  favorites, allCards)                                     → CollectorCard | null
+pickWeighted(candidates, favorites, allCards)              → CollectorCard | null
 ```
 
 Helpers publics (utilisés par GooseGame — dans le même fichier) :
 ```ts
-pickOneRare(collectorCards, alreadyOwned)                  → CollectorCard | null
-pickOneUnique(collectorCards, alreadyOwned)                → CollectorCard | null
+pickOneRare(collectorCards, ownedIds: Set<string>)         → CollectorCard | null
+pickOneUnique(collectorCards, ownedIds: Set<string>)       → CollectorCard | null
 ```
 
 ### Règles (appliquées dans l'ordre)
@@ -134,10 +137,10 @@ pickOneUnique(collectorCards, alreadyOwned)                → CollectorCard | n
 - Si pool vide dans les decks explorés → random dans `depth 1` global
 
 **Règle 2 — Bonus multiple de 3**
-- Si `(sessionsPlayed + 1) % 3 === 0`
-- Ajouter +1 carte `rare` de `depth 2`
-- Pondérer vers les decks représentés dans les favoris
-- Ne jamais dépasser 2 cartes au total (common + rare)
+- Si `sessionCount % 3 === 0` (sessionCount déjà incrémenté)
+- Si decks profonds joués (3–6) → +1 `rare` depth 2
+- Sinon → +1 `common` depth 1 extra (pondérée favoris)
+- Ne jamais dépasser 2 cartes au total avant la règle 3
 
 **Règle 3 — Chance unique premium**
 - Si `isPremium && sessionDecks.some(d => d === 5 || d === 6)`
@@ -162,14 +165,16 @@ pickOneUnique(collectorCards, alreadyOwned)                → CollectorCard | n
 ### Schéma de décision
 
 ```
-isSeanceDone ?
-  └─ oui → pick 1 common (decks explorés, hors alreadyOwned)
+sessionMode='seance' && cardCount >= seanceSize ?
+  └─ oui → pick 1 common (decks explorés en priorité, hors ownedIds)
             │
-            └─ (sessionsPlayed+1) % 3 === 0 ?
-                  └─ oui → +1 rare (depth 2, pondérée favoris)
+            └─ sessionCount % 3 === 0 ?
+                  └─ oui → deck profond (3–6) joué ?
+                              ├─ oui → +1 rare depth 2
+                              └─ non → +1 common extra
                             │
                             └─ isPremium && deck 5|6 ?
-                                  └─ oui → rand() < 0.2 → +1 unique
+                                  └─ oui → rand() < 0.2 → +1 unique depth 3
 ```
 
 ---
@@ -208,37 +213,38 @@ unlockCards: (newCards) => {
 
 ## Branchement dans `CardGameScreen`
 
-Le calcul se déclenche **au moment de `goToEnd()`**, juste avant la transition vers le step `end`.
+✅ Implémenté dans `app/components/screens/CardGame/index.tsx`.
+
+Le calcul se déclenche sur le bouton "Terminer la séance" (`handleGoToEnd`), avant la transition vers le step `end`.
 
 ```ts
-// CardGame/index.tsx — Sprint 3
+// CardGame/index.tsx — réel
 const { ownedCards, sessionCount, unlockCards, incrementSessionCount } = useUnlockStore();
 const [gainedCards, setGainedCards] = useState<GainedCard[]>([]);
 
-const alreadyOwned = ownedCards.map((c) => c.id);
+const handleGoToEnd = useCallback(() => {
+  const ownedIds = new Set(ownedCards.map((c) => c.id));
+  const nextSessionCount = sessionCount + 1;
+  incrementSessionCount();                    // incrémenté AVANT l'appel
 
-const handleSeanceDone = useCallback(() => {
-  const { gained, ownedCards: newOwned } = computeGainedCards(
-    { sessionDecks, favorites, seanceSize, isPremium, sessionsPlayed: sessionCount },
-    collectorCards,        // depuis data/cards-collector.ts
-    alreadyOwned
-  );
+  const { gained, ownedCards: newOwned } = computeGainedCards({
+    sessionMode: s.sessionMode,
+    cardCount: s.cardCount,
+    seanceSize: s.seanceSize,
+    sessionDecks: s.sessionDecks,
+    sessionCount: nextSessionCount,           // post-increment
+    ownedIds,
+    favorites: s.favorites,
+    isPremium,
+  }, collectorCards);
 
-  incrementSessionCount();
-
-  if (newOwned.length > 0) {
-    unlockCards(newOwned);          // OwnedCard[] direct — pas de mapping
-    setGainedCards(gained);
-  }
-
-  goToEnd();
-}, [sessionDecks, favorites, seanceSize, isPremium, sessionCount, alreadyOwned]);
+  if (newOwned.length > 0) unlockCards(newOwned);
+  setGainedCards(gained);
+  s.goToEnd();
+}, [ownedCards, sessionCount, incrementSessionCount, s, unlockCards, isPremium]);
 ```
 
-`gainedCards` est ensuite transmis à `GameEndCinematic` → `CardUnlockReveal` pour le flip reveal.
-
-Le prop `gainedCards?: GainedCard[]` dans `CardGameScreenProps` devient un state interne —  
-la prop externe peut être retirée ou gardée pour les tests.
+`gainedCards` est affiché dans le step `end` via `CardUnlockReveal` (flip R3F séquentiel, 750 ms par carte).
 
 ---
 
@@ -248,22 +254,22 @@ Ces deux triggers n'utilisent **pas** `computeGainedCards` — ils sont détermi
 Les helpers `pickOneRare` / `pickOneUnique` sont exportés depuis `app/lib/computeGainedCards.ts`.
 
 ```ts
-// GooseGameScreen — Sprint 4
+// GooseGameScreen — Sprint 4 🔲
 import { pickOneRare, pickOneUnique } from '@/lib/computeGainedCards';
 
 const { ownedCards, unlockCards } = useUnlockStore();
-const alreadyOwned = ownedCards.map((c) => c.id);
+const ownedIds = new Set(ownedCards.map((c) => c.id));  // Set<string> requis
 
 // Case complicite atteinte
 const handleComplicite = () => {
-  const card = pickOneRare(collectorCards, alreadyOwned);
+  const card = pickOneRare(collectorCards, ownedIds);
   if (card) unlockCards([{ id: card.id, rarity: 'rare', gainedOn: new Date().toISOString(), unlockedBy: 'goose-complicite' }]);
 };
 
 // Fin de partie Slow (premium uniquement)
 const handleSlowEnd = () => {
   if (!isPremium) return;
-  const card = pickOneUnique(collectorCards, alreadyOwned);
+  const card = pickOneUnique(collectorCards, ownedIds);
   if (card) unlockCards([{ id: card.id, rarity: 'unique', gainedOn: new Date().toISOString(), unlockedBy: 'goose-slow' }]);
 };
 ```
@@ -314,25 +320,54 @@ La déduplication dans `unlockCards` garantit qu'une carte ne peut apparaître q
 
 | Fichier | Contenu |
 |---|---|
-| `app/stores/unlockStore.ts` | ✅ Zustand + persist — `OwnedCard`, `unlockCards`, `incrementSessionCount`, `reset` |
-| `app/data/cards-collector.ts` | ✅ 10 stubs `CollectorCard[]` (4 common, 3 rare, 2 unique Deck A, 1 stub Deck B) + helpers |
-| `app/lib/computeGainedCards.ts` | ✅ Types + pure function complète + helpers GooseGame |
+| `app/stores/unlockStore.ts` | Zustand + persist — `OwnedCard`, `unlockCards`, `incrementSessionCount`, `reset` |
+| `app/data/cards-collector.ts` | 10 stubs `CollectorCard[]` (4 common, 3 rare, 2 unique Deck A, 1 stub Deck B) + helpers |
+| `app/lib/computeGainedCards.ts` | `ComputeParams` + pure function + helpers GooseGame (`pickOneRare`, `pickOneUnique`) |
 
 ### ✅ Sprint 1 — Modifiés
 
 | Fichier | Modification |
 |---|---|
-| `app/stores/index.ts` | ✅ Export `useUnlockStore` + `OwnedCard` + `Rarity` — `resetAllData` efface `consentement-unlocks` |
+| `app/stores/index.ts` | Export `useUnlockStore` + `OwnedCard` + `Rarity` — `resetAllData` efface `consentement-unlocks` |
 
-### 🔲 À créer
+### ✅ Sprint 2 — Créés
 
 | Fichier | Contenu |
 |---|---|
-| `app/lib/computeGainedCards.test.ts` | Tests unitaires — 10 cas (Sprint 2) |
+| `app/lib/computeGainedCards.test.ts` | 14 tests (10 computeGainedCards + 4 helpers) — commit `4f2e6ad` |
 
-### 🔲 À modifier
+**Couverture Sprint 2 :**
+
+| # | Cas testé |
+|---|---|
+| 1 | 1 common retournée sur séance complète |
+| 2 | `[]` si `sessionMode='libre'` (guard) |
+| 3 | Common prise en priorité dans les decks explorés |
+| 4 | Rare sur milestone ×3 avec deck profond (3–6) |
+| 5 | Pas de rare sans milestone |
+| 6 | Unique ajoutée si premium + deck 5\|6 + `Math.random < 0.2` |
+| 7 | Unique ignorée si `Math.random ≥ 0.2` |
+| 8 | Jamais une carte déjà dans `ownedIds` |
+| 9 | Maximum 3 cartes même avec toutes les règles déclenchées |
+| 10 | `gained` et `ownedCards` synchronisés (longueur + champs) |
+| 11–12 | `pickOneRare` — retourne disponible / null si tout possédé |
+| 13–14 | `pickOneUnique` — retourne disponible / null si tout possédé |
+
+### ✅ Sprint 2 — Fusion
+
+| Fichier | Résultat |
+|---|---|
+| `app/game-engine/cards/computeGainedCards.ts` | Supprimé — remplacé par `app/lib/computeGainedCards.ts` |
+| `app/game-engine/cards/CollectorCardCanvas.tsx` | Import migré vers `../../lib/computeGainedCards` |
+
+### ✅ Sprint 3 — CardGameScreen branché
 
 | Fichier | Modification |
 |---|---|
-| `app/components/screens/CardGame/index.tsx` | Brancher `computeGainedCards` au `goToEnd()` — Sprint 3 |
-| `app/components/screens/GooseGame/index.tsx` | Ajouter triggers `complicite` et `fin Slow` — Sprint 4 |
+| `app/components/screens/CardGame/index.tsx` | `handleGoToEnd` utilise `ComputeParams` + `collectorCards` — commit `a61af24` |
+
+### 🔲 Sprint 4 — GooseGame
+
+| Fichier | Modification |
+|---|---|
+| `app/components/screens/GooseGame/index.tsx` | Triggers `complicite` et `fin Slow` via `pickOneRare` / `pickOneUnique` |
