@@ -1,4 +1,4 @@
-# Rendu des cartes — État actuel (2026-04-23, màj 2026-04-23)
+# Rendu des cartes — État actuel (2026-04-23, màj 2026-04-25)
 
 **Fichiers clés :**
 - `app/components/screens/CardGame/PlayingCard.tsx` — composant carte (tilt, foil, swipe, DeckStack, nudge)
@@ -171,3 +171,135 @@ Pour Vérité et Douceur (depth 3), canvas Three.js superposé :
 - Texture linen/coton procédurale (GLSL)
 - Reflet spéculaire directionnel (PointLight virtuel)
 - Effet ink-on-paper sur le texte
+
+---
+
+## CollectorCardCanvas R3F (màj 2026-04-25)
+
+**Fichier :** `app/game-engine/cards/CollectorCardCanvas.tsx`
+
+Composant Three.js dédié au card collector. Distinct de `PlayingCard` (CSS gameplay) — ne pas mélanger les deux contextes.
+
+### Contextes d'utilisation
+
+| Contexte | Usage |
+|---|---|
+| `GameEndCinematic` | Flip reveal dos→face, 2–3 cartes en parallèle |
+| Hall of Cards | Carte zoomée plein écran, `isFlipped=true` d'emblée |
+
+### Props
+
+```ts
+interface CollectorCardCanvasProps {
+  card: GainedCard;       // depuis CardGame/index.tsx
+  isFlipped: boolean;     // false = dos, true = face
+  size?: number;          // largeur px (défaut 160), hauteur = size × 1.5
+  autoFlip?: boolean;     // flip auto après 800ms, indépendant de isFlipped
+  onFlipComplete?: () => void;
+}
+```
+
+### Architecture scène R3F
+
+```
+Canvas (dpr [1,1.5], powerPreference low-power, frameloop demand|always)
+  camera position [0,0,2.2] fov 45
+  color background #0a0810
+  └── CardScene
+        ├── Selection (contexte SelectiveBloom)
+        ├── ambientLight 0.04
+        ├── pointLight [3.5, 4, -1.0] intensity 0.16
+        ├── pointLight [-3.0, 1, -0.5] intensity 0.06
+        ├── RarityLights — rare: violet [0,0.5,-1.5] 0.32 / unique: or+rose
+        ├── Environment preset="studio" environmentIntensity 0.12
+        ├── ContactShadows position y=-0.80, opacity 0.45, blur 2.2
+        ├── CardMesh
+        │     └── outerRef <group>   ← wobble Z + arc Y + idle scale (unique)
+        │           └── flipRef <group>   ← rotation Y 0→PI
+        │                 └── styleRef <group>   ← squash/stretch
+        │                       ├── backMesh  ShapeGeometry, MeshBasicMaterial, z +0.001
+        │                       └── faceGroup (rotation Y PI)
+        │                             ├── glowRing  ShapeGeometry 1.06×1.58 (rare/unique)
+        │                             │             dans <Select enabled> → SelectiveBloom
+        │                             └── faceMesh  ShapeGeometry, MeshBasicMaterial, z +0.001
+        └── EffectComposer
+              ├── SelectiveBloom intensity 1.20, threshold 0.30, smoothing 0.60
+              └── Vignette offset 0.40, darkness 0.50
+```
+
+**Géométrie arrondie :** `makeRoundedCardGeometry(w, h, r)` crée un `THREE.ShapeGeometry` avec coins arrondis (r=0.086 pour la carte, r=0.092 pour le glow ring). Three.js ≥0.163 stocke les UV en coordonnées brutes — le générateur les renormalise manuellement `(x+hw)/w, (y+hh)/h` après création.
+
+**Décision matériau :** `MeshBasicMaterial` — texture affichée exactement, aucune dépendance aux lumières, zéro hotspot. Les lumières de scène servent uniquement aux ombres de contact (`ContactShadows`) et à l'ambiance générale.
+
+### Textures (CanvasTexture, 512×768px)
+
+**Dos** (`makeBackTexture`)
+- Fond `#1e1b2e → #2d2640` (gradient linéaire)
+- Lignes diagonales `rgba(255,255,255,0.05)`, step 9% de size
+- Grain (bands horizontales + sparse highlights, identique Board.tsx)
+- Highlight spéculaire radial top-gauche, opacité 6%
+- Shimmer diagonal `rgba(255,255,255,0→0.055→0.09→0)`
+- Symbole "C" Path2D centré, gradient `#ddd6fe → #a78bfa → #6d28d9`, opacity 0.78
+- Bordure gradient violet→rose→violet, lineWidth 2.5, rayon 22px
+
+**Face** (`makeFaceTexture`)
+
+Ordre de composition :
+1. Gradient `card.gradient` (parsé via regex `#xxxxxx`)
+2. Grain (bands + highlights)
+3. Highlight spéculaire top-left, opacité 8%
+4. Overlay COMMON : `rgba(20,30,60,0.08)` (légère désaturation bleutée)
+5. Vignette radiale `rgba(0,0,0,0→0.42)`, rayon interne `h×0.22`
+6. UNIQUE seulement :
+   - Compression de luminance centre `rgba(0,0,0,0.28→0)`, rayon `h×0.52`
+   - Highlight directionnel top-left→bottom-right `rgba(255,255,255,0.11→0.025)` + ombre `rgba(0,0,0,0.055)`
+7. Icône `card.iconName` via `drawIconNodes` — Path2D Lucide, lineWidth `4.2/scale`, couleur `#f1f3f5`
+8. Séparateur horizontal `rgba(255,255,255,0.15)`, sous la zone icône
+9. Texte `card.text` — font `600 ~50px system-ui`, letterSpacing `size×0.012px`, strokeStyle `rgba(0,0,0,0.30)` lineWidth `size×0.0032`, fill `#f1f3f5`, shadowBlur `size×0.018`
+10. Bordure `card.border` lineWidth 5, rayon 22px → Bloom la fait briller
+11. Badge rareté (RARE / UNIQUE) en haut à droite
+    - RARE : gradient violet `#7c3aed → #a855f7`, texte blanc
+    - UNIQUE : fond `#2b1e0f`, filet `rgba(246,211,106,0.55)`, texte `#f6d36a`
+
+**Icône Path2D** (`drawIconNodes`) — 13 icônes : MessageCircle, Heart, Star, Crown, Sparkles, Flame, Zap, Eye, Lock, Gift, Music, Wind, Handshake. Dessinée directement dans `makeFaceTexture` avec `inkColor = '#f1f3f5'` (même couleur que le texte). Cache `iconCache Map` pour `buildIconTexture` (usage futur, non utilisé par la face).
+
+### Effets rareté
+
+| Rareté | Glow ring | Lumière scène | Idle animation |
+|---|---|---|---|
+| `common` | — | — | — |
+| `rare` | opacity 0.38 | violet `#7c3aed` [0,0.5,-1.5] int. 0.32 | — |
+| `unique` | opacity 0.55 | or `#f59e0b` [-1.5,1,-1] + rose `#ec4899` [1.5,-1,-1] | `scale = 1 ± 0.006 × sin(t×1.2)` |
+
+**SelectiveBloom :** seul le glow ring est dans `<Select enabled>` — le Bloom ne touche pas les textures de face/dos, garantissant la lisibilité du texte.
+
+### Animation flip
+
+- **Rotation Y** (`flipRef`) : `startRot → targetRot`, durée **0.62s**, `easeOutSnap` (easeOutBack c1=1.0, ~3.7% overshoot)
+- **Wobble Z** (`outerRef`) : `sin(πt) × 0.06` — inclinaison ~3.4° dans le sens du flip
+- **Arc Y** (`outerRef.position.y`) : `-sin(πt) × 0.18` — légère montée au pivot
+- **Squash-stretch** (`styleRef`) post-flip, 0.28s : scaleY 1→0.96→1.02→1, scaleX inverse demi-amplitude
+- **Idle UNIQUE** (`outerRef.scale`) : `sin(idleT × 1.2) × 0.006`, compteur `idleT ref` — actif hors flip/bounce
+- `triggerFlip()` par changement `isFlipped` ou `autoFlip` (setTimeout 800ms)
+- `onFlipComplete` à `t=1` (début squash)
+
+### Gestion frameloop (perf mobile)
+
+- `'always'` pendant flip + cartes `unique` (idle animation continue)
+- `'demand'` au repos pour `common` et `rare`
+- Transition : `isFlipped/autoFlip` change → `setFrameloop('always')` → flip → `onFlipComplete` → `setFrameloop('demand')`
+
+### Fallback CSS (`CSSCardFallback`)
+
+Déclenché si WebGL crash (`CanvasBoundary`) ou avant mount 60ms. Flip via `transform: rotateY` CSS, `perspective: 600px`. Utilise `DynamicIcon` pour l'icône.
+
+### Pattern mount différé
+
+`setTimeout 60ms` avant de monter le `Canvas`. Sur iOS, `AnimatePresence` swap synchroniquement — le container n'a pas ses dimensions au mount, ce qui provoque un Canvas 0×0.
+
+### Contraintes
+
+- Ne pas toucher `PlayingCard.tsx` — composant CSS gameplay, contexte différent
+- `GainedCard` type défini dans `CardGame/index.tsx` — source unique
+- Pas de store, pas de logique métier dans ce composant
+- Ne pas repasser sur `MeshPhysicalMaterial` — cause des hotspots d'éclairage incontrôlables sur mobile

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy, Dices } from 'lucide-react';
 import { DICE_CATEGORIES } from '../../../data';
@@ -10,12 +11,110 @@ import { useCardSession } from './hooks/useCardSession';
 import { PlayingCard } from './PlayingCard';
 import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 
+// Carte gagnée à afficher dans la cinématique de fin
+// Sera alimentée par unlockStore (Phase 6 card-collector)
+export interface GainedCard {
+  id: string;
+  text: string;
+  rarity: 'common' | 'rare' | 'unique';
+  gradient: string;
+  iconName: string;
+  border: string;
+}
+
+function CardFlip({ card, delay }: { card: GainedCard; delay: number }) {
+  const [flipped, setFlipped] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setFlipped(true), delay * 1000);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  return (
+    <div style={{ perspective: 600, width: 88, height: 132 }}>
+      <motion.div
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1] }}
+        style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}
+      >
+        {/* Dos */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 14,
+          background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
+          border: '2px solid rgba(255,255,255,0.12)',
+          backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Sparkles size={26} color="rgba(255,255,255,0.3)" />
+        </div>
+        {/* Face */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 14,
+          background: card.gradient, border: `2px solid ${card.border}`,
+          backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+          transform: 'rotateY(180deg)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', gap: 6, padding: '8px 6px', overflow: 'hidden',
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 13,
+            background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.3) 0%, transparent 55%)',
+            pointerEvents: 'none',
+          }} />
+          <DynamicIcon name={card.iconName} size={28} color="rgba(255,255,255,0.92)" />
+          <p style={{
+            fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,0.85)',
+            textTransform: 'uppercase', letterSpacing: '0.08em',
+            textAlign: 'center', lineHeight: 1.3, position: 'relative',
+          }}>
+            {card.text.length > 40 ? card.text.slice(0, 40) + '…' : card.text}
+          </p>
+          {card.rarity !== 'common' && (
+            <div style={{
+              position: 'absolute', top: 5, right: 5, borderRadius: 6, padding: '2px 5px',
+              background: card.rarity === 'unique'
+                ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
+                : 'linear-gradient(135deg, #7c3aed, #a855f7)',
+            }}>
+              <span style={{ fontSize: 7, fontWeight: 800, color: 'white', letterSpacing: '0.05em' }}>
+                {card.rarity === 'unique' ? 'UNIQUE' : 'RARE'}
+              </span>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
+  if (cards.length === 0) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5 }}
+      className="w-full mb-6"
+    >
+      <p className="text-xs font-bold uppercase tracking-widest mb-4 text-center"
+        style={{ color: 'rgba(255,255,255,0.45)' }}>
+        🎴 {cards.length > 1 ? `${cards.length} cartes débloquées` : 'Carte débloquée'}
+      </p>
+      <div className="flex gap-3 justify-center flex-wrap">
+        {cards.map((card, i) => (
+          <CardFlip key={card.id} card={card} delay={0.65 + i * 0.2} />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 interface CardGameScreenProps {
   isPremium: boolean;
   isAdult: boolean;
+  gainedCards?: GainedCard[]; // alimenté par unlockStore (Phase 6)
 }
 
-export function CardGameScreen({ isAdult }: CardGameScreenProps) {
+export function CardGameScreen({ isAdult, gainedCards = [] }: CardGameScreenProps) {
   const { colors, id: themeId } = useTheme();
   const { t } = useTranslation();
   const s = useCardSession(isAdult);
@@ -333,6 +432,8 @@ export function CardGameScreen({ isAdult }: CardGameScreenProps) {
                 </div>
               </motion.div>
             )}
+
+            <CardUnlockReveal cards={gainedCards} />
 
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
               className="w-full p-4 rounded-2xl mb-7"
