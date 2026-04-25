@@ -8,7 +8,7 @@
 ## Plan d'évolution — 3 niveaux
 
 ```
-Level 1 ✅          Level 2 ✅              Level 3 🔲
+Level 1 ✅          Level 2 ✅              Level 3 ✅ (visuel)
 ──────────────      ──────────────────      ────────────────────────
 Composant R3F       Acquisition + End       Méta-jeu complet
 ──────────────      ──────────────────      ────────────────────────
@@ -301,17 +301,19 @@ En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 | Duo flow complet → 5 cartes `duo` | `DuoSpaceScreen` | 🔲 |
 | CTA "Voir ma collection" dans `GameEndCinematic` | `game-engine/shared/GameEndCinematic.tsx` | 🔲 |
 
-### Phase 3 — Hall of Cards 🔲
+### Phase 3 — Hall of Cards ✅ (visuel)
 
-| Tâche | Fichier |
-|---|---|
-| `HallOfCardsScreen` — grille Deck A + Deck B | `components/screens/HallOfCardsScreen.tsx` |
-| Réutiliser pattern grille du step `pick` de `CardGameScreen` | idem |
-| Silhouette + condition lisible pour les cartes verrouillées | idem |
-| Deck B entièrement en silhouette (sauf app adulte) | idem |
-| Tap carte acquise → plein écran R3F | idem |
-| Tap carte verrouillée → condition + CTA module | idem |
-| Entrée depuis hub jeux et profil | `GamesHubScreen`, `ProfileScreen` |
+| Tâche | Fichier | Statut |
+|---|---|---|
+| Grille CSS Deck A + Deck B | `components/screens/HallOfCardsScreen.tsx` | ✅ |
+| `AcquiredCard` — gradient + texture + badge rareté | idem | ✅ |
+| `LockedCard` — silhouette + condition lisible + dots depth | idem | ✅ |
+| Deck B fond sombre + label "App adulte" si `!isAdult` | idem | ✅ |
+| Tap carte acquise → zoom `CollectorCardCanvas` R3F | idem | ✅ |
+| `ZoomOverlay` — spring entrance + texte + dismiss backdrop | idem | ✅ |
+| Compteur ownedCards / total dans le header | idem | ✅ |
+| Entrée depuis hub jeux et profil | `GamesHubScreen`, `ProfileScreen` | 🔲 autre agent |
+| Tap carte verrouillée → CTA module | idem | 🔲 autre agent |
 
 ### Phase 4 — Brancher en jeu 🔲
 
@@ -364,5 +366,5 @@ Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 
 ## Prochaine action immédiate
 
-> **Level 3 — Hall of Cards** — `HallOfCardsScreen` : grille Deck A + Deck B, silhouettes verrouillées, tap → plein écran R3F.
-> Entrée depuis `GamesHubScreen` + `ProfileScreen`.
+> **Routing Hall of Cards** — brancher `HallOfCardsScreen` depuis `GamesHubScreen` + `ProfileScreen` (autre agent).
+> **Phase 4** — `drawCard` filtre sur `ownedCards` dans les cartes à tirer + compteur hub.
