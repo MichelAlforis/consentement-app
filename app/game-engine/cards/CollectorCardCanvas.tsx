@@ -307,7 +307,7 @@ function makeBackTexture(size = 512): THREE.CanvasTexture {
   return tex;
 }
 
-function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
+function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageElement): THREE.CanvasTexture {
   const h = Math.round(size * 1.5);
   const canvas = document.createElement('canvas');
   canvas.width = size; canvas.height = h;
@@ -319,6 +319,26 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   bg.addColorStop(1, c2);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, size, h);
+
+  // PNG référence — texture Midjourney à 50% sur le gradient
+  if (refImage) {
+    ctx.globalAlpha = 0.50;
+    ctx.drawImage(refImage, 0, 0, size, h);
+    ctx.globalAlpha = 1;
+  }
+
+  // Logo symbole — watermark centré, très subtil
+  const symS = Math.min(size / 336, h / 1044) * 0.75;
+  const symOX = (size - 336 * symS) / 2;
+  const symOY = (h - 1044 * symS) / 2;
+  ctx.save();
+  ctx.translate(symOX, symOY);
+  ctx.scale(symS, symS);
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.globalAlpha = 0.07;
+  ctx.fill(new Path2D(BACK_SYMBOL_PATH), 'evenodd');
+  ctx.globalAlpha = 1;
+  ctx.restore();
 
   // Grain (identique Pawn3D Board)
   for (let y = 0; y < h; y++) {
@@ -547,8 +567,18 @@ function CardMesh({
   const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
   const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
   const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.098), []);
-  const backTex  = useLoader(THREE.TextureLoader, '/cards/card-back.png');
-  const faceTex  = useMemo(() => makeFaceTexture(card), [card]);
+  const backTex = useLoader(THREE.TextureLoader, '/cards/card-back.png');
+  const [refCommon, refRare, refUnique] = useLoader(THREE.TextureLoader, [
+    '/cards/deck-a-face.png',
+    '/cards/deck-b-face.png',
+    '/cards/unique-foil.png',
+  ]);
+  const refTex = card.rarity === 'unique' ? refUnique : card.rarity === 'rare' ? refRare : refCommon;
+  const faceTex = useMemo(
+    () => makeFaceTexture(card, 512, refTex.image as HTMLImageElement),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [card, refTex],
+  );
 
   const isUnique = card.rarity === 'unique';
   const isRare   = card.rarity === 'rare';
