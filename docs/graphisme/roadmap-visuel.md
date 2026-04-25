@@ -97,8 +97,9 @@
 ## 6. Assets stores
 
 **L1 — Icône**
-- ⬜ Générer icône 1024×1024 depuis le symbole vectoriel en Canvas 2D → `image/stores/icon-1024.png`
-- ⬜ Variante fond clair pour adaptive icon Google Play
+- ✅ Icône App Store 1024×1024 → `image/stores/app-store/icon/icon-1024.png`
+- ✅ Icône Google Play 512×512 → `image/stores/google-play/icon/icon-512.png`
+- ⬜ Variante fond clair pour adaptive icon Google Play (optionnel)
 
 **L2 — Screenshots**
 - ⬜ Simulateur iPhone 16 Pro → 3 screenshots : accueil, plateau, collection
@@ -118,4 +119,4 @@
 | Animation | 2/3 ✅ | 1/2 ✅ (idle rare) | ⬜ |
 | Rarités | 3/4 ✅ | ⬜ | ⬜ |
 | Card Collector | ⬜ | ⬜ | ⬜ |
-| Assets stores | ⬜ | ⬜ | ⬜ |
+| Assets stores | 2/3 ✅ | ⬜ | ⬜ |

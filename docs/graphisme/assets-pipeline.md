@@ -1,6 +1,6 @@
 # Pipeline assets — Génération et organisation
 
-> Màj 2026-04-25
+> Màj 2026-04-25 — icônes stores ✅
 
 ---
 
@@ -31,17 +31,28 @@ Voir [midjourney-prompts.md](midjourney-prompts.md) pour les prompts complets.
 
 ```
 image/
+├── brand/
+│   └── logo/
+│       ├── logo.png                  — noir & blanc original (Midjourney)
+│       ├── Apple.png                 — master icône iOS (couleurs DA)
+│       ├── Android.png               — master icône Android (couleurs DA)
+│       └── *.svg                     — tracé vectoriel symbole
+│
 ├── stores/
-│   ├── icon-1024.png          — icône App Store + Google Play
-│   ├── screenshot-iphone-*.png
-│   └── screenshot-android-*.png
-├── google-play/
-│   └── feature-graphic-1024x500.png
+│   ├── app-store/
+│   │   ├── icon/
+│   │   │   └── icon-1024.png ✅      — App Store (1024×1024, squircle iOS)
+│   │   ├── screenshots/              — ⬜ à générer
+│   │   └── preview/                  — ⬜ vidéo optionnelle
+│   └── google-play/
+│       ├── icon/
+│       │   └── icon-512.png ✅       — Google Play (512×512, fond plein)
+│       ├── feature-graphic/          — ⬜ 1024×500
+│       └── screenshots/              — ⬜ à générer
+│
 ├── cards/
-│   └── templates/             — références DA pour guider le Canvas (jamais importées)
-└── marketing/
-    ├── social-*.png
-    └── press-*.png
+│   └── templates/                    — ⬜ références DA Deck A/B/unique (jamais importées)
+└── marketing/                        — ⬜ social, presse
 ```
 
 ---

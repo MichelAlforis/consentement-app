@@ -35,10 +35,13 @@
 
 ## Assets dans `image/`
 
-| Asset | Dossier | Source |
+| Asset | Fichier | Statut |
 |---|---|---|
-| Icône app | `image/stores/` | Midjourney → export PNG |
-| Screenshots stores | `image/stores/` | Simulateur → Midjourney bg |
-| Feature graphic Google Play | `image/google-play/` | Midjourney |
-| Références cartes DA | `image/cards/templates/` | Midjourney (jamais importé dans le code) |
-| Social / presse | `image/marketing/` | Midjourney |
+| Icône App Store 1024×1024 | `image/stores/app-store/icon/icon-1024.png` | ✅ |
+| Icône Google Play 512×512 | `image/stores/google-play/icon/icon-512.png` | ✅ |
+| Logo master noir & blanc | `image/brand/logo/logo.png` | ✅ |
+| Symbole vectoriel SVG | `image/brand/logo/*.svg` | ✅ |
+| Screenshots App Store | `image/stores/app-store/screenshots/` | ⬜ |
+| Feature graphic Google Play | `image/stores/google-play/feature-graphic/` | ⬜ |
+| Références DA cartes | `image/cards/templates/` | ⬜ |
+| Social / presse | `image/marketing/` | ⬜ |
