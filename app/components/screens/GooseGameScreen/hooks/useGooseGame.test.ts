@@ -206,7 +206,7 @@ describe('Triggers gain de cartes GooseGame', () => {
       { id: 'ca-006', rarity: 'rare' as const, gainedOn: '', unlockedBy: '' },
       { id: 'ca-007', rarity: 'rare' as const, gainedOn: '', unlockedBy: '' },
     ];
-    mockGetState.mockReturnValueOnce({ ownedCards: allRaresOwned, unlockCards: mockUnlockCards });
+    mockGetState.mockReturnValueOnce({ ownedCards: allRaresOwned, unlockCards: mockUnlockCards } as never);
     const { result } = setupPlaying();
     act(() => { capturedOnDiceLanded(6); });
     act(() => { result.current.endTurn(); }); act(() => { result.current.endTurn(); });

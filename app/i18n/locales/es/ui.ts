@@ -20,6 +20,7 @@ export const ui = {
     jeuDes: 'El Dado del Consentimiento',
     jeuOie: 'Juego de la Oca',
     jeuCartes: 'Cartas',
+    hallOfCards: 'Mi Colección',
     defaultAdult: 'Mi Espacio',
     defaultMinor: 'Espacio Educativo',
     personalSubtitle: 'Perfil de comodidad',

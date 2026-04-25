@@ -20,6 +20,7 @@ export const ui = {
     jeuDes: 'The Consent Die',
     jeuOie: 'Goose Game',
     jeuCartes: 'Card Draw',
+    hallOfCards: 'My Collection',
     defaultAdult: 'My Space',
     defaultMinor: 'Educational Space',
     personalSubtitle: 'Comfort profile',

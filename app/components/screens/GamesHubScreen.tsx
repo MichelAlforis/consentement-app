@@ -1,10 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Dices, CreditCard, ScrollText, Layers, Sparkles, ChevronRight } from 'lucide-react';
+import { Dices, CreditCard, ScrollText, Layers, Sparkles, ChevronRight, GalleryHorizontal } from 'lucide-react';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { useUnlockStore } from '../../stores';
+import { collectorCards } from '../../data/cards-collector';
 
 interface GamesHubScreenProps {
   onNavigate: (screen: Screen) => void;
@@ -135,6 +137,9 @@ function PremiumCard({
 export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: GamesHubScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { ownedCards } = useUnlockStore();
+  const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
+  const ownedCount = ownedCards.length;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10">
@@ -208,6 +213,24 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
           gradient="linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)"
           glow="#0ea5e9"
           onClick={() => !isPremium ? onGoPremium() : undefined}
+        />
+      </div>
+
+      {/* Ma Collection */}
+      <div className="mt-7">
+        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: colors.textMuted }}>
+          Ma collection
+        </p>
+        <FreeCard
+          icon={<GalleryHorizontal size={22} style={{ color: colors.textSecondary }} />}
+          title="Hall of Cards"
+          desc={
+            ownedCount === 0
+              ? 'Joue pour débloquer tes premières cartes'
+              : `${ownedCount} / ${totalCards} cartes débloquées`
+          }
+          delay={0.5}
+          onClick={() => onNavigate('hall-of-cards')}
         />
       </div>
     </motion.div>

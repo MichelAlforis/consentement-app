@@ -44,6 +44,7 @@ const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen').
 const DiceGameScreen = lazy(() => import('./components/screens/DiceGame').then(m => ({ default: m.DiceGameScreen })));
 const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen').then(m => ({ default: m.GooseGameScreen })));
 const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
+const HallOfCardsScreen = lazy(() => import('./components/screens/HallOfCardsScreen').then(m => ({ default: m.HallOfCardsScreen })));
 const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 
@@ -222,6 +223,9 @@ function AppShell() {
       case 'jeu-cartes':
         return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
 
+      case 'hall-of-cards':
+        return <HallOfCardsScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+
       case 'theme-select':
         return (
           <ThemeSelectScreen
@@ -262,6 +266,7 @@ function AppShell() {
       case 'jeu-des': return t('headers.jeuDes');
       case 'jeu-oie': return t('headers.jeuOie');
       case 'jeu-cartes': return t('headers.jeuCartes');
+      case 'hall-of-cards': return t('headers.hallOfCards');
       default: return isAdult ? t('headers.defaultAdult') : t('headers.defaultMinor');
     }
   };

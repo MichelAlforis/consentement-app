@@ -23,6 +23,7 @@ export type Screen =
   | 'jeu-des'
   | 'jeu-oie'
   | 'jeu-cartes'
+  | 'hall-of-cards'
   // Premium
   | 'premium'
   | 'theme-select';
