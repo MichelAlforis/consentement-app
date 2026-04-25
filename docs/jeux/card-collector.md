@@ -339,16 +339,16 @@ En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 
 ---
 
-## Rendu des cartes — split CSS / R3F
+## Rendu des cartes — split CSS / R3F ✅ terminé
 
 Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 
-| Contexte | Rendu | Raison |
-|---|---|---|
-| Session de jeu (tirage) | CSS 3D — `PlayingCard` existant | 1 carte, perf critique, fonctionne |
-| Flip reveal `GameEndCinematic` | R3F | moment showcase, 2–3 cartes max |
-| Hall of Cards — grille | CSS | 30–50 cartes visibles, mobile oblige |
-| Hall of Cards — carte zoomée | R3F | 1 carte plein écran, effets foil/shimmer |
+| Contexte | Rendu | Fichier | Statut |
+|---|---|---|---|
+| Session de jeu (tirage) | CSS 3D | `CardGame/PlayingCard.tsx` | ✅ existant |
+| Flip reveal fin de séance | R3F | `CardGame/index.tsx` → `CollectorCardCanvas` | ✅ |
+| Hall of Cards — grille | CSS | `HallOfCardsScreen.tsx` — `AcquiredCard` + `LockedCard` | ✅ |
+| Hall of Cards — zoom | R3F | `HallOfCardsScreen.tsx` — `ZoomOverlay` + `CollectorCardCanvas` | ✅ |
 
 **Ce que R3F débloque (implémenté dans `CollectorCardCanvas`) :**
 - Face/dos canvas texturés (gradient, icône, texte, badge rareté)
@@ -356,11 +356,15 @@ Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 - `SelectiveBloom` sur le ring de glow uniquement
 - Flip Y avec easeOutSnap + squash-stretch au landing
 
-**Contrainte mobile établie :**
-- `MeshBasicMaterial` obligatoire — `MeshPhysicalMaterial` crée des hotspots d'éclairage incontrôlables sur mobile
+**Effet foil/holographique — reporté :**
+- `MeshPhysicalMaterial` + iridescence bloqué — hotspots d'éclairage incontrôlables sur mobile
+- À reprendre quand Three.js mobile supportera `MeshPhysicalMaterial` de façon fiable
+
+**Contraintes mobiles établies (non négociables) :**
+- `MeshBasicMaterial` obligatoire partout
 - Three.js 0.184 : `ShapeGeometry` UVs non normalisés → remap manuel `pos → uv` obligatoire
-- Un seul contexte WebGL par page sur iOS → `CanvasBoundary` fallback CSS sur chaque Canvas R3F (déjà en place partout)
-- En `step='end'`, `GameEndCinematic` occupe le contexte WebGL principal → `CollectorCardCanvas` peut tomber en CSS fallback sur iOS 13–14 (acceptable)
+- Un seul contexte WebGL par page sur iOS → `CanvasBoundary` fallback CSS sur chaque Canvas R3F
+- `GameEndCinematic` occupe le contexte principal en `step='end'` → `CollectorCardCanvas` tombe en CSS fallback sur iOS 13–14 (acceptable)
 
 ---
 
