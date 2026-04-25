@@ -2,7 +2,7 @@
 
 > 25 avril 2026  
 > Référence technique : `card-gain-session.md`  
-> Avancement : Sprint 1 ✅ · Sprint 2 (tests) 🔲 · Sprints 3–5 🔲
+> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 🔲 · Sprint 5 🔲
 
 ---
 
@@ -36,7 +36,7 @@
 |---|---|
 | `computeGainedCards` est une pure function | Testable sans React, sans mock store |
 | `unlockStore` est la seule source de vérité | Pas de state dupliqué côté composant |
-| `addUnlockedCards` déduplique via `Set` | Impossible d'avoir deux fois la même carte |
+| `unlockCards` déduplique via `Set` sur les ids | Impossible d'avoir deux fois la même carte |
 | Max 3 cartes par gain de séance | UX — le flip reveal ne doit pas saturer |
 | Aucune fonction de suppression dans le store | Les cartes sont permanentes par design |
 | V3 : seul le middleware de persist change | L'API du store reste identique côté composants |
@@ -76,38 +76,45 @@ Intégré dans : resetAllData()    ✅
 ### Module B — `computeGainedCards` ✅
 
 **Responsabilité :** décider quelles cartes sont gagnées en fin de séance  
-**Fichier :** `app/lib/computeGainedCards.ts` — implémenté  
+**Fichier :** `app/lib/computeGainedCards.ts` — implémenté + fusionné (commit `a61af24`)
 
 ```
-Signature réelle
+Signature réelle (fusion des deux implémentations)
   computeGainedCards(
-    input: SessionGainInput,
-    collectorCards: CollectorCard[],
-    alreadyOwned: string[]
+    p: ComputeParams,
+    collectorCards: CollectorCard[]
   ): { gained: GainedCard[]; ownedCards: OwnedCard[] }
 
-  → gained     : visuels pour CardUnlockReveal
-  → ownedCards : prêts pour unlockCards() — pas de mapping intermédiaire
+  ComputeParams {
+    sessionMode, cardCount, seanceSize   ← guard intégré (game-engine)
+    sessionDecks, sessionCount,          ← post-increment (game-engine)
+    ownedIds: Set<string>,               ← O(1) lookup (game-engine)
+    favorites, isPremium                 ← pondération (lib)
+  }
 
 Helpers internes
-  excludeOwned(cards, alreadyOwned)                → CollectorCard[]
-  pickRandom<T>(arr)                               → T | null
-  pickWeightedByFavoriteDecks(candidates, ...)     → CollectorCard | null
+  excludeOwned(cards, ownedIds: Set)    → CollectorCard[]
+  pickRandom<T>(arr)                    → T | null
+  pickWeighted(candidates, favorites,
+    allCards)                           → CollectorCard | null
 
 Helpers publics (GooseGame)
-  pickOneRare(collectorCards, alreadyOwned)        → CollectorCard | null
-  pickOneUnique(collectorCards, alreadyOwned)      → CollectorCard | null
+  pickOneRare(collectorCards, ownedIds: Set)    → CollectorCard | null
+  pickOneUnique(collectorCards, ownedIds: Set)  → CollectorCard | null
 
-Règles (dans l'ordre) — inchangées
-  1. 1 common garantie (depth 1, decks explorés)
-  2. Si (sessionsPlayed+1) % 3 === 0 → +1 rare
-  3. Si isPremium && deck 5|6 → rand() < 0.2 → +1 unique
-  4. Pondération favoris × 2
-  5. Déduplication sur alreadyOwned
+Règles (dans l'ordre) — version fusionnée
+  0. Guard : sessionMode !== 'seance' || cardCount < seanceSize → []
+  1. 1 common garantie (depth 1, decks explorés en priorité)
+  2. sessionCount % 3 === 0 :
+       decks 3–6 joués → +1 rare   (game-engine)
+       sinon           → +1 common  (game-engine)
+  3. isPremium && deck 5|6 → rand() < 0.2 → +1 unique (lib — probabiliste)
+  4. Pondération favoris × 2 sur tous les picks (lib)
+  5. Déduplication via ownedIds — live Set mis à jour entre chaque règle
   6. Jamais > 3 cartes retournées
 ```
 
-**Différence vs spec :** retourne `{ gained, ownedCards }` au lieu de `GainedCard[]` seul — évite un mapping dans le composant.
+**Tests :** 14/14 passing (`app/lib/computeGainedCards.test.ts`)
 
 ---
 
@@ -144,36 +151,34 @@ Helpers exportés
 
 ---
 
-### Module D — Branchement `CardGameScreen` 🔲
+### Module D — Branchement `CardGameScreen` ✅
 
 **Responsabilité :** déclencher le calcul au bon moment, transmettre les cartes à l'affichage  
-**Fichier cible :** `app/components/screens/CardGame/index.tsx`
+**Fichier :** `app/components/screens/CardGame/index.tsx` — implémenté (commit `a61af24`)
 
 ```
-Changements
-  ├── Ajouter state local : useState<GainedCard[]>([])
-  ├── Remplacer prop gainedCards? → state interne
-  ├── Créer handleSeanceDone()
-  │     ├── computeGainedCards(input, collectorCards, alreadyOwned)
-  │     │     → { gained, ownedCards }
-  │     ├── incrementSessionCount()
-  │     ├── unlockCards(ownedCards)     ← OwnedCard[] direct
-  │     ├── setGainedCards(gained)
-  │     └── goToEnd()
-  └── Brancher handleSeanceDone() sur le déclencheur isSeanceDone
+Implémentation réelle
+  handleGoToEnd()
+    ├── ownedIds = new Set(ownedCards.map(c => c.id))
+    ├── nextSessionCount = sessionCount + 1
+    ├── incrementSessionCount()
+    ├── computeGainedCards({ ..., sessionCount: nextSessionCount, ownedIds, favorites }, collectorCards)
+    │     → { gained, ownedCards: newOwned }
+    ├── if (newOwned.length > 0) unlockCards(newOwned)
+    ├── setGainedCards(gained)
+    └── s.goToEnd()
 
 Flux visuel
-  isSeanceDone → handleSeanceDone()
-                       ↓
-               step = 'end' (GameEndCinematic)
-                       ↓
-               CardUnlockReveal (gainedCards)
-                       ↓
-               flip reveal 1–3 cartes
+  bouton "Terminer la séance" → handleGoToEnd()
+                                      ↓
+                              step = 'end' (GameEndCinematic)
+                                      ↓
+                              CardUnlockReveal (gainedCards)
+                                      ↓
+                              flip R3F séquentiel, 750ms/carte
 ```
 
-**Dépendances :** Module A + B + C  
-**Bloque :** validation end-to-end (sprint 5)
+**Test manuel :** séance 5 cartes → vérifier flip reveal + `localStorage["consentement-unlocks"]`
 
 ---
 
