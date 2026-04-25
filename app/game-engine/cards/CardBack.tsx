@@ -66,6 +66,11 @@ export function CardBack({ width = 240, height = 340, className, style }: CardBa
           <stop offset="100%" stopColor="white" stopOpacity="0.55" />
         </linearGradient>
 
+        <filter id={`${uid}grain`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.80" numOctaves="4" stitchTiles="stitch" result="noise" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.032 0" in="noise" />
+        </filter>
+
         <clipPath id={`${uid}clip`}>
           <rect x="0" y="0" width={W} height={H} rx="14" ry="14" />
         </clipPath>
@@ -97,6 +102,9 @@ export function CardBack({ width = 240, height = 340, className, style }: CardBa
 
       {/* Shimmer diagonal */}
       <rect x="0" y="0" width={W} height={H} fill={`url(#${uid}shim)`} clipPath={`url(#${uid}clip)`} />
+
+      {/* Grain feTurbulence */}
+      <rect x="0" y="0" width={W} height={H} rx="14" ry="14" filter={`url(#${uid}grain)`} clipPath={`url(#${uid}clip)`} />
 
       {/* Symbole "deux silhouettes en étreinte" — SVG imbriqué pour centrage natif */}
       <svg

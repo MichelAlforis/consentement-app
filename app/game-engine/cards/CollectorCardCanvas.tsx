@@ -336,12 +336,6 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   spec.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = spec; ctx.fillRect(0, 0, size, h);
 
-  // COMMON : teinte bleutée → cohérence + séparation vs RARE
-  if (card.rarity === 'common') {
-    ctx.fillStyle = 'rgba(20,30,60,0.08)';
-    ctx.fillRect(0, 0, size, h);
-  }
-
   // Vignette bords
   const vig = ctx.createRadialGradient(size / 2, h / 2, h * 0.22, size / 2, h / 2, h * 0.78);
   vig.addColorStop(0, 'rgba(0,0,0,0)');
@@ -375,14 +369,14 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   const inkColor = '#f1f3f5';
   const textShad = avgLum > 0.38 ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.85)';
 
-  const iconCy = h * 0.31;
+  const iconCy = h * 0.30;
   const iconR  = size * 0.165;
 
   // Icône
-  drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.4, inkColor);
+  drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.6, inkColor);
 
   // Séparateur
-  const sepY   = iconCy + iconR * 1.55;
+  const sepY   = iconCy + iconR * 1.72;
   const sepPad = size * 0.14;
   ctx.strokeStyle = 'rgba(255,255,255,0.15)';
   ctx.lineWidth = 1;
@@ -392,25 +386,25 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   ctx.stroke();
 
   // Texte
-  ctx.font = `600 ${Math.round(size * 0.099)}px system-ui, sans-serif`;
+  ctx.font = `500 ${Math.round(size * 0.094)}px system-ui, sans-serif`;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (ctx as any).letterSpacing = `${Math.round(size * 0.012)}px`;
+  (ctx as any).letterSpacing = `${Math.round(size * 0.008)}px`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.lineJoin = 'round';
   ctx.strokeStyle = 'rgba(0,0,0,0.30)';
-  ctx.lineWidth   = Math.round(size * 0.0032);
+  ctx.lineWidth   = Math.round(size * 0.0028);
   ctx.fillStyle   = inkColor;
   ctx.shadowColor = textShad;
   ctx.shadowBlur  = size * 0.018;
-  wrapText(ctx, card.text, size / 2, h * 0.57, size - size * 0.22, size * 0.129, true);
+  wrapText(ctx, card.text, size / 2, h * 0.58, size - size * 0.18, size * 0.134, true);
   ctx.shadowBlur = 0;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (ctx as any).letterSpacing = '0px';
 
-  // Bordure card.border — épaisse → Bloom la fait briller
+  // Bordure — rare/unique épais (Bloom), common discret
   ctx.strokeStyle = card.border;
-  ctx.lineWidth = 5;
+  ctx.lineWidth = card.rarity === 'common' ? 2.5 : 5;
   roundedRectPath(ctx, 4, 4, size - 8, h - 8, 22);
   ctx.stroke();
 
@@ -486,17 +480,19 @@ function CardMesh({
     onComplete: undefined as (() => void) | undefined,
   });
 
+  const flipDuration = card.rarity === 'unique' ? 0.70 : card.rarity === 'rare' ? 0.62 : 0.52;
+
   const triggerFlip = useCallback((toFace: boolean, cb?: () => void) => {
     const flip = flipRef.current;
     if (!flip) return;
     anim.current = {
       active: true, startRot: flip.rotation.y,
       targetRot: toFace ? Math.PI : 0,
-      elapsed: 0, duration: 0.62, done: false,
+      elapsed: 0, duration: flipDuration, done: false,
       bouncing: false, bounceElapsed: 0,
       onComplete: cb,
     };
-  }, []);
+  }, [flipDuration]);
 
   const prevFlipped = useRef(isFlipped);
   useEffect(() => {
@@ -525,7 +521,7 @@ function CardMesh({
       const t = a.elapsed / a.duration;
       flip.rotation.y  = a.startRot + (a.targetRot - a.startRot) * easeOutSnap(t);
       // Wobble Z léger — inclinaison dans le sens du flip (~3.4°), propre premium
-      outer.rotation.z = Math.sin(Math.PI * t) * 0.06;
+      outer.rotation.z = Math.sin(Math.PI * t) * 0.04;
       outer.position.y = -Math.sin(Math.PI * t) * 0.18;
 
       if (t >= 1) {
@@ -551,13 +547,17 @@ function CardMesh({
       if (b >= 1) { a.bouncing = false; style.scale.set(1, 1, 1); }
     }
 
-    // Micro animation idle UNIQUE — imperceptible consciemment, vital pour la perception
-    if (isUnique && !a.active && !a.bouncing) {
+    // Idle animations — chaque rareté a son rythme, seulement quand rien d'autre n'anime
+    if (!a.active && !a.bouncing) {
       idleT.current += delta;
-      const s = 1 + Math.sin(idleT.current * 1.2) * 0.006;
-      outer.scale.setScalar(s);
-    } else if (!isUnique) {
-      outer.scale.setScalar(1);
+      if (isUnique) {
+        outer.scale.setScalar(1 + Math.sin(idleT.current * 1.2) * 0.006);
+      } else if (isRare) {
+        outer.position.y = Math.sin(idleT.current * 0.8) * 0.015;
+      } else {
+        outer.scale.setScalar(1);
+        outer.position.y = 0;
+      }
     }
 
   });
@@ -600,8 +600,16 @@ function CardMesh({
 // ─── Lumières rareté ──────────────────────────────────────────────────────────
 
 function RarityLights({ rarity }: { rarity: GainedCard['rarity'] }) {
+  const rareRef = useRef<THREE.PointLight>(null);
+
+  useFrame(() => {
+    if (rareRef.current) {
+      rareRef.current.intensity = 0.26 + Math.sin(Date.now() * 0.0014) * 0.08;
+    }
+  });
+
   if (rarity === 'rare') {
-    return <pointLight position={[0, 0.5, -1.5]} intensity={0.32} color="#7c3aed" />;
+    return <pointLight ref={rareRef} position={[0, 0.5, -1.5]} intensity={0.32} color="#7c3aed" />;
   }
   if (rarity === 'unique') {
     return (
