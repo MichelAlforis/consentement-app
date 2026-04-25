@@ -13,6 +13,9 @@ import { useConfetti } from './useConfetti';
 import { Player, Phase, TurnStep } from '../types';
 import { useHaptics } from '../../../../game-engine/shared/useHaptics';
 import { useSettingsStore } from '../../../../stores/settingsStore';
+import { useUnlockStore } from '../../../../stores';
+import { pickOneRare, pickOneUnique } from '../../../../lib/computeGainedCards';
+import { collectorCards } from '../../../../data/cards-collector';
 
 export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   const explicitMode = useSettingsStore((s) => s.explicitMode);
@@ -67,11 +70,16 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   const processSquare = useCallback((squareIndex: number, p0: number, p1c: number, cp: 0 | 1, ac: number) => {
     const square = BOARD[squareIndex];
     switch (square.type) {
-      case 'arrivee':
+      case 'arrivee': {
         clearSavedGame();
         setPhase('end');
         vibrate([100, 80, 200]);
+        const { ownedCards: ownedA, unlockCards: unlockA } = useUnlockStore.getState();
+        const ownedIdsA = new Set(ownedA.map((c) => c.id));
+        const uniqueCard = pickOneUnique(collectorCards, ownedIdsA);
+        if (uniqueCard) unlockA([{ id: uniqueCard.id, rarity: 'unique', gainedOn: new Date().toISOString(), unlockedBy: 'goose-slow' }]);
         return;
+      }
       case 'normal':
       case 'depart': {
         const face = (square.face ?? 1) as 1 | 2 | 3 | 4 | 5 | 6;
@@ -102,6 +110,10 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
         setActivity(pickNoRepeat(douceurActs, usedActivityIds.current).text);
         setStep('complicite');
         triggerConfetti();
+        const { ownedCards: ownedC, unlockCards: unlockC } = useUnlockStore.getState();
+        const ownedIdsC = new Set(ownedC.map((c) => c.id));
+        const rareCard = pickOneRare(collectorCards, ownedIdsC);
+        if (rareCard) unlockC([{ id: rareCard.id, rarity: 'rare', gainedOn: new Date().toISOString(), unlockedBy: 'goose-complicite' }]);
         return;
       }
     }
