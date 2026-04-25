@@ -1,7 +1,7 @@
 # Système de gain de cartes — Sessions de jeu
 
 > Créé : 25 avril 2026  
-> Statut : 🔲 Phase 6 — À implémenter
+> Statut : 🔄 Sprint 1 ✅ · Sprint 2 (tests) en cours
 
 ---
 
@@ -26,12 +26,12 @@ card-gain-session.md (ici) → spec technique du gain en session (CardGameScreen
 | Déclencheur | Source | Récompense | Condition |
 |---|---|---|---|
 | Fin de séance complète | `CardGameScreen` | 1 carte `common` | `isSeanceDone === true` |
-| 3 sessions cumulées | `unlockStore.sessionsPlayed % 3 === 0` | +1 carte `rare` bonus | calculé après increment |
+| 3 sessions cumulées | `unlockStore.sessionCount % 3 === 0` | +1 carte `rare` bonus | calculé après increment |
 | Case complicite (jeu de l'oie) | `GooseGameScreen` | 1 carte `rare` depth 2 | case type `complicite` |
 | Fin de partie Slow (premium) | `GooseGameScreen` | 1 carte `unique` depth 3 | `isPremium && mode === 'slow'` |
 
 **Règle fondamentale :** les cartes débloquées restent acquises à vie, même sans abonnement premium.  
-`unlockedCards` n'expose pas de fonction de suppression — c'est intentionnel.
+`ownedCards` n'expose pas de fonction de suppression — c'est intentionnel.
 
 ---
 
@@ -68,16 +68,26 @@ export interface SessionGainInput {
 
 ---
 
-### `UnlockStore` — état persisté
+### `OwnedCard` + `UnlockStore` — état persisté
 
 ```ts
-export interface UnlockStore {
-  unlockedCards: string[];   // ids des cartes gagnées — source de vérité déduplication
-  sessionsPlayed: number;    // nombre total de sessions complètes
+// stores/unlockStore.ts
+export type Rarity = 'common' | 'rare' | 'unique';
+
+export interface OwnedCard {
+  id: string;
+  rarity: Rarity;
+  gainedOn: string;      // ISO date — "2026-04-25T14:32:00.000Z"
+  unlockedBy: string;    // 'card-session' | 'card-session-milestone' | 'card-session-premium' | module id
 }
 ```
 
-Clé localStorage : `consentement-unlock`
+La structure `OwnedCard` (vs simples ids) permet :
+- tracer la source de chaque gain (session vs module)
+- afficher "gagné le…" dans le Hall of Cards
+- faciliter la migration V3 (sync cloud avec historique)
+
+Clé localStorage : `consentement-unlocks`
 
 ---
 
@@ -86,14 +96,34 @@ Clé localStorage : `consentement-unlock`
 ### Signature
 
 ```ts
+// app/lib/computeGainedCards.ts
 function computeGainedCards(
   input: SessionGainInput,
   collectorCards: CollectorCard[],
-  alreadyOwned: string[]
-): GainedCard[]
+  alreadyOwned: string[]          // ownedCards.map(c => c.id)
+): { gained: GainedCard[]; ownedCards: OwnedCard[] }
 ```
 
+Retourne deux tableaux synchronisés :
+- `gained` → pour l'affichage `CardUnlockReveal` (visuels, texte)
+- `ownedCards` → prêt à passer directement à `unlockCards()` du store (avec `rarity`, `gainedOn`, `unlockedBy`)
+
 Aucun effet de bord. Aucun import React. Testable en Node pur.
+
+### Helpers internes
+
+```ts
+excludeOwned(cards, alreadyOwned)                          → CollectorCard[]
+pickRandom<T>(arr)                                         → T | null
+pickWeightedByFavoriteDecks(candidates, sessionDecks,
+  favorites, allCards)                                     → CollectorCard | null
+```
+
+Helpers publics (utilisés par GooseGame — dans le même fichier) :
+```ts
+pickOneRare(collectorCards, alreadyOwned)                  → CollectorCard | null
+pickOneUnique(collectorCards, alreadyOwned)                → CollectorCard | null
+```
 
 ### Règles (appliquées dans l'ordre)
 
@@ -146,53 +176,33 @@ isSeanceDone ?
 
 ## `unlockStore` — API publique
 
+✅ Implémenté dans `app/stores/unlockStore.ts`
+
 ```ts
-// Lecture
-function getUnlockedCards(): string[]
-function getSessionsPlayed(): number
+// Lecture (depuis le state Zustand)
+state.ownedCards: OwnedCard[]
+state.sessionCount: number
 
 // Écriture
-function addUnlockedCards(ids: string[]): void   // déduplique automatiquement via Set
-function incrementSessions(): void               // +1 sessionsPlayed
-
-// Reset (tests / onboarding fresh start)
-function resetUnlockStore(): void
+unlockCards(cards: OwnedCard[]): void   // déduplique par id — ignore les doublons
+incrementSessionCount(): void           // +1 sessionCount
+reset(): void                           // remet à zéro (tests / onboarding)
 ```
 
-### Implémentation cible (Zustand + persist)
-
-Pattern cohérent avec `settingsStore`, `authStore`, `premiumStore` :
+La déduplication est gérée dans `unlockCards` via un `Set` sur les ids existants :
 
 ```ts
-// stores/unlockStore.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-interface UnlockState {
-  unlockedCards: string[];
-  sessionsPlayed: number;
-  addUnlockedCards: (ids: string[]) => void;
-  incrementSessions: () => void;
-  reset: () => void;
-}
-
-export const useUnlockStore = create<UnlockState>()(
-  persist(
-    (set, get) => ({
-      unlockedCards: [],
-      sessionsPlayed: 0,
-      addUnlockedCards: (ids) =>
-        set((state) => ({
-          unlockedCards: [...new Set([...state.unlockedCards, ...ids])],
-        })),
-      incrementSessions: () =>
-        set((state) => ({ sessionsPlayed: state.sessionsPlayed + 1 })),
-      reset: () => set({ unlockedCards: [], sessionsPlayed: 0 }),
-    }),
-    { name: 'consentement-unlock' }
-  )
-);
+unlockCards: (newCards) => {
+  const existing = new Set(get().ownedCards.map((c) => c.id));
+  const toAdd = newCards.filter((c) => !existing.has(c.id));
+  if (toAdd.length === 0) return;
+  set((s) => ({ ownedCards: [...s.ownedCards, ...toAdd] }));
+},
 ```
+
+**Clé localStorage :** `consentement-unlocks`  
+**Exporté depuis :** `app/stores/index.ts`  
+**Intégré dans :** `resetAllData()` (efface `consentement-unlocks`)
 
 ---
 
@@ -201,26 +211,28 @@ export const useUnlockStore = create<UnlockState>()(
 Le calcul se déclenche **au moment de `goToEnd()`**, juste avant la transition vers le step `end`.
 
 ```ts
-// CardGame/index.tsx
-const { unlockedCards, sessionsPlayed, addUnlockedCards, incrementSessions } = useUnlockStore();
+// CardGame/index.tsx — Sprint 3
+const { ownedCards, sessionCount, unlockCards, incrementSessionCount } = useUnlockStore();
 const [gainedCards, setGainedCards] = useState<GainedCard[]>([]);
 
+const alreadyOwned = ownedCards.map((c) => c.id);
+
 const handleSeanceDone = useCallback(() => {
-  const gained = computeGainedCards(
-    { sessionDecks, favorites, seanceSize, isPremium, sessionsPlayed },
+  const { gained, ownedCards: newOwned } = computeGainedCards(
+    { sessionDecks, favorites, seanceSize, isPremium, sessionsPlayed: sessionCount },
     collectorCards,        // depuis data/cards-collector.ts
-    unlockedCards
+    alreadyOwned
   );
 
-  incrementSessions();
+  incrementSessionCount();
 
-  if (gained.length > 0) {
-    addUnlockedCards(gained.map((c) => c.id));
+  if (newOwned.length > 0) {
+    unlockCards(newOwned);          // OwnedCard[] direct — pas de mapping
     setGainedCards(gained);
   }
 
   goToEnd();
-}, [sessionDecks, favorites, seanceSize, isPremium, sessionsPlayed, unlockedCards]);
+}, [sessionDecks, favorites, seanceSize, isPremium, sessionCount, alreadyOwned]);
 ```
 
 `gainedCards` est ensuite transmis à `GameEndCinematic` → `CardUnlockReveal` pour le flip reveal.
@@ -232,20 +244,27 @@ la prop externe peut être retirée ou gardée pour les tests.
 
 ## Triggers `GooseGameScreen`
 
-Ces deux triggers n'utilisent **pas** `computeGainedCards` — ils sont déterministes (1 carte fixe).
+Ces deux triggers n'utilisent **pas** `computeGainedCards` — ils sont déterministes (1 carte fixe).  
+Les helpers `pickOneRare` / `pickOneUnique` sont exportés depuis `app/lib/computeGainedCards.ts`.
 
 ```ts
+// GooseGameScreen — Sprint 4
+import { pickOneRare, pickOneUnique } from '@/lib/computeGainedCards';
+
+const { ownedCards, unlockCards } = useUnlockStore();
+const alreadyOwned = ownedCards.map((c) => c.id);
+
 // Case complicite atteinte
 const handleComplicite = () => {
-  const card = pickOneRare(collectorCards, unlockedCards); // helper local
-  if (card) addUnlockedCards([card.id]);
+  const card = pickOneRare(collectorCards, alreadyOwned);
+  if (card) unlockCards([{ id: card.id, rarity: 'rare', gainedOn: new Date().toISOString(), unlockedBy: 'goose-complicite' }]);
 };
 
 // Fin de partie Slow (premium uniquement)
 const handleSlowEnd = () => {
   if (!isPremium) return;
-  const card = pickOneUnique(collectorCards, unlockedCards);
-  if (card) addUnlockedCards([card.id]);
+  const card = pickOneUnique(collectorCards, alreadyOwned);
+  if (card) unlockCards([{ id: card.id, rarity: 'unique', gainedOn: new Date().toISOString(), unlockedBy: 'goose-slow' }]);
 };
 ```
 
@@ -256,26 +275,28 @@ const handleSlowEnd = () => {
 Le store est conçu pour une migration sans breaking change côté composants.
 
 ```
-V2 : persist(localStorage, { name: 'consentement-unlock' })
-V3 : persist(cloudAdapter,  { name: 'consentement-unlock' })
+V2 : persist(localStorage, { name: 'consentement-unlocks' })
+V3 : persist(cloudAdapter,  { name: 'consentement-unlocks' })
      + sync bidirectionnelle au login
      + merge local → cloud au premier login (les cartes ne se perdent jamais)
 ```
 
-Seul le middleware de persistance change. L'API (`addUnlockedCards`, `incrementSessions`) reste identique dans tous les composants.
+La structure `OwnedCard` (avec `gainedOn` et `unlockedBy`) facilite le merge : en cas de conflit entre local et cloud, on garde l'union et on choisit la date la plus ancienne comme `gainedOn`.
+
+Seul le middleware de persistance change. L'API (`unlockCards`, `incrementSessionCount`) reste identique dans tous les composants.
 
 ---
 
 ## Interaction avec le gain par modules éducatifs
 
-Les deux chemins alimentent le même `unlockedCards` :
+Les deux chemins alimentent le même `ownedCards` :
 
 ```
-CardGameScreen (séance)    → computeGainedCards → addUnlockedCards()
-QuizScreen / DuoFlow       → unlockCards(moduleId) → addUnlockedCards()
-GooseGameScreen (triggers) → addUnlockedCards() directement
+CardGameScreen (séance)    → computeGainedCards → unlockCards(OwnedCard[])
+GooseGameScreen (triggers) → unlockCards(OwnedCard[]) directement
+QuizScreen / DuoFlow       → unlockCards(OwnedCard[]) — unlockedBy = module id
                                       │
-                              unlockStore.unlockedCards
+                              unlockStore.ownedCards
                                       │
                     ┌─────────────────┴──────────────────┐
                     ▼                                     ▼
@@ -283,23 +304,35 @@ GooseGameScreen (triggers) → addUnlockedCards() directement
            (collection visible)               (filtre sur ownedCards)
 ```
 
-La déduplication dans `addUnlockedCards` garantit qu'une carte ne peut apparaître qu'une fois, quelle que soit la source du gain.
+La déduplication dans `unlockCards` garantit qu'une carte ne peut apparaître qu'une fois dans `ownedCards`, quelle que soit la source du gain.
 
 ---
 
-## Fichiers à créer
+## État des fichiers
+
+### ✅ Sprint 1 — Créés
 
 | Fichier | Contenu |
 |---|---|
-| `stores/unlockStore.ts` | Zustand store + persist + types `UnlockState` |
-| `lib/computeGainedCards.ts` | Pure function + types `SessionGainInput`, `GainedCard` |
-| `data/cards-collector.ts` | Deck collector A + B, stubs textes, `CollectorCard[]` |
-| `lib/computeGainedCards.test.ts` | Tests unitaires — 8 cas minimum |
+| `app/stores/unlockStore.ts` | ✅ Zustand + persist — `OwnedCard`, `unlockCards`, `incrementSessionCount`, `reset` |
+| `app/data/cards-collector.ts` | ✅ 10 stubs `CollectorCard[]` (4 common, 3 rare, 2 unique Deck A, 1 stub Deck B) + helpers |
+| `app/lib/computeGainedCards.ts` | ✅ Types + pure function complète + helpers GooseGame |
 
-## Fichiers à modifier
+### ✅ Sprint 1 — Modifiés
 
 | Fichier | Modification |
 |---|---|
-| `app/components/screens/CardGame/index.tsx` | Brancher `computeGainedCards` au `goToEnd()`, migrer `gainedCards` en state interne |
-| `app/stores/index.ts` | Ajouter `useUnlockStore` aux exports + `resetAllData` inclut `consentement-unlock` |
-| `app/components/screens/GooseGame/index.tsx` | Ajouter triggers `complicite` et `fin Slow` |
+| `app/stores/index.ts` | ✅ Export `useUnlockStore` + `OwnedCard` + `Rarity` — `resetAllData` efface `consentement-unlocks` |
+
+### 🔲 À créer
+
+| Fichier | Contenu |
+|---|---|
+| `app/lib/computeGainedCards.test.ts` | Tests unitaires — 10 cas (Sprint 2) |
+
+### 🔲 À modifier
+
+| Fichier | Modification |
+|---|---|
+| `app/components/screens/CardGame/index.tsx` | Brancher `computeGainedCards` au `goToEnd()` — Sprint 3 |
+| `app/components/screens/GooseGame/index.tsx` | Ajouter triggers `complicite` et `fin Slow` — Sprint 4 |

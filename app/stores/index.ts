@@ -4,6 +4,8 @@ export { useSettingsStore } from './settingsStore';
 export { useProfileStore } from './profileStore';
 export { usePremiumStore } from './premiumStore';
 export { useDuoStore } from './duoStore';
+export { useUnlockStore } from './unlockStore';
+export type { OwnedCard, Rarity } from './unlockStore';
 
 import { useNavigationStore } from './navigationStore';
 import { useAuthStore } from './authStore';
@@ -11,6 +13,7 @@ import { useSettingsStore } from './settingsStore';
 import { useProfileStore } from './profileStore';
 import { usePremiumStore } from './premiumStore';
 import { useDuoStore } from './duoStore';
+import { useUnlockStore } from './unlockStore';
 import { initialPersonalProfile } from '../data';
 
 export function resetAllData() {
@@ -20,9 +23,10 @@ export function resetAllData() {
   useProfileStore.setState({ personalProfile: initialPersonalProfile });
   usePremiumStore.setState({ isPremium: false });
   useDuoStore.getState().reset();
+  useUnlockStore.getState().reset();
 
   // Clear all persisted storage
-  ['consentement-auth', 'consentement-settings', 'consentement-profile', 'consentement-premium'].forEach(
+  ['consentement-auth', 'consentement-settings', 'consentement-profile', 'consentement-premium', 'consentement-unlocks'].forEach(
     (key) => localStorage.removeItem(key)
   );
 }

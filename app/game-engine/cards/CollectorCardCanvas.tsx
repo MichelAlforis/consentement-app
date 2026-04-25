@@ -9,7 +9,7 @@ import { Environment, ContactShadows } from '@react-three/drei';
 import { EffectComposer, SelectiveBloom, Vignette, Selection, Select } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
-import type { GainedCard } from '../../components/screens/CardGame/index';
+import type { GainedCard } from './computeGainedCards';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 

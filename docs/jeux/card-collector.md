@@ -8,7 +8,7 @@
 ## Plan d'évolution — 3 niveaux
 
 ```
-Level 1 ✅          Level 2 🔲              Level 3 🔲
+Level 1 ✅          Level 2 ✅              Level 3 🔲
 ──────────────      ──────────────────      ────────────────────────
 Composant R3F       Acquisition + End       Méta-jeu complet
 ──────────────      ──────────────────      ────────────────────────
@@ -31,7 +31,7 @@ placeholder vide    animée séquentielle     (juriste, app adulte)
 | | Jouable | Persisté | Beau |
 |---|---|---|---|
 | **Level 1** | Non | Non | ✅ Composant prêt |
-| **Level 2** | ✅ Gain réel à la fin de séance | ✅ localStorage | ✅ Flip R3F en jeu |
+| **Level 2** | ✅ Gain réel à la fin de séance (fait) | ✅ localStorage (fait) | ✅ Flip R3F en jeu (fait) |
 | **Level 3** | ✅ + alimenté par l'éducatif | ✅ + historique | ✅ Hall complet |
 
 ### Dépendances entre niveaux
@@ -110,22 +110,31 @@ Les deux progressent via des parcours d'apprentissage distincts.
 
 ## Anatomie d'une carte
 
+Deux types coexistent : `GainedCard` (runtime, visuel) et `OwnedCard` (persistance).
+
 ```ts
-type CollectorCard = {
+// app/game-engine/cards/computeGainedCards.ts
+// Type runtime — affiché dans CardUnlockReveal et Hall of Cards
+interface GainedCard {
   id: string;
-  deck: 'A' | 'B';          // A = non-explicite | B = explicite (app adulte)
   text: string;
-  depth: 1 | 2 | 3;
-  tags: string[];           // 'confiance' | 'communication' | 'exploration' | 'duo' | 'désir' | 'pratique' | ...
   rarity: 'common' | 'rare' | 'unique';
-  unlockedBy: string;       // id du module source
-  visual: {
-    gradient: string;
-    iconName: string;
-    border: string;
-  };
-};
+  gradient: string;   // CSS gradient de la face
+  iconName: string;   // Lucide icon name
+  border: string;     // couleur bordure CSS
+}
+
+// app/stores/unlockStore.ts
+// Type persisté — ce qu'on stocke dans localStorage
+interface OwnedCard {
+  id: string;
+  rarity: 'common' | 'rare' | 'unique';
+  gainedOn: string;     // date ISO
+  unlockedBy: string;   // 'card-session' | 'slow-session' | id module éducatif
+}
 ```
+
+Le pool Deck A (12 cartes depth 1–3) est défini dans `computeGainedCards.ts`. Le pool Deck B (juriste) sera ajouté en Level 3.
 
 ---
 
@@ -237,69 +246,79 @@ function drawCard(phase, history, ownedCards) {
 ## Persistance (V2 localStorage — V3 cloud)
 
 ```ts
-// unlockStore — gratuit, toujours persisté
-type UnlockStore = {
-  ownedCards: OwnedCard[];        // cartes acquises
-  completedModules: string[];     // modules terminés
-  rarityLog: RarityEvent[];       // log des cartes rares/uniques gagnées
-};
-
-type OwnedCard = {
-  id: string;
-  unlockedAt: string;             // module source
-  rarity: 'common' | 'rare' | 'unique';
-  gainedOn: string;               // date ISO
-};
+// app/stores/unlockStore.ts — clé localStorage 'consentement-unlocks'
+interface UnlockStore {
+  ownedCards: OwnedCard[];   // cartes acquises (jamais supprimées)
+  sessionCount: number;      // total séances complètes (toutes sessions confondues)
+  unlockCards: (cards: OwnedCard[]) => void;   // déduplication interne par id
+  incrementSessionCount: () => void;
+  reset: () => void;
+}
 ```
 
+`ownedCards` est **append-only** — `unlockCards()` filtre les doublons, ne supprime jamais.
 En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 
 ---
 
 ## Roadmap d'implémentation
 
-### Phase 1 — Types + store 🔲
+### Phase 1 — Types + store ✅ (Level 2)
 
-| Tâche | Fichier cible |
-|---|---|
-| Définir `CollectorCard`, `OwnedCard`, `UnlockStore` | `stores/unlockStore.ts` |
-| Créer le deck collector (cartes liées aux modules existants) | `data/cards-collector.ts` |
-| Définir les conditions de déblocage par module | `data/unlock-conditions.ts` |
+| Tâche | Fichier | Statut |
+|---|---|---|
+| `GainedCard` (type runtime visuel) | `game-engine/cards/computeGainedCards.ts` | ✅ |
+| `OwnedCard`, `UnlockStore` (persistance) | `stores/unlockStore.ts` | ✅ |
+| Pool Deck A 12 cartes depth 1–3 | `game-engine/cards/computeGainedCards.ts` | ✅ |
+| Export `useUnlockStore` + reset global | `stores/index.ts` | ✅ |
 
-### Phase 2 — Acquisition de cartes (moment de gain) 🔲
+### Phase 2 — Acquisition jeu de cartes ✅ (Level 2)
 
-Le moment de gain est le plus important émotionnellement — c'est lui qui crée l'envie de revenir.
+| Tâche | Fichier | Statut |
+|---|---|---|
+| `computeGainedCards()` pure function | `game-engine/cards/computeGainedCards.ts` | ✅ |
+| `handleGoToEnd` orchestre compute + persist | `components/screens/CardGame/index.tsx` | ✅ |
+| `CardUnlockReveal` flip R3F séquentiel | `components/screens/CardGame/index.tsx` | ✅ |
+| `CollectorCardCanvas` import GainedCard partagé | `game-engine/cards/CollectorCardCanvas.tsx` | ✅ |
 
-**Base existante à réutiliser :** `GameEndCinematic` dans `game-engine/shared/GameEndCinematic.tsx` est déjà utilisée dans le step `end` de `CardGameScreen`. C'est le conteneur parfait pour afficher les cartes gagnées.
+**Logique de gain dans le jeu de cartes :**
 
-| Tâche | Fichier cible |
-|---|---|
-| Déclencher `unlockCards(moduleId)` à la fin de chaque module | Chaque écran éducatif concerné |
-| Cas spéciaux : score parfait quiz → carte `rare` | `QuizConsentementScreen` |
-| Duo flow complet → 5 cartes `duo` | `DuoSpaceScreen` |
-| Étendre `GameEndCinematic` pour afficher les cartes gagnées | `game-engine/shared/GameEndCinematic.tsx` |
-| Animation d'apparition des cartes dans la cinématique (flip + glow) | idem |
-| CTA "Voir dans ma collection" → redirige vers Hall of Cards | idem |
+| Déclencheur | Récompense | Condition |
+|---|---|---|
+| Séance complète | 1 `common` garanti | `sessionMode='seance'` + `cardCount >= seanceSize` |
+| Toutes les 3 séances | +1 `rare` (ou `common` si decks légers) | `sessionCount % 3 === 0` |
+| Decks 5–6 joués + premium | +1 `unique` | Vérité ou Douceur dans `sessionDecks` |
+| Max par séance | 3 cartes | `gained.slice(0, 3)` |
+
+### Phase 2bis — Acquisition modules éducatifs 🔲 (Level 3)
+
+À brancher sur les écrans éducatifs existants — nécessite `unlockStore` (déjà prêt).
+
+| Tâche | Fichier | Statut |
+|---|---|---|
+| Quiz consentement terminé → 3 `common` | `QuizConsentementScreen` | 🔲 |
+| Score parfait quiz → +1 `rare` | `QuizConsentementScreen` | 🔲 |
+| Duo flow complet → 5 cartes `duo` | `DuoSpaceScreen` | 🔲 |
+| CTA "Voir ma collection" dans `GameEndCinematic` | `game-engine/shared/GameEndCinematic.tsx` | 🔲 |
 
 ### Phase 3 — Hall of Cards 🔲
 
-| Tâche | Fichier cible |
+| Tâche | Fichier |
 |---|---|
-| `HallOfCardsScreen` — grille Deck A + Deck B | `screens/HallOfCardsScreen.tsx` |
-| Réutiliser le pattern grille du step `pick` de `CardGameScreen` | idem |
+| `HallOfCardsScreen` — grille Deck A + Deck B | `components/screens/HallOfCardsScreen.tsx` |
+| Réutiliser pattern grille du step `pick` de `CardGameScreen` | idem |
 | Silhouette + condition lisible pour les cartes verrouillées | idem |
 | Deck B entièrement en silhouette (sauf app adulte) | idem |
-| Tap carte acquise → plein écran | idem |
+| Tap carte acquise → plein écran R3F | idem |
 | Tap carte verrouillée → condition + CTA module | idem |
-| Filtres par tag / rareté / deck | idem |
-| Entrée depuis le hub jeux et depuis le profil | `GamesHubScreen`, `ProfileScreen` |
+| Entrée depuis hub jeux et profil | `GamesHubScreen`, `ProfileScreen` |
 
 ### Phase 4 — Brancher en jeu 🔲
 
-| Tâche | Fichier cible |
+| Tâche | Fichier |
 |---|---|
 | `drawCard` filtre sur `ownedCards` dans Cartes à tirer | `game-engine/cards/useCardEngine.ts` |
-| Afficher le nombre de cartes possédées dans le hub | `GamesHubScreen` |
+| Compteur cartes possédées dans le hub | `GamesHubScreen` |
 
 ---
 
@@ -329,16 +348,21 @@ Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 | Hall of Cards — grille | CSS | 30–50 cartes visibles, mobile oblige |
 | Hall of Cards — carte zoomée | R3F | 1 carte plein écran, effets foil/shimmer |
 
-**Ce que R3F débloque :**
-- Effet foil / holographique → `MeshPhysicalMaterial` + `iridescence`
-- Reflet d'environnement → `Environment` preset
-- Glow rareté → `pointLight` coloré derrière la carte
-- Shimmer au survol → normal map animée
+**Ce que R3F débloque (implémenté dans `CollectorCardCanvas`) :**
+- Face/dos canvas texturés (gradient, icône, texte, badge rareté)
+- Glow rareté → `pointLight` coloré (violet pour `rare`, amber+pink pour `unique`)
+- `SelectiveBloom` sur le ring de glow uniquement
+- Flip Y avec easeOutSnap + squash-stretch au landing
 
-**Contrainte mobile :** un seul contexte WebGL par page sur iOS. Le Hall of Cards ne sera pas ouvert en même temps que le plateau — gérable. `CanvasBoundary` fallback CSS obligatoire sur chaque Canvas R3F (pattern déjà en place dans `GameEndCinematic`).
+**Contrainte mobile établie :**
+- `MeshBasicMaterial` obligatoire — `MeshPhysicalMaterial` crée des hotspots d'éclairage incontrôlables sur mobile
+- Three.js 0.184 : `ShapeGeometry` UVs non normalisés → remap manuel `pos → uv` obligatoire
+- Un seul contexte WebGL par page sur iOS → `CanvasBoundary` fallback CSS sur chaque Canvas R3F (déjà en place partout)
+- En `step='end'`, `GameEndCinematic` occupe le contexte WebGL principal → `CollectorCardCanvas` peut tomber en CSS fallback sur iOS 13–14 (acceptable)
 
 ---
 
 ## Prochaine action immédiate
 
-> **Phase graphique R3F** — Construire `CollectorCardCanvas.tsx` : composant R3F pour le zoom carte (Hall of Cards) et le flip reveal (GameEndCinematic). Effets : foil `rare`, holographique `unique`, back identitaire, glow thème.
+> **Level 3 — Hall of Cards** — `HallOfCardsScreen` : grille Deck A + Deck B, silhouettes verrouillées, tap → plein écran R3F.
+> Entrée depuis `GamesHubScreen` + `ProfileScreen`.
