@@ -102,8 +102,9 @@
 - ⬜ Variante fond clair pour adaptive icon Google Play (optionnel)
 
 **L2 — Screenshots**
-- ⬜ Simulateur iPhone 16 Pro → 3 screenshots : accueil, plateau, collection
-- ⬜ Feature graphic Google Play 1024×500
+- ✅ Fonds Midjourney générés — 3 screenshots App Store + feature graphic Google Play
+- ⬜ Montage Figma : texte + mockup simulateur sur chaque fond (voir `assets-pipeline.md`)
+- ⬜ Screenshots Google Play (optionnel — même fonds réutilisables)
 
 **L3 — Preview vidéo App Store**
 - ⬜ Capture cinématique pack opening → vidéo 30s H.264 MP4 portrait 9:16
@@ -119,4 +120,4 @@
 | Animation | 2/3 ✅ | 1/2 ✅ (idle rare) | ⬜ |
 | Rarités | 3/4 ✅ | ⬜ | ⬜ |
 | Card Collector | ⬜ | ⬜ | ⬜ |
-| Assets stores | 2/3 ✅ | ⬜ | ⬜ |
+| Assets stores | 2/3 ✅ | fonds ✅ · Figma ⬜ | ⬜ |
