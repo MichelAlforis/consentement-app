@@ -46,7 +46,7 @@
 **L1 — Physique + feedback**
 - ✅ Flip speeds per rarity : common 0.52s / rare 0.62s / unique 0.70s
 - ✅ Wobble Z : `0.06 rad` → `0.04 rad`
-- ⬜ Haptics à `triggerFlip()` via `useHaptics()` : medium impact départ, light à l'atterrissage
+- ✅ Haptics à `triggerFlip()` : 48ms départ, 18ms atterrissage
 
 **L2 — Entrée scène**
 - ✅ Reveal animation : carte entre par le bas (`position.y = -3 → 0`), `easeOutCubic` 0.4s, au mount
@@ -67,7 +67,7 @@
 
 **L2 — Aura et matière**
 - ✅ Rare : second glow ring animé (opacity `0.12 + sin(t*1.4)*0.06`) — respiration
-- ⬜ Unique : shader iridescent sur glow ring (gradient arc-en-ciel rotation lente)
+- ✅ Unique : glow ring iridescent HSL shift 25°/s (~14s tour complet)
 - ⬜ Badge rareté : fade-in au flip (scale 0.8 → 1.0, 0.3s)
 
 **L3 — Effets physiquement basés**
@@ -117,7 +117,7 @@
 |---|---|---|---|
 | Dos de carte | 3/3 ✅ | ⬜ | ⬜ |
 | Face de carte | 4/4 ✅ | 3/3 ✅ | ⬜ |
-| Animation | 2/3 ✅ | 2/2 ✅ | ⬜ |
-| Rarités | 4/4 ✅ | 1/3 ✅ | ⬜ |
+| Animation | 3/3 ✅ | 2/2 ✅ | ⬜ |
+| Rarités | 4/4 ✅ | 2/3 ✅ | ⬜ |
 | Card Collector | ⬜ | ⬜ | ⬜ |
 | Assets stores | 2/3 ✅ | fonds ✅ · Figma ⬜ | ⬜ |
