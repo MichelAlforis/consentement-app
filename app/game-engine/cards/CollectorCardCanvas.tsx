@@ -231,7 +231,7 @@ function makeBackTexture(size = 512): THREE.CanvasTexture {
   ctx.fillRect(0, 0, size, h);
 
   // Diamond grid
-  const step = Math.round(size * 0.088);
+  const step = Math.round(size * 0.10);
   ctx.strokeStyle = 'rgba(255,255,255,0.07)';
   ctx.lineWidth = 0.8;
   for (let ix = -step; ix < size + step; ix += step) {
@@ -342,19 +342,75 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   vig.addColorStop(1, 'rgba(0,0,0,0.42)');
   ctx.fillStyle = vig; ctx.fillRect(0, 0, size, h);
 
-  // UNIQUE : compression de luminance centre + highlight directionnel top-left→bottom-right
+  // Common — arcs concentriques géométriques (très basse opacity)
+  if (card.rarity === 'common') {
+    const arcCx = size * 0.5;
+    const arcCy = h * 1.05;
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 1.2;
+    for (let i = 2; i < 14; i++) {
+      ctx.globalAlpha = Math.max(0, 0.040 - i * 0.0018);
+      ctx.beginPath();
+      ctx.arc(arcCx, arcCy, size * i * 0.11, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Rare — nébuleuse radiale indigo/violet (3 blobs superposés)
+  if (card.rarity === 'rare') {
+    const n1 = ctx.createRadialGradient(size * 0.50, h * 0.40, 0, size * 0.50, h * 0.40, size * 0.58);
+    n1.addColorStop(0,    'rgba(109,40,217,0.42)');
+    n1.addColorStop(0.55, 'rgba(76,29,149,0.16)');
+    n1.addColorStop(1,    'rgba(76,29,149,0)');
+    ctx.fillStyle = n1; ctx.fillRect(0, 0, size, h);
+
+    const n2 = ctx.createRadialGradient(size * 0.28, h * 0.58, 0, size * 0.28, h * 0.58, size * 0.42);
+    n2.addColorStop(0, 'rgba(124,58,237,0.26)');
+    n2.addColorStop(1, 'rgba(124,58,237,0)');
+    ctx.fillStyle = n2; ctx.fillRect(0, 0, size, h);
+
+    const n3 = ctx.createRadialGradient(size * 0.74, h * 0.32, 0, size * 0.74, h * 0.32, size * 0.34);
+    n3.addColorStop(0, 'rgba(167,139,250,0.20)');
+    n3.addColorStop(1, 'rgba(167,139,250,0)');
+    ctx.fillStyle = n3; ctx.fillRect(0, 0, size, h);
+  }
+
+  // Unique — compression luminance + highlight directionnel + flamme chaude bas
   if (card.rarity === 'unique') {
     const lum = ctx.createRadialGradient(size / 2, h * 0.48, 0, size / 2, h * 0.48, h * 0.52);
     lum.addColorStop(0,   'rgba(0,0,0,0.28)');
     lum.addColorStop(0.6, 'rgba(0,0,0,0)');
     lum.addColorStop(1,   'rgba(0,0,0,0)');
     ctx.fillStyle = lum; ctx.fillRect(0, 0, size, h);
-    // Direction lumière → donne du relief, casse l'effet "flat premium UI"
+
     const hlt = ctx.createLinearGradient(0, 0, size, h);
     hlt.addColorStop(0,    'rgba(255,255,255,0.11)');
     hlt.addColorStop(0.45, 'rgba(255,255,255,0.025)');
     hlt.addColorStop(1,    'rgba(0,0,0,0.055)');
     ctx.fillStyle = hlt; ctx.fillRect(0, 0, size, h);
+
+    // Flamme — gradient chaud depuis le bas
+    const flame = ctx.createLinearGradient(0, h * 0.45, 0, h);
+    flame.addColorStop(0,    'rgba(245,158,11,0)');
+    flame.addColorStop(0.45, 'rgba(245,158,11,0.07)');
+    flame.addColorStop(0.75, 'rgba(239,68,68,0.10)');
+    flame.addColorStop(1,    'rgba(120,40,10,0.18)');
+    ctx.fillStyle = flame; ctx.fillRect(0, 0, size, h);
+
+    // Tendrilles sinusoïdaux
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 5; i++) {
+      const startX = size * (0.12 + i * 0.19);
+      ctx.strokeStyle = `rgba(245,158,11,${(0.05 + (i % 2) * 0.02).toFixed(2)})`;
+      ctx.beginPath();
+      let first = true;
+      for (let y = h; y > h * 0.35; y -= 3) {
+        const x = startX + Math.sin(y * 0.06 + i * 1.1) * (size * 0.06);
+        if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
   }
 
 
@@ -436,6 +492,39 @@ function makeFaceTexture(card: GainedCard, size = 512): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(canvas);
   tex.needsUpdate = true;
   return tex;
+}
+
+// ─── Particles unique ─────────────────────────────────────────────────────────
+
+function UniqueParticles() {
+  const ref = useRef<THREE.Points>(null);
+  const COUNT = 12;
+
+  const geo = useMemo(() => {
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i++) {
+      const angle = (i / COUNT) * Math.PI * 2;
+      pos[i * 3]     = Math.cos(angle) * 0.72;
+      pos[i * 3 + 1] = Math.sin(angle) * 1.08;
+      pos[i * 3 + 2] = 0.01;
+    }
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    return g;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (!ref.current) return;
+    const t = clock.getElapsedTime();
+    ref.current.rotation.z = t * 0.22;
+    (ref.current.material as THREE.PointsMaterial).opacity = 0.55 + Math.sin(t * 1.8) * 0.18;
+  });
+
+  return (
+    <points ref={ref} geometry={geo}>
+      <pointsMaterial color="#f6d36a" size={0.042} transparent opacity={0.65} sizeAttenuation toneMapped={false} />
+    </points>
+  );
 }
 
 // ─── CardMesh ─────────────────────────────────────────────────────────────────
@@ -565,6 +654,7 @@ function CardMesh({
   return (
     // outerRef — world-space : wobble Z + arc Y position
     <group ref={outerRef}>
+      {isUnique && <UniqueParticles />}
       {/* flipRef — rotation Y (le flip lui-même) */}
       <group ref={flipRef}>
         {/* styleRef — squash/stretch à l'atterrissage */}
