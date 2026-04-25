@@ -50,6 +50,11 @@ export const home = {
       games: { title: 'Jeux', desc: '1 gratuit · 2 jeux premium' },
       resources: { title: 'Ressources', desc: 'Guides et informations' },
     },
+    collection: {
+      title: 'Ma Collection',
+      empty: 'Joue pour débloquer tes premières cartes',
+      count: '{owned} / {total} cartes débloquées',
+    },
     privacy: 'Tes données sont chiffrées et tu peux les supprimer à tout moment.',
   },
 } as const;

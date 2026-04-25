@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, X } from 'lucide-react';
+import { Lock, X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useUnlockStore } from '../../stores/unlockStore';
 import { collectorCards } from '../../data/cards-collector';
@@ -10,6 +10,11 @@ import type { CollectorCard } from '../../data/cards-collector';
 import { CollectorCardCanvas } from '../../game-engine/cards/CollectorCardCanvas';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import type { Screen } from '../../types';
+
+function getUnlockScreen(card: CollectorCard): Screen {
+  return card.depth === 3 ? 'jeu-oie' : 'jeu-cartes';
+}
 
 function toGainedCard(card: CollectorCard): GainedCard {
   return {
@@ -81,32 +86,32 @@ function AcquiredCard({ card, index, onTap }: {
 
 // ── Carte verrouillée ─────────────────────────────────────────────────────────
 
-function LockedCard({ card, index, deckB = false }: {
+function LockedCard({ card, index, deckB = false, onTap }: {
   card: CollectorCard;
   index: number;
   deckB?: boolean;
+  onTap?: () => void;
 }) {
   const { colors } = useTheme();
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04 }}
-      className="relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-1.5"
-      style={{
-        aspectRatio: '2 / 3',
-        background: deckB
-          ? 'linear-gradient(135deg, #0f0a1e 0%, #1e1230 100%)'
-          : colors.bgSecondary,
-        border: `1.5px solid ${colors.border}`,
-      }}
-    >
+  const sharedStyle = {
+    aspectRatio: '2 / 3',
+    background: deckB ? 'linear-gradient(135deg, #0f0a1e 0%, #1e1230 100%)' : colors.bgSecondary,
+    border: `1.5px solid ${colors.border}`,
+  };
+  const sharedProps = {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    transition: { delay: index * 0.04 },
+    className: 'relative overflow-hidden rounded-2xl flex flex-col items-center justify-center gap-1.5',
+    style: sharedStyle,
+  };
+  const inner = (
+    <>
       <Lock size={18} color={colors.textMuted} style={{ opacity: 0.35 }} />
       <p className="text-[7px] font-semibold text-center px-2 leading-tight"
         style={{ color: colors.textMuted, opacity: deckB ? 0.45 : 0.55 }}>
-        {deckB ? 'App adulte' : card.unlockedBy.replace(/-/g, ' ')}
+        {deckB ? 'App adulte' : card.unlockedBy.replace(/-/g, ' ')}
       </p>
-      {/* Indicateur depth */}
       <div className="absolute bottom-2 flex gap-0.5">
         {([1, 2, 3] as const).map((d) => (
           <div key={d} className="w-1.5 h-1.5 rounded-full" style={{
@@ -115,8 +120,22 @@ function LockedCard({ card, index, deckB = false }: {
           }} />
         ))}
       </div>
-    </motion.div>
+      {onTap && (
+        <div className="absolute top-1.5 right-1.5">
+          <ChevronRight size={9} color={colors.accent} style={{ opacity: 0.55 }} />
+        </div>
+      )}
+    </>
   );
+
+  if (onTap) {
+    return (
+      <motion.button {...sharedProps} whileTap={{ scale: 0.93 }} onClick={onTap}>
+        {inner}
+      </motion.button>
+    );
+  }
+  return <motion.div {...sharedProps}>{inner}</motion.div>;
 }
 
 // ── Zoom R3F ──────────────────────────────────────────────────────────────────
@@ -171,9 +190,10 @@ function ZoomOverlay({ card, onClose }: { card: GainedCard; onClose: () => void 
 interface HallOfCardsScreenProps {
   isPremium: boolean;
   isAdult: boolean;
+  onNavigate: (screen: Screen) => void;
 }
 
-export function HallOfCardsScreen({ isAdult }: HallOfCardsScreenProps) {
+export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProps) {
   const { colors } = useTheme();
   const { ownedCards } = useUnlockStore();
   const ownedIds = new Set(ownedCards.map((c) => c.id));
@@ -210,7 +230,7 @@ export function HallOfCardsScreen({ isAdult }: HallOfCardsScreenProps) {
           {deckA.map((card, i) =>
             ownedIds.has(card.id)
               ? <AcquiredCard key={card.id} card={toGainedCard(card)} index={i} onTap={setZoomed} />
-              : <LockedCard key={card.id} card={card} index={i} />
+              : <LockedCard key={card.id} card={card} index={i} onTap={() => onNavigate(getUnlockScreen(card))} />
           )}
         </div>
 
@@ -225,11 +245,18 @@ export function HallOfCardsScreen({ isAdult }: HallOfCardsScreenProps) {
           )}
         </p>
         <div className="grid grid-cols-3 gap-2.5">
-          {deckB.map((card, i) =>
-            isAdult && ownedIds.has(card.id)
+          {deckB.map((card, i) => {
+            const owned = isAdult && ownedIds.has(card.id);
+            return owned
               ? <AcquiredCard key={card.id} card={toGainedCard(card)} index={i} onTap={setZoomed} />
-              : <LockedCard key={card.id} card={card} index={i} deckB={!isAdult} />
-          )}
+              : <LockedCard
+                  key={card.id}
+                  card={card}
+                  index={i}
+                  deckB={!isAdult}
+                  onTap={isAdult ? () => onNavigate(getUnlockScreen(card)) : undefined}
+                />;
+          })}
         </div>
       </motion.div>
 

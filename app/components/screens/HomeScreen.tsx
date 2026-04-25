@@ -1,12 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, Heart } from 'lucide-react';
+import { HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, Heart, GalleryHorizontal, ChevronRight } from 'lucide-react';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { MenuCard } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { useUnlockStore } from '../../stores';
+import { collectorCards } from '../../data/cards-collector';
 
 interface HomeScreenProps {
   isAdult: boolean | null;
@@ -107,6 +109,9 @@ function MinorHome({ onNavigate }: { onNavigate: (screen: Screen) => void }) {
 function AdultHome({ userName, onNavigate }: { userName: string; onNavigate: (screen: Screen) => void }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { ownedCards } = useUnlockStore();
+  const ownedCount = ownedCards.length;
+  const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
@@ -137,6 +142,33 @@ function AdultHome({ userName, onNavigate }: { userName: string; onNavigate: (sc
         <MenuCard icon={<Gamepad2 size={26} className="text-white" />} title={t('homeAdult.menu.games.title')} description={t('homeAdult.menu.games.desc')} onClick={() => onNavigate('jeux')} variant="amber" delay={3} />
         <MenuCard icon={<BookOpen size={26} style={{ color: colors.accent }} />} title={t('homeAdult.menu.resources.title')} description={t('homeAdult.menu.resources.desc')} onClick={() => onNavigate('learn')} delay={4} />
       </div>
+
+      {/* Hall of Cards — accès rapide */}
+      <motion.button
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.38 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => onNavigate('hall-of-cards')}
+        className="w-full mt-3 rounded-2xl p-3.5 flex items-center gap-3 text-left"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+      >
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+          style={{ background: colors.bgSecondary }}>
+          <GalleryHorizontal size={18} style={{ color: colors.accent }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
+            {t('homeAdult.collection.title')}
+          </span>
+          <p className="text-xs leading-snug" style={{ color: colors.textMuted }}>
+            {ownedCount === 0
+              ? t('homeAdult.collection.empty')
+              : t('homeAdult.collection.count', { owned: String(ownedCount), total: String(totalCards) })}
+          </p>
+        </div>
+        <ChevronRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />
+      </motion.button>
 
       <div className="mt-4">
         <ExplicitModeToggle delay={0.45} />

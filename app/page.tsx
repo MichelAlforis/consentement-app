@@ -224,7 +224,7 @@ function AppShell() {
         return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
 
       case 'hall-of-cards':
-        return <HallOfCardsScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+        return <HallOfCardsScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={navigateTo} />;
 
       case 'theme-select':
         return (
