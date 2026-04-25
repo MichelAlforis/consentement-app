@@ -2,7 +2,7 @@
 
 > 25 avril 2026  
 > Référence technique : `card-gain-session.md`  
-> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 🔲
+> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ (auto) — 2 checks manuels restants
 
 ---
 
@@ -273,20 +273,19 @@ Sprint 2 se réduit donc aux **tests uniquement**.
 
 ---
 
-### Sprint 5 — Validation end-to-end
+### Sprint 5 — Validation end-to-end ✅ (auto) · 🔲 (manuel)
 
-| # | Scénario | Validation |
+| # | Scénario | Résultat |
 |---|---|---|
-| 5.1 | 3 sessions complètes | La 3e séance génère bien 1 common + 1 rare dans le flip reveal |
-| 5.2 | Persistance cross-reload | Fermer + rouvrir l'app → `unlockedCards` intact |
-| 5.3 | Pool épuisé | Toutes les commons possédées → séances suivantes ne génèrent rien (pas d'erreur) |
-| 5.4 | `resetAllData` complet | `consentement-unlocks` vidé + `sessionCount = 0` |
-| 5.5 | Sans abonnement | `isPremium = false` + deck 5 → jamais de `unique` |
-| 5.6 | Déduplication cross-source | Gain séance + gain module → même id → apparaît une seule fois dans `ownedCards` |
-| 5.7 | GooseGame trigger | Case complicite → `OwnedCard` dans store avec `unlockedBy: 'goose-complicite'` |
+| 5.1 | 3 sessions → rare | ✅ Tests 4 + 16 (`sessionCount % 3 === 0` + deck profond) |
+| 5.2 | Persistance cross-reload | 🔲 Manuel : fermer + rouvrir l'app, vérifier `localStorage["consentement-unlocks"]` |
+| 5.3 | Pool épuisé → pas d'erreur | ✅ Tests 15–17 (`computeGainedCards.test.ts`) — commit `740dc36` |
+| 5.4 | `resetAllData` complet | 🔲 Manuel : appeler `resetAllData()` → clé absente + `sessionCount = 0` |
+| 5.5 | Sans premium → jamais unique | ✅ Tests 6 + 7 (`isPremium=false` + deck 5) |
+| 5.6 | Déduplication cross-source | ✅ Test 8 (ids déjà dans `ownedIds` exclus) |
+| 5.7 | GooseGame triggers | ✅ Tests 5.7a–5.7c (`useGooseGame.test.ts`) — commit `740dc36` |
 
-**Durée estimée :** 1h  
-**Résultat :** vert → Phase 6 terminée, Hall of Cards débloqué
+**45/45 tests passing** · 2 scénarios manuels restants (5.2, 5.4 — nécessitent le navigateur)
 
 ---
 

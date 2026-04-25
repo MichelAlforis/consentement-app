@@ -1,7 +1,7 @@
 # Système de gain de cartes — Sessions de jeu
 
 > Créé : 25 avril 2026  
-> Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · ✅ Sprint 4 (GooseGame) · 🔲 Sprint 5 (validation E2E)
+> Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · ✅ Sprint 4 (GooseGame) · ✅ Sprint 5 (45/45 auto — 2 checks manuels restants)
 
 ---
 
