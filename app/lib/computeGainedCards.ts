@@ -14,12 +14,15 @@ export interface GainedCard {
   border: string;
 }
 
-export interface SessionGainInput {
-  sessionDecks: number[];  // ex: [2, 5] — decks explorés dans la session
-  favorites: string[];     // ids des cartes mises en favori pendant la session
-  seanceSize: 5 | 10;
+export interface ComputeParams {
+  sessionMode: 'seance' | 'libre';
+  cardCount: number;
+  seanceSize: number;
+  sessionDecks: number[];
+  sessionCount: number;  // APRÈS increment — incrémenté avant l'appel
+  ownedIds: Set<string>;
+  favorites: string[];   // ids des cartes mises en favori pendant la session
   isPremium: boolean;
-  sessionsPlayed: number;  // avant cette session (avant increment)
 }
 
 // ---------------------------------------------------------------------------
@@ -46,9 +49,8 @@ function toOwnedCard(card: CollectorCard, source: string): OwnedCard {
   };
 }
 
-function excludeOwned(cards: CollectorCard[], alreadyOwned: string[]): CollectorCard[] {
-  const owned = new Set(alreadyOwned);
-  return cards.filter((c) => !owned.has(c.id));
+function excludeOwned(cards: CollectorCard[], ownedIds: Set<string>): CollectorCard[] {
+  return cards.filter((c) => !ownedIds.has(c.id));
 }
 
 function pickRandom<T>(arr: T[]): T | null {
@@ -56,17 +58,15 @@ function pickRandom<T>(arr: T[]): T | null {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Pondère les cartes dont le sourceDeck est présent dans les decks favoris.
-// Les cartes d'un deck représenté dans les favoris ont un poids × 2.
-function pickWeightedByFavoriteDecks(
+// Decks représentés dans les favoris ont un poids × 2.
+function pickWeighted(
   candidates: CollectorCard[],
-  sessionDecks: number[],
   favorites: string[],
   allCards: CollectorCard[]
 ): CollectorCard | null {
   if (candidates.length === 0) return null;
+  if (favorites.length === 0) return pickRandom(candidates);
 
-  // Identifie les decks dont au moins 1 favori fait partie
   const favoriteCardIds = new Set(favorites);
   const favoriteDeckSet = new Set<number>();
   for (const card of allCards) {
@@ -75,7 +75,6 @@ function pickWeightedByFavoriteDecks(
     }
   }
 
-  // Pondère chaque candidat : × 2 si son sourceDeck est dans les favoris
   const weighted: CollectorCard[] = [];
   for (const card of candidates) {
     const weight = card.sourceDeck && favoriteDeckSet.has(card.sourceDeck) ? 2 : 1;
@@ -93,72 +92,79 @@ function pickWeightedByFavoriteDecks(
  * Calcule les cartes gagnées à la fin d'une séance.
  *
  * Règles (dans l'ordre) :
- *   1. 1 carte common garantie (depth 1, decks explorés)
- *   2. Si (sessionsPlayed + 1) % 3 === 0 → +1 carte rare
- *   3. Si isPremium && deck 5 ou 6 exploré → 20% chance d'une unique
- *   4. Pondération favoris × 2 sur les decks représentés
- *   5. Déduplication sur alreadyOwned — pas de carte déjà possédée
- *   6. Maximum 3 cartes retournées
+ *   1. Guard — retourne vide si pas une séance complète
+ *   2. 1 common garantie (depth 1, decks explorés en priorité)
+ *   3. Tous les 3 sessions : rare si decks profonds (3–6) joués, sinon extra common
+ *   4. Deck 5|6 + premium → 20% chance d'une unique
+ *   5. Pondération favoris × 2 sur tous les picks
+ *   6. Maximum 3 cartes — `ownedIds` mis à jour entre chaque règle
  */
 export function computeGainedCards(
-  input: SessionGainInput,
-  collectorCards: CollectorCard[],
-  alreadyOwned: string[]
+  p: ComputeParams,
+  collectorCards: CollectorCard[]
 ): { gained: GainedCard[]; ownedCards: OwnedCard[] } {
-  const { sessionDecks, favorites, isPremium, sessionsPlayed } = input;
-  const available = excludeOwned(collectorCards, alreadyOwned);
+  if (p.sessionMode !== 'seance' || p.cardCount < p.seanceSize) {
+    return { gained: [], ownedCards: [] };
+  }
+
   const gained: GainedCard[] = [];
   const ownedCards: OwnedCard[] = [];
+  let live = new Set(p.ownedIds);
 
   const add = (card: CollectorCard, source: string) => {
     gained.push(toGainedCard(card));
     ownedCards.push(toOwnedCard(card, source));
+    live = new Set([...live, card.id]);
   };
 
-  // Règle 1 — 1 common garantie
-  const commonPool = available.filter(
-    (c) => c.rarity === 'common' && c.depth === 1
+  // Règle 2 — 1 common garantie
+  const commonPool = excludeOwned(
+    collectorCards.filter((c) => c.rarity === 'common' && c.depth === 1),
+    live
   );
-  // Préférer les decks explorés pendant la séance
   const commonInSession = commonPool.filter(
-    (c) => c.sourceDeck && sessionDecks.includes(c.sourceDeck)
+    (c) => c.sourceDeck && p.sessionDecks.includes(c.sourceDeck)
   );
-  const commonPick =
-    pickWeightedByFavoriteDecks(
-      commonInSession.length > 0 ? commonInSession : commonPool,
-      sessionDecks,
-      favorites,
-      collectorCards
-    );
+  const commonPick = pickWeighted(
+    commonInSession.length > 0 ? commonInSession : commonPool,
+    p.favorites,
+    collectorCards
+  );
   if (commonPick) add(commonPick, 'card-session');
 
-  // Règle 2 — bonus multiple de 3
-  if ((sessionsPlayed + 1) % 3 === 0 && gained.length < 3) {
-    const ownedAfterCommon = alreadyOwned.concat(gained.map((g) => g.id));
-    const rarePool = excludeOwned(
-      collectorCards.filter((c) => c.rarity === 'rare' && c.depth === 2),
-      ownedAfterCommon
-    );
-    const rarePick = pickWeightedByFavoriteDecks(
-      rarePool,
-      sessionDecks,
-      favorites,
-      collectorCards
-    );
-    if (rarePick) add(rarePick, 'card-session-milestone');
+  // Règle 3 — bonus tous les 3 sessions
+  if (p.sessionCount % 3 === 0 && gained.length < 3) {
+    const playedDeep = p.sessionDecks.some((d) => [3, 4, 5, 6].includes(d));
+    if (playedDeep) {
+      const rarePool = excludeOwned(
+        collectorCards.filter((c) => c.rarity === 'rare' && c.depth === 2),
+        live
+      );
+      const rarePick = pickWeighted(rarePool, p.favorites, collectorCards);
+      if (rarePick) add(rarePick, 'card-session-milestone');
+    } else {
+      const extraPool = excludeOwned(
+        collectorCards.filter((c) => c.rarity === 'common' && c.depth === 1),
+        live
+      );
+      const extraPick = pickWeighted(extraPool, p.favorites, collectorCards);
+      if (extraPick) add(extraPick, 'card-session-milestone');
+    }
   }
 
-  // Règle 3 — chance unique premium
-  if (isPremium && sessionDecks.some((d) => d === 5 || d === 6) && gained.length < 3) {
-    if (Math.random() < 0.2) {
-      const ownedSoFar = alreadyOwned.concat(gained.map((g) => g.id));
-      const uniquePool = excludeOwned(
-        collectorCards.filter((c) => c.rarity === 'unique' && c.depth === 3),
-        ownedSoFar
-      );
-      const uniquePick = pickRandom(uniquePool);
-      if (uniquePick) add(uniquePick, 'card-session-premium');
-    }
+  // Règle 4 — unique premium 20%
+  if (
+    p.isPremium &&
+    p.sessionDecks.some((d) => d === 5 || d === 6) &&
+    gained.length < 3 &&
+    Math.random() < 0.2
+  ) {
+    const uniquePool = excludeOwned(
+      collectorCards.filter((c) => c.rarity === 'unique' && c.depth === 3),
+      live
+    );
+    const uniquePick = pickRandom(uniquePool);
+    if (uniquePick) add(uniquePick, 'card-session-premium');
   }
 
   return { gained, ownedCards };
@@ -170,22 +176,14 @@ export function computeGainedCards(
 
 export function pickOneRare(
   collectorCards: CollectorCard[],
-  alreadyOwned: string[]
+  ownedIds: Set<string>
 ): CollectorCard | null {
-  const pool = excludeOwned(
-    collectorCards.filter((c) => c.rarity === 'rare'),
-    alreadyOwned
-  );
-  return pickRandom(pool);
+  return pickRandom(excludeOwned(collectorCards.filter((c) => c.rarity === 'rare'), ownedIds));
 }
 
 export function pickOneUnique(
   collectorCards: CollectorCard[],
-  alreadyOwned: string[]
+  ownedIds: Set<string>
 ): CollectorCard | null {
-  const pool = excludeOwned(
-    collectorCards.filter((c) => c.rarity === 'unique'),
-    alreadyOwned
-  );
-  return pickRandom(pool);
+  return pickRandom(excludeOwned(collectorCards.filter((c) => c.rarity === 'unique'), ownedIds));
 }

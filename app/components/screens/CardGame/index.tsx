@@ -11,8 +11,9 @@ import { useCardSession } from './hooks/useCardSession';
 import { PlayingCard } from './PlayingCard';
 import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { CollectorCardCanvas } from '../../../game-engine/cards/CollectorCardCanvas';
-import { computeGainedCards } from '../../../game-engine/cards/computeGainedCards';
-import type { GainedCard } from '../../../game-engine/cards/computeGainedCards';
+import { computeGainedCards } from '../../../lib/computeGainedCards';
+import type { GainedCard } from '../../../lib/computeGainedCards';
+import { collectorCards } from '../../../data/cards-collector';
 import { useUnlockStore } from '../../../stores/unlockStore';
 
 export type { GainedCard };
@@ -78,24 +79,18 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
     const nextSessionCount = sessionCount + 1;
     incrementSessionCount();
 
-    const gained = computeGainedCards({
+    const { gained, ownedCards: newOwned } = computeGainedCards({
       sessionMode: s.sessionMode,
       cardCount: s.cardCount,
       seanceSize: s.seanceSize,
       sessionDecks: s.sessionDecks,
       sessionCount: nextSessionCount,
       ownedIds,
+      favorites: s.favorites,
       isPremium,
-    });
+    }, collectorCards);
 
-    if (gained.length > 0) {
-      unlockCards(gained.map((c) => ({
-        id: c.id,
-        rarity: c.rarity,
-        gainedOn: new Date().toISOString(),
-        unlockedBy: 'card-session',
-      })));
-    }
+    if (newOwned.length > 0) unlockCards(newOwned);
 
     setGainedCards(gained);
     s.goToEnd();
