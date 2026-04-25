@@ -4,7 +4,7 @@ import {
   useRef, useMemo, useState, useEffect, useCallback,
   Suspense, Component, type ReactNode,
 } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Environment, ContactShadows } from '@react-three/drei';
 import { EffectComposer, SelectiveBloom, Vignette, Selection, Select } from '@react-three/postprocessing';
 import * as THREE from 'three';
@@ -547,7 +547,7 @@ function CardMesh({
   const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
   const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
   const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.098), []);
-  const backTex  = useMemo(() => makeBackTexture(), []);
+  const backTex  = useLoader(THREE.TextureLoader, '/cards/card-back.png');
   const faceTex  = useMemo(() => makeFaceTexture(card), [card]);
 
   const isUnique = card.rarity === 'unique';
