@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards + Sprint 18 tests + Sprint 19 CardMesh dans DiceScene)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprint 18 tests + Sprint 19–20 DiceGame)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -345,6 +345,18 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | `components/screens/DiceGame/index.tsx` | `useUnlockStore` · `samplePreviewCard()` · `showCard` state · clear sur reroll/reset |
 
 **Architecture :** un seul WebGL context, pas de Canvas imbriqué. `CardMesh` intégré directement dans `DiceScene` via le pattern API : `<group position scale><Suspense><CardMesh enableBloom={false}/></Suspense><RarityLights/></group>`
+
+---
+
+### Sprint 20 — Échantillonnage thématique + i18n finaux ✅
+**Livrable :** la carte affichée après le lancer correspond à la catégorie du dé · zéro chaîne hardcodée restante
+
+| Fichier | Changement |
+|---|---|
+| `components/screens/DiceGame/index.tsx` | `FACE_TO_THEME` (1→osez … 6→douceur) · `samplePreviewCard(faceId)` filtre par thème, fallback aléatoire si pool vide |
+| `components/screens/CardGame/index.tsx` | Badge `"PREMIUM"` → `t('games.premium')` |
+
+**Invariant :** tous les écrans principaux sont désormais 100 % i18n — aucune chaîne FR hardcodée restante.
 
 ---
 

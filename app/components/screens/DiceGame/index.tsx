@@ -15,7 +15,17 @@ import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useUnlockStore } from '../../../stores';
 import { collectorCards } from '../../../data/cards-collector';
+import type { CardTheme } from '../../../data/cards-collector';
 import type { GainedCard } from '../../../lib/computeGainedCards';
+
+const FACE_TO_THEME: Record<number, CardTheme> = {
+  1: 'osez',
+  2: 'parlez',
+  3: 'et-si',
+  4: 'defi',
+  5: 'verite',
+  6: 'douceur',
+};
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -68,10 +78,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
 
-  const samplePreviewCard = (): GainedCard | null => {
+  const samplePreviewCard = (faceId: number): GainedCard | null => {
     if (ownedCards.length === 0) return null;
-    const idx = Math.floor(Math.random() * ownedCards.length);
-    const owned = ownedCards[idx];
+    const targetTheme = FACE_TO_THEME[faceId];
+    const themed = targetTheme
+      ? ownedCards.filter((oc) => collectorCards.find((c) => c.id === oc.id)?.theme === targetTheme)
+      : [];
+    const pool = themed.length > 0 ? themed : ownedCards;
+    const owned = pool[Math.floor(Math.random() * pool.length)];
     const cc = collectorCards.find((c) => c.id === owned.id);
     if (!cc) return null;
     return { id: cc.id, text: cc.text, rarity: cc.rarity, gradient: cc.visual.gradient, iconName: cc.visual.iconName, border: cc.visual.border };
@@ -183,7 +197,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 onRollComplete={() => {
                   onRollComplete();
                   setMode('practice');
-                  const card = samplePreviewCard();
+                  const card = samplePreviewCard(currentItem?.faceId ?? 0);
                   setPreviewCard(card);
                   setShowCard(!!card);
                 }}

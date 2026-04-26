@@ -207,7 +207,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm shrink-0"
                 style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
                 <Sparkles size={11} className="text-white" />
-                <span className="text-xs font-bold text-white tracking-widest">PREMIUM</span>
+                <span className="text-xs font-bold text-white tracking-widest">{t('games.premium')}</span>
               </div>
             </div>
 
