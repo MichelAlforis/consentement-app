@@ -8,6 +8,11 @@ export const games = {
     comingSoon: 'Próximamente',
     locked: 'Premium',
     unlock: 'Toca para desbloquear',
+    includedFree: 'Incluido · acceso libre',
+    unlockCTA: 'Desbloquear · 4,99 €/mes',
+    seeOffer: 'Ver la oferta →',
+    myCollection: 'Mi colección',
+    playToUnlock: 'Juega para desbloquear tus primeras cartas',
     dice: {
       title: 'El Dado del Consentimiento',
       descAdult: 'Solo o en pareja — 6 categorías, 3 niveles',
@@ -221,6 +226,10 @@ export const games = {
     tapToFlip: 'Toca para revelar',
     next: 'Siguiente carta',
     done: 'Ver mi colección',
+    cardUnlockedLabel: 'Carta desbloqueada',
+    cardsUnlockedLabel: '{count} cartas desbloqueadas',
+    hintScroll: 'Desliza para ver todas las cartas · Toca para voltear',
+    hintTap: 'Toca una carta para voltearla',
   },
 
   hallOfCards: {

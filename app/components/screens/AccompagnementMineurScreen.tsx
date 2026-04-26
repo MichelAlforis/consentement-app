@@ -114,8 +114,8 @@ export function AccompagnementMineurScreen({ onNavigate, onComplete }: Accompagn
                   <Phone size={18} className="text-teal-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-teal-800 text-sm">Fil Santé Jeunes</p>
-                  <p className="text-xs text-teal-600">0 800 235 236 — Gratuit, anonyme</p>
+                  <p className="font-semibold text-teal-800 text-sm">{t('accompagnement.filSanteJeunes')}</p>
+                  <p className="text-xs text-teal-600">{t('accompagnement.filSanteContact')}</p>
                 </div>
               </a>
             </div>
@@ -162,8 +162,8 @@ export function AccompagnementMineurScreen({ onNavigate, onComplete }: Accompagn
                   <Phone size={18} className="text-teal-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-teal-800 text-sm">Fil Santé Jeunes</p>
-                  <p className="text-xs text-teal-600">0 800 235 236 — Gratuit, anonyme</p>
+                  <p className="font-semibold text-teal-800 text-sm">{t('accompagnement.filSanteJeunes')}</p>
+                  <p className="text-xs text-teal-600">{t('accompagnement.filSanteContact')}</p>
                 </div>
               </a>
               <a href="tel:0800081111" className="flex items-center gap-3 p-4 rounded-2xl bg-green-50 border border-green-100">
@@ -171,8 +171,8 @@ export function AccompagnementMineurScreen({ onNavigate, onComplete }: Accompagn
                   <Phone size={18} className="text-green-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-green-800 text-sm">Planning Familial</p>
-                  <p className="text-xs text-green-600">0 800 08 11 11 — Gratuit</p>
+                  <p className="font-semibold text-green-800 text-sm">{t('accompagnement.planningFamilial')}</p>
+                  <p className="text-xs text-green-600">{t('accompagnement.planningFamilialContact')}</p>
                 </div>
               </a>
             </div>

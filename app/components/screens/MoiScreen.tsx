@@ -86,7 +86,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
         {isPremium && (
           <div className="flex items-center gap-1.5">
             <Crown size={12} style={{ color: '#f59e0b' }} />
-            <span className="text-xs font-medium" style={{ color: '#f59e0b' }}>Premium</span>
+            <span className="text-xs font-medium" style={{ color: '#f59e0b' }}>{t('games.games.premium')}</span>
           </div>
         )}
       </motion.div>

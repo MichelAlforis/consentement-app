@@ -8,6 +8,11 @@ export const games = {
     comingSoon: 'Bientôt',
     locked: 'Premium',
     unlock: 'Appuie pour débloquer',
+    includedFree: 'Inclus · accès libre',
+    unlockCTA: 'Débloquer · 4,99 €/mois',
+    seeOffer: "Voir l'offre →",
+    myCollection: 'Ma collection',
+    playToUnlock: 'Joue pour débloquer tes premières cartes',
     dice: {
       title: 'Le Dé du Consentement',
       descAdult: 'Solo ou à deux — 6 catégories, 3 niveaux',
@@ -221,6 +226,10 @@ export const games = {
     tapToFlip: 'Appuie pour révéler',
     next: 'Carte suivante',
     done: 'Voir ma collection',
+    cardUnlockedLabel: 'Carte débloquée',
+    cardsUnlockedLabel: '{count} cartes débloquées',
+    hintScroll: 'Glisse pour voir toutes les cartes · Touche pour retourner',
+    hintTap: 'Touche une carte pour la retourner',
   },
 
   hallOfCards: {

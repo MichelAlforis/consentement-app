@@ -119,5 +119,9 @@ export const education = {
       seeCard: 'See my card',
     },
     backHome: 'Back',
+    filSanteJeunes: 'Fil Santé Jeunes',
+    filSanteContact: '0 800 235 236 — Free, anonymous',
+    planningFamilial: 'Planning Familial',
+    planningFamilialContact: '0 800 08 11 11 — Free',
   },
 } as const;

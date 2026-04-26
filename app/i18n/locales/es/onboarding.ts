@@ -9,6 +9,8 @@ export const onboarding = {
     },
     cta: 'Empezar',
     privacy: "100% privado — nada se registra sin tu consentimiento",
+    appName: 'Consentement',
+    legalBadge: 'Creado con un abogado penalista',
   },
 
   ageCheck: {

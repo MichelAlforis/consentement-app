@@ -8,6 +8,11 @@ export const games = {
     comingSoon: 'Coming soon',
     locked: 'Premium',
     unlock: 'Tap to unlock',
+    includedFree: 'Included · free access',
+    unlockCTA: 'Unlock · €4.99/mo',
+    seeOffer: 'See offer →',
+    myCollection: 'My collection',
+    playToUnlock: 'Play to unlock your first cards',
     dice: {
       title: 'The Consent Die',
       descAdult: 'Solo or duo — 6 categories, 3 levels',
@@ -221,6 +226,10 @@ export const games = {
     tapToFlip: 'Tap to reveal',
     next: 'Next card',
     done: 'View my collection',
+    cardUnlockedLabel: 'Card unlocked',
+    cardsUnlockedLabel: '{count} cards unlocked',
+    hintScroll: 'Swipe to see all cards · Tap to flip',
+    hintTap: 'Tap a card to flip it',
   },
 
   hallOfCards: {

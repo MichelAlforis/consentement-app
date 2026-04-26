@@ -9,6 +9,8 @@ export const onboarding = {
     },
     cta: 'Get started',
     privacy: "100% private — nothing is recorded without your consent",
+    appName: 'Consentement',
+    legalBadge: 'Created with a criminal lawyer',
   },
 
   ageCheck: {

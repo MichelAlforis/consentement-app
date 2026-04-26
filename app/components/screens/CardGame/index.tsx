@@ -25,6 +25,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
   const [flipped, setFlipped]           = useState<Record<string, boolean>>({});
   const [hintVisible, setHintVisible]   = useState(false);
   const { vibrate } = useHaptics();
+  const { t } = useTranslation();
 
   // 1 carte → 160px | 2 → 150px | 3+ → 140px (scroll horizontal)
   const cardSize   = cards.length === 1 ? 160 : cards.length === 2 ? 150 : 140;
@@ -56,7 +57,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
     >
       <p className="text-xs font-bold uppercase tracking-widest mb-5 text-center"
         style={{ color: 'rgba(255,255,255,0.4)', letterSpacing: '0.14em' }}>
-        {cards.length > 1 ? `${cards.length} cartes débloquées` : 'Carte débloquée'}
+        {cards.length > 1 ? t('flipReveal.cardsUnlockedLabel', { count: cards.length }) : t('flipReveal.cardUnlockedLabel')}
       </p>
 
       {/* 3+ cartes : scroll horizontal avec snap — 2 cartes visibles, bord du 3e visible */}
@@ -96,7 +97,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
         className="text-center mt-4 text-xs"
         style={{ color: 'rgba(255,255,255,0.50)' }}
       >
-        {isScrollable ? 'Glisse pour voir toutes les cartes · Touche pour retourner' : 'Touche une carte pour la retourner'}
+        {isScrollable ? t('flipReveal.hintScroll') : t('flipReveal.hintTap')}
       </motion.p>
     </motion.div>
   );

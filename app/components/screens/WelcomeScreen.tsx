@@ -65,7 +65,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           className="mb-4"
         >
           <h1 className="text-3xl font-bold tracking-tight mb-1" style={{ color: colors.textPrimary }}>
-            Consentement
+            {t('welcome.appName')}
           </h1>
           <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">
             {t('welcome.tagline')}
@@ -110,7 +110,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           style={{ color: colors.textMuted }}
         >
           <BadgeCheck size={13} className="text-violet-500 shrink-0" />
-          Créé avec un juriste en droit pénal
+          {t('welcome.legalBadge')}
         </motion.div>
       </div>
 
