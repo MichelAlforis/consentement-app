@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprint 18 tests + Sprint 19–21 DiceGame + GooseGame Accord card)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–22 — tests + DiceGame + GooseGame Accord card)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -370,6 +370,22 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 **Décision d'architecture :** `CollectorCardCanvas` (scène perspective dédiée) plutôt que `CardMesh` inline dans le Canvas orthographique du plateau — la caméra orthographique à 40° d'élévation ne permet pas un rendu satisfaisant d'une carte dressée. L'overlay AccordFlow couvre déjà le plateau ; son propre WebGL context est marginal.
 
 **UX :** dos face visible → flip automatique (`autoFlip`) → face dévoilée · aucune carte si `ownedCards` vide.
+
+---
+
+### Sprint 22 — Tests `sampleCard` + refactor extraction ✅
+**Livrable :** logique de sampling extraite en module pur · 19 nouveaux tests unitaires
+
+| Fichier | Rôle |
+|---|---|
+| `app/lib/sampleCard.ts` | `FACE_TO_THEME` · `sampleCardByFace(faceId, owned, cards?)` · `sampleRandomCard(owned, cards?)` |
+| `app/lib/sampleCard.test.ts` | 19 tests : FACE_TO_THEME · sampleCardByFace (7 cas) · sampleRandomCard (5 cas) |
+| `DiceGame/index.tsx` | `samplePreviewCard` → délègue à `sampleCardByFace` (3 lignes) |
+| `AccordFlow.tsx` | sampling inline → délègue à `sampleRandomCard` |
+
+**Couverture :** empty pool · filtre thématique · fallback pool complet · face inconnue (0) · forme GainedCard · id absent du catalogue · random=0 et random→1
+
+**7 fichiers · 98 tests · tous verts.**
 
 ---
 

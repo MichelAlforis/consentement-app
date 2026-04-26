@@ -6,7 +6,7 @@ import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
 import { useUnlockStore } from '../../../../stores';
-import { collectorCards } from '../../../../data/cards-collector';
+import { sampleRandomCard } from '../../../../lib/sampleCard';
 import type { GainedCard } from '../../../../lib/computeGainedCards';
 import { CollectorCardCanvas } from '../../../../game-engine/cards/CollectorCardCanvas';
 
@@ -37,11 +37,8 @@ export function AccordFlow({
   const ownedCards = useUnlockStore((s) => s.ownedCards);
 
   const previewCard = useMemo((): GainedCard | null => {
-    if (!bothYes || ownedCards.length === 0) return null;
-    const owned = ownedCards[Math.floor(Math.random() * ownedCards.length)];
-    const cc = collectorCards.find((c) => c.id === owned.id);
-    if (!cc) return null;
-    return { id: cc.id, text: cc.text, rarity: cc.rarity, gradient: cc.visual.gradient, iconName: cc.visual.iconName, border: cc.visual.border };
+    if (!bothYes) return null;
+    return sampleRandomCard(ownedCards);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bothYes]);
 
