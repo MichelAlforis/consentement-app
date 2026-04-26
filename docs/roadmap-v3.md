@@ -217,7 +217,7 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 | # | Tâche | Statut |
 |---|---|---|
 | 12.1–12.5 | `useModuleComplete` branché sur les 5 écrans | ✅ (fait Sprint 9) |
-| 12.6 | Animation flip reveal séquentielle au retour vers `hall-of-cards` | ⬜ |
+| 12.6 | Animation flip reveal séquentielle au retour vers `hall-of-cards` | ✅ |
 
 ### Sprint 13 — Composants Home V3
 **Livrable :** 3 composants Home + `HomeScreen` refactoré

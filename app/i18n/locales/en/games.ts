@@ -183,6 +183,7 @@ export const games = {
     insight3: "Great start — try random mode to explore all the nuances.",
     newSeance: 'New session',
     continueLibre: 'Continue in free mode',
+    viewCollection: 'View my collection →',
     cardBackLabel: 'Card Draw',
     emptyTitle: 'Your deck is empty',
     emptyDesc: 'Complete a module to unlock your first cards and start playing.',
@@ -211,5 +212,14 @@ export const games = {
       access: 'Priority access to new features',
     },
     themesNote: "Premium themes are part of the subscription",
+  },
+
+  flipReveal: {
+    titleOne: 'New card!',
+    titlePlural: '{count} new cards!',
+    progress: '{current} / {total}',
+    tapToFlip: 'Tap to reveal',
+    next: 'Next card',
+    done: 'View my collection',
   },
 } as const;

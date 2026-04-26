@@ -3,6 +3,7 @@
 import { useCallback } from 'react';
 import { useModuleProgressStore } from '../stores/moduleProgressStore';
 import { useUnlockStore } from '../stores/unlockStore';
+import { useRevealStore } from '../stores/revealStore';
 import { computeModuleGain } from './computeModuleGain';
 import { collectorCards } from '../data/cards-collector';
 
@@ -15,6 +16,8 @@ export function useModuleComplete() {
   const markModuleComplete = useModuleProgressStore((s) => s.markModuleComplete);
   const unlockCards = useUnlockStore((s) => s.unlockCards);
 
+  const setPending = useRevealStore((s) => s.setPending);
+
   return useCallback(
     (moduleId: string): number => {
       const { completedModules } = useModuleProgressStore.getState();
@@ -25,9 +28,12 @@ export function useModuleComplete() {
       const { ownedCards } = useUnlockStore.getState();
       const ownedIds = new Set(ownedCards.map((c) => c.id));
       const newCards = computeModuleGain(moduleId, ownedIds, collectorCards);
-      if (newCards.length > 0) unlockCards(newCards);
+      if (newCards.length > 0) {
+        unlockCards(newCards);
+        setPending(newCards.map((c) => c.id));
+      }
       return newCards.length;
     },
-    [markModuleComplete, unlockCards]
+    [markModuleComplete, unlockCards, setPending]
   );
 }

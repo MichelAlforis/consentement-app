@@ -183,6 +183,7 @@ export const games = {
     insight3: "Belle entrée en matière — essayez le mode aléatoire pour explorer toutes les nuances.",
     newSeance: 'Nouvelle séance',
     continueLibre: 'Continuer en mode libre',
+    viewCollection: 'Voir ma collection →',
     cardBackLabel: 'Cartes à tirer',
     emptyTitle: 'Ton deck est vide',
     emptyDesc: 'Complète un module pour débloquer tes premières cartes et commencer à jouer.',
@@ -211,5 +212,14 @@ export const games = {
       access: 'Accès prioritaire aux nouvelles fonctionnalités',
     },
     themesNote: "Les thèmes premium font partie de l'abonnement",
+  },
+
+  flipReveal: {
+    titleOne: 'Nouvelle carte !',
+    titlePlural: '{count} nouvelles cartes !',
+    progress: '{current} / {total}',
+    tapToFlip: 'Appuie pour révéler',
+    next: 'Carte suivante',
+    done: 'Voir ma collection',
   },
 } as const;
