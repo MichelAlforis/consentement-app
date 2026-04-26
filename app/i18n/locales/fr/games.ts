@@ -184,6 +184,9 @@ export const games = {
     newSeance: 'Nouvelle séance',
     continueLibre: 'Continuer en mode libre',
     cardBackLabel: 'Cartes à tirer',
+    emptyTitle: 'Ton deck est vide',
+    emptyDesc: 'Complète un module pour débloquer tes premières cartes et commencer à jouer.',
+    emptyCTA: 'Commencer le quiz consentement',
   },
 
   premium: {

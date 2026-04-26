@@ -21,13 +21,27 @@ export type { GainedCard };
 // Affiche les cartes gagnées séquentiellement avec flip R3F
 function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
   const [mountedCount, setMountedCount] = useState(0);
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
+  const [hintVisible, setHintVisible] = useState(false);
+
+  // Taille adaptée au nombre de cartes pour rester lisible sur mobile
+  const cardSize = cards.length === 1 ? 160 : cards.length === 2 ? 140 : 110;
 
   useEffect(() => {
     if (cards.length === 0) return;
-    // Monter les cartes une par une toutes les 750ms
-    const timers = cards.map((_, i) =>
-      setTimeout(() => setMountedCount((n) => Math.max(n, i + 1)), 500 + i * 750)
-    );
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    cards.forEach((card, i) => {
+      // Apparition échelonnée
+      timers.push(setTimeout(() => setMountedCount(n => Math.max(n, i + 1)), 300 + i * 550));
+      // Auto-flip vers la face 800ms après apparition
+      timers.push(setTimeout(() => setFlipped(f => ({ ...f, [card.id]: true })), 300 + i * 550 + 800));
+    });
+
+    // Hint tactile après que toutes les cartes aient été révélées
+    const lastFlip = 300 + (cards.length - 1) * 550 + 800;
+    timers.push(setTimeout(() => setHintVisible(true), lastFlip + 600));
+
     return () => timers.forEach(clearTimeout);
   }, [cards]);
 
@@ -35,28 +49,44 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 }}
+      transition={{ delay: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
       className="w-full mb-6"
     >
-      <p className="text-xs font-bold uppercase tracking-widest mb-4 text-center"
-        style={{ color: 'rgba(255,255,255,0.45)' }}>
-        🎴 {cards.length > 1 ? `${cards.length} cartes débloquées` : 'Carte débloquée'}
+      <p className="text-xs font-bold uppercase tracking-widest mb-5 text-center"
+        style={{ color: 'rgba(255,255,255,0.4)', letterSpacing: '0.14em' }}>
+        {cards.length > 1 ? `${cards.length} cartes débloquées` : 'Carte débloquée'}
       </p>
-      <div className="flex gap-3 justify-center flex-wrap">
+
+      <div className="flex gap-4 justify-center flex-wrap">
         {cards.slice(0, mountedCount).map((card) => (
           <motion.div
             key={card.id}
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
-            style={{ width: 88, height: 132 }}
+            initial={{ opacity: 0, scale: 0.72, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
+            onClick={() => setFlipped(f => ({ ...f, [card.id]: !f[card.id] }))}
+            style={{ width: cardSize, height: Math.round(cardSize * 1.5), cursor: 'pointer', flexShrink: 0 }}
           >
-            <CollectorCardCanvas card={card} isFlipped={false} autoFlip size={88} />
+            <CollectorCardCanvas
+              card={card}
+              isFlipped={!!flipped[card.id]}
+              size={cardSize}
+            />
           </motion.div>
         ))}
       </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: hintVisible ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mt-4 text-xs"
+        style={{ color: 'rgba(255,255,255,0.25)' }}
+      >
+        Touche une carte pour la retourner
+      </motion.p>
     </motion.div>
   );
 }
@@ -64,9 +94,10 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
 interface CardGameScreenProps {
   isPremium: boolean;
   isAdult: boolean;
+  onNavigate?: (screen: string) => void;
 }
 
-export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
+export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScreenProps) {
   const { colors, id: themeId } = useTheme();
   const { t } = useTranslation();
   const s = useCardSession(isAdult);
@@ -118,7 +149,40 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
             className="flex flex-col px-5 pt-5 pb-10"
           >
-            <div className="flex items-start justify-between mb-6">
+            {/* ── EMPTY DECK GUARD ────────────────────────── */}
+            {s.available.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center text-center px-2 pt-8 pb-10 gap-6"
+              >
+                <div
+                  className="w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg"
+                  style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
+                >
+                  <Sparkles size={36} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black mb-2" style={{ color: colors.textPrimary }}>
+                    {t('cardGame.emptyTitle')}
+                  </h3>
+                  <p className="text-sm leading-relaxed" style={{ color: colors.textMuted }}>
+                    {t('cardGame.emptyDesc')}
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  onClick={() => onNavigate?.('quiz-consentement')}
+                  className="w-full py-4 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
+                  style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 6px 24px #8b5cf655' }}
+                >
+                  <ChevronRight size={18} />
+                  {t('cardGame.emptyCTA')}
+                </motion.button>
+              </motion.div>
+            )}
+
+            {s.available.length > 0 && (<><div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-black tracking-tight leading-none" style={{ color: colors.textPrimary }}>{t('cardGame.title')}</h2>
                 <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
@@ -248,6 +312,7 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
               {s.sessionMode === 'seance' ? t('cardGame.startSeance', { count: s.seanceSize }) : t('cardGame.drawCard')}
               <ChevronRight size={20} />
             </motion.button>
+            </>)}
           </motion.div>
         )}
 

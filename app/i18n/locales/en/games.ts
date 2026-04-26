@@ -184,6 +184,9 @@ export const games = {
     newSeance: 'New session',
     continueLibre: 'Continue in free mode',
     cardBackLabel: 'Card Draw',
+    emptyTitle: 'Your deck is empty',
+    emptyDesc: 'Complete a module to unlock your first cards and start playing.',
+    emptyCTA: 'Start the consent quiz',
   },
 
   premium: {

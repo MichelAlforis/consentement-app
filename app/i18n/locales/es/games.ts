@@ -184,6 +184,9 @@ export const games = {
     newSeance: 'Nueva sesión',
     continueLibre: 'Continuar en modo libre',
     cardBackLabel: 'Cartas',
+    emptyTitle: 'Tu mazo está vacío',
+    emptyDesc: 'Completa un módulo para desbloquear tus primeras cartas y empezar a jugar.',
+    emptyCTA: 'Empezar el test de consentimiento',
   },
 
   premium: {

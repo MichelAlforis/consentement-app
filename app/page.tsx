@@ -224,7 +224,7 @@ function AppShell() {
         return <GooseGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
 
       case 'jeu-cartes':
-        return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
+        return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={(s) => navigateTo(s as Screen)} />;
 
       case 'hall-of-cards':
         return <HallOfCardsScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={navigateTo} />;
