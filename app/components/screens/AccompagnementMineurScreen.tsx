@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HeartHandshake, ChevronRight, Phone, AlertTriangle, CheckCircle } from 'lucide-react';
+import { HeartHandshake, ChevronRight, Phone, AlertTriangle, CheckCircle, Sparkles } from 'lucide-react';
 import { Button } from '../ui';
 import { Screen } from '../../types';
 import { useTranslation } from '../../i18n';
+import { useModuleComplete } from '../../lib/useModuleComplete';
 
 interface AccompagnementMineurScreenProps {
   onNavigate: (screen: Screen) => void;
+  onComplete?: () => void;
 }
 
 type Step = 'intro' | 'age' | 'talked' | 'partner-ok' | 'resources' | 'guide';
@@ -19,8 +21,9 @@ interface StepState {
   partnerOk?: boolean;
 }
 
-export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurScreenProps) {
+export function AccompagnementMineurScreen({ onNavigate, onComplete }: AccompagnementMineurScreenProps) {
   const { t } = useTranslation();
+  const complete = useModuleComplete();
   const [step, setStep] = useState<Step>('intro');
   const [state, setState] = useState<StepState>({});
 
@@ -226,6 +229,16 @@ export function AccompagnementMineurScreen({ onNavigate }: AccompagnementMineurS
                 </div>
               ))}
             </div>
+            {onComplete && (
+              <Button
+                onClick={() => { complete('accompagnement-mineur'); onComplete(); }}
+                fullWidth
+                className="mb-3"
+              >
+                <Sparkles size={16} />
+                {t('accompagnement.guide.seeCard')}
+              </Button>
+            )}
             <Button onClick={() => onNavigate('home')} fullWidth variant="secondary">
               {t('accompagnement.guide.backHome')}
             </Button>

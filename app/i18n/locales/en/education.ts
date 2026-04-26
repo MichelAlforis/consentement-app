@@ -116,6 +116,7 @@ export const education = {
       tip3: 'If something hurts, say so',
       tip4: 'The first time is rarely like in films',
       backHome: 'Back home',
+      seeCard: 'See my card',
     },
     backHome: 'Back',
   },

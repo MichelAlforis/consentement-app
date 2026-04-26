@@ -1,8 +1,9 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '../../ui';
+import { useModuleComplete } from '../../../lib/useModuleComplete';
 import {
   DuoNavBar,
   DuoBumpStep,
@@ -26,6 +27,7 @@ interface DuoSpaceScreenProps {
   onUpdateComfort: (category: 'tenderness' | 'intensity' | 'trust', itemId: string, value: number) => void;
   onUpdateSafeword: (safeword: string) => void;
   onBack: () => void;
+  onComplete?: () => void;
 }
 
 export function DuoSpaceScreen({
@@ -33,8 +35,10 @@ export function DuoSpaceScreen({
   onUpdateComfort,
   onUpdateSafeword,
   onBack,
+  onComplete,
 }: DuoSpaceScreenProps) {
   const { t } = useTranslation();
+  const complete = useModuleComplete();
   const session = useDuoSession();
 
   const commonGround = session.partnerProfile
@@ -124,7 +128,13 @@ export function DuoSpaceScreen({
               partnerName={session.partnerName}
               partnerSafeword={session.partnerSafeword}
             />
-            <div className="px-5 pb-6">
+            <div className="px-5 pb-6 space-y-3">
+              {onComplete && (
+                <Button onClick={() => { complete('duo-flow'); onComplete(); }} fullWidth>
+                  <Sparkles size={16} />
+                  {t('duo.seeCard')}
+                </Button>
+              )}
               <Button onClick={session.handleReset} fullWidth variant="ghost">
                 <ArrowLeft size={18} />
                 {t('duo.newSession')}

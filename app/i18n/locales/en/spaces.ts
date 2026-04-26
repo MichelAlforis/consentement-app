@@ -78,6 +78,7 @@ export const spaces = {
       back: 'Back',
     },
     newSession: 'New session',
+    seeCard: 'See my card',
     or: 'or',
     back: 'Back',
     you: 'You',

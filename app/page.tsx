@@ -180,6 +180,7 @@ function AppShell() {
             onUpdateComfort={updateComfortLevel}
             onUpdateSafeword={updateSafeword}
             onBack={() => goBack()}
+            onComplete={() => navigateTo('hall-of-cards')}
           />
         );
 
@@ -204,7 +205,7 @@ function AppShell() {
         return <QuizConsentementScreen onComplete={() => navigateTo('hall-of-cards')} />;
 
       case 'accompagnement-mineur':
-        return <AccompagnementMineurScreen onNavigate={navigateTo} />;
+        return <AccompagnementMineurScreen onNavigate={navigateTo} onComplete={() => navigateTo('hall-of-cards')} />;
 
       case 'jeux':
         return (

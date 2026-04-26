@@ -116,6 +116,7 @@ export const education = {
       tip3: 'Si quelque chose fait mal, dites-le',
       tip4: 'La première fois est rarement comme dans les films',
       backHome: "Retour à l'accueil",
+      seeCard: 'Voir ma carte',
     },
     backHome: 'Retour',
   },
