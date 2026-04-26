@@ -578,9 +578,9 @@ export function CardMesh({
   const iridAngle = useRef(0);
   const idleT     = useRef(0);
 
-  const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
-  const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
-  const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.098), []);
+  const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.15), []);
+  const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.16), []);
+  const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.17), []);
   const backPng = useLoader(THREE.TextureLoader, '/cards/card-back.png');
   const [refCommon, refRare, refUnique] = useLoader(THREE.TextureLoader, [
     '/cards/deck-a-face.png',
@@ -892,7 +892,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
         transition: 'transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}>
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 14,
+          position: 'absolute', inset: 0, borderRadius: 20,
           background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
           border: '2px solid rgba(255,255,255,0.16)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
@@ -901,7 +901,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
           <span style={{ fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.09)' }}>C</span>
         </div>
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 14,
+          position: 'absolute', inset: 0, borderRadius: 20,
           background: card.gradient, border: `2px solid ${card.border}`,
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
@@ -910,7 +910,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
           gap: 8, padding: '10px 8px', overflow: 'hidden',
         }}>
           <div style={{
-            position: 'absolute', inset: 0, borderRadius: 13,
+            position: 'absolute', inset: 0, borderRadius: 20,
             background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.28) 0%, transparent 55%)',
             pointerEvents: 'none',
           }} />
@@ -1023,7 +1023,7 @@ function LightOverlay({ rarity, isFlipped, size = 160 }: { rarity: string; isFli
   return (
     <div style={{
       position: 'absolute', inset: 0, overflow: 'hidden',
-      borderRadius: 14, pointerEvents: 'none', zIndex: 2,
+      borderRadius: 20, pointerEvents: 'none', zIndex: 2,
     }}>
       {/* Gyro radial — updated directly via DOM ref at rAF rate, no React re-renders */}
       <div

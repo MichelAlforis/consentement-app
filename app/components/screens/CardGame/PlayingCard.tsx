@@ -37,7 +37,7 @@ function DeckStack({
             style={{
               position: 'absolute',
               inset: 0,
-              borderRadius: 28,
+              borderRadius: 20,
               background: gradient,
               zIndex: -depth,
               opacity: 1 - depth * 0.22,
@@ -212,7 +212,7 @@ export function PlayingCard({
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  borderRadius: 28,
+                  borderRadius: 20,
                   background: cat.gradient,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
@@ -260,7 +260,7 @@ export function PlayingCard({
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  borderRadius: 28,
+                  borderRadius: 20,
                   background: colors.bgCard,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
