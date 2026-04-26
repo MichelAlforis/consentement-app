@@ -1,20 +1,21 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PAWN_EMOJIS } from '../../../../data/goose-game';
+import { PAWN_ICONS } from '../../../../data/goose-game';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 import { useTranslation } from '../../../../i18n';
 
 interface SetupPlayerProps {
   playerIndex: 0 | 1;
-  otherEmoji: string | undefined;
-  onConfirm: (name: string, emoji: string) => void;
+  otherPawn: string | undefined;
+  onConfirm: (name: string, pawn: string) => void;
 }
 
-export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerProps) {
+export function SetupPlayer({ playerIndex, otherPawn, onConfirm }: SetupPlayerProps) {
   const { t } = useTranslation();
   const [name, setName]   = useState('');
-  const [emoji, setEmoji] = useState<string | null>(null);
-  const available = PAWN_EMOJIS.filter(e => e !== otherEmoji);
+  const [pawn, setPawn] = useState<string | null>(null);
+  const available = PAWN_ICONS.filter(p => p !== otherPawn);
 
   return (
     <AnimatePresence mode="wait">
@@ -27,7 +28,17 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
         style={{ minHeight: '100%' }}
       >
         <div className="text-center mt-4">
-          <div className="text-4xl mb-2">{playerIndex === 0 ? '1️⃣' : '2️⃣'}</div>
+          <div className="mb-2 flex justify-center">
+          <div style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)',
+            border: '2px solid rgba(255,255,255,0.4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 20, fontWeight: 800, color: 'white',
+          }}>
+            {playerIndex + 1}
+          </div>
+        </div>
           <h2 className="text-xl font-bold text-white">{t('gooseGame.setup.title', { n: playerIndex + 1 })}</h2>
           <p className="text-white/60 text-sm mt-1">{t('gooseGame.setup.sub')}</p>
         </div>
@@ -47,20 +58,20 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
         <div>
           <label className="block text-white/80 text-sm font-semibold mb-3">{t('gooseGame.setup.pawnLabel')}</label>
           <div className="flex justify-center gap-3 flex-wrap">
-            {available.map(e => (
+            {available.map(p => (
               <motion.button
-                key={e}
+                key={p}
                 whileTap={{ scale: 0.88 }}
-                onClick={() => setEmoji(e)}
+                onClick={() => setPawn(p)}
                 style={{
-                  width: 56, height: 56, borderRadius: 16, fontSize: 28,
+                  width: 56, height: 56, borderRadius: 16,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: emoji === e ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.07)',
-                  border: emoji === e ? '2.5px solid rgba(255,255,255,0.9)' : '2px solid transparent',
+                  background: pawn === p ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.07)',
+                  border: pawn === p ? '2.5px solid rgba(255,255,255,0.9)' : '2px solid transparent',
                   transition: 'all 0.15s ease',
                 }}
               >
-                {e}
+                <DynamicIcon name={p} size={26} color="white" />
               </motion.button>
             ))}
           </div>
@@ -68,11 +79,11 @@ export function SetupPlayer({ playerIndex, otherEmoji, onConfirm }: SetupPlayerP
 
         <motion.button
           whileTap={{ scale: 0.97 }}
-          onClick={() => { if (name.trim() && emoji) onConfirm(name.trim(), emoji); }}
+          onClick={() => { if (name.trim() && pawn) onConfirm(name.trim(), pawn); }}
           style={{
-            background: name.trim() && emoji ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.15)',
+            background: name.trim() && pawn ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.15)',
             borderRadius: 18, padding: '14px', fontWeight: 700, fontSize: 16,
-            color: name.trim() && emoji ? '#1e293b' : 'rgba(255,255,255,0.4)',
+            color: name.trim() && pawn ? '#1e293b' : 'rgba(255,255,255,0.4)',
             marginTop: 'auto', transition: 'all 0.2s ease',
           }}
         >

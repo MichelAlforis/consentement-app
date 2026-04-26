@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { Trophy, Handshake, Leaf, Waves, Sparkles, Heart } from 'lucide-react';
 import { Player } from '../types';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 import { useTranslation } from '../../../../i18n';
 import { GameEndCinematic } from '../../../../game-engine/shared/GameEndCinematic';
 
@@ -56,12 +57,12 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
         className="flex items-center gap-5"
       >
         <div className="text-center">
-          <div className="text-4xl">{player1.emoji}</div>
+          <div className="flex justify-center"><DynamicIcon name={player1.pawn} size={40} color="white" /></div>
           <div className="text-sm font-bold text-white/75 mt-1">{player1.name}</div>
         </div>
         <div className="text-white/25 text-xl">×</div>
         <div className="text-center">
-          <div className="text-4xl">{player2.emoji}</div>
+          <div className="flex justify-center"><DynamicIcon name={player2.pawn} size={40} color="white" /></div>
           <div className="text-sm font-bold text-white/75 mt-1">{player2.name}</div>
         </div>
       </motion.div>

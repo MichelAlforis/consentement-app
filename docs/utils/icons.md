@@ -1,7 +1,7 @@
 # Système d'icônes — DynamicIcon
 
-> Mis à jour : 2026-04-23  
-> Statut : **Level 2 terminé** — migration Emoji → Lucide complète (hors scope R3F)
+> Mis à jour : 2026-04-26  
+> Statut : **Migration complète** — zéro emoji dans l'UI rendue (hors identifiants thèmes décoratifs)
 
 ---
 
@@ -116,6 +116,32 @@ const ICON_MAP: Record<string, LucideIcon> = {
 | Zone Intimité | 🌊 | `Waves` |
 | Zone Connexion | ✨ | `Sparkles` |
 
+### Jeu de l'Oie — UI (overlays / phases)
+
+| Composant | Emoji retiré | Remplacement |
+|---|---|---|
+| `ChanceOverlay` — icône centrale | ⭐ | `Star` fill blanc |
+| `LockedCard` — cadenas | 🔒 | `Lock` Lucide |
+| `PacteScreen` — 3 items | 🤝🔒⏸️ | `Handshake Lock Pause` via `DynamicIcon` |
+| `AccordFlow` — avatar joueur | emoji pion | `DynamicIcon name={player.pawn}` |
+| `PacteScreen` — avatar joueur | emoji pion | `DynamicIcon name={player.pawn}` |
+| `EndScreen` — avatar joueur | emoji pion | `DynamicIcon name={player.pawn}` |
+| `SetupPlayer` — indicateur joueur | 1️⃣ 2️⃣ | Badge circulaire numérique |
+| `SetupPlayer` — sélecteur pion | 🦊🐼🦋🌙🌟🎲 | `DynamicIcon` depuis `PAWN_ICONS` |
+| `index.tsx` — pion actif tour | emoji pion | `DynamicIcon name={activePawn}` |
+
+### Duo
+
+| Composant | Emoji retiré | Remplacement |
+|---|---|---|
+| `DuoRevealStep` — fin de révélation | 💜 | `Heart size={40} fill="#a855f7"` |
+
+### Confetti
+
+| Composant | Emojis retirés | Remplacement |
+|---|---|---|
+| `ConfettiParticles` | ❤️✨🎉💜🌟🤝 | `Heart Sparkles Star Zap Flame Handshake` avec couleurs hex |
+
 ### Écrans éducatifs
 
 | Écran | Emoji retiré | iconName / composant |
@@ -140,29 +166,38 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 | Élément | Raison |
 |---|---|
-| `PAWN_EMOJIS` (🦊🐼🦋🌙🌟🎲) | Choix de pion joueur — sera remplacé par des avatars R3F |
-| `CONFETTI_EMOJIS` (❤️✨🎉💜🌟🤝) | Particules de confetti — scope cinématique R3F future |
-| `theme.emoji` dans `theme.ts` | Identifiant décoratif du système de thèmes (🌅🌙✨🤍🌈) |
-| `player.emoji` dans GooseGame | Pion actif — lié à `PAWN_EMOJIS` |
+| `theme.emoji` dans `theme.ts` | Identifiant décoratif du système de thèmes (🌅🌙✨🤍🌈) — non rendu en UI |
+
+### Migré (2026-04-26)
+
+| Élément | → |
+|---|---|
+| `PAWN_EMOJIS` → `PAWN_ICONS` | `['Zap','Leaf','Wind','Moon','Star','Dice5']` |
+| `Player.emoji` → `Player.pawn` | stocke un nom d'icône Lucide |
+| `CONFETTI_EMOJIS` → `CONFETTI_ITEMS` | objets `{ icon, color }`, rendu via `DynamicIcon` |
+| `PawnSvg` — `<text>{emoji}` | `<foreignObject>` + `DynamicIcon` dans le SVG |
+| Clé de sauvegarde | `consentement_jeu_oie` → `consentement_jeu_oie_v2` (invalidation localStorage) |
 
 ---
 
 ## Types impactés
 
-Tous ces types ont eu `emoji: string` → `iconName: string` :
+Tous ces types ont eu `emoji: string` → `iconName: string` (ou `pawn: string`) :
 
-| Type | Fichier |
-|---|---|
-| `ComfortItem` | `app/types/index.ts` |
-| `ComfortCategory` | `app/types/index.ts` |
-| `ComfortLevel` | `app/types/index.ts` |
-| `ConsentPrinciple` | `app/types/index.ts` — champ supprimé (code mort) |
-| `DiceFace` | `app/game-engine/dice/types.ts` |
-| `CardConfig` | `app/game-engine/cards/types.ts` |
-| `SquareVisual` | `app/data/goose-game.ts` |
-| `Zone` | `app/data/goose-game.ts` |
-| `SquareConfig` | `app/game-engine/board/types.ts` |
-| `LegendEntry` | `app/game-engine/board/BoardRenderer.tsx` |
+| Type | Fichier | Champ |
+|---|---|---|
+| `ComfortItem` | `app/types/index.ts` | `iconName` |
+| `ComfortCategory` | `app/types/index.ts` | `iconName` |
+| `ComfortLevel` | `app/types/index.ts` | `iconName` |
+| `ConsentPrinciple` | `app/types/index.ts` | supprimé (code mort) |
+| `DiceFace` | `app/game-engine/dice/types.ts` | `iconName` |
+| `CardConfig` | `app/game-engine/cards/types.ts` | `iconName` |
+| `SquareVisual` | `app/data/goose-game.ts` | `iconName` |
+| `Zone` | `app/data/goose-game.ts` | `iconName` |
+| `SquareConfig` | `app/game-engine/board/types.ts` | `iconName` |
+| `LegendEntry` | `app/game-engine/board/BoardRenderer.tsx` | `iconName` |
+| `Player` | `app/components/screens/GooseGameScreen/types.ts` | `pawn` (nom Lucide) |
+| `SavedGooseGame` | `app/data/goose-game.ts` | `pawn` |
 
 ---
 

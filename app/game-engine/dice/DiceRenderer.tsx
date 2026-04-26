@@ -110,6 +110,8 @@ function Cube6({
         y:      [0, 0,    -22,  -6,   -1,   0],
         transition: { duration: 0.44, ease: 'easeOut' },
       });
+    }).catch(() => {
+      // Animation interrompue (démontage composant) — état cohérent garanti par Framer Motion
     });
   }, [isRolling, targetFaceIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 

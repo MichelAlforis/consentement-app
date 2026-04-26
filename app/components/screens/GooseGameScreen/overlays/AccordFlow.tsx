@@ -2,6 +2,7 @@
 import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, X, EyeOff, Sparkles, Smile, Handshake } from 'lucide-react';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
@@ -68,7 +69,7 @@ export function AccordFlow({
       {step === 'accord-p1' && (
         <Overlay key="acc-p1" color="#0f172a">
           <div className="text-center mb-4">
-            <span className="text-3xl">{player1.emoji}</span>
+            <div className="flex justify-center"><DynamicIcon name={player1.pawn} size={32} color="white" /></div>
             <p className="text-white font-bold mt-1">{t('gooseGame.accord.yourVote', { name: player1.name })}</p>
             <p className="text-white/45 text-xs mt-0.5">{t('gooseGame.accord.noSee')}</p>
           </div>
@@ -102,7 +103,7 @@ export function AccordFlow({
       {step === 'accord-p2' && (
         <Overlay key="acc-p2" color="#0f172a">
           <div className="text-center mb-4">
-            <span className="text-3xl">{player2.emoji}</span>
+            <div className="flex justify-center"><DynamicIcon name={player2.pawn} size={32} color="white" /></div>
             <p className="text-white font-bold mt-1">{t('gooseGame.accord.yourVote', { name: player2.name })}</p>
             <p className="text-white/45 text-xs mt-0.5">{t('gooseGame.accord.voteWithout', { name: player1.name })}</p>
           </div>

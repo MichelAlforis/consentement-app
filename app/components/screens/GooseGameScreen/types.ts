@@ -15,5 +15,5 @@ export type TurnStep =
 
 export interface Player {
   name: string;
-  emoji: string;
+  pawn: string;
 }

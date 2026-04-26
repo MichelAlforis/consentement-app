@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Player } from '../types';
 import { useTranslation } from '../../../../i18n';
+import { DynamicIcon } from '../../../../utils/iconFromName';
 
-const PACTE_ICONS = ['🤝', '🔒', '⏸️'];
+const PACTE_ICON_NAMES = ['Handshake', 'Lock', 'Pause'];
 
 interface PacteScreenProps {
   player1: Player;
@@ -42,12 +43,12 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
         className="flex items-center gap-5"
       >
         <div className="text-center">
-          <div className="text-4xl">{player1.emoji}</div>
+          <div className="flex justify-center"><DynamicIcon name={player1.pawn} size={40} color="white" /></div>
           <div className="text-xs text-white/60 mt-1 font-semibold">{player1.name}</div>
         </div>
         <div className="text-white/25 text-2xl">×</div>
         <div className="text-center">
-          <div className="text-4xl">{player2.emoji}</div>
+          <div className="flex justify-center"><DynamicIcon name={player2.pawn} size={40} color="white" /></div>
           <div className="text-xs text-white/60 mt-1 font-semibold">{player2.name}</div>
         </div>
       </motion.div>
@@ -76,9 +77,9 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.8 + i * 0.5, type: 'spring', stiffness: 350 }}
-              style={{ fontSize: 18, flexShrink: 0 }}
+              style={{ flexShrink: 0, display: 'flex' }}
             >
-              {PACTE_ICONS[i]}
+              <DynamicIcon name={PACTE_ICON_NAMES[i]} size={18} color="white" />
             </motion.span>
             <p className="text-white/85 text-sm leading-relaxed">{line}</p>
           </motion.div>

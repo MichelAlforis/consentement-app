@@ -1,4 +1,5 @@
 import { diePractices, DICE_CATEGORIES, DiePractice } from './index';
+import { logger } from '../lib/logger';
 
 export type SquareType = 'depart' | 'normal' | 'chance' | 'pause' | 'accord' | 'complicite' | 'arrivee';
 
@@ -62,7 +63,7 @@ export const SQUARE_VISUAL: Record<SquareType, SquareVisual> = {
   arrivee:    { bg: 'linear-gradient(135deg, #34d399, #059669)', iconName: 'Flag',      label: 'Arrivée' },
 };
 
-export const PAWN_EMOJIS  = ['🦊', '🐼', '🦋', '🌙', '🌟', '🎲'];
+export const PAWN_ICONS = ['Zap', 'Leaf', 'Wind', 'Moon', 'Star', 'Dice5'];
 export const PAWN_COLORS  = ['#ff6b00', '#00aaff'] as const; // J1 orange vif · J2 bleu vif
 
 // ─── Zones narratives ─────────────────────────────────────────────────────────
@@ -226,20 +227,21 @@ export function getSquareIconName(square: BoardSquare): string {
 }
 
 export interface SavedGooseGame {
-  players: [{ name: string; emoji: string }, { name: string; emoji: string }];
+  players: [{ name: string; pawn: string }, { name: string; pawn: string }];
   positions: [number, number];
   currentPlayer: 0 | 1;
   accordsCount: number;
 }
 
-const SAVE_KEY = 'consentement_jeu_oie';
+const SAVE_KEY = 'consentement_jeu_oie_v2';
 
 export function loadSavedGame(): SavedGooseGame | null {
   if (typeof window === 'undefined') return null;
   try {
     const s = localStorage.getItem(SAVE_KEY);
     return s ? JSON.parse(s) : null;
-  } catch {
+  } catch (err) {
+    logger.warn('loadSavedGame failed', err instanceof Error ? err : undefined, { extra: { key: SAVE_KEY } });
     return null;
   }
 }
@@ -248,7 +250,9 @@ export function saveGame(data: SavedGooseGame): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  } catch {}
+  } catch (err) {
+    logger.warn('saveGame failed', err instanceof Error ? err : undefined, { extra: { key: SAVE_KEY } });
+  }
 }
 
 export function clearSavedGame(): void {

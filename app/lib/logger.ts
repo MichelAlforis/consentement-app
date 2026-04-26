@@ -61,6 +61,10 @@ class Logger {
     this.globalContext = { ...this.globalContext, ...partial };
   }
 
+  resetContext() {
+    this.globalContext = {};
+  }
+
   private log(level: LogLevel, message: string, error?: Error, context?: LogContext) {
     const entry: LogEntry = {
       level,

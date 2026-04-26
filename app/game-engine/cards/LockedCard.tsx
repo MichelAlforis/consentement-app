@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
+import { Lock } from 'lucide-react';
 
 export interface LockedCardProps {
   deck: 'a' | 'b';
@@ -103,13 +104,7 @@ export function LockedCard({ deck, condition, width = 160, height = 240, style }
             justifyContent: 'center',
           }}
         >
-          <span
-            style={{ fontSize: width * 0.1, lineHeight: 1, userSelect: 'none' }}
-            role="img"
-            aria-label="Verrouillé"
-          >
-            🔒
-          </span>
+          <Lock size={Math.round(width * 0.11)} color="rgba(255,255,255,0.85)" />
         </div>
       </div>
 

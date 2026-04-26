@@ -258,9 +258,9 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 1, repeat: 2 }}
-                className="text-4xl mb-3"
+                className="mb-3 flex justify-center"
               >
-                💜
+                <Heart size={40} fill="#a855f7" className="text-purple-500" />
               </motion.div>
               <p className="text-lg font-medium" style={{ color: colors.textSecondary }}>
                 {t('duo.reveal.share')}

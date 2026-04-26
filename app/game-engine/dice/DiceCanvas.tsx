@@ -344,7 +344,7 @@ function DiceScene({
         {hasCard && (
           <group position={[0.72, 0, 0]} scale={0.55}>
             <Suspense fallback={null}>
-              <CardMesh card={previewCard} isFlipped={true} enableBloom={false} />
+              <CardMesh card={previewCard} isFlipped={true} />
             </Suspense>
             <RarityLights rarity={previewCard.rarity} />
           </group>

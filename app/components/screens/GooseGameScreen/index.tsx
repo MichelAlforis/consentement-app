@@ -10,6 +10,7 @@ import { ConfettiParticles } from './components/ConfettiParticles';
 import { ZoneIndicator } from './components/ZoneIndicator';
 
 import { Lock, Handshake } from 'lucide-react';
+import { DynamicIcon } from '../../../utils/iconFromName';
 import { useTranslation } from '../../../i18n';
 import { IntroScreen } from './phases/IntroScreen';
 import { SetupPlayer } from './phases/SetupPlayer';
@@ -90,7 +91,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'setup-p1') {
     return (
       <div style={{ minHeight: '100%', background: 'linear-gradient(160deg, #7c3aed, #4f46e5)' }}>
-        <SetupPlayer playerIndex={0} otherEmoji={undefined} onConfirm={handleP1Confirm} />
+        <SetupPlayer playerIndex={0} otherPawn={undefined} onConfirm={handleP1Confirm} />
       </div>
     );
   }
@@ -98,7 +99,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'setup-p2') {
     return (
       <div style={{ minHeight: '100%', background: 'linear-gradient(160deg, #0369a1, #0891b2)' }}>
-        <SetupPlayer playerIndex={1} otherEmoji={p1?.emoji} onConfirm={handleP2Confirm} />
+        <SetupPlayer playerIndex={1} otherPawn={p1?.pawn} onConfirm={handleP2Confirm} />
       </div>
     );
   }
@@ -145,8 +146,8 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
         <BoardGrid
           displayPos0={displayPos0}
           displayPos1={displayPos1}
-          p0Emoji={player1.emoji}
-          p1Emoji={player2.emoji}
+          p0Pawn={player1.pawn}
+          p1Pawn={player2.pawn}
           p0Color={PAWN_COLORS[0]}
           p1Color={PAWN_COLORS[1]}
           activeSquare={activeSquare}
@@ -174,7 +175,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <span style={{ fontSize: 30 }}>{activePawn}</span>
+          <DynamicIcon name={activePawn} size={30} color="white" />
           <p className="text-white/55 text-sm mt-1">
             {t('gooseGame.yourTurn', { name: activeName })}
           </p>

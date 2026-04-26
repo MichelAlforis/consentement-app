@@ -1,12 +1,15 @@
 'use client';
 import { useCallback } from 'react';
+import { logger } from '../../lib/logger';
 
 export function usePersist<T>(key: string) {
   const save = useCallback((data: T): void => {
     if (typeof window === 'undefined') return;
     try {
       localStorage.setItem(key, JSON.stringify(data));
-    } catch {}
+    } catch (err) {
+      logger.warn('localStorage.setItem failed', err instanceof Error ? err : undefined, { extra: { key } });
+    }
   }, [key]);
 
   const load = useCallback((): T | null => {

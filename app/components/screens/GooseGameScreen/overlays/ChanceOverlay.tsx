@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import { Star } from 'lucide-react';
 import { Overlay } from '../components/Overlay';
 import { useTranslation } from '../../../../i18n';
 
@@ -17,9 +18,9 @@ export function ChanceOverlay({ activeName, onAdvance }: ChanceOverlayProps) {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 320 }}
-          className="text-6xl mb-3"
+          className="flex justify-center mb-3"
         >
-          ⭐
+          <Star size={56} fill="white" color="white" />
         </motion.div>
         <h3 className="text-white text-2xl font-black mb-2">{t('gooseGame.chance.title')}</h3>
         <p className="text-white/80 text-base mb-7">

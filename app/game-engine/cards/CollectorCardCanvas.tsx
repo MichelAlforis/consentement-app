@@ -7,7 +7,7 @@ import {
 import { motion } from 'framer-motion';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
-import { EffectComposer, SelectiveBloom, Vignette, Selection, Select } from '@react-three/postprocessing';
+import { EffectComposer, SelectiveBloom, Vignette, Selection } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
@@ -558,19 +558,16 @@ function UniqueParticles() {
 
 // ─── CardMesh — export public, utilisable dans toute scène R3F ───────────────
 //   GooseGame, DiceGame, futurs jeux : <CardMesh card={...} isFlipped={...} />
-//   Dans une scène sans Selection/SelectiveBloom : passer enableBloom={false}
 
 export interface CardMeshProps {
   card: GainedCard;
   isFlipped: boolean;
   autoFlip?: boolean;
   onFlipComplete?: () => void;
-  /** false si la scène parente n'a pas de <Selection> context (ex : GooseGame) */
-  enableBloom?: boolean;
 }
 
 export function CardMesh({
-  card, isFlipped, autoFlip, onFlipComplete, enableBloom = true,
+  card, isFlipped, autoFlip, onFlipComplete,
 }: CardMeshProps) {
   const outerRef  = useRef<THREE.Group>(null); // world-space arc + Z wobble
   const flipRef   = useRef<THREE.Group>(null); // rotation Y (le flip)
@@ -750,29 +747,15 @@ export function CardMesh({
 
           {/* Face group — pré-roté PI → local +Z pointe caméra quand flipRef = PI */}
           <group rotation={[0, Math.PI, 0]}>
-            {/* Glow ring rare — dans <Select> si bloom actif, sinon mesh nu */}
-            {isRare && enableBloom && (
-              <Select enabled>
-                <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
-                  <meshBasicMaterial color={card.border} toneMapped={false} transparent opacity={0.38} />
-                </mesh>
-              </Select>
-            )}
-            {isRare && !enableBloom && (
+            {/* Glow ring rare */}
+            {isRare && (
               <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
                 <meshBasicMaterial color={card.border} toneMapped={false} transparent opacity={0.38} />
               </mesh>
             )}
 
             {/* Glow ring unique — iridescent HSL shift */}
-            {isUnique && enableBloom && (
-              <Select enabled>
-                <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
-                  <meshBasicMaterial ref={uniqueGlowRef} color={card.border} toneMapped={false} transparent opacity={0.55} />
-                </mesh>
-              </Select>
-            )}
-            {isUnique && !enableBloom && (
+            {isUnique && (
               <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
                 <meshBasicMaterial ref={uniqueGlowRef} color={card.border} toneMapped={false} transparent opacity={0.55} />
               </mesh>
@@ -902,28 +885,30 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
         </div>
         <div style={{
           position: 'absolute', inset: 0, borderRadius: 20,
-          background: card.gradient, border: `2px solid ${card.border}`,
+          background: (() => {
+            const m = card.gradient.match(/#[0-9a-f]{6}/i);
+            const c1 = m ? m[0] : '#3b1f85';
+            return `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`;
+          })(),
+          border: '1.5px solid rgba(255,255,255,0.10)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 8, padding: '10px 8px', overflow: 'hidden',
+          overflow: 'hidden',
         }}>
+          {/* Top stripe */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: card.gradient }} />
+          {/* Category pill — fixed top position */}
           <div style={{
-            position: 'absolute', inset: 0, borderRadius: 20,
-            background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.28) 0%, transparent 55%)',
-            pointerEvents: 'none',
-          }} />
-          <DynamicIcon name={card.iconName} size={28} color="rgba(255,255,255,0.92)" />
-          <p style={{
-            fontSize: Math.round(size * 0.08), fontWeight: 700, color: 'rgba(255,255,255,0.85)',
-            textAlign: 'center', lineHeight: 1.35, position: 'relative', margin: 0,
+            position: 'absolute', top: 14, left: 10,
+            display: 'inline-flex', alignItems: 'center', gap: 4,
+            padding: '3px 8px', borderRadius: 16, background: card.gradient,
           }}>
-            {card.text.length > 50 ? `${card.text.slice(0, 50)}…` : card.text}
-          </p>
+            <DynamicIcon name={card.iconName} size={10} color="white" />
+          </div>
+          {/* Rarity badge */}
           {card.rarity !== 'common' && (
             <div style={{
-              position: 'absolute', top: 5, right: 5, borderRadius: 6, padding: '2px 5px',
+              position: 'absolute', top: 14, right: 10, borderRadius: 6, padding: '2px 5px',
               background: card.rarity === 'unique'
                 ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
                 : 'linear-gradient(135deg, #7c3aed, #a855f7)',
@@ -933,6 +918,18 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
               </span>
             </div>
           )}
+          {/* Card text — centered vertically in remaining space */}
+          <p style={{
+            position: 'absolute', top: 36, bottom: 14, left: 10, right: 10,
+            fontSize: Math.round(size * 0.09), fontWeight: 500, color: 'rgba(255,255,255,0.90)',
+            textAlign: 'left', lineHeight: 1.5, margin: 0,
+            display: 'flex', alignItems: 'center',
+            overflow: 'hidden',
+          }}>
+            {card.text}
+          </p>
+          {/* Bottom stripe */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: card.gradient }} />
         </div>
       </div>
     </div>

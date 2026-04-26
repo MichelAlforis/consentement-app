@@ -181,13 +181,13 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   }, [persistGame, triggerConfetti]);
 
   // ── Setup ──────────────────────────────────────────────────────────────────
-  const handleP1Confirm = useCallback((name: string, emoji: string) => {
-    setP1({ name, emoji });
+  const handleP1Confirm = useCallback((name: string, pawn: string) => {
+    setP1({ name, pawn });
     setPhase('setup-p2');
   }, []);
 
-  const handleP2Confirm = useCallback((name: string, emoji: string) => {
-    setP2({ name, emoji });
+  const handleP2Confirm = useCallback((name: string, pawn: string) => {
+    setP2({ name, pawn });
     setPhase('pacte');
   }, []);
 
@@ -225,11 +225,11 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   }, []);
 
   // ── Valeurs dérivées ───────────────────────────────────────────────────────
-  const player1 = p1 ?? { name: 'Joueur 1', emoji: '🦊' };
-  const player2 = p2 ?? { name: 'Joueur 2', emoji: '🐼' };
-  const activeName  = curPlayer === 0 ? player1.name  : player2.name;
-  const activePos   = curPlayer === 0 ? pos0          : pos1;
-  const activePawn  = curPlayer === 0 ? player1.emoji : player2.emoji;
+  const player1 = p1 ?? { name: 'Joueur 1', pawn: 'Zap' };
+  const player2 = p2 ?? { name: 'Joueur 2', pawn: 'Leaf' };
+  const activeName  = curPlayer === 0 ? player1.name : player2.name;
+  const activePos   = curPlayer === 0 ? pos0         : pos1;
+  const activePawn  = curPlayer === 0 ? player1.pawn : player2.pawn;
 
   const displayPos0  = (curPlayer === 0 && animatingPos !== null) ? animatingPos : pos0;
   const displayPos1  = (curPlayer === 1 && animatingPos !== null) ? animatingPos : pos1;

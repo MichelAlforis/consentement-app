@@ -41,8 +41,8 @@ vi.mock('../../../../data/goose-game', async () => {
 // Helper : amène le hook jusqu'à la phase playing avec deux joueurs configurés
 function setupPlaying() {
   const hook = renderHook(() => useGooseGame({ isAdult: false }));
-  act(() => { hook.result.current.handleP1Confirm('Alice', '🦊'); });
-  act(() => { hook.result.current.handleP2Confirm('Bob', '🐼'); });
+  act(() => { hook.result.current.handleP1Confirm('Alice', 'Zap'); });
+  act(() => { hook.result.current.handleP2Confirm('Bob', 'Leaf'); });
   act(() => { hook.result.current.startNewGame(); });
   return hook;
 }
@@ -63,16 +63,16 @@ describe('useGooseGame', () => {
 
   it('handleP1Confirm → p1 défini, phase setup-p2', () => {
     const { result } = renderHook(() => useGooseGame({ isAdult: false }));
-    act(() => { result.current.handleP1Confirm('Alice', '🦊'); });
-    expect(result.current.p1).toMatchObject({ name: 'Alice', emoji: '🦊' });
+    act(() => { result.current.handleP1Confirm('Alice', 'Zap'); });
+    expect(result.current.p1).toMatchObject({ name: 'Alice', pawn: 'Zap' });
     expect(result.current.phase).toBe('setup-p2');
   });
 
   it('handleP2Confirm → p2 défini, phase pacte', () => {
     const { result } = renderHook(() => useGooseGame({ isAdult: false }));
-    act(() => { result.current.handleP1Confirm('Alice', '🦊'); });
-    act(() => { result.current.handleP2Confirm('Bob', '🐼'); });
-    expect(result.current.p2).toMatchObject({ name: 'Bob', emoji: '🐼' });
+    act(() => { result.current.handleP1Confirm('Alice', 'Zap'); });
+    act(() => { result.current.handleP2Confirm('Bob', 'Leaf'); });
+    expect(result.current.p2).toMatchObject({ name: 'Bob', pawn: 'Leaf' });
     expect(result.current.phase).toBe('pacte');
   });
 

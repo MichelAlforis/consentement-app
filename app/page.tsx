@@ -12,7 +12,7 @@ import { ToastProvider } from './context/ToastContext';
 import { GrainOverlay } from './components/ui/ThemeEffects';
 import { useTheme } from './context/ThemeContext';
 import { useTranslation } from './i18n';
-import { isCapacitor } from './lib/platform';
+import { isCapacitor, getPlatform } from './lib/platform';
 import { logger } from './lib/logger';
 import {
   useNavigationStore,
@@ -117,6 +117,7 @@ function AppShell() {
   useAndroidBackButton();
 
   useEffect(() => {
+    logger.setContext({ platform: getPlatform() });
     const onUnhandledRejection = (event: PromiseRejectionEvent) => {
       logger.error('Unhandled promise rejection', event.reason instanceof Error ? event.reason : new Error(String(event.reason)));
     };
@@ -130,6 +131,10 @@ function AppShell() {
       window.removeEventListener('error', onError);
     };
   }, []);
+
+  useEffect(() => {
+    logger.setContext({ screen: currentScreen });
+  }, [currentScreen]);
 
   // Hard block : redirige les mineurs hors des écrans réservés aux adultes
   const ADULT_ONLY: Screen[] = ['personal-space', 'duo-space'];

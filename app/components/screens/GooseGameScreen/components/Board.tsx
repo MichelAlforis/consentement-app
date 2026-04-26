@@ -103,7 +103,7 @@ function CameraLookAt() {
 
 // ─── PawnSvg ──────────────────────────────────────────────────────────────────
 
-function PawnSvg({ emoji, color, pawnId }: { emoji: string; color: string; pawnId: string }) {
+function PawnSvg({ pawn, color, pawnId }: { pawn: string; color: string; pawnId: string }) {
   const cylId  = `pc-${pawnId}`;
   const headId = `ph-${pawnId}`;
   const baseId = `pb-${pawnId}`;
@@ -145,19 +145,21 @@ function PawnSvg({ emoji, color, pawnId }: { emoji: string; color: string; pawnI
       {/* Tête sphère */}
       <circle cx="30" cy="22" r="13" fill={`url(#${headId})`} />
 
-      {/* Emoji */}
-      <text x="30" y="23" textAnchor="middle" dominantBaseline="middle" fontSize="15">
-        {emoji}
-      </text>
+      {/* Pawn icon */}
+      <foreignObject x="17" y="9" width="26" height="26">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+          <DynamicIcon name={pawn} size={14} color="rgba(255,255,255,0.92)" />
+        </div>
+      </foreignObject>
     </svg>
   );
 }
 
 // ─── PawnOverlay ──────────────────────────────────────────────────────────────
 
-function PawnOverlay({ squareIndex, emoji, color, pawnId, cellW, xOffset = 0 }: {
+function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0 }: {
   squareIndex: number;
-  emoji: string;
+  pawn: string;
   color: string;
   pawnId: string;
   cellW: number;
@@ -215,7 +217,7 @@ function PawnOverlay({ squareIndex, emoji, color, pawnId, cellW, xOffset = 0 }: 
         z: 50,
       }}
     >
-      <PawnSvg emoji={emoji} color={color} pawnId={pawnId} />
+      <PawnSvg pawn={pawn} color={color} pawnId={pawnId} />
     </motion.div>
   );
 }
@@ -269,8 +271,8 @@ function BoardCell({ squareIndex, isActive, isAnimating }: BoardCellProps) {
 interface BoardGridProps {
   displayPos0: number;
   displayPos1: number;
-  p0Emoji: string;
-  p1Emoji: string;
+  p0Pawn: string;
+  p1Pawn: string;
   p0Color: string;
   p1Color: string;
   activeSquare: number;
@@ -307,7 +309,7 @@ function useWebGLSupport(): boolean | null {
 
 function BoardGridCSS({
   displayPos0, displayPos1,
-  p0Emoji, p1Emoji, p0Color, p1Color,
+  p0Pawn, p1Pawn, p0Color, p1Color,
   activeSquare, isAnimating,
 }: BoardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -362,7 +364,7 @@ function BoardGridCSS({
 
             <PawnOverlay
               squareIndex={displayPos0}
-              emoji={p0Emoji}
+              pawn={p0Pawn}
               color={p0Color}
               pawnId="p0"
               cellW={cellW}
@@ -370,7 +372,7 @@ function BoardGridCSS({
             />
             <PawnOverlay
               squareIndex={displayPos1}
-              emoji={p1Emoji}
+              pawn={p1Pawn}
               color={p1Color}
               pawnId="p1"
               cellW={cellW}

@@ -61,8 +61,8 @@ export default function PlateauTestPage() {
       <BoardGrid
         displayPos0={pos0}
         displayPos1={pos1}
-        p0Emoji="🦊"
-        p1Emoji="🐻"
+        p0Pawn="Zap"
+        p1Pawn="Moon"
         p0Color="#fb923c"
         p1Color="#38bdf8"
         activeSquare={active}
