@@ -451,7 +451,7 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ];
   const avgLum   = (lm(toRgb01(c1)) + lm(toRgb01(c2))) / 2;
   const inkColor = '#f1f3f5';
-  const textShad = avgLum > 0.38 ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.85)';
+  const textShad = avgLum > 0.38 ? 'rgba(0,0,0,0.70)' : 'rgba(0,0,0,0.92)';
 
   const iconCy = h * 0.30;
   const iconR  = size * 0.165;
@@ -470,7 +470,7 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ctx.stroke();
 
   // Texte
-  ctx.font = `500 ${Math.round(size * 0.094)}px system-ui, sans-serif`;
+  ctx.font = `500 ${Math.round(size * 0.108)}px system-ui, sans-serif`;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (ctx as any).letterSpacing = `${Math.round(size * 0.008)}px`;
   ctx.textAlign = 'center';
@@ -480,8 +480,8 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ctx.lineWidth   = Math.round(size * 0.0028);
   ctx.fillStyle   = inkColor;
   ctx.shadowColor = textShad;
-  ctx.shadowBlur  = size * 0.018;
-  wrapText(ctx, card.text, size / 2, h * 0.58, size - size * 0.18, size * 0.134, true);
+  ctx.shadowBlur  = size * 0.028;
+  wrapText(ctx, card.text, size / 2, h * 0.58, size - size * 0.18, size * 0.148, true);
   ctx.shadowBlur = 0;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (ctx as any).letterSpacing = '0px';
@@ -828,7 +828,7 @@ function CardScene({
           autoFlip={autoFlip}
           onFlipComplete={onFlipComplete}
         />
-        <ContactShadows position={[0, -0.80, 0]} opacity={0.45} blur={2.2} far={2.5} scale={4} />
+        <ContactShadows position={[0, -0.80, 0]} opacity={0.55} blur={3.2} far={2.5} scale={4} />
       </Suspense>
 
       {/* SelectiveBloom — isolé dans PostFXBoundary → si ça crash (Safari/WebGL1), cartes restent visibles */}
@@ -866,7 +866,7 @@ class CanvasBoundary extends Component<
 
 // ─── Fallback CSS ─────────────────────────────────────────────────────────────
 
-function CSSCardFallback({ card, isFlipped }: { card: GainedCard; isFlipped: boolean }) {
+function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; isFlipped: boolean; size?: number }) {
   return (
     <div style={{ perspective: 600, width: '100%', height: '100%' }}>
       <div style={{
@@ -900,7 +900,7 @@ function CSSCardFallback({ card, isFlipped }: { card: GainedCard; isFlipped: boo
           }} />
           <DynamicIcon name={card.iconName} size={28} color="rgba(255,255,255,0.92)" />
           <p style={{
-            fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.85)',
+            fontSize: Math.round(size * 0.08), fontWeight: 700, color: 'rgba(255,255,255,0.85)',
             textAlign: 'center', lineHeight: 1.35, position: 'relative', margin: 0,
           }}>
             {card.text.length > 50 ? `${card.text.slice(0, 50)}…` : card.text}
@@ -925,11 +925,17 @@ function CSSCardFallback({ card, isFlipped }: { card: GainedCard; isFlipped: boo
 
 // ─── LightOverlay — shimmer sweep + gyroscope radial highlight ───────────────
 
-function LightOverlay({ rarity, isFlipped }: { rarity: string; isFlipped: boolean }) {
+function LightOverlay({ rarity, isFlipped, size = 160 }: { rarity: string; isFlipped: boolean; size?: number }) {
   const gyroRef = useRef<HTMLDivElement>(null);
+
+  // Respect prefers-reduced-motion (a11y + mal des transports)
+  const prefersReduced = typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     if (!isFlipped) return;
+    // Gyroscope inutile (invisible) et coûteux sous 140px
+    if (size < 140 || prefersReduced) return;
 
     const getGyroGradient = (x: number, y: number) => {
       if (rarity === 'unique') {
@@ -987,7 +993,7 @@ function LightOverlay({ rarity, isFlipped }: { rarity: string; isFlipped: boolea
       cancelAnimationFrame(rafId);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFlipped]);
+  }, [isFlipped, size]);
 
   const shimmerGradient =
     rarity === 'unique'
@@ -1013,20 +1019,22 @@ function LightOverlay({ rarity, isFlipped }: { rarity: string; isFlipped: boolea
           mixBlendMode: 'screen',
         }}
       />
-      {/* Shimmer sweep — diagonal, always runs when card is face-up */}
-      <motion.div
-        style={{ position: 'absolute', top: 0, bottom: 0, width: '100%', background: shimmerGradient }}
-        initial={{ x: '-110%' }}
-        animate={isFlipped ? { x: ['-110%', '110%'] } : { x: '-110%' }}
-        transition={isFlipped ? {
-          duration: shimmerDuration,
-          delay: 0.55,
-          repeat: Infinity,
-          repeatDelay: shimmerRepeatDelay,
-          ease: [0.4, 0, 0.2, 1],
-          repeatType: 'loop',
-        } : { duration: 0 }}
-      />
+      {/* Shimmer sweep — 2 passages après la révélation, puis s'arrête */}
+      {!prefersReduced && (
+        <motion.div
+          style={{ position: 'absolute', top: 0, bottom: 0, width: '100%', background: shimmerGradient }}
+          initial={{ x: '-110%' }}
+          animate={isFlipped ? { x: ['-110%', '110%'] } : { x: '-110%' }}
+          transition={isFlipped ? {
+            duration: shimmerDuration,
+            delay: 0.55,
+            repeat: 2,
+            repeatDelay: shimmerRepeatDelay,
+            ease: [0.4, 0, 0.2, 1],
+            repeatType: 'loop',
+          } : { duration: 0 }}
+        />
+      )}
     </div>
   );
 }
@@ -1061,7 +1069,7 @@ export function CollectorCardCanvas({
 
   const w = size;
   const h = Math.round(size * 1.5);
-  const fallback = <CSSCardFallback card={card} isFlipped={isFlipped} />;
+  const fallback = <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />;
 
   return (
     <div style={{ width: w, height: h, position: 'relative' }}>
@@ -1084,7 +1092,7 @@ export function CollectorCardCanvas({
           </Canvas>
         </CanvasBoundary>
       ) : fallback}
-      <LightOverlay rarity={card.rarity} isFlipped={isFlipped} />
+      <LightOverlay rarity={card.rarity} isFlipped={isFlipped} size={size} />
     </div>
   );
 }

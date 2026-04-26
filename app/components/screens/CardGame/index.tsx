@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useHaptics } from '../../../game-engine/shared/useHaptics';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy } from 'lucide-react';
 import { CardTheme, THEME_CATEGORIES } from '../../../data/cards-collector';
@@ -21,26 +22,25 @@ export type { GainedCard };
 // Affiche les cartes gagnées séquentiellement avec flip R3F
 function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
   const [mountedCount, setMountedCount] = useState(0);
-  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
-  const [hintVisible, setHintVisible] = useState(false);
+  const [flipped, setFlipped]           = useState<Record<string, boolean>>({});
+  const [hintVisible, setHintVisible]   = useState(false);
+  const { vibrate } = useHaptics();
 
-  // Taille adaptée au nombre de cartes pour rester lisible sur mobile
-  const cardSize = cards.length === 1 ? 160 : cards.length === 2 ? 140 : 110;
+  // 1 carte → 160px | 2 → 150px | 3+ → 140px (scroll horizontal)
+  const cardSize   = cards.length === 1 ? 160 : cards.length === 2 ? 150 : 140;
+  const isScrollable = cards.length >= 3;
 
   useEffect(() => {
     if (cards.length === 0) return;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     cards.forEach((card, i) => {
-      // Apparition échelonnée
       timers.push(setTimeout(() => setMountedCount(n => Math.max(n, i + 1)), 300 + i * 550));
-      // Auto-flip vers la face 800ms après apparition
       timers.push(setTimeout(() => setFlipped(f => ({ ...f, [card.id]: true })), 300 + i * 550 + 800));
     });
 
-    // Hint tactile après que toutes les cartes aient été révélées
-    const lastFlip = 300 + (cards.length - 1) * 550 + 800;
-    timers.push(setTimeout(() => setHintVisible(true), lastFlip + 600));
+    // Hint juste après le premier flip — l'utilisateur sait déjà que les cartes sont interactives
+    timers.push(setTimeout(() => setHintVisible(true), 300 + 800 + 300));
 
     return () => timers.forEach(clearTimeout);
   }, [cards]);
@@ -59,15 +59,26 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
         {cards.length > 1 ? `${cards.length} cartes débloquées` : 'Carte débloquée'}
       </p>
 
-      <div className="flex gap-4 justify-center flex-wrap">
+      {/* 3+ cartes : scroll horizontal avec snap — 2 cartes visibles, bord du 3e visible */}
+      <div
+        className={isScrollable
+          ? 'flex overflow-x-auto gap-3 snap-x snap-mandatory pb-2 -mx-5 px-5'
+          : 'flex gap-4 justify-center'}
+        style={isScrollable ? { scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } : undefined}
+      >
         {cards.slice(0, mountedCount).map((card) => (
           <motion.div
             key={card.id}
             initial={{ opacity: 0, scale: 0.72, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
+            whileTap={{ scale: 0.94, transition: { duration: 0.1 } }}
             transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
-            onClick={() => setFlipped(f => ({ ...f, [card.id]: !f[card.id] }))}
-            style={{ width: cardSize, height: Math.round(cardSize * 1.5), cursor: 'pointer', flexShrink: 0 }}
+            onClick={() => {
+              vibrate('light');
+              setFlipped(f => ({ ...f, [card.id]: !f[card.id] }));
+            }}
+            className={isScrollable ? 'snap-center flex-shrink-0' : ''}
+            style={{ width: cardSize, height: Math.round(cardSize * 1.5), cursor: 'pointer' }}
           >
             <CollectorCardCanvas
               card={card}
@@ -81,11 +92,11 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: hintVisible ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
         className="text-center mt-4 text-xs"
-        style={{ color: 'rgba(255,255,255,0.25)' }}
+        style={{ color: 'rgba(255,255,255,0.50)' }}
       >
-        Touche une carte pour la retourner
+        {isScrollable ? 'Glisse pour voir toutes les cartes · Touche pour retourner' : 'Touche une carte pour la retourner'}
       </motion.p>
     </motion.div>
   );
