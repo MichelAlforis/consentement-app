@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Users, RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy } from 'lucide-react';
-import { DICE_CATEGORIES } from '../../../data';
+import { CardTheme, THEME_CATEGORIES } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
 import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
@@ -83,7 +83,7 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
       sessionMode: s.sessionMode,
       cardCount: s.cardCount,
       seanceSize: s.seanceSize,
-      sessionDecks: s.sessionDecks,
+      sessionThemes: s.sessionThemes,
       sessionCount: nextSessionCount,
       ownedIds,
       favorites: s.favorites,
@@ -100,9 +100,11 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
     ? Math.max(0, s.seanceSize - s.cardCount)
     : s.isSeanceDone ? 0 : 3;
 
-  const endInsight = s.sessionDecks.some((d) => [5, 6].includes(d))
+  const deepThemes: CardTheme[] = ['verite', 'douceur'];
+  const midThemes: CardTheme[] = ['parlez', 'et-si'];
+  const endInsight = s.sessionThemes.some((th) => deepThemes.includes(th))
     ? t('cardGame.insight1')
-    : s.sessionDecks.some((d) => [2, 3].includes(d))
+    : s.sessionThemes.some((th) => midThemes.includes(th))
       ? t('cardGame.insight2')
       : t('cardGame.insight3');
 
@@ -187,9 +189,9 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: colors.textMuted }}>{t('cardGame.deckLabel')}</p>
             <motion.button
               whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
-              onClick={() => s.setSelectedDeck('random')}
+              onClick={() => s.setSelectedTheme('random')}
               className="w-full mb-3 p-4 rounded-2xl border-2 flex items-center gap-4 transition-all"
-              style={s.selectedDeck === 'random'
+              style={s.selectedTheme === 'random'
                 ? { borderColor: '#8b5cf6', background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)' }
                 : { borderColor: colors.border, background: colors.bgSecondary }}
             >
@@ -198,10 +200,10 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
                 <Shuffle size={22} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-sm" style={{ color: s.selectedDeck === 'random' ? '#7c3aed' : colors.textPrimary }}>{t('cardGame.random')}</p>
+                <p className="font-bold text-sm" style={{ color: s.selectedTheme === 'random' ? '#7c3aed' : colors.textPrimary }}>{t('cardGame.random')}</p>
                 <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('cardGame.randomDesc', { count: s.available.length })}</p>
               </div>
-              {s.selectedDeck === 'random' && (
+              {s.selectedTheme === 'random' && (
                 <div className="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center shrink-0">
                   <div className="w-2.5 h-2.5 rounded-full bg-white" />
                 </div>
@@ -209,14 +211,14 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
             </motion.button>
 
             <div className="grid grid-cols-3 gap-2.5 mb-8">
-              {([1, 2, 3, 4, 5, 6] as const).map((d) => {
-                const c = DICE_CATEGORIES[d];
-                const isSelected = s.selectedDeck === d;
-                const count = s.available.filter((card) => card.deck === d).length;
+              {(Object.keys(THEME_CATEGORIES) as CardTheme[]).map((theme) => {
+                const c = THEME_CATEGORIES[theme];
+                const isSelected = s.selectedTheme === theme;
+                const count = s.available.filter((card) => card.theme === theme).length;
                 return (
-                  <motion.button key={d}
+                  <motion.button key={theme}
                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    onClick={() => s.setSelectedDeck(d)}
+                    onClick={() => s.setSelectedTheme(theme)}
                     className="relative overflow-hidden rounded-2xl flex flex-col items-center justify-end pb-3 shadow-sm"
                     style={{
                       aspectRatio: '2 / 3',
@@ -230,7 +232,7 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
                     <span className="absolute top-2 left-2.5 text-white/30"><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
                     <span className="absolute bottom-10 right-2.5 text-white/30" style={{ transform: 'rotate(180deg)' }}><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
                     <span className="relative z-10 mb-0.5"><DynamicIcon name={c.iconName} size={28} color="white" /></span>
-                    <p className="text-white font-black text-xs text-center leading-tight relative z-10 px-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{t(`diceCategories.${d}`)}</p>
+                    <p className="text-white font-black text-xs text-center leading-tight relative z-10 px-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{c.name}</p>
                     <p className="text-white/55 text-xs relative z-10">{count}</p>
                   </motion.button>
                 );
@@ -258,7 +260,7 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
             <div className="flex items-center gap-2 mb-5">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm" style={{ background: s.cat.gradient }}>
                 <DynamicIcon name={s.cat.iconName} size={14} color="white" />
-                <span className="text-white font-bold text-xs tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.25)' }}>{t(`diceCategories.${s.currentCard.deck}`)}</span>
+                <span className="text-white font-bold text-xs tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.25)' }}>{s.cat.name}</span>
               </div>
               <span className="text-xs font-semibold" style={{ color: colors.textMuted }}>
                 {s.sessionMode === 'seance' ? `${s.cardCount} / ${s.seanceSize}` : `#${s.cardCount}`}
@@ -389,20 +391,20 @@ export function CardGameScreen({ isPremium, isAdult }: CardGameScreenProps) {
 
             <h3 className="text-2xl font-black mb-2 text-white">{t('cardGame.endTitle')}</h3>
             <p className="text-sm mb-7 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              {s.seanceSize} {t('cardGame.cardUnit')} · {s.sessionDecks.length} {s.sessionDecks.length > 1 ? t('cardGame.decksExplored') : t('cardGame.deckExplored')}
+              {s.seanceSize} {t('cardGame.cardUnit')} · {s.sessionThemes.length} {s.sessionThemes.length > 1 ? t('cardGame.decksExplored') : t('cardGame.deckExplored')}
               {s.favorites.length > 0 && <> · <Heart size={12} className="inline align-middle" /> {s.favorites.length} {s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}</>}
             </p>
 
-            {s.sessionDecks.length > 0 && (
+            {s.sessionThemes.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="w-full mb-6">
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>{t('cardGame.exploredDecksLabel')}</p>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {s.sessionDecks.map((d) => {
-                    const c = DICE_CATEGORIES[d];
+                  {s.sessionThemes.map((theme) => {
+                    const c = THEME_CATEGORIES[theme];
                     return (
-                      <div key={d} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: c.gradient }}>
+                      <div key={theme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: c.gradient }}>
                         <DynamicIcon name={c.iconName} size={12} color="white" />
-                        <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>{t(`diceCategories.${d}`)}</span>
+                        <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>{c.name}</span>
                       </div>
                     );
                   })}

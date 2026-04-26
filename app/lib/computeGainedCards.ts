@@ -1,4 +1,4 @@
-import type { CollectorCard, Rarity } from '../data/cards-collector';
+import type { CollectorCard, Rarity, CardTheme } from '../data/cards-collector';
 import type { OwnedCard } from '../stores/unlockStore';
 
 // ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ export interface ComputeParams {
   sessionMode: 'seance' | 'libre';
   cardCount: number;
   seanceSize: number;
-  sessionDecks: number[];
+  sessionThemes: CardTheme[];
   sessionCount: number;  // APRÈS increment — incrémenté avant l'appel
   ownedIds: Set<string>;
   favorites: string[];   // ids des cartes mises en favori pendant la session
@@ -58,7 +58,7 @@ function pickRandom<T>(arr: T[]): T | null {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Decks représentés dans les favoris ont un poids × 2.
+// Themes représentés dans les favoris ont un poids × 2.
 function pickWeighted(
   candidates: CollectorCard[],
   favorites: string[],
@@ -68,16 +68,16 @@ function pickWeighted(
   if (favorites.length === 0) return pickRandom(candidates);
 
   const favoriteCardIds = new Set(favorites);
-  const favoriteDeckSet = new Set<number>();
+  const favoriteThemeSet = new Set<CardTheme>();
   for (const card of allCards) {
-    if (favoriteCardIds.has(card.id) && card.sourceDeck !== undefined) {
-      favoriteDeckSet.add(card.sourceDeck);
+    if (favoriteCardIds.has(card.id)) {
+      favoriteThemeSet.add(card.theme);
     }
   }
 
   const weighted: CollectorCard[] = [];
   for (const card of candidates) {
-    const weight = card.sourceDeck && favoriteDeckSet.has(card.sourceDeck) ? 2 : 1;
+    const weight = favoriteThemeSet.has(card.theme) ? 2 : 1;
     for (let i = 0; i < weight; i++) weighted.push(card);
   }
 
@@ -117,14 +117,15 @@ export function computeGainedCards(
     live = new Set([...live, card.id]);
   };
 
+  const deepThemes: CardTheme[] = ['et-si', 'defi', 'verite', 'douceur'];
+  const premiumThemes: CardTheme[] = ['verite', 'douceur'];
+
   // Règle 2 — 1 common garantie
   const commonPool = excludeOwned(
     collectorCards.filter((c) => c.rarity === 'common' && c.depth === 1),
     live
   );
-  const commonInSession = commonPool.filter(
-    (c) => c.sourceDeck && p.sessionDecks.includes(c.sourceDeck)
-  );
+  const commonInSession = commonPool.filter((c) => p.sessionThemes.includes(c.theme));
   const commonPick = pickWeighted(
     commonInSession.length > 0 ? commonInSession : commonPool,
     p.favorites,
@@ -134,7 +135,7 @@ export function computeGainedCards(
 
   // Règle 3 — bonus tous les 3 sessions
   if (p.sessionCount % 3 === 0 && gained.length < 3) {
-    const playedDeep = p.sessionDecks.some((d) => [3, 4, 5, 6].includes(d));
+    const playedDeep = p.sessionThemes.some((th) => deepThemes.includes(th));
     if (playedDeep) {
       const rarePool = excludeOwned(
         collectorCards.filter((c) => c.rarity === 'rare' && c.depth === 2),
@@ -155,7 +156,7 @@ export function computeGainedCards(
   // Règle 4 — unique premium 20%
   if (
     p.isPremium &&
-    p.sessionDecks.some((d) => d === 5 || d === 6) &&
+    p.sessionThemes.some((th) => premiumThemes.includes(th)) &&
     gained.length < 3 &&
     Math.random() < 0.2
   ) {

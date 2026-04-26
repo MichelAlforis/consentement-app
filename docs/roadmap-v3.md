@@ -2,7 +2,7 @@
 
 > Créé : 26 avril 2026  
 > Mis à jour : 26 avril 2026  
-> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 9 · 10(partiel) · 11 · 13 · 16 ✅ · Sprint 10.1–10.2 · 14 · 15 à faire  
+> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 9 · 10.1 · 11 · 13 · 16 ✅ · Sprint 10.2 · 14 · 15 à faire  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -196,7 +196,7 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 
 | # | Tâche | Statut |
 |---|---|---|
-| 10.1 | `drawCard` filtre sur `ownedCards` par `theme` (remplace `diePractices`) | 🔲 |
+| 10.1 | `drawCard` filtre sur `ownedCards` par `theme` (remplace `diePractices`) | ✅ |
 | 10.2 | Guard : `ownedCards` vide → prompt "Module de base pour démarrer" | 🔲 |
 | 10.3 | Supprimer `case 'complicite'` + `case 'arrivee'` dans `useGooseGame.ts` | ✅ |
 | 10.4 | Supprimer tests 5.7a–5.7c dans `useGooseGame.test.ts` | ✅ |

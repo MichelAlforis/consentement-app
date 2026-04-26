@@ -4,11 +4,8 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, animate, useAnimation, useMotionValue, useTransform, useSpring, MotionValue } from 'framer-motion';
 import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
-import type { CardData } from '../../../data';
+import type { CollectorCard } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
-
-// Depth per deck — used for foil intensity
-const DECK_DEPTH: Record<number, 1 | 2 | 3> = { 1: 1, 4: 1, 2: 2, 3: 2, 5: 3, 6: 3 };
 
 type Cat = { name: string; iconName: string; gradient: string; border: string };
 
@@ -55,7 +52,7 @@ function DeckStack({
 // ─── PlayingCard ──────────────────────────────────────────────────────────────
 
 export interface PlayingCardProps {
-  card: CardData;
+  card: CollectorCard;
   cat: Cat;
   isRevealed: boolean;
   isAnimating: boolean;
@@ -123,7 +120,7 @@ export function PlayingCard({
         transparent 80%)`,
   );
 
-  const depth = DECK_DEPTH[card.deck] ?? 1;
+  const depth = card.depth;
   // screen blend on a near-black background adds soft colour, not a void
   const foilTargetOpacity = themeId === 'youth' ? 0 : depth === 3 ? 0.18 : depth === 2 ? 0.12 : 0;
 
@@ -350,7 +347,7 @@ export function PlayingCard({
                 {/* Bottom stripe */}
                 <div style={{ height: 5, background: cat.gradient, flexShrink: 0 }} />
 
-                {card.ageGate === 'adult' && (
+                {card.deck !== 'A' && (
                   <span
                     style={{
                       position: 'absolute',

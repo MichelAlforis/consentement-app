@@ -184,6 +184,22 @@ export const collectorCards: CollectorCard[] = [
   },
 ];
 
+export type ThemeCategory = {
+  name: string;
+  iconName: string;
+  gradient: string;
+  border: string;
+};
+
+export const THEME_CATEGORIES: Record<CardTheme, ThemeCategory> = {
+  'osez':    { name: 'Osez',    iconName: 'Layers',        gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', border: '#fbbf24' },
+  'parlez':  { name: 'Parlez',  iconName: 'MessageCircle', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', border: '#a78bfa' },
+  'et-si':   { name: 'Et si…',  iconName: 'HelpCircle',    gradient: 'linear-gradient(135deg, #ec4899, #db2777)', border: '#f9a8d4' },
+  'defi':    { name: 'Défi',    iconName: 'Target',        gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', border: '#93c5fd' },
+  'verite':  { name: 'Vérité',  iconName: 'Sparkles',      gradient: 'linear-gradient(135deg, #10b981, #059669)', border: '#6ee7b7' },
+  'douceur': { name: 'Douceur', iconName: 'Heart',         gradient: 'linear-gradient(135deg, #be123c, #9f1239)', border: '#fda4af' },
+};
+
 // Helpers de lecture
 
 export function getCollectorCardById(id: string): CollectorCard | undefined {
