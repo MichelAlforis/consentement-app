@@ -556,16 +556,22 @@ function UniqueParticles() {
   );
 }
 
-// ─── CardMesh ─────────────────────────────────────────────────────────────────
+// ─── CardMesh — export public, utilisable dans toute scène R3F ───────────────
+//   GooseGame, DiceGame, futurs jeux : <CardMesh card={...} isFlipped={...} />
+//   Dans une scène sans Selection/SelectiveBloom : passer enableBloom={false}
 
-function CardMesh({
-  card, isFlipped, autoFlip, onFlipComplete,
-}: {
+export interface CardMeshProps {
   card: GainedCard;
   isFlipped: boolean;
   autoFlip?: boolean;
   onFlipComplete?: () => void;
-}) {
+  /** false si la scène parente n'a pas de <Selection> context (ex : GooseGame) */
+  enableBloom?: boolean;
+}
+
+export function CardMesh({
+  card, isFlipped, autoFlip, onFlipComplete, enableBloom = true,
+}: CardMeshProps) {
   const outerRef  = useRef<THREE.Group>(null); // world-space arc + Z wobble
   const flipRef   = useRef<THREE.Group>(null); // rotation Y (le flip)
   const styleRef  = useRef<THREE.Group>(null); // squash-stretch atterrissage
@@ -744,22 +750,32 @@ function CardMesh({
 
           {/* Face group — pré-roté PI → local +Z pointe caméra quand flipRef = PI */}
           <group rotation={[0, Math.PI, 0]}>
-            {/* Glow ring rare dans <Select> → SelectiveBloom */}
-            {isRare && (
+            {/* Glow ring rare — dans <Select> si bloom actif, sinon mesh nu */}
+            {isRare && enableBloom && (
               <Select enabled>
                 <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
                   <meshBasicMaterial color={card.border} toneMapped={false} transparent opacity={0.38} />
                 </mesh>
               </Select>
             )}
+            {isRare && !enableBloom && (
+              <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
+                <meshBasicMaterial color={card.border} toneMapped={false} transparent opacity={0.38} />
+              </mesh>
+            )}
 
-            {/* Glow ring unique — iridescent HSL shift, dans <Select> pour Bloom */}
-            {isUnique && (
+            {/* Glow ring unique — iridescent HSL shift */}
+            {isUnique && enableBloom && (
               <Select enabled>
                 <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
                   <meshBasicMaterial ref={uniqueGlowRef} color={card.border} toneMapped={false} transparent opacity={0.55} />
                 </mesh>
               </Select>
+            )}
+            {isUnique && !enableBloom && (
+              <mesh geometry={glowGeometry} position={[0, 0, -0.003]}>
+                <meshBasicMaterial ref={uniqueGlowRef} color={card.border} toneMapped={false} transparent opacity={0.55} />
+              </mesh>
             )}
 
             {/* Second glow ring rare — respiration lente, hors Bloom */}
@@ -778,9 +794,9 @@ function CardMesh({
   );
 }
 
-// ─── Lumières rareté ──────────────────────────────────────────────────────────
+// ─── RarityLights — export public ────────────────────────────────────────────
 
-function RarityLights({ rarity }: { rarity: GainedCard['rarity'] }) {
+export function RarityLights({ rarity }: { rarity: GainedCard['rarity'] }) {
   const rareRef = useRef<THREE.PointLight>(null);
 
   useFrame(() => {
