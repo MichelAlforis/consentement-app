@@ -382,7 +382,11 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
 
   const deckA = collectorCards.filter((c) => c.deck === 'A');
   const deckB = collectorCards.filter((c) => c.deck === 'B');
-  const totalOwned = deckA.filter((c) => ownedIds.has(c.id)).length;
+  const deckM = collectorCards.filter((c) => c.deck === 'M');
+
+  const primaryDeck = isAdult ? deckA : deckM;
+  const primaryLabel = isAdult ? 'Deck A — Connexion' : 'Deck M — Espace Jeune';
+  const totalOwned = primaryDeck.filter((c) => ownedIds.has(c.id)).length;
 
   return (
     <>
@@ -398,47 +402,45 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
             Hall of Cards
           </h2>
           <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
-            {totalOwned} / {deckA.length} cartes débloquées
+            {totalOwned} / {primaryDeck.length} cartes débloquées
           </p>
         </div>
 
-        {/* Deck A */}
+        {/* Deck principal (A pour adultes, M pour mineurs) */}
         <p className="text-xs font-bold uppercase tracking-widest mb-3"
           style={{ color: colors.textMuted }}>
-          Deck A — Connexion
+          {primaryLabel}
         </p>
         <div className="grid grid-cols-3 gap-2.5 mb-8">
-          {deckA.map((card, i) =>
+          {primaryDeck.map((card, i) =>
             ownedIds.has(card.id)
               ? <AcquiredCard key={card.id} card={toGainedCard(card)} index={i} onTap={setZoomed} />
               : <LockedCard key={card.id} card={card} index={i} onTap={() => onNavigate(getUnlockScreen(card))} />
           )}
         </div>
 
-        {/* Deck B */}
-        <p className="text-xs font-bold uppercase tracking-widest mb-3"
-          style={{ color: colors.textMuted }}>
-          Deck B — Explicite
-          {!isAdult && (
-            <span className="ml-2 normal-case font-normal" style={{ opacity: 0.55 }}>
-              · app adulte uniquement
-            </span>
-          )}
-        </p>
-        <div className="grid grid-cols-3 gap-2.5">
-          {deckB.map((card, i) => {
-            const owned = isAdult && ownedIds.has(card.id);
-            return owned
-              ? <AcquiredCard key={card.id} card={toGainedCard(card)} index={i} onTap={setZoomed} />
-              : <LockedCard
-                  key={card.id}
-                  card={card}
-                  index={i}
-                  deckB={!isAdult}
-                  onTap={isAdult ? () => onNavigate(getUnlockScreen(card)) : undefined}
-                />;
-          })}
-        </div>
+        {/* Deck B — adultes seulement */}
+        {isAdult && (
+          <>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3"
+              style={{ color: colors.textMuted }}>
+              Deck B — Explicite
+            </p>
+            <div className="grid grid-cols-3 gap-2.5">
+              {deckB.map((card, i) => {
+                const owned = ownedIds.has(card.id);
+                return owned
+                  ? <AcquiredCard key={card.id} card={toGainedCard(card)} index={i} onTap={setZoomed} />
+                  : <LockedCard
+                      key={card.id}
+                      card={card}
+                      index={i}
+                      onTap={() => onNavigate(getUnlockScreen(card))}
+                    />;
+              })}
+            </div>
+          </>
+        )}
       </motion.div>
 
       {/* Zoom R3F overlay */}

@@ -69,9 +69,9 @@ export function useCardSession(isAdult: boolean): CardSession {
     const ownedIds = new Set(ownedCards.map((c) => c.id));
     return collectorCards.filter((c) => {
       if (!ownedIds.has(c.id)) return false;
-      if (c.deck === 'A') return true;
-      if (c.deck === 'B') return isAdult;
-      if (c.deck === 'M') return isAdult && explicitMode;
+      if (c.deck === 'A') return isAdult;           // adultes seulement
+      if (c.deck === 'B') return isAdult && explicitMode; // adultes + mode explicite
+      if (c.deck === 'M') return !isAdult;          // mineurs seulement
       return false;
     });
   }, [ownedCards, isAdult, explicitMode]);
