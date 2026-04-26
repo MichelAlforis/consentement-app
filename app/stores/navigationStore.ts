@@ -3,8 +3,8 @@
 import { create } from 'zustand';
 import { Screen } from '../types';
 
-const NO_HEADER_SCREENS: Screen[] = ['welcome', 'age-check', 'auth'];
-const ROOT_SCREENS: Screen[] = ['welcome', 'age-check', 'home'];
+const NO_HEADER_SCREENS: Screen[] = ['welcome', 'age-check', 'auth', 'home', 'apprendre', 'moi'];
+const ROOT_SCREENS: Screen[] = ['welcome', 'age-check', 'home', 'apprendre', 'jeux', 'moi'];
 
 interface NavigationStore {
   currentScreen: Screen;

@@ -24,6 +24,10 @@ export type Screen =
   | 'jeu-oie'
   | 'jeu-cartes'
   | 'hall-of-cards'
+  // Navigation V3 — Tab Bar
+  | 'apprendre'
+  | 'moi'
+  | 'module-de-base'
   // Premium
   | 'premium'
   | 'theme-select';

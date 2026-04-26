@@ -127,6 +127,7 @@ function buildIconTexture(iconName: string): THREE.CanvasTexture | null {
   ctx.clearRect(0, 0, S, S);
   drawIconNodes(ctx, iconName, S / 2, S / 2, S, 'rgba(255,255,255,0.96)');
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
@@ -217,56 +218,56 @@ const BACK_SYMBOL_PATH =
   'm133 0 2 2q3 0 3 3 0 2 1 1h1q2 3 4 2 3-1 2 2 0 2 1 1 3 0 1 1h-2l-2 1-3 1-4 7q1 2 3-2 0-3 2-3 3 0 2 2h-1v-1l-2 3-3 3q-2 0-1 4 1 2-4 2l-2 2q0 3 2 2l3-1-5 3q-5 1-5 3 1 3-2 2-1-3 4-6 3 0 1-1c-2-1-7 2-6 3v4l-2 5q-2 5 1 3 2 0 1-2l2-2q6-3 1 1l-2 4-3 1-2 1-1 1q-3 0-1 2c1 1-3 6-5 5-1-1-7 8-8 11l-1 3-1-1v-1l-2 1-3 1-1 1 1 1-1 1-4 1q-2 0 0 0 2 3-3 5-2 0-2 3l-2 2-2 1q1 2-2 4l-2 4q0 3-2 3l-1 2q1 2-1 3-3 2-3 6v4l-1 1v2q3-1 0 3v3l1 2-6 6-7 6-4 5q-5 4-10 13a90 90 0 0 0-13 26l-5 21-1 12-2 6v1q4 0 1 2v7l-2 1v1l1 1-2 1c-2 0-3-8-1-9q3-2-1-2-2 0-2-3l1-4q1-1-1-1l-1-1 1-5-1 1a174 174 0 0 0-1 40v2q2 3-1 5l-1 2h1l3 3v4l-2 1-1 1h2q5-1 1 3-3 2 0 2t0 2l-1 2h1l2 1-3 2q-3 1-4-3l-1-3v-5q1-2-1-2l-3-2v-4l-1-2q0-2-2-2l-1-1 1-4q2-3-2-2-4-1-3 4l1 3 1 1-1 1-1 1 2 6a221 221 0 0 0 13 54l1 2 2 5 2 5 1 2 3 6 2 7 1 2 2 2v3l1 2q2 2 1 3l1 1 1 2 1 2 1 3q0 2 2 2 2-1 2 2l2 2q2 0 1 2l1 2q2 0 1 3 0 3 2 3l2 1h1q3-1-1 2-2 3 1 1 4 1 2 4l2 1v2l2 2 1 1q3-2 2 4 0 2 3 2 2 1 1 2l1 2 2 1q0 2 1 1 2 0 1 1-1 2 2 2l2 3 2 3q4 1 1 2-3 3 3 2 2 0 1 1l1 2v1l1 2 1 1q0 3 1 0l2-1v1c0 1 2 6 3 5l1 1 2 2 3 1c1 3 6 9 8 9q2 0 1 1l2 2c2 1 6 5 4 5l1 2 3 2h1c-1 1 1 5 2 4h1l-2 1-3 1q-2 3 1 1 4-1 0 3-4 3-2 0 0-2-1-1l-2 4q0 8-3 8-4 0-5 7-1 3-4 3l-2 2h2l2 1q2 1 0 0l-2 1v3l-7 3h3l3 1-3 1q-4 0 0 2v1l-2 1-3 1h-2q1-1-1-1h-2q1 3 4 3l1 1q0 2-2 1l-1 1-3 2v-3l-3 2-1 3q-3-1-3 1l1 2v-1l1-2 1 2q1 2-1 2-4 3 1 2t1 3-3 0q1-1-1-1l-6 3 1 3 1 1 2-1c0-2 5-2 7-1l1 2q-5-1-6 2l-1 2-3 1h-2l-2 1q-1 2-3 1l-1 1 1 1 2 1-3 1q-3-1-3 2l-1 1-1 1q0 3 4-1l1-2h2q3-2 2-3l1-2q2 0 1 1-1 2 3-1 1-3 1 0-2 4-6 6l-1 1h2q3 0 0 3h-1q2-1-2-1-4 1-3 4 0 3-2 3v2l-1 2-2 1h2q3-2 3 1l-6 2v2l3 2q2 0 0 0l-1 1-3 2-3 2-1 1q0 3 1 1l3-1q3-1 0 2l-3 1-1 1q0 2-3 2l-3 1q0 2 2 1l3-1-1 1q-2 2 1 3l-2 1q-6 3 0 2 3 0 0 1-4 3-1 6 2 1-1 2t-1 2v1l-2 1h1l2 1-2 1-2 2-2 3-1 2v6q2 0-1 3-4 4-2 4h3l2 1-2 1-2 1-2 2-1 1-2 2-1 2q0 3 1 0l3-1v2l-2 3 3 1q6-2 8-8l1-2q3 0 1 2-5 8-10 10-9 3-7 5l4-2q4-5 3 0-2 3 1 2l3-1 2-1 3-1q2 2-6 5-6 1-7 6-1 4-5 4l-3 1h2l2 1v1l-1 1-1 1q-2 0-1 1 1 3 3 0l3-2q3 0 1 1v2q2 1 2-3l1 1q3 3 3 0-2-1 1-1 3 1-3 4-7 4-6 1 0-3-4 0t0 2q3-3 3-1l-3 3q-3 2-1 3l2-1 1-1 2-2h1l-1 3q-2 2 2 1 3-1 2-3l1-3 1 1 2 1v1q-2-1-2 2 0 2-1 1l-6 5q1 1 3-1l5-2h2l-2 2-2 4-3 5q-4 4-2 4l2 1 1 1q2 0 2 2 0 3-2 3l-1-2q1-1-1-1-4 0 1 4 3 2 1 2l-2 1q-1 1 1 1 3-2 0 1l-3 2-2 2q-3 3-1 3l2-2 2-1v3h-1l-1 1-2 1h-2q0 3 4 1 7-3 1 1l-3 2q1 2-2 2-5 3 1 1 5 0 2 2l-4 1-1 1 1 1q4-1 4 2h-1l-3-1-1 2h2l1 1-3 1-2 1 1 1h7v3q-3 4 0 4t1 1h-2l-1-1-1 1v2q-3 3 2 1h2l-1 1-3 2q-2 5 1 3 3-1 0 3-4 3-2 0 1-3 0 0l-2 2-2 3q-3 2 0 0c2 0 7 1 5 2h-1l-2 1v5l1 2v6l-2 2 2-1q7-3 3 1l-1 3-1 3q-4 8 0 2 5-4 3 0 0 3-2 3l-1 1 1 2q3 0 0 3v3h1q2-2 3 1 0 2-2 1l-1 1 2 2q2 0 0 0l-1 2q0 2 1 1 2 0 1 1l1 3 1 2c-1 2 1 16 2 16v6l1 5 2 5 1 6 1 4 1 3 1 3q2 2-1 3l-1 1h2l2 3 1 5 1 4q1 7 4 9l1 3 1 3 1 1 1 2v1l1 2v2q-2 1 1 1 3-1 2 2v2l3 5 2 4 1 2q-1 2 1 2l2 1-2 1-1 1h2q2-1 2 2l1 2q3 1-1 5h1q4-1 6 5l3 4 1 2 1 2q2 0 2 2l3 3 2 2 2 3 2 2 2 2 1 2q-1 1 1 3l2 3 3 4 2 3 1 2v2l1 3 4 8 2 2 2 3 1 2 2 2 2 4q2 2 1 4l2 1q2 0 1 3l1 2 3 4 4 5 1 2 2 3 6 7 5 6q3 1-3-6l-4-6-3-4-3-5-3-5-6-10-5-8-2-3q1-2-1-2l-1-1v-2l-3-6-2-5q-2-1 1-1 2 0-2-3l-3-4-2-5-1-2-7-17-1-5-1-3-2-6-2-6-2-5-2-6-4-11-2-8-2-8-7-38a1027 1027 0 0 1 3-125l2-6v-5l2-7 3-10 1-7 2-4v-3l1-3 1-1v-4l3-9 2-7 1-3 8-19 3-9 6-13 2-7 2-3 3-7 7-13 5-9 6-10 1-2 4-8 6-10 3-3q2 0 1-2l4-7 7-9 4-5 1-1 4-6 3-4 2 2 4 2 1 1 1 1 3 1 2 2 1 1q-2 2 1 1l3 1 2 1 2 1q0 3 1 1 1-3 1 0l1 2q2 0 1 1 0 2 1 1l1 1 1-1q3-3 2 1 0 3 1 1l1-1 1 1v1q4 1 4 3 0 3 2 1h3v2l-2 2 2-1q5-3 5 2 0 4 2 1 2-2 5 1l2 3h2l2 1 3 2 5 3 4 1 1 1 2 1 2 2 2 2q2 0 1 1h1l2 1h2l3 2q2 3 3 2 2 0 1 1 0 2 3 2l4 2 2 1 3 1 2 2 3 1q5 4 6 3l4 2 6 3 5 3 6 3 2 2 1 1 7 2q10 5 6 1l-5-1-1-2-2-1-1-1-2-1q-6-2-8-5v-1q-5 0-5-2h-4 1l1-2h-1l-2-1-1-1q-2 1-3-1l-3-1h-1l-4-3-3-2q1-3-1-5-3-1-2-3-2-2-5 1t-7 0l-2-2q-1 1-2-1 0-3 2-1t4 1v1l1 2q3 2 1-1 0-2 1 0l1 1q1-3-1-4h-1l-2-1-1-1-2-1h-2q2-3-4-4-3 1-2-1l-1-1-2-1-3-2-6-1q-4-1-2-4 1-3-2-2-3 2-1-1 2-1-1-2h-3l-2-1q1-1-1-1-1 2-1-1 1-1-1-1l-1-2-1-1-1 1-1 1v-2l-2-1-4-2-3-2h-1q2-2-1-2l-2-1q0-2-4-1l-1-2-1-2-4-1h1q2 0 1-1l-4-1q-2 0-1-1l-1-1-2-2-3-2q-3 0-3-2l-2-1-1-1-1-1-5-5-1-1 3-5 39-49 5-5 3-4 20-23c0-1 6-10 13-17l16-19 7-9 3-5 2-4c3-3 14-25 16-31l5-32c0-7-3-22-5-26l-1-2q1-1-1-1v-2l-1-1-5-2-5-1-3-3-8-17-2-2q-3 0-3-2l-1-2q-3 0-1-2 1-4-2-1l-1 1-3-4-2-4-3-1h-2l-2-1q-4 1-1-2 1-1-1-2l-2 1v-1l-3-1h-1l-1-1c-1 1-3-3-2-4l-8-1h-1l1-1 2-1q-1-3-4 0h-1q1-3-2 0h-1l1-2q1-1-2-1h-2l-11-3q-1 1-2-1l-1-2-2 2v-2q0-2-1-1h-2l6-3q2 1 1-2l2-2h1l-2-1h-1l2-2q2 0 1-2 0-3 3 0 1 2 1-1l-3-2q-4 2-2-7l1-1 1 2q0 2 1 1 2-3-1-5l-1-2h5q3-2-1-2-3 1-2-1l1-1 1-1 2-5v4l2-2 1-3 2-3-2 2-2 2v-2l-1-2h-1l-3 6v-2q2-3-1-1-4-1-1-3l1 1 1 1c1 0 5-4 4-5l-2 1q-4 3-3 1h-2q-7 2-2-1l7-2q6 0 4 1 0 3 2 0l3-2 1-1-1-1-7 1-7 1h-2l4-2 4-2q0-3-3 0l-4 1-4 1q-1 1-1-1l2-1 6-2 3-2-1-1 1-1 2-1q1-3-4 0l-1 2-1 1c-2 2-8 2-7 0l3-1q4-2 5-5 0-2-2 1l-4 2q-2 0 1-2l2-2h-2q-3-1-3 2l-1 2-1-3v-1h-2q0-2 4-2 1 0 0 0l-2-1-1-1q1-1-1-3l-3-3 3 1h2l-2-2q-5-1 0-3l4 1v-1l1-4v-1l-2 2q-1 4-2-2l-1-5q-1-3 3-3l2-1q2-4-1-1h-2v-2q4-2 0-3t-1-2l2-1 2-1-2-1q-2 1-3-1 0-2-2-2h-2q0-2 8-2 4 1-1-2-7-2-11 1h-3c-4 1-13 6-17 10q-9 10-10 22l1 10q2 2-1 7l-3 5q-4 3-3 8c0 2 6 5 8 5q3 0 1 5-1 7 2 8v2q-2 7 1 8t0 8q-5 10 7 10a147 147 0 0 1 36 9c1-1 11 6 14 8l2 2c1-1 12 11 13 15l4 4 1 4 1 2 1 2 1 2 1 3 1 2 1 1q-1 10 2 10v6l1 2h1l-2 11-1 10-1 3-2 2-3 1h3q3 0-2 5l-4 5v1l-1-2-1-1q-3 1-5 6l-3 3q-3 1-1 3 3 2 0 2l-4 2-1 1h2l2 1-3 1q-5 1-6 4l-1 1-1 1q1 1 0 0l-6 4v2l2-2 4-2q6 0 1 1-7 3-8 6 0 3-1 2-1-2-3 1v2q3 0 0 2l-3 2 1-1 1-2-2 1-1 2q1 1-2 3t-4 5q1 2 3-1 1-3 2 0c0 2-6 5-7 3h2c0-3-4-2-4 0l-2 1-2 3q0 4-3 6-2 3-2 1 1-3-2 1v3q-2 3 3 0l3-2c0 1-6 7-8 7l-2 1-3 1-1 3-2 2-1 1-3 2h-1l-2 6q-4 1-3 3l-1 2v1l2 1-1 1c-2 0-7 6-7 7l-1 2-3 1h-2l1 1v1h-3v1l3 1 2 1-3 1-1 2q0 3-4 3-2 0 0 2c2 1-2 4-4 3l-1 1-3 3-3 1 3 1q3 0 0 1-5 0-5 2l-4 5-3 4-1 2-1-2q-1-3-2 0h-2l-2-1h-2l3-1q4-1 1-1-3-1-1-2l1-1-1-1q-4 2-4-1v-3q-2-3-3-1-3 3-2 0l2-3 2-1 2-2 1-1q-2 0-2-3 2-3 0 0l-1 3-2 1q-6 0-1-4v-1q-4 1 0-2v-1l-4-1-4-2-1-1 1-1q3-2-1-3-2 0-2-5l1-3q3 1 3-1l-3-1h-2q1-3-2 0l-1-1 1-2q2 0 2-3-1-3-4-1h-2l2-2q3-4-1-4-2 0 1-2t0-2l-2 1h-2q-3-1-1-4v-1h-2l2-1q2 0 1-2l-2-1q-2 1-2-2-1-3 3-2h2l-4-1q-4 1-2-2 4-5 5-2l-2 1-1 1h4v-6l2-1q-1-3-5 1-1 3-4 2-2-1 1-2 3 0 3-2 1-4-2-1-1 1-1-2 0-2 2-2l2-1-2-1q-2 1 1-2 2-1-1-1l-2 1-2 2q-3-1 0-7 3-3 1-3v-1q3 0 0-1h-4l-2 2q-2-1 1-6 2-1-1-1h-3l5-2 3 1h1v-2l-2-1h-1q0-5-2-5-3 4-6 3l2-2q5-2 6-6l-2 1q-6 5-7 3l1-2 2-2 1-2h1q2-1-3-1h-3l2-1 2-2-2-1h-6q-4 1 0-2c1-1 7-1 10 1h1q1-2-3-2-3 0-3-2l4-1 4-1c2-2-7-1-9 1q-6 4-1-3 5-6 1-4h-3q-2-1 1-2l2-2h-2l-1-1q1-5-3 1l-1 3 1-3q0-3 3-7l2-3-2 2-4 1-1-1h-1l3-1 2-1-2-1-2-2-1-2-1 1v1l-1-2-2-1h-1l4-1q6 1 4-3v-3h-1l-2 1-2 2h-2v-3h1q2 1 2-1-1-1 2-3l2-2-2 1q-3 1-2-1l-1-1-1-1 1-1 2-2q1-3-4 1t-3 1v-2l1-2 1-1-3 1q-1 1-1-2l1-2 1-2-2-1q-1 1 0 0 3-4 2-6l-3 1-2 1q-3-1-1-1l1-3 1-3h1v2c0 1 6-2 6-4v-1h-1l-1 1v1q-1 1-1-1l-1-2q-3 3-3 0l1-1 1-3q-1-3-1-1l-3 3-2 1q1-1-2-2h-3 3q3 0 4-3l5-2 2-1-6-1q-6 0-5 2l-1 2-1-2q1-3-1-2l-2-2 4-1 3-1q2-2-1-1-3 0-2-2l1-5q0-2 2-2v-2q-3-1-1-2l1-2-2 1-1 3q0 3-3 3h-3l2-3q4-3 1-2-2-1 1-3 2 0-1-2l-1-1-1-2v-5l-3 2-2 3v-2q2-1 1-3h1q2-1-3-4l-2-1 2-2q-1-1 2-3 3-4 1-4l-2 2-2 2q-3 1 0-3 3-3 1-3-1-1 1-6l3-5q-1-3 10-18c5-7 15-14 18-14l2-1 2-2h3l1 1 2 1 1 1v-2q0-2 3-3l3-3 1 1q3 2 2-1 1-3 17-4h5l9-1 19-2c15-2 15-2 11-10l-2-8-1-1c-2 0 0-6 2-8v-1q-4-1 0-3l1-1 3-4 4-6 2-3 2-3 1-3 1-3 1-7c1-6 2-14 1-15l-1-3-1-2-1-3-1-3v-2l-1-1v-2l-1-1q-2 0-2-3-1-4-12-13c-6-5-17-10-17-8';
 
 
-function makeBackTexture(size = 512): THREE.CanvasTexture {
+function makeBackTexture(size = 512, refImage?: HTMLImageElement): THREE.CanvasTexture {
   const h = Math.round(size * 1.5);
   const canvas = document.createElement('canvas');
   canvas.width = size; canvas.height = h;
   const ctx = canvas.getContext('2d')!;
 
-  // Background — quasi-noir → indigo → violet saturé
-  const bg = ctx.createLinearGradient(0, 0, size, h);
-  bg.addColorStop(0,    '#010007');
-  bg.addColorStop(0.45, '#0c0920');
-  bg.addColorStop(1,    '#3b1f85');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, size, h);
-
-  // Diamond grid
-  const step = Math.round(size * 0.10);
-  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
-  ctx.lineWidth = 0.8;
-  for (let ix = -step; ix < size + step; ix += step) {
-    for (let iy = -step; iy < h + step; iy += step) {
-      ctx.beginPath();
-      ctx.moveTo(ix + step / 2, iy);
-      ctx.lineTo(ix + step,     iy + step / 2);
-      ctx.lineTo(ix + step / 2, iy + step);
-      ctx.lineTo(ix,            iy + step / 2);
-      ctx.closePath();
-      ctx.stroke();
-    }
+  if (refImage) {
+    ctx.drawImage(refImage, 0, 0, size, h);
+  } else {
+    // Fallback gradient si PNG non disponible
+    const bg = ctx.createLinearGradient(0, 0, size, h);
+    bg.addColorStop(0,    '#010007');
+    bg.addColorStop(0.45, '#0c0920');
+    bg.addColorStop(1,    '#3b1f85');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, size, h);
   }
 
-  // Halo central violet
-  const halo = ctx.createRadialGradient(size / 2, h / 2, 0, size / 2, h / 2, size * 0.44);
-  halo.addColorStop(0,    'rgba(124,58,237,0.48)');
-  halo.addColorStop(0.55, 'rgba(76,29,149,0.18)');
-  halo.addColorStop(1,    'rgba(76,29,149,0)');
-  ctx.fillStyle = halo; ctx.fillRect(0, 0, size, h);
+  if (!refImage) {
+    // Overlays uniquement sur le gradient fallback — trop lourds sur un PNG Midjourney
+    const step = Math.round(size * 0.10);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 0.8;
+    for (let ix = -step; ix < size + step; ix += step) {
+      for (let iy = -step; iy < h + step; iy += step) {
+        ctx.beginPath();
+        ctx.moveTo(ix + step / 2, iy);
+        ctx.lineTo(ix + step,     iy + step / 2);
+        ctx.lineTo(ix + step / 2, iy + step);
+        ctx.lineTo(ix,            iy + step / 2);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+    const halo = ctx.createRadialGradient(size / 2, h / 2, 0, size / 2, h / 2, size * 0.44);
+    halo.addColorStop(0,    'rgba(124,58,237,0.48)');
+    halo.addColorStop(0.55, 'rgba(76,29,149,0.18)');
+    halo.addColorStop(1,    'rgba(76,29,149,0)');
+    ctx.fillStyle = halo; ctx.fillRect(0, 0, size, h);
+    const vig = ctx.createRadialGradient(size / 2, h / 2, h * 0.25, size / 2, h / 2, h * 0.70);
+    vig.addColorStop(0, 'rgba(0,0,0,0)');
+    vig.addColorStop(1, 'rgba(0,0,0,0.72)');
+    ctx.fillStyle = vig; ctx.fillRect(0, 0, size, h);
+    const spec = ctx.createRadialGradient(size * 0.24, h * 0.14, 0, size * 0.24, h * 0.14, size * 0.38);
+    spec.addColorStop(0, 'rgba(255,255,255,0.14)');
+    spec.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = spec; ctx.fillRect(0, 0, size, h);
+  }
 
-  // Vignette
-  const vig = ctx.createRadialGradient(size / 2, h / 2, h * 0.25, size / 2, h / 2, h * 0.70);
-  vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.72)');
-  ctx.fillStyle = vig; ctx.fillRect(0, 0, size, h);
-
-  // Specular top-left
-  const spec = ctx.createRadialGradient(size * 0.24, h * 0.14, 0, size * 0.24, h * 0.14, size * 0.38);
-  spec.addColorStop(0, 'rgba(255,255,255,0.14)');
-  spec.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = spec; ctx.fillRect(0, 0, size, h);
-
-  // Shimmer diagonal
+  // Shimmer diagonal — léger sur PNG, plus marqué sur gradient
   const shim = ctx.createLinearGradient(0, 0, size, h);
   shim.addColorStop(0,    'rgba(255,255,255,0)');
   shim.addColorStop(0.48, 'rgba(255,255,255,0.055)');
@@ -274,20 +275,27 @@ function makeBackTexture(size = 512): THREE.CanvasTexture {
   shim.addColorStop(1,    'rgba(255,255,255,0)');
   ctx.fillStyle = shim; ctx.fillRect(0, 0, size, h);
 
-  // Symbole — gradient top→bottom #ddd6fe → #a78bfa → #6d28d9
+  // Symbole — gradient adapté au fond (gradient sombre vs PNG Midjourney)
   const symS = Math.min(size / 336, h / 1044) * 0.85;
   const symOX = (size - 336 * symS) / 2;
   const symOY = (h - 1044 * symS) / 2;
   const symH = 1044 * symS;
   const symGrad = ctx.createLinearGradient(0, symOY, 0, symOY + symH);
-  symGrad.addColorStop(0,    '#ddd6fe');
-  symGrad.addColorStop(0.45, '#a78bfa');
-  symGrad.addColorStop(1,    '#6d28d9');
+  if (refImage) {
+    // Sur PNG : couleurs saturées sans blanc, opacité réduite pour éviter le voile
+    symGrad.addColorStop(0,    '#c4b5fd');
+    symGrad.addColorStop(0.45, '#a78bfa');
+    symGrad.addColorStop(1,    '#6d28d9');
+  } else {
+    symGrad.addColorStop(0,    '#ddd6fe');
+    symGrad.addColorStop(0.45, '#a78bfa');
+    symGrad.addColorStop(1,    '#6d28d9');
+  }
   ctx.save();
   ctx.translate(symOX, symOY);
   ctx.scale(symS, symS);
   ctx.fillStyle = symGrad;
-  ctx.globalAlpha = 0.72;
+  ctx.globalAlpha = refImage ? 0.22 : 0.72;
   ctx.fill(new Path2D(BACK_SYMBOL_PATH), 'evenodd');
   ctx.globalAlpha = 1;
   ctx.restore();
@@ -303,6 +311,7 @@ function makeBackTexture(size = 512): THREE.CanvasTexture {
   ctx.stroke();
 
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
@@ -326,19 +335,6 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
     ctx.drawImage(refImage, 0, 0, size, h);
     ctx.globalAlpha = 1;
   }
-
-  // Logo symbole — watermark centré, très subtil
-  const symS = Math.min(size / 336, h / 1044) * 0.75;
-  const symOX = (size - 336 * symS) / 2;
-  const symOY = (h - 1044 * symS) / 2;
-  ctx.save();
-  ctx.translate(symOX, symOY);
-  ctx.scale(symS, symS);
-  ctx.fillStyle = 'rgba(255,255,255,1)';
-  ctx.globalAlpha = 0.07;
-  ctx.fill(new Path2D(BACK_SYMBOL_PATH), 'evenodd');
-  ctx.globalAlpha = 1;
-  ctx.restore();
 
   // Grain (identique Pawn3D Board)
   for (let y = 0; y < h; y++) {
@@ -511,6 +507,7 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   }
 
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
@@ -567,13 +564,17 @@ function CardMesh({
   const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.086), []);
   const glowGeometry  = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.092), []);
   const glowGeometry2 = useMemo(() => makeRoundedCardGeometry(1.14, 1.68, 0.098), []);
-  const backTex = useLoader(THREE.TextureLoader, '/cards/card-back.png');
+  const backPng = useLoader(THREE.TextureLoader, '/cards/card-back.png');
   const [refCommon, refRare, refUnique] = useLoader(THREE.TextureLoader, [
     '/cards/deck-a-face.png',
     '/cards/deck-b-face.png',
     '/cards/unique-foil.png',
   ]);
   const refTex = card.rarity === 'unique' ? refUnique : card.rarity === 'rare' ? refRare : refCommon;
+  const backTex = useMemo(
+    () => makeBackTexture(512, backPng.image as HTMLImageElement),
+    [backPng],
+  );
   const faceTex = useMemo(
     () => makeFaceTexture(card, 512, refTex.image as HTMLImageElement),
     // eslint-disable-next-line react-hooks/exhaustive-deps

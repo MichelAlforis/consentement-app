@@ -1,8 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { CollectorCardCanvas } from '../game-engine/cards/CollectorCardCanvas';
+import dynamic from 'next/dynamic';
 import { CardBack } from '../game-engine/cards/CardBack';
 import type { GainedCard } from '../components/screens/CardGame/index';
+
+const CollectorCardCanvas = dynamic(
+  () => import('../game-engine/cards/CollectorCardCanvas').then(m => ({ default: m.CollectorCardCanvas })),
+  { ssr: false },
+);
 
 // ─── Données de test ──────────────────────────────────────────────────────────
 

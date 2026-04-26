@@ -5,6 +5,7 @@ import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { Header, Toast, AdBanner } from './components/ui';
+import { TabBar } from './components/ui/TabBar';
 import { Screen } from './types';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ToastProvider } from './context/ToastContext';
@@ -47,12 +48,13 @@ const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m
 const HallOfCardsScreen = lazy(() => import('./components/screens/HallOfCardsScreen').then(m => ({ default: m.HallOfCardsScreen })));
 const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
+const ApprendreScreen = lazy(() => import('./components/screens/ApprendreScreen').then(m => ({ default: m.ApprendreScreen })));
+const MoiScreen = lazy(() => import('./components/screens/MoiScreen').then(m => ({ default: m.MoiScreen })));
 
 // Screens affichant une bannière publicitaire (freemium uniquement)
 const AD_SCREENS: Screen[] = [
   'learn', 'scenarios-minor', 'feelings',
   'resources-minor', 'porno-vs-realite', 'loi-consentement', 'quiz-consentement', 'accompagnement-mineur',
-  'jeux',
 ];
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
@@ -82,7 +84,7 @@ function useAndroidBackButton() {
   useEffect(() => {
     if (!isCapacitor()) return;
     let cleanup: (() => void) | undefined;
-    const noBack = ['welcome', 'age-check', 'home'];
+    const noBack = ['welcome', 'age-check', 'home', 'apprendre', 'jeux', 'moi'];
     import('@capacitor/app').then(({ App }) => {
       App.addListener('backButton', () => {
         if (!noBack.includes(currentScreen)) {
@@ -243,6 +245,15 @@ function AppShell() {
           />
         );
 
+      case 'apprendre':
+        return <ApprendreScreen isAdult={isAdult} onNavigate={navigateTo} />;
+
+      case 'moi':
+        return <MoiScreen isAdult={isAdult} onNavigate={navigateTo} />;
+
+      case 'module-de-base':
+        return <WelcomeScreen onStart={() => navigateTo('home')} />;
+
       default:
         return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
     }
@@ -262,6 +273,8 @@ function AppShell() {
       case 'loi-consentement': return t('headers.loi');
       case 'quiz-consentement': return t('headers.quiz');
       case 'accompagnement-mineur': return t('headers.accompagnement');
+      case 'apprendre': return t('tabs.learn');
+      case 'moi': return t('tabs.me');
       case 'jeux': return t('headers.games');
       case 'jeu-des': return t('headers.jeuDes');
       case 'jeu-oie': return t('headers.jeuOie');
@@ -311,6 +324,8 @@ function AppShell() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <TabBar currentScreen={currentScreen} onNavigate={navigateTo} />
 
       {!isPremium && AD_SCREENS.includes(currentScreen) && (
         <AdBanner onGoPremium={() => navigateTo('premium')} />

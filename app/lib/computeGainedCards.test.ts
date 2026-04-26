@@ -7,15 +7,15 @@ import type { CollectorCard } from '../data/cards-collector';
 
 const CARDS: CollectorCard[] = [
   // common depth 1
-  { id: 'c1', deck: 'A', text: 'Common deck 1', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 1, visual: { gradient: '', iconName: 'Heart', border: '' } },
-  { id: 'c2', deck: 'A', text: 'Common deck 2', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 2, visual: { gradient: '', iconName: 'Heart', border: '' } },
-  { id: 'c3', deck: 'A', text: 'Common deck 3', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 3, visual: { gradient: '', iconName: 'Heart', border: '' } },
+  { id: 'c1', deck: 'A', theme: 'osez',    text: 'Common deck 1', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 1, visual: { gradient: '', iconName: 'Heart',    border: '' } },
+  { id: 'c2', deck: 'A', theme: 'parlez',  text: 'Common deck 2', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 2, visual: { gradient: '', iconName: 'Heart',    border: '' } },
+  { id: 'c3', deck: 'A', theme: 'et-si',   text: 'Common deck 3', depth: 1, tags: [], rarity: 'common', unlockedBy: 'x', sourceDeck: 3, visual: { gradient: '', iconName: 'Heart',    border: '' } },
   // rare depth 2
-  { id: 'r1', deck: 'A', text: 'Rare deck 3',   depth: 2, tags: [], rarity: 'rare',   unlockedBy: 'x', sourceDeck: 3, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
-  { id: 'r2', deck: 'A', text: 'Rare deck 4',   depth: 2, tags: [], rarity: 'rare',   unlockedBy: 'x', sourceDeck: 4, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
+  { id: 'r1', deck: 'A', theme: 'et-si',   text: 'Rare deck 3',   depth: 2, tags: [], rarity: 'rare',   unlockedBy: 'x', sourceDeck: 3, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
+  { id: 'r2', deck: 'A', theme: 'defi',    text: 'Rare deck 4',   depth: 2, tags: [], rarity: 'rare',   unlockedBy: 'x', sourceDeck: 4, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
   // unique depth 3
-  { id: 'u1', deck: 'A', text: 'Unique deck 5', depth: 3, tags: [], rarity: 'unique', unlockedBy: 'x', sourceDeck: 5, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
-  { id: 'u2', deck: 'A', text: 'Unique deck 6', depth: 3, tags: [], rarity: 'unique', unlockedBy: 'x', sourceDeck: 6, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
+  { id: 'u1', deck: 'A', theme: 'verite',  text: 'Unique deck 5', depth: 3, tags: [], rarity: 'unique', unlockedBy: 'x', sourceDeck: 5, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
+  { id: 'u2', deck: 'A', theme: 'douceur', text: 'Unique deck 6', depth: 3, tags: [], rarity: 'unique', unlockedBy: 'x', sourceDeck: 6, visual: { gradient: '', iconName: 'Sparkles', border: '' } },
 ];
 
 const BASE: ComputeParams = {

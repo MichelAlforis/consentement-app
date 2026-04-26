@@ -1,4 +1,11 @@
 export const home = {
+  tabs: {
+    home: 'Inicio',
+    learn: 'Aprender',
+    play: 'Jugar',
+    me: 'Yo',
+  },
+
   homeMinor: {
     badge: 'Espacio Joven',
     title: 'Lo que no te enseñan en la escuela',
@@ -52,7 +59,7 @@ export const home = {
     },
     collection: {
       title: 'Mi Colección',
-      empty: 'Juega para desbloquear tus primeras cartas',
+      empty: 'Completa un módulo para desbloquear tus primeras cartas',
       count: '{owned} / {total} cartas desbloqueadas',
     },
     privacy: 'Tus datos están cifrados y puedes eliminarlos en cualquier momento.',

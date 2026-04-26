@@ -1,13 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { HelpCircle, Gamepad2, HeartHandshake, User, Users, BookOpen, Settings, Lock, Heart, GalleryHorizontal, ChevronRight } from 'lucide-react';
+import { Heart, Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
-import { MenuCard } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
-import { useUnlockStore } from '../../stores';
+import { useUnlockStore, useModuleProgressStore } from '../../stores';
+import { getProgressLevel } from '../../lib/progressLevel';
 import { collectorCards } from '../../data/cards-collector';
 
 interface HomeScreenProps {
@@ -16,172 +16,397 @@ interface HomeScreenProps {
   onNavigate: (screen: Screen) => void;
 }
 
+// ── Module sequence (for next-module suggestion) ─────────────────────────────
 
-function HomeFooter({ privacyText, onSettings }: { privacyText: string; onSettings: () => void }) {
+const ADULT_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'duo-flow'];
+const MINOR_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'accompagnement-mineur'];
+
+const MODULE_META: Record<string, { title: string; screen: Screen }> = {
+  'porno-vs-realite':    { title: 'Porno vs Réalité', screen: 'porno-vs-realite' },
+  'quiz-consentement':   { title: 'Quiz Consentement', screen: 'quiz-consentement' },
+  'loi-consentement':    { title: 'La loi & le consentement', screen: 'loi-consentement' },
+  'duo-flow':            { title: 'Duo Flow', screen: 'duo-space' },
+  'accompagnement-mineur': { title: 'Je me questionne', screen: 'accompagnement-mineur' },
+};
+
+function getNextModule(isAdult: boolean, completedModules: string[]) {
+  const seq = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
+  const id = seq.find((m) => !completedModules.includes(m)) ?? null;
+  return id ? MODULE_META[id] ?? null : null;
+}
+
+// ── Shared sub-components ────────────────────────────────────────────────────
+
+function GreetingCard({ userName }: { userName: string }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="rounded-3xl p-5 mb-4 flex items-start gap-3"
+      style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+    >
+      <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
+        style={{ background: colors.accentGradient }}>
+        <Heart size={18} className="text-white" fill="white" />
+      </div>
+      <div>
+        <h2 className="text-xl font-bold mb-0.5" style={{ color: colors.textPrimary }}>
+          {t('homeAdult.greeting', { name: userName })}
+        </h2>
+        <p className="text-sm" style={{ color: colors.textSecondary }}>
+          {t('homeAdult.subtitle')}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+function MinorBadge() {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="mb-5"
+    >
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
+        style={{ background: colors.bgSecondary }}>
+        <span className="text-xs font-medium" style={{ color: colors.accent }}>{t('homeMinor.badge')}</span>
+      </div>
+      <h1 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>
+        {t('homeMinor.title')}
+      </h1>
+      <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+        {t('homeMinor.subtitle')}
+      </p>
+    </motion.div>
+  );
+}
+
+function CollectionButton({ ownedCount, onNavigate }: { ownedCount: number; onNavigate: (s: Screen) => void }) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => onNavigate('hall-of-cards')}
+      className="w-full rounded-2xl p-3.5 flex items-center gap-3 text-left"
+      style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+    >
+      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+        style={{ background: colors.bgSecondary }}>
+        <GalleryHorizontal size={18} style={{ color: colors.accent }} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
+          {t('homeAdult.collection.title')}
+        </span>
+        <p className="text-xs" style={{ color: colors.textMuted }}>
+          {ownedCount === 0
+            ? t('homeAdult.collection.empty')
+            : t('homeAdult.collection.count', { owned: String(ownedCount), total: String(totalCards) })}
+        </p>
+      </div>
+      <ChevronRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />
+    </motion.button>
+  );
+}
+
+function PrivacyText({ text }: { text: string }) {
+  const { colors } = useTheme();
+  return (
+    <motion.p
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ delay: 0.7 }}
-      className="flex items-center justify-between mt-6 px-1"
+      transition={{ delay: 0.5 }}
+      className="text-xs text-center mt-4"
+      style={{ color: colors.textMuted }}
     >
-      <div className="flex items-center gap-2">
-        <Lock size={12} style={{ color: colors.textMuted }} />
-        <p className="text-xs" style={{ color: colors.textMuted }}>{privacyText}</p>
-      </div>
+      {text}
+    </motion.p>
+  );
+}
+
+// ── Level 1 — Découverte ─────────────────────────────────────────────────────
+
+function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
+      {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+
+      {/* CTA principal */}
       <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={onSettings}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-        style={{ background: colors.bgSecondary }}
-      >
-        <Settings size={13} style={{ color: colors.textMuted }} />
-        <span className="text-xs" style={{ color: colors.textMuted }}>Paramètres</span>
-      </motion.button>
-    </motion.div>
-  );
-}
-
-function MinorHome({ onNavigate }: { onNavigate: (screen: Screen) => void }) {
-  const { colors } = useTheme();
-  const { t } = useTranslation();
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-6"
+        transition={{ delay: 0.2 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => onNavigate('apprendre')}
+        className="w-full rounded-3xl p-5 mb-3 flex items-center gap-4"
+        style={{ background: colors.accentGradient }}
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
-          style={{ background: colors.bgSecondary }}>
-          <span className="text-xs font-medium" style={{ color: colors.accent }}>{t('homeMinor.badge')}</span>
+        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+          <BookOpen size={24} className="text-white" />
         </div>
-        <h1 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>
-          {t('homeMinor.title')}
-        </h1>
-        <p className="text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-          {t('homeMinor.subtitle')}
-        </p>
-      </motion.div>
-
-      <div className="space-y-3">
-        <MenuCard
-          icon={<BookOpen size={26} className="text-white" />}
-          title={t('homeMinor.cards.learn.title')}
-          description={t('homeMinor.cards.learn.desc')}
-          onClick={() => onNavigate('resources-minor')}
-          variant="accent"
-          delay={1}
-        />
-        <MenuCard
-          icon={<HeartHandshake size={26} className="text-white" />}
-          title={t('homeMinor.cards.guide.title')}
-          description={t('homeMinor.cards.guide.desc')}
-          onClick={() => onNavigate('accompagnement-mineur')}
-          variant="secondary"
-          delay={2}
-        />
-        <MenuCard
-          icon={<HelpCircle size={26} className="text-white" />}
-          title={t('homeMinor.cards.help.title')}
-          description={t('homeMinor.cards.help.desc')}
-          onClick={() => onNavigate('help')}
-          variant="amber"
-          delay={3}
-        />
-        <MenuCard
-          icon={<Gamepad2 size={26} style={{ color: colors.accent }} />}
-          title={t('homeMinor.cards.games.title')}
-          description={t('homeMinor.cards.games.desc')}
-          onClick={() => onNavigate('jeux')}
-          delay={4}
-        />
-      </div>
-
-      <HomeFooter privacyText={t('homeMinor.privacy')} onSettings={() => onNavigate('settings')} />
-    </motion.div>
-  );
-}
-
-function AdultHome({ userName, onNavigate }: { userName: string; onNavigate: (screen: Screen) => void }) {
-  const { colors } = useTheme();
-  const { t } = useTranslation();
-  const { ownedCards } = useUnlockStore();
-  const ownedCount = ownedCards.length;
-  const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
-
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="rounded-3xl p-5 mb-6 flex items-start gap-3"
-        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
-      >
-        <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
-          style={{ background: colors.accentGradient }}>
-          <Heart size={18} className="text-white" fill="white" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold mb-1" style={{ color: colors.textPrimary }}>
-            {t('homeAdult.greeting', { name: userName })}
-          </h2>
-          <p className="text-sm" style={{ color: colors.textSecondary }}>
-            {t('homeAdult.subtitle')}
+        <div className="flex-1 text-left">
+          <span className="font-bold text-base text-white block mb-0.5">
+            {isAdult ? 'Commence ton parcours' : 'Explore les modules'}
+          </span>
+          <p className="text-xs text-white/75">
+            Chaque module complété débloque des cartes
           </p>
         </div>
-      </motion.div>
+        <ArrowRight size={20} className="text-white shrink-0" />
+      </motion.button>
 
-      <div className="space-y-3">
-        <MenuCard icon={<User size={26} className="text-white" />} title={t('homeAdult.menu.personal.title')} description={t('homeAdult.menu.personal.desc')} onClick={() => onNavigate('personal-space')} variant="accent" delay={1} />
-        <MenuCard icon={<Users size={26} className="text-white" />} title={t('homeAdult.menu.duo.title')} description={t('homeAdult.menu.duo.desc')} onClick={() => onNavigate('duo-space')} variant="secondary" delay={2} />
-        <MenuCard icon={<Gamepad2 size={26} className="text-white" />} title={t('homeAdult.menu.games.title')} description={t('homeAdult.menu.games.desc')} onClick={() => onNavigate('jeux')} variant="amber" delay={3} />
-        <MenuCard icon={<BookOpen size={26} style={{ color: colors.accent }} />} title={t('homeAdult.menu.resources.title')} description={t('homeAdult.menu.resources.desc')} onClick={() => onNavigate('learn')} delay={4} />
-      </div>
-
-      {/* Hall of Cards — accès rapide */}
-      <motion.button
+      {/* FOMO — Hall verrouillé */}
+      <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.38 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={() => onNavigate('hall-of-cards')}
-        className="w-full mt-3 rounded-2xl p-3.5 flex items-center gap-3 text-left"
+        transition={{ delay: 0.3 }}
+        className="rounded-2xl p-4 flex items-center gap-3"
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
           style={{ background: colors.bgSecondary }}>
-          <GalleryHorizontal size={18} style={{ color: colors.accent }} />
+          <Lock size={18} style={{ color: colors.textMuted }} />
         </div>
         <div className="flex-1 min-w-0">
           <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
-            {t('homeAdult.collection.title')}
+            Ta collection t'attend
           </span>
-          <p className="text-xs leading-snug" style={{ color: colors.textMuted }}>
-            {ownedCount === 0
-              ? t('homeAdult.collection.empty')
-              : t('homeAdult.collection.count', { owned: String(ownedCount), total: String(totalCards) })}
+          <p className="text-xs" style={{ color: colors.textMuted }}>
+            Module de base → 24 cartes · Quiz → 1 carte · Loi → 1 rare…
           </p>
         </div>
-        <ChevronRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />
-      </motion.button>
+      </motion.div>
 
-      <div className="mt-4">
-        <ExplicitModeToggle delay={0.45} />
-      </div>
+      {isAdult && (
+        <div className="mt-4">
+          <ExplicitModeToggle delay={0.4} />
+        </div>
+      )}
 
-      <HomeFooter privacyText={t('homeAdult.privacy')} onSettings={() => onNavigate('settings')} />
+      <PrivacyText text={t(isAdult ? 'homeAdult.privacy' : 'homeMinor.privacy')} />
     </motion.div>
   );
 }
 
+// ── Level 2 — Apprentissage ──────────────────────────────────────────────────
+
+function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const { ownedCards } = useUnlockStore();
+  const { completedModules } = useModuleProgressStore();
+  const sequence = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
+  const progress = sequence.filter((m) => completedModules.includes(m)).length;
+  const nextModule = getNextModule(isAdult ?? true, completedModules);
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
+      {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+
+      {/* Progression */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="rounded-2xl p-4 mb-3"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+      >
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold" style={{ color: colors.textPrimary }}>
+            Progression
+          </span>
+          <span className="text-xs font-medium" style={{ color: colors.accent }}>
+            {progress} / {sequence.length} modules
+          </span>
+        </div>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${(progress / sequence.length) * 100}%` }}
+            transition={{ delay: 0.35, duration: 0.6, ease: 'easeOut' }}
+            className="h-full rounded-full"
+            style={{ background: colors.accentGradient }}
+          />
+        </div>
+        <p className="text-xs mt-2" style={{ color: colors.textMuted }}>
+          {ownedCards.length} carte{ownedCards.length > 1 ? 's' : ''} débloquée{ownedCards.length > 1 ? 's' : ''}
+        </p>
+      </motion.div>
+
+      {/* Prochain module suggéré */}
+      {nextModule && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onNavigate(nextModule.screen)}
+          className="w-full rounded-2xl p-4 mb-3 flex items-center gap-3 text-left"
+          style={{
+            background: colors.bgCard,
+            border: `1px solid ${colors.accent}40`,
+          }}
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: colors.accentGradient }}>
+            <Star size={18} className="text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
+              style={{ color: colors.accent }}>Prochain module</p>
+            <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
+              {nextModule.title}
+            </span>
+          </div>
+          <ArrowRight size={18} style={{ color: colors.accent, flexShrink: 0 }} />
+        </motion.button>
+      )}
+
+      <CollectionButton ownedCount={ownedCards.length} onNavigate={onNavigate} />
+
+      {isAdult && (
+        <div className="mt-4">
+          <ExplicitModeToggle delay={0.4} />
+        </div>
+      )}
+
+      <PrivacyText text={t(isAdult ? 'homeAdult.privacy' : 'homeMinor.privacy')} />
+    </motion.div>
+  );
+}
+
+// ── Level 3 — Maîtrise ───────────────────────────────────────────────────────
+
+function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const { ownedCards } = useUnlockStore();
+  const { completedModules } = useModuleProgressStore();
+
+  const rareCount   = ownedCards.filter((c) => c.rarity === 'rare').length;
+  const uniqueCount = ownedCards.filter((c) => c.rarity === 'unique').length;
+  const nextModule  = getNextModule(isAdult ?? true, completedModules);
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
+      {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+
+      {/* Collection showcase */}
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => onNavigate('hall-of-cards')}
+        className="w-full rounded-2xl p-4 mb-3 text-left"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+      >
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: colors.accentGradient }}>
+            <GalleryHorizontal size={18} className="text-white" />
+          </div>
+          <div>
+            <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
+              {ownedCards.length} cartes débloquées
+            </span>
+            <p className="text-xs" style={{ color: colors.textMuted }}>
+              {rareCount > 0 ? `${rareCount} rare${rareCount > 1 ? 's' : ''} · ` : ''}
+              {uniqueCount > 0 ? `${uniqueCount} unique${uniqueCount > 1 ? 's' : ''}` : 'Voir ta collection →'}
+            </p>
+          </div>
+        </div>
+      </motion.button>
+
+      {/* Duo CTA (adultes) */}
+      {isAdult && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onNavigate('duo-space')}
+          className="w-full rounded-2xl p-4 mb-3 flex items-center gap-3 text-left"
+          style={{
+            background: 'linear-gradient(135deg, rgba(236,72,153,0.12), rgba(219,39,119,0.06))',
+            border: '1px solid rgba(236,72,153,0.25)',
+          }}
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
+            <Users size={18} className="text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
+              Notre Espace
+            </span>
+            <p className="text-xs" style={{ color: colors.textSecondary }}>
+              Joue avec tes cartes débloquées en duo
+            </p>
+          </div>
+          <ArrowRight size={18} style={{ color: '#ec4899', flexShrink: 0 }} />
+        </motion.button>
+      )}
+
+      {/* Prochain module s'il en reste */}
+      {nextModule && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onNavigate(nextModule.screen)}
+          className="w-full rounded-2xl p-3.5 mb-3 flex items-center gap-3 text-left"
+          style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+        >
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: colors.bgSecondary }}>
+            <Sparkles size={16} style={{ color: colors.accent }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
+              style={{ color: colors.accent }}>Aller plus loin</p>
+            <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+              {nextModule.title}
+            </span>
+          </div>
+          <ArrowRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />
+        </motion.button>
+      )}
+
+      {isAdult && (
+        <div className="mt-2">
+          <ExplicitModeToggle delay={0.42} />
+        </div>
+      )}
+
+      <PrivacyText text={t(isAdult ? 'homeAdult.privacy' : 'homeMinor.privacy')} />
+    </motion.div>
+  );
+}
+
+// ── Export principal ─────────────────────────────────────────────────────────
+
 export function HomeScreen({ isAdult, userName, onNavigate }: HomeScreenProps) {
-  if (isAdult) {
-    return <AdultHome userName={userName} onNavigate={onNavigate} />;
-  }
-  return <MinorHome onNavigate={onNavigate} />;
+  const { completedModules } = useModuleProgressStore();
+  const level = getProgressLevel(completedModules);
+
+  if (level === 3) return <MasteryHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
+  if (level === 2) return <LearningHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
+  return <DiscoveryHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
 }
