@@ -131,6 +131,15 @@ Tap sur une carte → `vibrate('light')` + toggle flip (retourner dans les deux 
 
 **Règle mobile — taille minimale 140 px :** en dessous, le texte canvas descend sous 13 px — illisible sur smartphone. Pour 3+ cartes, le layout passe en scroll horizontal (`overflow-x-auto snap-x snap-mandatory`) avec 2 cartes visibles et le bord du 3e pour signaler le scroll. `scrollbarWidth: none` masque la scrollbar native iOS/Android.
 
+**i18n — namespace `flipReveal` (fr/en/es) :**
+
+| Clé | FR | EN | ES |
+|---|---|---|---|
+| `cardUnlockedLabel` | Carte débloquée | Card unlocked | Carta desbloqueada |
+| `cardsUnlockedLabel` | `{count}` cartes débloquées | `{count}` cards unlocked | `{count}` cartas desbloqueadas |
+| `hintTap` | Touche une carte pour la retourner | Tap a card to flip it | Toca una carta para voltearla |
+| `hintScroll` | Glisse pour voir toutes les cartes · Touche pour retourner | Swipe to see all cards · Tap to flip | Desliza para ver todas las cartas · Toca para voltear |
+
 **Quand des cartes sont gagnées :**
 `computeGainedCards()` est appelé dans `handleGoToEnd()` avec `sessionMode`, `cardCount`, `seanceSize`, `sessionThemes`, `sessionCount` (après incrément), `ownedIds`, `favorites`, `isPremium`. La logique de gain est dans `app/lib/computeGainedCards.ts` (voir `docs/jeux/card-gain-session.md`).
 

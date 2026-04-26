@@ -5,6 +5,33 @@
 
 ---
 
+## Exports publics
+
+| Export | Usage |
+|---|---|
+| `CollectorCardCanvas` | Widget standalone avec son propre `<Canvas>` — CardGame, hall-of-cards |
+| `CardMesh` | Mesh 3D pur, utilisable dans **toute scène R3F** — GooseGame, DiceGame, futurs jeux |
+| `RarityLights` | Lumières de rareté, positionnables dans la scène hôte |
+| `CardMeshProps` | Interface TypeScript de `CardMesh` |
+
+### Usage dans une scène R3F existante
+
+```tsx
+import { CardMesh, RarityLights } from '../cards/CollectorCardCanvas';
+
+// Dans le JSX R3F (GooseGame, DiceGame...) :
+<group position={[x, y, z]} scale={0.5}>
+  <Suspense fallback={null}>
+    <CardMesh card={card} isFlipped={isFlipped} enableBloom={false} />
+  </Suspense>
+  <RarityLights rarity={card.rarity} />
+</group>
+```
+
+**`enableBloom`** (défaut `true`) : passer `false` dans les scènes sans `<Selection>` context — les glow rings restent visibles sans post-processing bloom.
+
+---
+
 ## Architecture
 
 ```
