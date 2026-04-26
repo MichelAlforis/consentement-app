@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–22 — tests + DiceGame + GooseGame Accord card)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–23 — stores testés + DiceGame + GooseGame Accord card)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -386,6 +386,21 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 **Couverture :** empty pool · filtre thématique · fallback pool complet · face inconnue (0) · forme GainedCard · id absent du catalogue · random=0 et random→1
 
 **7 fichiers · 98 tests · tous verts.**
+
+---
+
+### Sprint 23 — Tests stores du flux unlock ✅
+**Livrable :** couverture complète des 3 stores critiques · 24 nouveaux tests
+
+| Fichier | Tests | Cas couverts |
+|---|---|---|
+| `stores/revealStore.test.ts` | 6 | état initial · setPending · clearPending · ordre · dernier gagne |
+| `stores/moduleProgressStore.test.ts` | 7 | état initial · markComplete · idempotence · ordre · reset · reprise après reset |
+| `stores/unlockStore.test.ts` | 11 | état initial · ajout · dédup cross-appel · lot mixte · métadonnées · sessionCount · reset |
+
+**Note :** `unlockCards` ne déduplique pas dans un même batch (callers fournissent des listes uniques — comportement documenté et correct).
+
+**10 fichiers · 122 tests · tous verts.**
 
 ---
 
