@@ -13,6 +13,9 @@ import { useTheme } from '../../../context/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { useUnlockStore } from '../../../stores';
+import { collectorCards } from '../../../data/cards-collector';
+import type { GainedCard } from '../../../lib/computeGainedCards';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -56,16 +59,31 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     [available],
   );
 
+  const ownedCards = useUnlockStore((s) => s.ownedCards);
+  const [previewCard, setPreviewCard] = useState<GainedCard | null>(null);
+  const [showCard, setShowCard] = useState(false);
+
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
   const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
+
+  const samplePreviewCard = (): GainedCard | null => {
+    if (ownedCards.length === 0) return null;
+    const idx = Math.floor(Math.random() * ownedCards.length);
+    const owned = ownedCards[idx];
+    const cc = collectorCards.find((c) => c.id === owned.id);
+    if (!cc) return null;
+    return { id: cc.id, text: cc.text, rarity: cc.rarity, gradient: cc.visual.gradient, iconName: cc.visual.iconName, border: cc.visual.border };
+  };
 
   const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
+    setShowCard(false);
+    setPreviewCard(null);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -74,6 +92,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
+    setShowCard(false);
+    setPreviewCard(null);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -82,6 +102,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setMode('pick');
     setP1Answer(null);
     setP2Answer(null);
+    setShowCard(false);
+    setPreviewCard(null);
   };
 
   return (
@@ -158,9 +180,17 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                 config={DICE_CONFIG}
                 currentFace={currentFace}
                 isRolling={isRolling}
-                onRollComplete={() => { onRollComplete(); setMode('practice'); }}
+                onRollComplete={() => {
+                  onRollComplete();
+                  setMode('practice');
+                  const card = samplePreviewCard();
+                  setPreviewCard(card);
+                  setShowCard(!!card);
+                }}
                 renderer="webgl"
                 size={240}
+                previewCard={previewCard}
+                showCard={showCard}
               />
 
               <AnimatePresence>

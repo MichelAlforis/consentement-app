@@ -275,9 +275,11 @@ export interface DiceRendererProps {
   size?: number;
   /** 'category' (défaut) : faces gradients + icône | 'numeric' : dé classique à points */
   mode?: 'category' | 'numeric';
+  previewCard?: import('../../lib/computeGainedCards').GainedCard | null;
+  showCard?: boolean;
 }
 
-export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size, mode = 'category' }: DiceRendererProps) {
+export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size, mode = 'category', previewCard, showCard }: DiceRendererProps) {
   if (renderer === 'webgl') {
     return (
       <DiceCanvas
@@ -287,6 +289,8 @@ export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, r
         onRollComplete={onRollComplete}
         size={size ?? 200}
         mode={mode}
+        previewCard={previewCard}
+        showCard={showCard}
       />
     );
   }
