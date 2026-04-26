@@ -297,7 +297,7 @@ function ConvergenceSection() {
       width: '100%', maxWidth: 700,
     }}>
       <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>
-        Convergence visuelle C1 + C3
+        Convergence visuelle C1 + C2 + C3
       </span>
 
       <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center' }}>

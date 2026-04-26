@@ -2,13 +2,18 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, animate, useAnimation, useMotionValue, useTransform, useSpring, MotionValue } from 'framer-motion';
-import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CollectorCard } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
 import { BACK_SYMBOL_PATH } from '../../../game-engine/cards/CollectorCardCanvas';
 
 type Cat = { name: string; iconName: string; gradient: string; border: string };
+
+function buildFaceBg(gradient: string): string {
+  const match = gradient.match(/#[0-9a-f]{6}/i);
+  const c1 = match ? match[0] : '#3b1f85';
+  return `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`;
+}
 
 // ─── Ghost stack ──────────────────────────────────────────────────────────────
 
@@ -71,7 +76,6 @@ export function PlayingCard({
   onDraw,
   themeId,
 }: PlayingCardProps) {
-  const { colors } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   // useNormalizedPointer still drives the foil gradient (Framer MotionValues)
   const { x: tiltX, y: tiltY } = useNormalizedPointer(cardRef);
@@ -123,7 +127,7 @@ export function PlayingCard({
 
   const depth = card.depth;
   // screen blend on a near-black background adds soft colour, not a void
-  const foilTargetOpacity = themeId === 'youth' ? 0 : depth === 3 ? 0.18 : depth === 2 ? 0.12 : 0;
+  const foilTargetOpacity = themeId === 'youth' ? 0 : depth === 3 ? 0.28 : depth === 2 ? 0.18 : 0;
 
   const handleDragEnd = async (
     _: unknown,
@@ -277,15 +281,15 @@ export function PlayingCard({
                   position: 'absolute',
                   inset: 0,
                   borderRadius: 20,
-                  background: colors.bgCard,
+                  background: buildFaceBg(cat.gradient),
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                   display: 'flex',
                   flexDirection: 'column',
                   overflow: 'hidden',
-                  boxShadow: '0 20px 56px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.07)',
-                  border: `1.5px solid ${colors.border}`,
+                  boxShadow: `0 20px 56px ${cat.border}55, 0 4px 20px rgba(0,0,0,0.40)`,
+                  border: '1.5px solid rgba(255,255,255,0.10)',
                 }}
               >
                 {/* Top stripe */}
@@ -331,7 +335,7 @@ export function PlayingCard({
                   {/* Card text — left-aligned for readability */}
                   <p
                     style={{
-                      color: colors.textPrimary,
+                      color: 'rgba(255,255,255,0.92)',
                       fontSize: 15,
                       fontWeight: 500,
                       lineHeight: 1.65,
@@ -352,7 +356,7 @@ export function PlayingCard({
                             width: 5,
                             height: 5,
                             borderRadius: 3,
-                            background: d <= depth ? cat.border : `${colors.border}`,
+                            background: d <= depth ? cat.border : 'rgba(255,255,255,0.15)',
                           }}
                         />
                       ))}
@@ -371,7 +375,7 @@ export function PlayingCard({
                       right: 14,
                       fontSize: 9,
                       fontWeight: 900,
-                      color: colors.textMuted,
+                      color: 'rgba(255,255,255,0.45)',
                       userSelect: 'none',
                       opacity: 0.4,
                     }}

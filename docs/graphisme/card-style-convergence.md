@@ -1,6 +1,6 @@
 # Convergence visuelle — PlayingCard ↔ CollectorCard
 
-**Statut :** 📋 Planifié  
+**Statut :** ✅ Complété (C1 + C2 + C3)  
 **Date :** 2026-04-26  
 **Fichiers concernés :**
 - `app/components/screens/CardGame/PlayingCard.tsx`
