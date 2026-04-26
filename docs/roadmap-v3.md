@@ -2,7 +2,7 @@
 
 > Créé : 26 avril 2026  
 > Mis à jour : 26 avril 2026  
-> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 9 · 10 · 11 · 13 · 16 ✅ · Sprint 14 · 15 à faire  
+> Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -209,9 +209,9 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 |---|---|---|
 | 11.1 | `moduleProgressStore` : `completedModules[]` + `markModuleComplete(id)` (idempotent) | ✅ |
 | 11.2 | Export + `reset()` dans `resetAllData()` | ✅ |
-| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) | ✅ implémentée, tests ⬜ |
+| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) | ✅ |
 
-### Sprint 12 — Flip reveal animation *(partiel — logique ✅, animation ⬜)*
+### Sprint 12 — Flip reveal animation ✅
 **Livrable :** animation flip card au déverrouillage (le wiring logique est fait dans Sprint 9)
 
 | # | Tâche | Statut |
@@ -231,23 +231,23 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 | 13.5 | `HomeScreen.tsx` — `useProgressLevel` + dispatch vers les 3 composants | ✅ |
 | 13.6 | i18n : nouvelles clés home pour les 3 états (FR/EN/ES) | ✅ |
 
-### Sprint 14 — `ModuleDeBaseScreen`
+### Sprint 14 — `ModuleDeBaseScreen` ✅
 **Livrable :** écran d'intro skippable + 24 cartes au premier lancement
 
-| # | Tâche |
-|---|---|
-| 14.1 | Rédiger le contenu du module de base (équipe — pas le juriste) |
-| 14.2 | Créer `ModuleDeBaseScreen` — scroll guidé, bouton "J'ai compris" + lien "Passer" |
-| 14.3 | Routing : premier lancement → `module-de-base` avant `home` |
-| 14.4 | Complétion → 24 cartes → flip reveal séquentiel |
+| # | Tâche | Statut |
+|---|---|---|
+| 14.1 | Contenu du module de base (placeholder équipe) | ✅ `data/moduleDeBase.ts` |
+| 14.2 | `ModuleDeBaseScreen` — 4 slides, progress dots, skip | ✅ |
+| 14.3 | Routing : `case 'home'` intercepté si `!hasOnboarded` | ✅ `page.tsx` |
+| 14.4 | Complétion → 24 cartes → flip reveal séquentiel | ✅ via `useModuleComplete` |
 
-### Sprint 15 — Guard CardGame niveau 1
+### Sprint 15 — Guard CardGame niveau 1 ✅
 **Livrable :** CardGame ne crashe pas si ownedCards vide
 
-| # | Tâche |
-|---|---|
-| 15.1 | Si `ownedCards.length === 0` → afficher `EmptyDeckPrompt` (CTA vers module de base) |
-| 15.2 | Test : niveau 1 + accès CardGame → guard affiché, pas de crash |
+| # | Tâche | Statut |
+|---|---|---|
+| 15.1 | `ownedCards` vide → `EmptyDeckPrompt` (CTA quiz consentement) | ✅ |
+| 15.2 | Tests : pool vide → `available.length===0`, `startPlaying` sans crash, `currentCard` null | ✅ 4 tests |
 
 ### Sprint 16 — Navigation Tab Bar V3 ✅
 **Livrable :** 4 onglets persistants remplaçant les MenuCards de la Home
