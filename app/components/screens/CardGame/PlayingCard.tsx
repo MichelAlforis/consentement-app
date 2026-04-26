@@ -6,6 +6,7 @@ import { useTheme } from '../../../context/ThemeContext';
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CollectorCard } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
+import { BACK_SYMBOL_PATH } from '../../../game-engine/cards/CollectorCardCanvas';
 
 type Cat = { name: string; iconName: string; gradient: string; border: string };
 
@@ -235,6 +236,21 @@ export function PlayingCard({
                     backgroundSize: '18px 18px',
                   }}
                 />
+                {/* Watermark symbol */}
+                <svg
+                  viewBox="0 0 336 1044"
+                  style={{
+                    position: 'absolute',
+                    width: '45%',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    opacity: 0.05,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <path d={BACK_SYMBOL_PATH} fill="white" fillRule="evenodd" />
+                </svg>
                 {/* Center content */}
                 <span style={{ position: 'relative', zIndex: 1, lineHeight: 1 }}>
                   <DynamicIcon name={cat.iconName} size={56} color="rgba(255,255,255,0.85)" />
