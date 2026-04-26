@@ -221,11 +221,6 @@ export function PlayingCard({
                   background: cat.gradient,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
                   overflow: 'hidden',
                   boxShadow: `0 20px 56px ${cat.border}44, 0 4px 16px rgba(0,0,0,0.12)`,
                 }}
@@ -255,20 +250,21 @@ export function PlayingCard({
                 >
                   <path d={BACK_SYMBOL_PATH} fill="white" fillRule="evenodd" />
                 </svg>
-                {/* Center content */}
-                <span style={{ position: 'relative', zIndex: 1, lineHeight: 1 }}>
-                  <DynamicIcon name={cat.iconName} size={56} color="rgba(255,255,255,0.85)" />
-                </span>
+                {/* Category name — bottom, subtle */}
                 <p
                   style={{
-                    color: 'rgba(255,255,255,0.7)',
-                    fontSize: 13,
+                    position: 'absolute',
+                    bottom: 14,
+                    left: 0,
+                    right: 0,
+                    textAlign: 'center',
+                    color: 'rgba(255,255,255,0.45)',
+                    fontSize: 10,
                     fontWeight: 800,
-                    letterSpacing: '0.18em',
+                    letterSpacing: '0.20em',
                     textTransform: 'uppercase',
-                    position: 'relative',
-                    zIndex: 1,
                     margin: 0,
+                    zIndex: 1,
                   }}
                 >
                   {cat.name}
