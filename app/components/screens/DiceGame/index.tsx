@@ -16,6 +16,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useUnlockStore } from '../../../stores';
 import { sampleCardByFace } from '../../../lib/sampleCard';
 import type { GainedCard } from '../../../lib/computeGainedCards';
+import { FlipRevealOverlay } from '../../ui/FlipRevealOverlay';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -68,6 +69,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const ownedCards = useUnlockStore((s) => s.ownedCards);
   const [previewCard, setPreviewCard] = useState<GainedCard | null>(null);
   const [showCard, setShowCard] = useState(false);
+  const [showReveal, setShowReveal] = useState(false);
 
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
@@ -83,6 +85,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setP2Answer(null);
     setShowCard(false);
     setPreviewCard(null);
+    setShowReveal(false);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -93,6 +96,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setP2Answer(null);
     setShowCard(false);
     setPreviewCard(null);
+    setShowReveal(false);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -103,9 +107,11 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
     setP2Answer(null);
     setShowCard(false);
     setPreviewCard(null);
+    setShowReveal(false);
   };
 
   return (
+    <>
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10 min-h-[75vh] flex flex-col">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-11 h-11 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
@@ -211,23 +217,26 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   </motion.div>
                 )}
                 {mode === 'practice' && showCard && previewCard && (
-                  <motion.div
+                  <motion.button
                     key="card-label"
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="mt-2 px-3 py-2 rounded-xl flex items-start gap-2"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setShowReveal(true)}
+                    className="mt-2 px-3 py-2 rounded-xl flex items-center gap-2 text-left"
                     style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, maxWidth: 210 }}
                   >
                     <span
                       className="mt-0.5 w-2 h-2 rounded-full shrink-0"
                       style={{ background: RARITY_COLOR[previewCard.rarity] }}
                     />
-                    <p className="text-xs leading-snug line-clamp-2" style={{ color: colors.textSecondary }}>
+                    <p className="text-xs leading-snug line-clamp-2 flex-1" style={{ color: colors.textSecondary }}>
                       {previewCard.text}
                     </p>
-                  </motion.div>
+                    <ChevronRight size={12} className="shrink-0" style={{ color: colors.textMuted, opacity: 0.6 }} />
+                  </motion.button>
                 )}
               </AnimatePresence>
             </div>
@@ -407,5 +416,15 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
       </AnimatePresence>
     </motion.div>
+
+    <AnimatePresence>
+      {showReveal && previewCard && (
+        <FlipRevealOverlay
+          cards={[previewCard]}
+          onDone={() => setShowReveal(false)}
+        />
+      )}
+    </AnimatePresence>
+    </>
   );
 }

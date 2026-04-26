@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–24 — stores testés + DiceGame card label + GooseGame Accord card)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–25 — FlipRevealOverlay partagé + DiceGame tap-to-reveal)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -432,6 +432,28 @@ const RARITY_COLOR: Record<string, string> = {
 ```
 
 **Fichier modifié :** `app/components/screens/DiceGame/index.tsx`  
+**122 tests · tous verts.**
+
+---
+
+### Sprint 25 — FlipRevealOverlay partagé + DiceGame tap-to-reveal ✅
+**Livrable :** overlay de flip extrait en composant partagé · câblé dans DiceGame
+
+**Extraction :**
+- `FlipRevealOverlay` déplacé de `HallOfCardsScreen.tsx` (local) → `app/components/ui/FlipRevealOverlay.tsx` (partagé)
+- `HallOfCardsScreen` importe depuis `../ui/FlipRevealOverlay` — comportement identique
+
+**DiceGame — tap-to-reveal :**
+- Le `card-label` (dot rareté + texte) devient un bouton `motion.button` avec `whileTap` + `ChevronRight` indicateur
+- Tap → `showReveal = true` → `FlipRevealOverlay` plein écran (animation flip 3D)
+- `onDone` → `showReveal = false`
+- `showReveal` remis à `false` sur `pickRoll`, `reroll`, `reset`
+
+**Fichiers :**
+- `app/components/ui/FlipRevealOverlay.tsx` (nouveau)
+- `app/components/screens/HallOfCardsScreen.tsx` (import mis à jour, Sparkles retiré)
+- `app/components/screens/DiceGame/index.tsx` (showReveal, overlay, label tappable)
+
 **122 tests · tous verts.**
 
 ---
