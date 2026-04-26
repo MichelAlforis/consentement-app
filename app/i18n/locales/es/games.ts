@@ -222,4 +222,15 @@ export const games = {
     next: 'Siguiente carta',
     done: 'Ver mi colección',
   },
+
+  hallOfCards: {
+    title: 'Hall of Cards',
+    subtitle: '{owned} / {total} cartas desbloqueadas',
+    deckALabel: 'Deck A — Conexión',
+    deckMLabel: 'Deck M — Espacio Joven',
+    deckBLabel: 'Deck B — Explícito',
+    rarityRare: 'RARA',
+    rarityUnique: 'ÚNICA',
+    appAdulte: 'App adulta',
+  },
 } as const;

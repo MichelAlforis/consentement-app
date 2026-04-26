@@ -36,6 +36,7 @@ function AcquiredCard({ card, index, onTap }: {
   index: number;
   onTap: (c: GainedCard) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <motion.button
       initial={{ opacity: 0, y: 12 }}
@@ -70,7 +71,7 @@ function AcquiredCard({ card, index, onTap }: {
             : 'linear-gradient(135deg, #7c3aed, #a855f7)',
         }}>
           <span className="text-[6px] font-black text-white tracking-wider">
-            {card.rarity === 'unique' ? 'UNIQUE' : 'RARE'}
+            {card.rarity === 'unique' ? t('hallOfCards.rarityUnique') : t('hallOfCards.rarityRare')}
           </span>
         </div>
       )}
@@ -95,6 +96,7 @@ function LockedCard({ card, index, deckB = false, onTap }: {
   onTap?: () => void;
 }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const sharedStyle = {
     aspectRatio: '2 / 3',
     background: deckB ? 'linear-gradient(135deg, #0f0a1e 0%, #1e1230 100%)' : colors.bgSecondary,
@@ -112,7 +114,7 @@ function LockedCard({ card, index, deckB = false, onTap }: {
       <Lock size={18} color={colors.textMuted} style={{ opacity: 0.35 }} />
       <p className="text-[7px] font-semibold text-center px-2 leading-tight"
         style={{ color: colors.textMuted, opacity: deckB ? 0.45 : 0.55 }}>
-        {deckB ? 'App adulte' : card.unlockedBy.replace(/-/g, ' ')}
+        {deckB ? t('hallOfCards.appAdulte') : card.unlockedBy.replace(/-/g, ' ')}
       </p>
       <div className="absolute bottom-2 flex gap-0.5">
         {([1, 2, 3] as const).map((d) => (
@@ -166,7 +168,7 @@ function FlipRevealOverlay({ cards, onDone }: { cards: GainedCard[]; onDone: () 
   };
 
   const rarityLabel = card.rarity !== 'common'
-    ? (card.rarity === 'unique' ? 'UNIQUE' : 'RARE')
+    ? (card.rarity === 'unique' ? t('hallOfCards.rarityUnique') : t('hallOfCards.rarityRare'))
     : null;
 
   const title = total === 1
@@ -365,6 +367,7 @@ interface HallOfCardsScreenProps {
 
 export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { ownedCards } = useUnlockStore();
   const ownedIds = new Set(ownedCards.map((c) => c.id));
   const [zoomed, setZoomed] = useState<GainedCard | null>(null);
@@ -385,7 +388,7 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
   const deckM = collectorCards.filter((c) => c.deck === 'M');
 
   const primaryDeck = isAdult ? deckA : deckM;
-  const primaryLabel = isAdult ? 'Deck A — Connexion' : 'Deck M — Espace Jeune';
+  const primaryLabel = isAdult ? t('hallOfCards.deckALabel') : t('hallOfCards.deckMLabel');
   const totalOwned = primaryDeck.filter((c) => ownedIds.has(c.id)).length;
 
   return (
@@ -399,10 +402,10 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
         <div className="mb-6">
           <h2 className="text-2xl font-black tracking-tight leading-none"
             style={{ color: colors.textPrimary }}>
-            Hall of Cards
+            {t('hallOfCards.title')}
           </h2>
           <p className="text-sm mt-1" style={{ color: colors.textMuted }}>
-            {totalOwned} / {primaryDeck.length} cartes débloquées
+            {t('hallOfCards.subtitle', { owned: String(totalOwned), total: String(primaryDeck.length) })}
           </p>
         </div>
 
@@ -424,7 +427,7 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
           <>
             <p className="text-xs font-bold uppercase tracking-widest mb-3"
               style={{ color: colors.textMuted }}>
-              Deck B — Explicite
+              {t('hallOfCards.deckBLabel')}
             </p>
             <div className="grid grid-cols-3 gap-2.5">
               {deckB.map((card, i) => {
