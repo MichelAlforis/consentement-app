@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { computeGainedCards, pickOneRare, pickOneUnique } from './computeGainedCards';
+import { computeGainedCards } from './computeGainedCards';
 import type { ComputeParams } from './computeGainedCards';
 import type { CollectorCard } from '../data/cards-collector';
 
@@ -149,28 +149,3 @@ describe('pool épuisé', () => {
   });
 });
 
-// ── Helpers GooseGame ─────────────────────────────────────────────────────────
-
-describe('pickOneRare', () => {
-  it('retourne une rare non possédée', () => {
-    const result = pickOneRare(CARDS, new Set(['r1']));
-    expect(result).not.toBeNull();
-    expect(result!.id).toBe('r2');
-  });
-
-  it('retourne null si toutes les rares sont possédées', () => {
-    expect(pickOneRare(CARDS, new Set(['r1', 'r2']))).toBeNull();
-  });
-});
-
-describe('pickOneUnique', () => {
-  it('retourne une unique non possédée', () => {
-    const result = pickOneUnique(CARDS, new Set(['u1']));
-    expect(result).not.toBeNull();
-    expect(result!.rarity).toBe('unique');
-  });
-
-  it('retourne null si toutes les uniques sont possédées', () => {
-    expect(pickOneUnique(CARDS, new Set(['u1', 'u2']))).toBeNull();
-  });
-});

@@ -1,15 +1,22 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Scale, AlertTriangle } from 'lucide-react';
+import { Scale, AlertTriangle, Sparkles } from 'lucide-react';
 import { loiPoints } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { DynamicIcon } from '../../utils/iconFromName';
+import { Button } from '../ui';
+import { useModuleComplete } from '../../lib/useModuleComplete';
 
-export function LoiConsentementScreen() {
+interface LoiConsentementScreenProps {
+  onComplete?: () => void;
+}
+
+export function LoiConsentementScreen({ onComplete }: LoiConsentementScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const complete = useModuleComplete();
 
   return (
     <motion.div
@@ -85,6 +92,23 @@ export function LoiConsentementScreen() {
           {t('loiScreen.source2')}
         </p>
       </motion.div>
+
+      {onComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="mt-4"
+        >
+          <Button
+            fullWidth
+            onClick={() => { complete('loi-consentement'); onComplete(); }}
+          >
+            <Sparkles size={16} />
+            {t('loiScreen.markRead')}
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

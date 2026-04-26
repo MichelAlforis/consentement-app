@@ -38,6 +38,7 @@ export const education = {
     inPorno: 'En el porno',
     inReality: 'En la realidad',
     closing: "La sexualidad real se construye con comunicación, respeto y consentimiento. No imitando una película.",
+    markRead: 'Lo he leído — Ver mi carta',
   },
 
   loiScreen: {
@@ -49,6 +50,7 @@ export const education = {
     },
     source1: 'Contenido validado por nuestro cofundador, abogado en derecho penal.',
     source2: 'Código Penal francés — Artículos 222-22 y siguientes',
+    markRead: 'Lo he leído — Ver mi carta',
   },
 
   quizScreen: {
@@ -62,6 +64,7 @@ export const education = {
     restart: 'Reiniciar',
     score: '{score} respuesta{plural} correcta{plural} de {total}',
     adviceReread: 'Vuelve a leer los módulos Porno vs. Realidad y La Ley para entender mejor.',
+    seeCard: 'Ver mi carta',
     scoreLabels: {
       excellent: '¡Excelente!',
       good: '¡Bien!',

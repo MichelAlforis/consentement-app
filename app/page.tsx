@@ -195,13 +195,13 @@ function AppShell() {
         return <ResourcesMinorScreen onNavigate={navigateTo} />;
 
       case 'porno-vs-realite':
-        return <PornoVsRealiteScreen onBack={() => goBack()} />;
+        return <PornoVsRealiteScreen onBack={() => goBack()} onComplete={() => navigateTo('hall-of-cards')} />;
 
       case 'loi-consentement':
-        return <LoiConsentementScreen />;
+        return <LoiConsentementScreen onComplete={() => navigateTo('hall-of-cards')} />;
 
       case 'quiz-consentement':
-        return <QuizConsentementScreen />;
+        return <QuizConsentementScreen onComplete={() => navigateTo('hall-of-cards')} />;
 
       case 'accompagnement-mineur':
         return <AccompagnementMineurScreen onNavigate={navigateTo} />;

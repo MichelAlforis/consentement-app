@@ -2,19 +2,23 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Film, ChevronDown, ChevronUp, Lightbulb } from 'lucide-react';
+import { Film, ChevronDown, ChevronUp, Lightbulb, Sparkles } from 'lucide-react';
 import { pornoVsRealite } from '../../data';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { DynamicIcon } from '../../utils/iconFromName';
+import { Button } from '../ui';
+import { useModuleComplete } from '../../lib/useModuleComplete';
 
 interface PornoVsRealiteScreenProps {
   onBack: () => void;
+  onComplete?: () => void;
 }
 
-export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
+export function PornoVsRealiteScreen({ onBack, onComplete }: PornoVsRealiteScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const complete = useModuleComplete();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -124,6 +128,23 @@ export function PornoVsRealiteScreen({ onBack }: PornoVsRealiteScreenProps) {
           {t('pornoVsRealiteScreen.closing')}
         </p>
       </motion.div>
+
+      {onComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="mt-4"
+        >
+          <Button
+            fullWidth
+            onClick={() => { complete('porno-vs-realite'); onComplete(); }}
+          >
+            <Sparkles size={16} />
+            {t('pornoVsRealiteScreen.markRead')}
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

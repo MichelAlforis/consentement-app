@@ -2,15 +2,21 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, ChevronRight, RotateCcw, Trophy, ThumbsUp, BookOpen, Flame, CheckCircle, XCircle } from 'lucide-react';
+import { Gamepad2, ChevronRight, RotateCcw, Trophy, ThumbsUp, BookOpen, Flame, CheckCircle, XCircle, Sparkles } from 'lucide-react';
 import { quizQuestions } from '../../data';
 import { Button } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { useModuleComplete } from '../../lib/useModuleComplete';
 
-export function QuizConsentementScreen() {
+interface QuizConsentementScreenProps {
+  onComplete?: () => void;
+}
+
+export function QuizConsentementScreen({ onComplete }: QuizConsentementScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const complete = useModuleComplete();
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -38,6 +44,7 @@ export function QuizConsentementScreen() {
 
   const handleNext = () => {
     if (current + 1 >= total) {
+      complete('quiz-consentement');
       setFinished(true);
     } else {
       setCurrent(c => c + 1);
@@ -101,6 +108,12 @@ export function QuizConsentementScreen() {
           <RotateCcw size={16} />
           {t('quizScreen.restart')}
         </Button>
+        {onComplete && (
+          <Button onClick={onComplete} className="mt-3">
+            <Sparkles size={16} />
+            {t('quizScreen.seeCard')}
+          </Button>
+        )}
       </motion.div>
     );
   }

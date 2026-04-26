@@ -38,6 +38,7 @@ export const education = {
     inPorno: 'Dans le porno',
     inReality: 'Dans la réalité',
     closing: "La vraie sexualité, ça se construit avec communication, respect et consentement. Pas en imitant un film.",
+    markRead: "J'ai lu — Voir ma carte",
   },
 
   loiScreen: {
@@ -49,6 +50,7 @@ export const education = {
     },
     source1: 'Contenu validé par notre co-fondateur juriste en droit pénal.',
     source2: 'Code pénal français — Articles 222-22 et suivants',
+    markRead: "J'ai lu — Voir ma carte",
   },
 
   quizScreen: {
@@ -62,6 +64,7 @@ export const education = {
     restart: 'Recommencer',
     score: '{score} bonne{plural} réponse{plural} sur {total}',
     adviceReread: 'Relis les modules Porno vs. Réalité et La Loi pour mieux comprendre.',
+    seeCard: 'Voir ma carte',
     scoreLabels: {
       excellent: 'Excellent !',
       good: 'Bien !',

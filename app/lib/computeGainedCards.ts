@@ -170,20 +170,3 @@ export function computeGainedCards(
   return { gained, ownedCards };
 }
 
-// ---------------------------------------------------------------------------
-// Helpers pour les triggers déterministes (GooseGame)
-// ---------------------------------------------------------------------------
-
-export function pickOneRare(
-  collectorCards: CollectorCard[],
-  ownedIds: Set<string>
-): CollectorCard | null {
-  return pickRandom(excludeOwned(collectorCards.filter((c) => c.rarity === 'rare'), ownedIds));
-}
-
-export function pickOneUnique(
-  collectorCards: CollectorCard[],
-  ownedIds: Set<string>
-): CollectorCard | null {
-  return pickRandom(excludeOwned(collectorCards.filter((c) => c.rarity === 'unique'), ownedIds));
-}

@@ -38,6 +38,7 @@ export const education = {
     inPorno: 'In porn',
     inReality: 'In reality',
     closing: "Real intimacy is built with communication, respect and consent. Not by imitating a film.",
+    markRead: "I've read it — See my card",
   },
 
   loiScreen: {
@@ -49,6 +50,7 @@ export const education = {
     },
     source1: 'Content validated by our co-founder, a criminal law attorney.',
     source2: 'French Penal Code — Articles 222-22 et seq.',
+    markRead: "I've read it — See my card",
   },
 
   quizScreen: {
@@ -62,6 +64,7 @@ export const education = {
     restart: 'Restart',
     score: '{score} correct answer{plural} out of {total}',
     adviceReread: 'Re-read the Porn vs. Reality and The Law modules to better understand.',
+    seeCard: 'See my card',
     scoreLabels: {
       excellent: 'Excellent!',
       good: 'Good!',

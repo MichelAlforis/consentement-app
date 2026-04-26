@@ -1,7 +1,8 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Statut global : 🔲 En attente d'implémentation  
+> Mis à jour : 26 avril 2026  
+> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 11 · 13 · 16 ✅ · Sprints 9 · 10 · 12 en cours  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -152,21 +153,21 @@ export interface CollectorCard {
 ### Sprint 6 — Données cartes
 **Livrable :** 48 cartes dans `cards-collector.ts` (24 Deck A + 24 Deck M)
 
-| # | Tâche |
-|---|---|
-| 6.1 | Ajouter `deck: 'A'\|'B'\|'M'` et `theme` au type `CollectorCard` |
-| 6.2 | Rédiger 24 textes Deck A common depth 1 (6 thèmes × 4) |
-| 6.3 | Rédiger 24 textes Deck M common depth 1 (même structure, langue 13-14 ans) |
-| 6.4 | Ajouter les 48 cartes avec visuels dans `cards-collector.ts` |
+| # | Tâche | Statut |
+|---|---|---|
+| 6.1 | Ajouter `deck: 'A'\|'B'\|'M'` et `theme` au type `CollectorCard` | ✅ |
+| 6.2 | Rédiger 24 textes Deck A common depth 1 (6 thèmes × 4) | 🔲 contenu équipe |
+| 6.3 | Rédiger 24 textes Deck M common depth 1 (même structure, langue 13-14 ans) | 🔲 contenu équipe |
+| 6.4 | Ajouter les 48 cartes avec visuels dans `cards-collector.ts` | 🔲 après 6.2-6.3 |
 
 ### Sprint 7 — `computeModuleGain`
 **Livrable :** pure function testée + config modules
 
-| # | Tâche |
-|---|---|
-| 7.1 | Créer `app/lib/computeModuleGain.ts` avec table de config |
-| 7.2 | Logique : rareté cible par moduleId, random pick, déduplication |
-| 7.3 | Tests : easy → common, medium → rare, hard → unique, pool épuisé → [] |
+| # | Tâche | Statut |
+|---|---|---|
+| 7.1 | Créer `app/lib/computeModuleGain.ts` avec table de config | ✅ |
+| 7.2 | Logique : rareté cible par moduleId, random pick, déduplication | ✅ |
+| 7.3 | Tests : easy → common, medium → rare, hard → unique, pool épuisé → [] | 🔲 |
 
 ### Sprint 8 — Module de base
 **Livrable :** écran onboarding + 24 cartes au premier lancement
@@ -191,22 +192,33 @@ export interface CollectorCard {
 ### Sprint 10 — CardGame pool switch + nettoyage GooseGame
 **Livrable :** CardGame pioche dans ownedCards · triggers jeu supprimés
 
-| # | Tâche |
-|---|---|
-| 10.1 | `drawCard` filtre sur `ownedCards` par `theme` (remplace `diePractices`) |
-| 10.2 | Guard : `ownedCards` vide → prompt "Module de base pour démarrer" |
-| 10.3 | Supprimer `case 'complicite'` + `case 'arrivee'` dans `useGooseGame.ts` |
-| 10.4 | Supprimer tests 5.7a–5.7c dans `useGooseGame.test.ts` |
-| 10.5 | Nettoyer `pickOneRare` / `pickOneUnique` dans `computeGainedCards.ts` |
+| # | Tâche | Statut |
+|---|---|---|
+| 10.1 | `drawCard` filtre sur `ownedCards` par `theme` (remplace `diePractices`) | 🔲 |
+| 10.2 | Guard : `ownedCards` vide → prompt "Module de base pour démarrer" | 🔲 |
+| 10.3 | Supprimer `case 'complicite'` + `case 'arrivee'` dans `useGooseGame.ts` | ✅ |
+| 10.4 | Supprimer tests 5.7a–5.7c dans `useGooseGame.test.ts` | ✅ |
+| 10.5 | Nettoyer `pickOneRare` / `pickOneUnique` dans `computeGainedCards.ts` | ✅ |
 
 ### Sprint 11 — `moduleProgressStore`
 **Livrable :** store Zustand persist + pure functions
 
-| # | Tâche |
-|---|---|
-| 11.1 | `moduleProgressStore` : `completedModules[]` + `markModuleComplete(id)` (idempotent) |
-| 11.2 | Export + `reset()` dans `resetAllData()` |
-| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) |
+| # | Tâche | Statut |
+|---|---|---|
+| 11.1 | `moduleProgressStore` : `completedModules[]` + `markModuleComplete(id)` (idempotent) | ✅ |
+| 11.2 | Export + `reset()` dans `resetAllData()` | ✅ |
+| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) | ✅ implémentée, tests 🔲 |
+
+### Sprint 9 — Wiring modules existants
+**Livrable :** 4 modules adultes + 1 mineur branchés sur `markModuleComplete`
+
+| # | Écran | Déclencheur | Statut |
+|---|---|---|---|
+| 9.1 | `QuizConsentementScreen` | Score affiché → bouton "Voir ma carte" | ✅ |
+| 9.2 | `PornoVsRealiteScreen` | Bouton "J'ai lu" en bas | ✅ |
+| 9.3 | `LoiConsentementScreen` | Bouton "J'ai lu" en bas | ✅ |
+| 9.4 | `DuoSpaceScreen` | Étape 9 validée | 🔲 |
+| 9.5 | `AccompagnementMineurScreen` | Dernière étape de l'arbre | 🔲 |
 
 ### Sprint 12 — Wiring `markModuleComplete` dans tous les modules
 **Livrable :** chaque module appelle `markModuleComplete` + `computeModuleGain` + flip reveal
@@ -232,14 +244,14 @@ const handleFinish = () => {
 ### Sprint 13 — Composants Home V3
 **Livrable :** 3 composants Home + `HomeScreen` refactoré
 
-| # | Tâche |
-|---|---|
-| 13.1 | `DiscoveryHome({ isAdult, onNavigate })` — niveau 1 |
-| 13.2 | `LearningHome({ isAdult, ownedCards, completedModules, onNavigate })` — niveau 2 |
-| 13.3 | `MasteryHome({ isAdult, ownedCards, completedModules, onNavigate })` — niveau 3 |
-| 13.4 | `ProgressBar` + `NextModuleSuggestion` — composants UI partagés |
-| 13.5 | `HomeScreen.tsx` — `useProgressLevel` + dispatch vers les 3 composants |
-| 13.6 | i18n : nouvelles clés home pour les 3 états (FR/EN/ES) |
+| # | Tâche | Statut |
+|---|---|---|
+| 13.1 | `DiscoveryHome({ isAdult, onNavigate })` — niveau 1 | ✅ |
+| 13.2 | `LearningHome({ isAdult, ownedCards, completedModules, onNavigate })` — niveau 2 | ✅ |
+| 13.3 | `MasteryHome({ isAdult, ownedCards, completedModules, onNavigate })` — niveau 3 | ✅ |
+| 13.4 | `ProgressBar` + `NextModuleSuggestion` — inline dans HomeScreen | ✅ |
+| 13.5 | `HomeScreen.tsx` — `useProgressLevel` + dispatch vers les 3 composants | ✅ |
+| 13.6 | i18n : nouvelles clés home pour les 3 états (FR/EN/ES) | 🔲 partiel |
 
 ### Sprint 14 — `ModuleDeBaseScreen`
 **Livrable :** écran d'intro skippable + 24 cartes au premier lancement
@@ -259,7 +271,7 @@ const handleFinish = () => {
 | 15.1 | Si `ownedCards.length === 0` → afficher `EmptyDeckPrompt` (CTA vers module de base) |
 | 15.2 | Test : niveau 1 + accès CardGame → guard affiché, pas de crash |
 
-### Sprint 16 — Navigation Tab Bar V3
+### Sprint 16 — Navigation Tab Bar V3 ✅
 **Livrable :** 4 onglets persistants remplaçant les MenuCards de la Home
 
 #### Arbre de navigation cible
