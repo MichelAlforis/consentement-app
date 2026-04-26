@@ -13,6 +13,7 @@ import { GrainOverlay } from './components/ui/ThemeEffects';
 import { useTheme } from './context/ThemeContext';
 import { useTranslation } from './i18n';
 import { isCapacitor } from './lib/platform';
+import { logger } from './lib/logger';
 import {
   useNavigationStore,
   useAuthStore,
@@ -87,13 +88,12 @@ function useAndroidBackButton() {
     if (!isCapacitor()) return;
     let cleanup: (() => void) | undefined;
     const noBack = ['welcome', 'age-check', 'home', 'apprendre', 'jeux', 'moi'];
-    import('@capacitor/app').then(({ App }) => {
-      App.addListener('backButton', () => {
-        if (!noBack.includes(currentScreen)) {
-          goBackRef.current();
-        }
-      }).then((handle) => { cleanup = () => handle.remove(); });
-    });
+    import('@capacitor/app')
+      .then(({ App }) => App.addListener('backButton', () => {
+        if (!noBack.includes(currentScreen)) goBackRef.current();
+      }))
+      .then((handle) => { cleanup = () => handle.remove(); })
+      .catch((err) => logger.warn('Capacitor back button unavailable', err));
     return () => cleanup?.();
   }, [currentScreen]);
 }
@@ -115,6 +115,21 @@ function AppShell() {
   const { isPremium, activatePremium, deactivatePremium } = usePremiumStore();
 
   useAndroidBackButton();
+
+  useEffect(() => {
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      logger.error('Unhandled promise rejection', event.reason instanceof Error ? event.reason : new Error(String(event.reason)));
+    };
+    const onError = (event: ErrorEvent) => {
+      logger.error('Global JS error', event.error instanceof Error ? event.error : new Error(event.message));
+    };
+    window.addEventListener('unhandledrejection', onUnhandledRejection);
+    window.addEventListener('error', onError);
+    return () => {
+      window.removeEventListener('unhandledrejection', onUnhandledRejection);
+      window.removeEventListener('error', onError);
+    };
+  }, []);
 
   // Hard block : redirige les mineurs hors des écrans réservés aux adultes
   const ADULT_ONLY: Screen[] = ['personal-space', 'duo-space'];
