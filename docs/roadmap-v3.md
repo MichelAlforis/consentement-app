@@ -167,7 +167,7 @@ export interface CollectorCard {
 |---|---|---|
 | 7.1 | Créer `app/lib/computeModuleGain.ts` avec table de config | ✅ |
 | 7.2 | Logique : rareté cible par moduleId, random pick, déduplication | ✅ |
-| 7.3 | Tests : easy → common, medium → rare, hard → unique, pool épuisé → [] | 🔲 |
+| 7.3 | Tests : easy → common, medium → rare, hard → unique, pool épuisé → [] | ✅ |
 
 ### Sprint 8 — Module de base
 **Livrable :** écran onboarding + 24 cartes au premier lancement
