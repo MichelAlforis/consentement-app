@@ -52,7 +52,7 @@ function FreeCard({
         <div className="flex items-center gap-2 mb-0.5">
           <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>{title}</span>
           <span className="text-xs px-1.5 py-0.5 rounded-md font-bold uppercase" style={{ background: '#dcfce7', color: '#15803d' }}>
-            {t('games.games.free')}
+            {t('games.free')}
           </span>
         </div>
         <p className="text-xs leading-snug" style={{ color: colors.textMuted }}>{desc}</p>
@@ -126,7 +126,7 @@ function PremiumCard({
             style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)', color: '#fff' }}
           >
             <Sparkles size={14} />
-            {t('games.games.unlockCTA')}
+            {t('games.unlockCTA')}
           </div>
         </div>
       )}
@@ -153,7 +153,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
 
       {/* Gratuit */}
       <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: colors.textMuted }}>
-        {t('games.games.includedFree')}
+        {t('games.includedFree')}
       </p>
       <div className="mb-7">
         <FreeCard
@@ -168,7 +168,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
       {/* Premium */}
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-bold uppercase tracking-widest" style={{ color: colors.textMuted }}>
-          {t('games.games.premium')}
+          {t('games.premium')}
         </p>
         {!isPremium && (
           <motion.button
@@ -177,7 +177,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
             className="text-xs font-bold px-3 py-1 rounded-full"
             style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff' }}
           >
-            {t('games.games.seeOffer')}
+            {t('games.seeOffer')}
           </motion.button>
         )}
       </div>
@@ -187,7 +187,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
           icon={<Layers size={26} className="text-white" />}
           title={t('games.goose.title')}
           desc={t('games.goose.desc')}
-          tag={t('games.games.premium')}
+          tag={t('games.premium')}
           locked={!isPremium}
           delay={0.2}
           gradient="linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"
@@ -198,7 +198,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
           icon={<CreditCard size={26} className="text-white" />}
           title={t('games.cards.title')}
           desc={isAdult ? t('games.cards.descAdult') : t('games.cards.descMinor')}
-          tag={t('games.games.premium')}
+          tag={t('games.premium')}
           locked={!isPremium}
           delay={0.3}
           gradient="linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)"
@@ -209,7 +209,7 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
           icon={<ScrollText size={26} className="text-white" />}
           title={t('games.scenarios.title')}
           desc={t('games.scenarios.desc')}
-          tag={t('games.games.comingSoon')}
+          tag={t('games.comingSoon')}
           locked={!isPremium}
           delay={0.4}
           gradient="linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)"
@@ -221,14 +221,14 @@ export function GamesHubScreen({ onNavigate, isPremium, isAdult, onGoPremium }: 
       {/* Ma Collection */}
       <div className="mt-7">
         <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: colors.textMuted }}>
-          {t('games.games.myCollection')}
+          {t('games.myCollection')}
         </p>
         <FreeCard
           icon={<GalleryHorizontal size={22} style={{ color: colors.textSecondary }} />}
           title={t('hallOfCards.title')}
           desc={
             ownedCount === 0
-              ? t('games.games.playToUnlock')
+              ? t('games.playToUnlock')
               : t('hallOfCards.subtitle', { owned: ownedCount, total: totalCards })
           }
           delay={0.5}
