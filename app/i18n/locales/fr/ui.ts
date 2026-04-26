@@ -82,4 +82,31 @@ export const ui = {
     reset: 'Reset',
     demo: 'Mode démo — Navigation libre',
   },
+
+  apprendre: {
+    subtitleEmpty: 'Chaque module complété débloque des cartes pour tes jeux.',
+    subtitleOne: '1 / {total} module complété',
+    subtitleMany: '{count} / {total} modules complétés',
+    rewardPrefix: 'Récompense : ',
+    rarityCommon: 'commune',
+    rarityRare: 'rare',
+    rarityUnique: 'unique',
+    rewardCommon: '1 carte commune',
+    rewardRare: '1 carte rare',
+    rewardUnique: '1 carte unique',
+    quiz:          { title: 'Quiz Consentement',         desc: '8 questions pour tester ce que tu sais vraiment' },
+    porno:         { title: 'Porno vs Réalité',           desc: 'Ce que les films ne te montrent pas' },
+    loi:           { title: 'La loi & le consentement',   desc: "Tes droits, l'âge légal, ce qui est un crime" },
+    pratiques:     { title: 'Pratiques avancées',         desc: 'Module rédigé par notre juriste — à venir' },
+    accompagnement:{ title: 'Je me questionne',           desc: 'Des questions à se poser. Sans jugement.' },
+  },
+
+  moi: {
+    defaultName:      'Mon espace',
+    personalSpaceDesc:'Explorer mes zones de confort',
+    duoSpaceDesc:     'Dialoguer avec mon/ma partenaire',
+    helpDesc:         'Numéros gratuits, anonymes, disponibles 24h/24',
+    settingsDesc:     'Thème, langue, données personnelles',
+    premiumDesc:      'Tous les jeux · contenus profonds · sans limite',
+  },
 } as const;

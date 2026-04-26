@@ -5,6 +5,7 @@ import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart } from 'l
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore, usePremiumStore } from '../../stores';
+import { useTranslation } from '../../i18n';
 
 interface MoiScreenProps {
   isAdult: boolean | null;
@@ -61,6 +62,7 @@ function ProfileCard({
 
 export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const userName = useAuthStore((s) => s.userName);
   const { isPremium } = usePremiumStore();
 
@@ -78,7 +80,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
         <div className="flex items-center gap-2 mb-1">
           <User size={20} style={{ color: colors.accent }} />
           <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
-            {userName || 'Mon espace'}
+            {userName || t('moi.defaultName')}
           </h1>
         </div>
         {isPremium && (
@@ -95,16 +97,16 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           <>
             <ProfileCard
               icon={<Heart size={20} className="text-white" />}
-              title="Mon Espace"
-              desc="Explorer mes zones de confort"
+              title={t('headers.personalSpace')}
+              desc={t('moi.personalSpaceDesc')}
               iconBg="linear-gradient(135deg, #8b5cf6, #7c3aed)"
               onClick={() => onNavigate('personal-space')}
               index={++cardIndex}
             />
             <ProfileCard
               icon={<Users size={20} className="text-white" />}
-              title="Notre Espace"
-              desc="Dialoguer avec mon/ma partenaire"
+              title={t('headers.duoSpace')}
+              desc={t('moi.duoSpaceDesc')}
               iconBg="linear-gradient(135deg, #ec4899, #db2777)"
               onClick={() => onNavigate('duo-space')}
               index={++cardIndex}
@@ -116,8 +118,8 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
         {!isAdult && (
           <ProfileCard
             icon={<HelpCircle size={20} className="text-white" />}
-            title="Aide & Urgences"
-            desc="Numéros gratuits, anonymes, disponibles 24h/24"
+            title={t('settings.help.title')}
+            desc={t('moi.helpDesc')}
             iconBg="linear-gradient(135deg, #f59e0b, #d97706)"
             onClick={() => onNavigate('help')}
             index={++cardIndex}
@@ -127,8 +129,8 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
         {/* Settings — always visible */}
         <ProfileCard
           icon={<Settings size={20} style={{ color: colors.textMuted }} />}
-          title="Paramètres"
-          desc="Thème, langue, données personnelles"
+          title={t('headers.settings')}
+          desc={t('moi.settingsDesc')}
           onClick={() => onNavigate('settings')}
           index={++cardIndex}
         />
@@ -155,10 +157,10 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
             </div>
             <div className="flex-1 min-w-0">
               <span className="font-semibold text-sm block" style={{ color: '#f59e0b' }}>
-                Passer Premium
+                {t('settings.premium.title')}
               </span>
               <p className="text-xs" style={{ color: colors.textSecondary }}>
-                Tous les jeux · contenus profonds · sans limite
+                {t('moi.premiumDesc')}
               </p>
             </div>
             <ChevronRight size={16} style={{ color: '#f59e0b' }} />

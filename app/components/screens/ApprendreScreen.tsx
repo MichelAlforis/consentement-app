@@ -5,6 +5,7 @@ import { BookOpen, CheckCircle, Lock, ChevronRight, Sparkles, Brain, Film, Scale
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
+import { useTranslation } from '../../i18n';
 
 interface ApprendreScreenProps {
   isAdult: boolean | null;
@@ -21,13 +22,14 @@ type ModuleMeta = {
   desc: string;
   reward: string;
   rarity: Rarity;
+  rarityLabel: string;
   available: boolean;
 };
 
 const RARITY = {
-  common: { bg: 'rgba(107,114,128,0.15)', text: '#9ca3af', label: 'commune' },
-  rare:   { bg: 'rgba(139,92,246,0.15)',  text: '#8b5cf6', label: 'rare' },
-  unique: { bg: 'rgba(245,158,11,0.15)',  text: '#f59e0b', label: 'unique' },
+  common: { bg: 'rgba(107,114,128,0.15)', text: '#9ca3af' },
+  rare:   { bg: 'rgba(139,92,246,0.15)',  text: '#8b5cf6' },
+  unique: { bg: 'rgba(245,158,11,0.15)',  text: '#f59e0b' },
 };
 
 const ICON_BG = {
@@ -35,92 +37,6 @@ const ICON_BG = {
   rare:   'linear-gradient(135deg, #8b5cf6, #7c3aed)',
   unique: 'linear-gradient(135deg, #f59e0b, #d97706)',
 };
-
-const ADULT_MODULES: ModuleMeta[] = [
-  {
-    id: 'quiz-consentement',
-    screen: 'quiz-consentement',
-    icon: <Brain size={20} className="text-white" />,
-    title: 'Quiz Consentement',
-    desc: '8 questions pour tester ce que tu sais vraiment',
-    reward: '1 carte commune',
-    rarity: 'common',
-    available: true,
-  },
-  {
-    id: 'porno-vs-realite',
-    screen: 'porno-vs-realite',
-    icon: <Film size={20} className="text-white" />,
-    title: 'Porno vs Réalité',
-    desc: 'Ce que les films ne te montrent pas',
-    reward: '1 carte commune',
-    rarity: 'common',
-    available: true,
-  },
-  {
-    id: 'loi-consentement',
-    screen: 'loi-consentement',
-    icon: <Scale size={20} className="text-white" />,
-    title: 'La loi & le consentement',
-    desc: 'Tes droits, l\'âge légal, ce qui est un crime',
-    reward: '1 carte rare',
-    rarity: 'rare',
-    available: true,
-  },
-  {
-    id: 'module-pratiques-adultes',
-    screen: null,
-    icon: <Sparkles size={20} className="text-white" />,
-    title: 'Pratiques avancées',
-    desc: 'Module rédigé par notre juriste — à venir',
-    reward: '1 carte unique',
-    rarity: 'unique',
-    available: false,
-  },
-];
-
-const MINOR_MODULES: ModuleMeta[] = [
-  {
-    id: 'quiz-consentement',
-    screen: 'quiz-consentement',
-    icon: <Brain size={20} className="text-white" />,
-    title: 'Quiz Consentement',
-    desc: '8 questions pour tester ce que tu sais vraiment',
-    reward: '1 carte commune',
-    rarity: 'common',
-    available: true,
-  },
-  {
-    id: 'porno-vs-realite',
-    screen: 'porno-vs-realite',
-    icon: <Film size={20} className="text-white" />,
-    title: 'Porno vs Réalité',
-    desc: 'Ce que les films ne te montrent pas',
-    reward: '1 carte commune',
-    rarity: 'common',
-    available: true,
-  },
-  {
-    id: 'loi-consentement',
-    screen: 'loi-consentement',
-    icon: <Scale size={20} className="text-white" />,
-    title: 'La loi & le consentement',
-    desc: 'Tes droits, l\'âge légal, ce qui est un crime',
-    reward: '1 carte rare',
-    rarity: 'rare',
-    available: true,
-  },
-  {
-    id: 'accompagnement-mineur',
-    screen: 'accompagnement-mineur',
-    icon: <HeartHandshake size={20} className="text-white" />,
-    title: 'Je me questionne',
-    desc: 'Des questions à se poser. Sans jugement.',
-    reward: '1 carte rare',
-    rarity: 'rare',
-    available: true,
-  },
-];
 
 function ModuleCard({
   module,
@@ -134,6 +50,7 @@ function ModuleCard({
   onNavigate: (screen: Screen) => void;
 }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const r = RARITY[module.rarity];
 
   return (
@@ -167,14 +84,14 @@ function ModuleCard({
             className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0"
             style={{ background: r.bg, color: r.text }}
           >
-            {r.label}
+            {module.rarityLabel}
           </span>
         </div>
         <p className="text-xs leading-snug" style={{ color: colors.textSecondary }}>
           {module.desc}
         </p>
         <p className="text-[10px] mt-1 font-medium" style={{ color: r.text }}>
-          Récompense : {module.reward}
+          {t('apprendre.rewardPrefix')}{module.reward}
         </p>
       </div>
 
@@ -193,10 +110,71 @@ function ModuleCard({
 
 export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { completedModules } = useModuleProgressStore();
+
+  const ADULT_MODULES: ModuleMeta[] = [
+    {
+      id: 'quiz-consentement', screen: 'quiz-consentement',
+      icon: <Brain size={20} className="text-white" />,
+      title: t('apprendre.quiz.title'), desc: t('apprendre.quiz.desc'),
+      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
+    },
+    {
+      id: 'porno-vs-realite', screen: 'porno-vs-realite',
+      icon: <Film size={20} className="text-white" />,
+      title: t('apprendre.porno.title'), desc: t('apprendre.porno.desc'),
+      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
+    },
+    {
+      id: 'loi-consentement', screen: 'loi-consentement',
+      icon: <Scale size={20} className="text-white" />,
+      title: t('apprendre.loi.title'), desc: t('apprendre.loi.desc'),
+      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
+    },
+    {
+      id: 'module-pratiques-adultes', screen: null,
+      icon: <Sparkles size={20} className="text-white" />,
+      title: t('apprendre.pratiques.title'), desc: t('apprendre.pratiques.desc'),
+      reward: t('apprendre.rewardUnique'), rarity: 'unique', rarityLabel: t('apprendre.rarityUnique'), available: false,
+    },
+  ];
+
+  const MINOR_MODULES: ModuleMeta[] = [
+    {
+      id: 'quiz-consentement', screen: 'quiz-consentement',
+      icon: <Brain size={20} className="text-white" />,
+      title: t('apprendre.quiz.title'), desc: t('apprendre.quiz.desc'),
+      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
+    },
+    {
+      id: 'porno-vs-realite', screen: 'porno-vs-realite',
+      icon: <Film size={20} className="text-white" />,
+      title: t('apprendre.porno.title'), desc: t('apprendre.porno.desc'),
+      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
+    },
+    {
+      id: 'loi-consentement', screen: 'loi-consentement',
+      icon: <Scale size={20} className="text-white" />,
+      title: t('apprendre.loi.title'), desc: t('apprendre.loi.desc'),
+      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
+    },
+    {
+      id: 'accompagnement-mineur', screen: 'accompagnement-mineur',
+      icon: <HeartHandshake size={20} className="text-white" />,
+      title: t('apprendre.accompagnement.title'), desc: t('apprendre.accompagnement.desc'),
+      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
+    },
+  ];
 
   const modules = isAdult ? ADULT_MODULES : MINOR_MODULES;
   const completedCount = modules.filter((m) => completedModules.includes(m.id)).length;
+
+  const subtitle = completedCount === 0
+    ? t('apprendre.subtitleEmpty')
+    : completedCount === 1
+      ? t('apprendre.subtitleOne', { total: String(modules.length) })
+      : t('apprendre.subtitleMany', { count: String(completedCount), total: String(modules.length) });
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -209,14 +187,10 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
         <div className="flex items-center gap-2 mb-1">
           <BookOpen size={20} style={{ color: colors.accent }} />
           <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
-            Apprendre
+            {t('tabs.learn')}
           </h1>
         </div>
-        <p className="text-sm" style={{ color: colors.textSecondary }}>
-          {completedCount === 0
-            ? 'Chaque module complété débloque des cartes pour tes jeux.'
-            : `${completedCount} / ${modules.length} module${completedCount > 1 ? 's' : ''} complété${completedCount > 1 ? 's' : ''}`}
-        </p>
+        <p className="text-sm" style={{ color: colors.textSecondary }}>{subtitle}</p>
       </motion.div>
 
       <div className="space-y-3">
