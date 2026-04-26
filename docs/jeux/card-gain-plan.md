@@ -1,8 +1,15 @@
-# Plan d'implémentation — Gain de cartes en session
+# Plan d'implémentation — Gain de cartes
 
-> 25 avril 2026  
-> Référence technique : `card-gain-session.md`  
-> Avancement : Sprint 1 ✅ · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ (auto) — 2 checks manuels restants
+> 25 avril 2026 — màj pivot 2026-04-25  
+> Référence session (déprécié) : `card-gain-session.md`  
+> Référence modules (actif) : `card-gain-modules.md`
+
+> ⚠️ **PIVOT — L'architecture de gain a changé le 2026-04-25.**  
+> Les Sprints 1–5 ci-dessous sont terminés mais dépréciés pour le gain de cartes.  
+> **Seule l'éducation crée des cartes. Les jeux les utilisent.**  
+> Tous les triggers de jeu (CardGameScreen fin de séance, GooseGame complicite + arrivée) sont supprimés.  
+> Action technique : Sprint 10 — nettoyer `useGooseGame.ts` + supprimer tests 5.7a–5.7c.  
+> **Suite du travail → voir `card-gain-modules.md` (Sprints 6+).**
 
 ---
 
@@ -259,7 +266,7 @@ Sprint 2 se réduit donc aux **tests uniquement**.
 
 ---
 
-### Sprint 4 — Triggers `GooseGameScreen` ✅ *(commit `3eb9f7e`)*
+### Sprint 4 — Triggers `GooseGameScreen` ✅ implémenté · ❌ À supprimer (Sprint 10)
 
 | # | Tâche | Fichier | Résultat |
 |---|---|---|---|
@@ -283,7 +290,7 @@ Sprint 2 se réduit donc aux **tests uniquement**.
 | 5.4 | `resetAllData` complet | 🔲 Manuel : appeler `resetAllData()` → clé absente + `sessionCount = 0` |
 | 5.5 | Sans premium → jamais unique | ✅ Tests 6 + 7 (`isPremium=false` + deck 5) |
 | 5.6 | Déduplication cross-source | ✅ Test 8 (ids déjà dans `ownedIds` exclus) |
-| 5.7 | GooseGame triggers | ✅ Tests 5.7a–5.7c (`useGooseGame.test.ts`) — commit `740dc36` |
+| 5.7 | GooseGame triggers | ✅ Tests 5.7a–5.7c écrits · ❌ À supprimer Sprint 10 (triggers supprimés) |
 
 **45/45 tests passing** · 2 scénarios manuels restants (5.2, 5.4 — nécessitent le navigateur)
 

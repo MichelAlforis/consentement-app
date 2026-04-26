@@ -142,23 +142,26 @@ Ne jamais bloquer un couple qui veut jouer. La friction est sur la profondeur, p
 
 ### Gain de cartes (engagement sans paywall)
 
-Les cartes débloquées restent acquises même sans abonnement — c'est une récompense de jeu, pas un contournement du premium.
+Les cartes débloquées restent acquises même sans abonnement — c'est une récompense d'apprentissage, pas un contournement du premium.
 
-| Déclencheur | Récompense |
-|---|---|
-| 3 sessions complètes | +5 cartes depth 2 offertes |
-| Case `complicite` atteinte | +1 carte rare depth 2 |
-| Fin de partie Slow (premium) | +1 carte thématique depth 3 |
+> ⚠️ **Pivot 2026-04-25** — Le gain se déclenche sur la **complétion de modules éducatifs**, pas sur les sessions de jeu. Spec complète : `card-gain-modules.md`.
+
+| Déclencheur | Récompense | Rareté |
+|---|---|---|
+| Module de base complété | 24 cartes starter | `common` |
+| Quiz / Porno vs Réalité terminé | 1 carte | `common` |
+| Loi & consentement / Duo flow terminé | 1 carte | `rare` |
+| Module pratiques adultes *(juriste)* | 1 carte | `unique` |
+| ~~Case `complicite` GooseGame~~ | ~~1 carte rare~~ | ~~supprimé~~ |
+| ~~Fin de partie Slow GooseGame~~ | ~~1 carte unique~~ | ~~supprimé~~ |
 
 ### Logique de filtrage (un seul check dans `drawCard`)
 
 ```ts
-function drawCard(phase, history, isPremium, unlockedCards) {
-  const pool = deck
-    .filter(c => c.depth === 1
-      || isPremium
-      || unlockedCards.includes(c.id)
-    )
+// Pool = ownedCards (Hall of Cards) — le joueur pioche dans sa collection
+function drawCard(phase, history, ownedCards) {
+  const pool = ownedCards
+    .filter(c => matchesPhase(c, phase))
     .filter(c => !history.session.has(c.id));
 
   // fallback si pool épuisé : réautoriser les plus anciennes
@@ -168,12 +171,15 @@ function drawCard(phase, history, isPremium, unlockedCards) {
 }
 ```
 
+> Si `ownedCards` est vide (aucun module complété) → afficher un prompt "Module de base requis" avant d'accéder au jeu.
+
 ### Stores localStorage
 
 ```ts
 // Gratuit — persiste toujours
-unlockedCards: string[]     // ids des cartes gagnées
-sessionsPlayed: number
+// unlockStore.ts (clé 'consentement-unlocks') — ✅ implémenté
+ownedCards: OwnedCard[]     // cartes gagnées via modules éducatifs uniquement
+sessionCount: number
 
 // Premium — actif si abonnement
 isPremium: boolean
@@ -230,18 +236,20 @@ sessionHistory: SessionRecord[]  // historique intime (V2 local, V3 cloud)
 | Bouton Skip / Adapter **visible** sur chaque carte | `overlays/ActivityOverlay.tsx` | Pas caché dans un menu — cœur de la marque |
 | 3 pouvoirs `complicite` : relancer / ignorer / choisir | `overlays/ActivityOverlay.tsx` | Pas plus de 3 |
 
-### Phase 6 — Freemium + gain de cartes 🔲
+### Phase 6 — Freemium + gain de cartes (partiellement ✅)
 
-| Tâche | Fichier cible | Notes |
-|---|---|---|
-| `unlockStore` — `unlockedCards[]` + `sessionsPlayed` | `stores/unlockStore.ts` | localStorage, toujours persisté |
-| Filtrage `drawCard` par `isPremium` ou `unlockedCards` | `game-engine/cards/useCardEngine.ts` | Un seul check |
-| Déclencheurs de gain : fin de session, `complicite` | `hooks/useGooseGame.ts` | +5 / +1 carte selon le déclencheur |
-| Écran fin de partie — afficher les cartes gagnées | `phases/EndScreen.tsx` | Moment de récompense visible |
-| `sessionHistoryStore` — log des sessions jouées | `stores/sessionHistoryStore.ts` | Premium only — V2 local, V3 cloud |
-| Écran historique sessions (premium) | `screens/SessionHistoryScreen.tsx` | Liste des sessions avec date + mode |
-| Gate modes Fast / Slow derrière `isPremium` | `phases/ModeSelectScreen.tsx` | Quicky toujours accessible — lock visuel sur Fast + Slow avec CTA premium |
-| Retirer le lock global du jeu de l'oie dans `GamesHubScreen` | `screens/GamesHubScreen.tsx` | Le jeu devient accessible en gratuit (Quicky) — was: entièrement premium |
+> Gain via modules éducatifs (pivot 2026-04-25) — voir `card-gain-modules.md` (Sprints 6–10).
+
+| Tâche | Fichier cible | Statut | Notes |
+|---|---|---|---|
+| `unlockStore` — `ownedCards[]` + `sessionCount` | `stores/unlockStore.ts` | ✅ Implémenté | API riche — `OwnedCard` avec rarity, gainedOn, unlockedBy |
+| `CardUnlockReveal` flip R3F — cartes gagnées | `CardGame/index.tsx` | ✅ Implémenté | 750 ms / carte, séquentiel |
+| ~~Triggers GooseGame (`complicite`, `arrivée`)~~ | `hooks/useGooseGame.ts` | ❌ À supprimer — Sprint 10 | seule l'éducation crée des cartes |
+| `drawCard` pioche dans `ownedCards` | `game-engine/cards/useCardEngine.ts` | 🔲 Sprint 10 | Remplace `diePractices` |
+| Modules → triggers gain (`computeModuleGain`) | `lib/computeModuleGain.ts` | 🔲 Sprint 7 | Pure function |
+| Module de base → 24 cartes starter | screen + `cards-collector.ts` | 🔲 Sprint 6–8 | |
+| Gate modes Fast / Slow derrière `isPremium` | `phases/ModeSelectScreen.tsx` | 🔲 | Quicky toujours accessible |
+| `sessionHistoryStore` — log des sessions jouées | `stores/sessionHistoryStore.ts` | 🔲 | Premium only — V2 local, V3 cloud |
 
 ---
 

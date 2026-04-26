@@ -3,6 +3,11 @@
 > Créé : 25 avril 2026  
 > Statut : ✅ Sprint 1 · ✅ Sprint 2 (tests + fusion) · ✅ Sprint 3 (CardGameScreen) · ✅ Sprint 4 (GooseGame) · ✅ Sprint 5 (45/45 auto — 2 checks manuels restants)
 
+> ⚠️ **PIVOT 2026-04-25** — Ce document décrit l'ancien système (gain via sessions de jeu).  
+> Le nouveau modèle est dans `card-gain-modules.md` : **gain via modules éducatifs uniquement**.  
+> Le code implémenté (Sprints 1–5) reste valide pour les triggers GooseGame (complicite, arrivée).  
+> Le trigger CardGameScreen (fin de séance) est **déprécié** — remplacé par les modules.
+
 ---
 
 ## Contexte

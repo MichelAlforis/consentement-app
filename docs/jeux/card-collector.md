@@ -31,8 +31,8 @@ placeholder vide    animée séquentielle     (juriste, app adulte)
 | | Jouable | Persisté | Beau |
 |---|---|---|---|
 | **Level 1** | Non | Non | ✅ Composant prêt |
-| **Level 2** | ✅ Gain réel à la fin de séance (fait) | ✅ localStorage (fait) | ✅ Flip R3F en jeu (fait) |
-| **Level 3** | ✅ + alimenté par l'éducatif | ✅ + historique | ✅ Hall complet |
+| **Level 2** | ✅ Gain via modules éducatifs uniquement — GooseGame utilise les cartes, ne les crée pas | ✅ localStorage (fait) | ✅ Flip R3F en jeu (fait) |
+| **Level 3** | ✅ + CardGame pioche dans ownedCards | ✅ + historique | ✅ Hall complet |
 
 ### Dépendances entre niveaux
 
@@ -89,52 +89,66 @@ Les cartes gagnées sont **permanentes** — jamais perdues, même sans abonneme
 
 ---
 
-## Deux decks distincts
+## Trois decks — même mécanique, contenu adapté
 
-Le collector repose sur **deux decks parallèles et complémentaires**.
+Tous les decks partagent la même structure (depth, rareté, tags thème, visuels, flip reveal).  
+Seul le contenu textuel des cartes change selon le public.
 
-> Parler de consentement sans parler de sexe, c'est de la théorie. Les deux decks sont nécessaires pour que l'app soit honnête et utile.
+### Deck M — Mineurs
+Consentement, respect, relations saines, limites, corps. Langue adaptée aux 13-14 ans.  
+**Même flip reveal, même Hall of Cards, même FOMO que les adultes.**
 
-### Deck A — Non-explicite
-Connexion, communication, exploration émotionnelle et sensorielle.
+### Deck A — Adultes non-explicite
+Connexion, communication, exploration émotionnelle et sensorielle.  
 Accessible à tous les adultes. Jamais de contenu sexuel direct.
 
-### Deck B — Explicite
-Pratiques sexuelles, désirs, exploration physique. Contenu rédigé par le juriste.
+### Deck B — Adultes explicite
+Pratiques sexuelles, désirs, exploration physique. Contenu rédigé par le juriste.  
 **App adulte uniquement.** Driver #1 de l'abonnement.
 
-Les deux decks ont la même structure (depth 1→3, rareté, tags).
-Les deux progressent via des parcours d'apprentissage distincts.
+> Les trois decks ont la même structure (depth 1→3, rareté, theme, tags).  
+> La mécanique de récompense est identique — l'éducation crée les cartes, les jeux les utilisent.
 
 ---
 
 ## Anatomie d'une carte
 
-Deux types coexistent : `GainedCard` (runtime, visuel) et `OwnedCard` (persistance).
-
 ```ts
-// app/game-engine/cards/computeGainedCards.ts
+// data/cards-collector.ts — source de données
+interface CollectorCard {
+  id: string;
+  deck: 'A' | 'B' | 'M';   // M = Mineur, A = Adulte, B = Adulte explicite
+  theme: 'osez' | 'parlez' | 'et-si' | 'defi' | 'verite' | 'douceur'; // catégorie CardGame
+  text: string;
+  depth: 1 | 2 | 3;
+  tags: string[];            // tags sémantiques (confiance, duo, exploration…)
+  rarity: 'common' | 'rare' | 'unique';
+  unlockedBy: string;        // id du module source
+  visual: { gradient, iconName, border };
+}
+
 // Type runtime — affiché dans CardUnlockReveal et Hall of Cards
 interface GainedCard {
   id: string;
   text: string;
   rarity: 'common' | 'rare' | 'unique';
-  gradient: string;   // CSS gradient de la face
-  iconName: string;   // Lucide icon name
-  border: string;     // couleur bordure CSS
+  gradient: string;
+  iconName: string;
+  border: string;
 }
 
-// app/stores/unlockStore.ts
-// Type persisté — ce qu'on stocke dans localStorage
+// Type persisté — localStorage 'consentement-unlocks'
 interface OwnedCard {
   id: string;
   rarity: 'common' | 'rare' | 'unique';
-  gainedOn: string;     // date ISO
-  unlockedBy: string;   // 'card-session' | 'slow-session' | id module éducatif
+  gainedOn: string;          // date ISO
+  unlockedBy: string;        // id du module éducatif
 }
 ```
 
-Le pool Deck A (12 cartes depth 1–3) est défini dans `computeGainedCards.ts`. Le pool Deck B (juriste) sera ajouté en Level 3.
+Chaque deck cible **24 cartes starter** depth 1 + expansion jusqu'à 100+ depth 1–3.  
+Défini dans `data/cards-collector.ts` avec le champ `deck: 'A' | 'B' | 'M'` et `theme` (les 6 catégories de jeu).  
+Le pool Deck B (juriste) sera ajouté en Level 3. Le Deck M est rédigé par l'équipe.
 
 ---
 
@@ -272,34 +286,42 @@ En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 | Pool Deck A 12 cartes depth 1–3 | `game-engine/cards/computeGainedCards.ts` | ✅ |
 | Export `useUnlockStore` + reset global | `stores/index.ts` | ✅ |
 
-### Phase 2 — Acquisition jeu de cartes ✅ (Level 2)
+### Phase 2 — Acquisition via modules éducatifs 🔲 (Level 2 — PRIORITÉ)
+
+> ⚠️ **Pivot 2026-04-25** — Le gain principal se déclenche sur la **complétion de modules éducatifs**, pas sur les sessions de jeu.  
+> Spec complète : `docs/jeux/card-gain-modules.md`
+
+**Logique de gain (modèle actif) :**
+
+| Déclencheur | Récompense | Rareté |
+|---|---|---|
+| Module de base complété (1ère fois) | 24 cartes starter | `common` |
+| Quiz consentement terminé | 1 carte | `common` |
+| Porno vs Réalité terminé | 1 carte | `common` |
+| Loi & consentement terminé | 1 carte | `rare` |
+| Duo Flow parcours complet | 1 carte | `rare` |
+| Module pratiques adultes *(juriste)* | 1 carte | `unique` |
+
+**Règle de rareté :** easy → common · medium → rare · hard → unique  
+**Random pick** dans le pool filtré par rareté (hors cartes déjà possédées). Pool épuisé → aucune carte.
 
 | Tâche | Fichier | Statut |
 |---|---|---|
-| `computeGainedCards()` pure function | `game-engine/cards/computeGainedCards.ts` | ✅ |
-| `handleGoToEnd` orchestre compute + persist | `components/screens/CardGame/index.tsx` | ✅ |
-| `CardUnlockReveal` flip R3F séquentiel | `components/screens/CardGame/index.tsx` | ✅ |
-| `CollectorCardCanvas` import GainedCard partagé | `game-engine/cards/CollectorCardCanvas.tsx` | ✅ |
+| `computeModuleGain()` pure function | `lib/computeModuleGain.ts` | 🔲 Sprint 7 |
+| `unlockStore` + `CardUnlockReveal` flip R3F | `stores/unlockStore.ts` + `CardGame/index.tsx` | ✅ Infra prête |
+| Module de base → 24 cartes starter | `data/cards-collector.ts` + nouveau screen | 🔲 Sprint 6–8 |
+| Quiz consentement → trigger gain | `QuizConsentementScreen` | 🔲 Sprint 9 |
+| Porno vs Réalité → trigger gain | `PornoVsRealiteScreen` | 🔲 Sprint 9 |
+| Loi & consentement → trigger gain | `LoiConsentementScreen` | 🔲 Sprint 9 |
+| Duo Flow → trigger gain | `DuoSpaceScreen` | 🔲 Sprint 9 |
 
-**Logique de gain dans le jeu de cartes :**
+### Phase 2bis — Triggers GooseGame ❌ Supprimés
 
-| Déclencheur | Récompense | Condition |
-|---|---|---|
-| Séance complète | 1 `common` garanti | `sessionMode='seance'` + `cardCount >= seanceSize` |
-| Toutes les 3 séances | +1 `rare` (ou `common` si decks légers) | `sessionCount % 3 === 0` |
-| Decks 5–6 joués + premium | +1 `unique` | Vérité ou Douceur dans `sessionDecks` |
-| Max par séance | 3 cartes | `gained.slice(0, 3)` |
+> **Décision finale** : seule l'éducation crée des cartes. Les jeux les utilisent.
 
-### Phase 2bis — Acquisition modules éducatifs 🔲 (Level 3)
-
-À brancher sur les écrans éducatifs existants — nécessite `unlockStore` (déjà prêt).
-
-| Tâche | Fichier | Statut |
-|---|---|---|
-| Quiz consentement terminé → 3 `common` | `QuizConsentementScreen` | 🔲 |
-| Score parfait quiz → +1 `rare` | `QuizConsentementScreen` | 🔲 |
-| Duo flow complet → 5 cartes `duo` | `DuoSpaceScreen` | 🔲 |
-| CTA "Voir ma collection" dans `GameEndCinematic` | `game-engine/shared/GameEndCinematic.tsx` | 🔲 |
+Les triggers GooseGame Sprint 4 (`complicite` → rare, `arrivée` → unique) sont supprimés.  
+Le trigger CardGameScreen (fin de séance → common) est supprimé.  
+Action : retirer de `useGooseGame.ts` + supprimer tests 5.7a–5.7c — Sprint 10.
 
 ### Phase 3 — Hall of Cards ✅ (visuel)
 
@@ -315,11 +337,12 @@ En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 | Entrée depuis hub jeux et profil | `GamesHubScreen`, `ProfileScreen` | 🔲 autre agent |
 | Tap carte verrouillée → CTA module | idem | 🔲 autre agent |
 
-### Phase 4 — Brancher en jeu 🔲
+### Phase 4 — CardGame pool switch 🔲 (Sprint 10)
 
 | Tâche | Fichier |
 |---|---|
-| `drawCard` filtre sur `ownedCards` dans Cartes à tirer | `game-engine/cards/useCardEngine.ts` |
+| `drawCard` pioche dans `ownedCards` (remplace `diePractices`) | `game-engine/cards/useCardEngine.ts` |
+| Guard : si `ownedCards` vide → prompt "Module de base requis" | `CardGame/index.tsx` |
 | Compteur cartes possédées dans le hub | `GamesHubScreen` |
 
 ---
@@ -370,5 +393,8 @@ Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 
 ## Prochaine action immédiate
 
-> **Routing Hall of Cards** — brancher `HallOfCardsScreen` depuis `GamesHubScreen` + `ProfileScreen` (autre agent).
-> **Phase 4** — `drawCard` filtre sur `ownedCards` dans les cartes à tirer + compteur hub.
+> **Sprint 6** — Rédiger les 24 cartes starter Deck A (`data/cards-collector.ts`).  
+> **Sprint 7** — `computeModuleGain()` pure function + tests.  
+> **Sprint 8** — Module de base : screen + complétion → 24 cartes → flip reveal.  
+> **Sprint 9** — Brancher quiz, porno, loi, duo sur les triggers de gain.  
+> **Sprint 10** — CardGame pioche dans `ownedCards` (switch pool `diePractices` → `ownedCards`).

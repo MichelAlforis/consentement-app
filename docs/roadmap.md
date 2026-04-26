@@ -42,7 +42,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Persistance localStorage | ✅ | Thème, profil, saves de partie |
 | `DynamicIcon` resolver (`iconFromName.tsx`) | ✅ | Résout `iconName: string` → composant Lucide dans Duo + PersonalSpace |
 | `WelcomeScreen` Option A | ✅ | `HeartHandshake`, gradient chaud, badge juriste, stagger progressif |
-| Tests critiques (Vitest) | ✅ | 25 tests — `useCardSession` (14) + `useGooseGame` (11) — 25/25 ✓ |
+| Tests critiques (Vitest) | ✅ | 45 tests — `computeGainedCards` (17) + `useGooseGame` (14+3) + helpers — 45/45 ✓ |
 | Hard block mineur (`personal-space`, `duo-space`) | ✅ | `useEffect` guard dans `AppShell` |
 | `ConsentCheckScreen` adulte | ✅ | 3 panneaux accordéon — checklist consentement, doutes/ressources, questions |
 
@@ -121,7 +121,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ---
 
-## Bloc F — Jeux ✅ Terminé (3 jeux V2)
+## Bloc F — Jeux ✅ Terminé (3 jeux V2) · Card Collector 🔲 En cours
 
 > Scope initial : 2 jeux V2. **Livré : 3 jeux complets.**
 
@@ -131,6 +131,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Jeu 1 — Dé du consentement (gratuit) | ✅ | Solo + duo secret, niveau 3 premium, dé R3F Level 2 |
 | Jeu 2 — Cartes à tirer (premium) | ✅ | 84 cartes, 6 paquets, flip 3D, mode séance / libre |
 | Jeu 3 — Jeu de l'Oie (premium) | ✅ | 24 cases, 3 zones, accord à deux, sauvegarde locale |
+| Card Collector — Hall of Cards + gain via modules | 🔄 | Sprints 6–10 — voir `docs/jeux/card-gain-modules.md` |
 | Jeu 4 — Scénarios guidés | 🔲 | Prévu V3 |
 
 ---
@@ -142,6 +143,35 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Refonte `WelcomeScreen` Option A | ✅ | `HeartHandshake`, gradient violet→rose, badge juriste, stagger progressif |
 | CTA principal vers le processus de consentement | 🔲 | À définir avec le juriste — pas de doublon avec DuoSpace/HelpScreen |
 | Messages clés : "Je consens / Je ne consens pas / J'ai des questions" | 🔲 | Reporté — contenu à rédiger par le juriste |
+
+---
+
+## Bloc J — Home V3 — Progression en 3 niveaux 🔲 (Sprints 11–15)
+
+> Spec complète : `docs/home-v3.md`  
+> Changement structurel — la Home adulte devient adaptative selon la progression de l'utilisateur.
+
+La Home actuelle est statique. En V3, elle reflète où l'utilisateur en est dans son parcours éducatif.
+
+**3 niveaux calculés depuis `ownedCards` + `completedModules` :**
+
+| Niveau | Condition | Home |
+|---|---|---|
+| 1 — Découverte | 0 cartes, module de base pas fait | CTA unique : "Commence par ici" · Collection verrouillée |
+| 2 — Apprentissage | 1–49 cartes, 1–3 modules faits | Progression visible · Prochain module suggéré · Jeu accessible |
+| 3 — Maîtrise | 50+ cartes ou 4+ modules | Collection en avant-plan · Duo mis en avant · FOMO depth 3 |
+
+**Nouveaux blocs techniques :**
+
+| Tâche | Statut | Notes |
+|---|---|---|
+| `moduleProgressStore` — `completedModules[]` + `markModuleComplete()` | 🔲 Sprint 11 | Zustand + persist `consentement-modules` |
+| `computeModuleGain()` pure function | 🔲 Sprint 11 | easy→common · medium→rare · hard→unique |
+| `getProgressLevel()` pure function | 🔲 Sprint 11 | Calcul niveau 1/2/3 |
+| Wiring modules existants (quiz, porno, loi, duo) | 🔲 Sprint 12 | `markModuleComplete` + flip reveal |
+| `DiscoveryHome` / `LearningHome` / `MasteryHome` | 🔲 Sprint 13 | 3 composants Home |
+| `ModuleDeBaseScreen` + 24 cartes starter | 🔲 Sprint 14 | Premier lancement adulte |
+| CardGame pioche dans `ownedCards` | 🔲 Sprint 15 | Remplace `diePractices` |
 
 ---
 
@@ -250,10 +280,23 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ```
 1. Sélecteur de langue (UI)     →  ✅ déjà en place (LanguagePicker dans SettingsScreen)
-2. Tests critiques              →  ✅ 25 tests — useCardSession (14) + useGooseGame (11)
+2. Tests critiques              →  ✅ 45 tests — computeGainedCards (17) + useGooseGame (14+3)
 3. Bloc E hard block mineur     →  ✅ useEffect guard personal-space / duo-space
 4. Bloc G ConsentCheckScreen    →  ✅ écran adulte 3 panneaux + carte dans AdultHome
-5. Build mobile                 →  npx cap add ios && npx cap add android
-6. Contenus juriste             →  Blocs D et E
-7. Backend Supabase             →  ⛔ uniquement si validation V2 confirmée
+5. Hall of Cards                →  ✅ écran collection + routing depuis home + locked → CTA module
+6. Card Collector Sprints 6–10  →  24 cartes, computeModuleGain, wiring modules, pool switch
+   └─ Sprint 6  : 24 cartes dans cards-collector.ts
+   └─ Sprint 7  : computeModuleGain pure function + tests
+   └─ Sprint 8  : module de base → 24 starter cards → flip reveal
+   └─ Sprint 9  : quiz, porno, loi, duo → triggers gain
+   └─ Sprint 10 : CardGame pioche dans ownedCards
+7. Home V3 Sprints 11–15        →  logique 3 niveaux, Home adaptative, moduleProgressStore
+   └─ Sprint 11 : store + pure functions (getProgressLevel, computeModuleGain)
+   └─ Sprint 12 : wiring modules existants (markModuleComplete + flip reveal)
+   └─ Sprint 13 : DiscoveryHome / LearningHome / MasteryHome
+   └─ Sprint 14 : ModuleDeBaseScreen + premier lancement adulte
+   └─ Sprint 15 : CardGame guard niveau 1
+8. Build mobile                 →  npx cap add ios && npx cap add android
+9. Contenus juriste             →  Blocs D et E (modules adultes, Deck B, loi enrichie)
+10. Backend Supabase            →  ⛔ uniquement si validation V2 confirmée
 ```
