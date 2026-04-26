@@ -3,6 +3,9 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { CardBack } from '../game-engine/cards/CardBack';
 import type { GainedCard } from '../components/screens/CardGame/index';
+import { ThemeProvider } from '../context/ThemeContext';
+import { PlayingCard } from '../components/screens/CardGame/PlayingCard';
+import type { CollectorCard } from '../data/cards-collector';
 
 const CollectorCardCanvas = dynamic(
   () => import('../game-engine/cards/CollectorCardCanvas').then(m => ({ default: m.CollectorCardCanvas })),
@@ -10,6 +13,29 @@ const CollectorCardCanvas = dynamic(
 );
 
 // ─── Données de test ──────────────────────────────────────────────────────────
+
+const PLAYING_CARD_DEMO: CollectorCard = {
+  id: 'demo-playing',
+  deck: 'A',
+  theme: 'parlez',
+  text: 'Décrivez un souvenir qui vous a rapprochés, une chose que vous n\'avez jamais oublié.',
+  depth: 1,
+  tags: [],
+  rarity: 'common',
+  unlockedBy: 'demo',
+  visual: {
+    gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+    iconName: 'MessageCircle',
+    border: '#a78bfa',
+  },
+};
+
+const PLAYING_CAT = {
+  name: 'Parlez-vous',
+  iconName: 'MessageCircle',
+  gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+  border: '#a78bfa',
+};
 
 const CARDS: GainedCard[] = [
   {
@@ -112,6 +138,9 @@ export default function CardCollectorTestPage() {
       {/* Test autoFlip */}
       <AutoFlipDemo size={size} />
 
+      {/* ── CONVERGENCE VISUELLE ──────────────────────────────────────────── */}
+      <ConvergenceSection />
+
       {/* CardBack SVG — comparaison rendu HTML vs WebGL */}
       <div style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
@@ -209,7 +238,7 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
         transition: 'transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}>
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 14,
+          position: 'absolute', inset: 0, borderRadius: 20,
           background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
           border: '2px solid rgba(255,255,255,0.14)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
@@ -218,7 +247,7 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
           <span style={{ fontSize: size * 0.22, fontWeight: 900, color: 'rgba(255,255,255,0.09)' }}>C</span>
         </div>
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 14,
+          position: 'absolute', inset: 0, borderRadius: 20,
           background: card.gradient, border: `2px solid ${card.border}`,
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
@@ -227,7 +256,7 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
           gap: 6, padding: '8px 6px', overflow: 'hidden',
         }}>
           <div style={{
-            position: 'absolute', inset: 0, borderRadius: 13,
+            position: 'absolute', inset: 0, borderRadius: 20,
             background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.28) 0%, transparent 55%)',
             pointerEvents: 'none',
           }} />
@@ -238,6 +267,87 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
           }}>
             {card.text}
           </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Convergence visuelle — PlayingCard ↔ CollectorCard ──────────────────────
+
+const COLLECTOR_FOR_CONVERGENCE: GainedCard = {
+  id: 'convergence-demo',
+  rarity: 'common',
+  text: PLAYING_CARD_DEMO.text,
+  gradient: PLAYING_CARD_DEMO.visual.gradient,
+  border: PLAYING_CARD_DEMO.visual.border,
+  iconName: PLAYING_CARD_DEMO.visual.iconName,
+};
+
+function ConvergenceSection() {
+  const [revealed, setRevealed] = useState(false);
+  const [collectorFlipped, setCollectorFlipped] = useState(false);
+
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20,
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 20, padding: '24px 28px',
+      width: '100%', maxWidth: 700,
+    }}>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>
+        Convergence visuelle C1 + C3
+      </span>
+
+      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {/* CollectorCard */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
+            CollectorCard · R3F · 160px
+          </span>
+          <CollectorCardCanvas
+            card={COLLECTOR_FOR_CONVERGENCE}
+            isFlipped={collectorFlipped}
+            size={160}
+          />
+          <button
+            onClick={() => setCollectorFlipped(f => !f)}
+            style={{ ...chipStyle(collectorFlipped), fontSize: 11 }}
+          >
+            {collectorFlipped ? '← Dos' : 'Face →'}
+          </button>
+        </div>
+
+        {/* Séparateur */}
+        <div style={{
+          alignSelf: 'stretch', width: 1,
+          background: 'rgba(255,255,255,0.08)',
+          minHeight: 240,
+        }} />
+
+        {/* PlayingCard */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
+            PlayingCard · CSS · 290px
+          </span>
+          <ThemeProvider>
+            <PlayingCard
+              card={PLAYING_CARD_DEMO}
+              cat={PLAYING_CAT}
+              isRevealed={revealed}
+              isAnimating={false}
+              deckRemaining={3}
+              onDraw={() => {}}
+              themeId="dark-luxury"
+            />
+          </ThemeProvider>
+          <button
+            onClick={() => setRevealed(f => !f)}
+            style={{ ...chipStyle(revealed), fontSize: 11 }}
+          >
+            {revealed ? '← Dos' : 'Face →'}
+          </button>
         </div>
       </div>
     </div>
