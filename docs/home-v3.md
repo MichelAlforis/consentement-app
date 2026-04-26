@@ -1,7 +1,8 @@
 # Home V3 — Logique de progression en 3 niveaux
 
 > Créé : 25 avril 2026  
-> Statut : 🔲 À implémenter — Sprints 11+  
+> Mis à jour : 26 avril 2026  
+> Statut : ✅ Sprints 11–13 implémentés · Sprint 12.6 (flip reveal) ✅ · Sprint 14 ⬜  
 > Scope : refonte structurelle des **deux Homes** (adulte ET mineur) — **même logique, quel que soit l'âge**
 
 ---
@@ -313,53 +314,110 @@ La barrière premium est sur la profondeur du contenu, pas sur l'accès au syst�
 
 ## Sprints
 
-### Sprint 11 — Store + pure functions
+### Sprint 11 — Store + pure functions ✅
 
-| # | Tâche | Fichier |
+| # | Tâche | Fichier | Statut |
+|---|---|---|---|
+| 11.1 | `moduleProgressStore` Zustand + persist | `stores/moduleProgressStore.ts` | ✅ |
+| 11.2 | Export + `resetAllData` | `stores/index.ts` | ✅ |
+| 11.3 | `getProgressLevel` pure function + tests (9 cas) | `lib/progressLevel.ts` · `.test.ts` | ✅ |
+
+### Sprint 12 — Wiring modules + flip reveal ✅
+
+| # | Tâche | Fichier | Statut |
+|---|---|---|---|
+| 12.1 | Quiz → `useModuleComplete` → `hall-of-cards` | `QuizConsentementScreen.tsx` | ✅ |
+| 12.2 | Porno vs Réalité → `useModuleComplete` | `PornoVsRealiteScreen.tsx` | ✅ |
+| 12.3 | Loi & consentement → `useModuleComplete` | `LoiConsentementScreen.tsx` | ✅ |
+| 12.4 | Duo flow → `useModuleComplete` | `DuoSpaceScreen.tsx` | ✅ |
+| 12.5 | Accompagnement mineur → `useModuleComplete` | `AccompagnementMineurScreen.tsx` | ✅ |
+| 12.6 | `FlipRevealOverlay` séquentiel + `revealStore` éphémère | `HallOfCardsScreen.tsx` · `stores/revealStore.ts` | ✅ |
+
+> **Hook `useModuleComplete`** : point d'entrée unique — marque le module, calcule les cartes via `computeModuleGain`, persiste dans `unlockStore`, stocke les IDs dans `revealStore` pour le reveal.
+
+### Sprint 13 — Home V3 composants ✅
+
+| # | Tâche | Fichier | Statut |
+|---|---|---|---|
+| 13.1 | `DiscoveryHome` (niveau 1) | inline dans `HomeScreen.tsx` | ✅ |
+| 13.2 | `LearningHome` (niveau 2) | inline dans `HomeScreen.tsx` | ✅ |
+| 13.3 | `MasteryHome` (niveau 3) | inline dans `HomeScreen.tsx` | ✅ |
+| 13.4 | `ProgressBar` + `NextModuleSuggestion` | inline dans `HomeScreen.tsx` | ✅ |
+| 13.5 | `HomeScreen.tsx` — dispatch vers les 3 niveaux | `HomeScreen.tsx` | ✅ |
+| 13.6 | i18n `homeV3.*` (FR/EN/ES) | `i18n/locales/*/home.ts` | ✅ |
+
+### Sprint 14 — Module de base ⬜
+
+| # | Tâche | Fichier | Statut |
+|---|---|---|---|
+| 14.1 | `ModuleDeBaseScreen` — contenu court, guidé (5 min) | `screens/ModuleDeBaseScreen.tsx` | ⬜ contenu requis |
+| 14.2 | Complétion → 24 cartes starter → flip reveal séquentiel | idem | ⬜ |
+| 14.3 | Routing : premier lancement → `module-de-base` avant home | `page.tsx` | ⬜ |
+| 14.4 | Rédiger le contenu (équipe — pas le juriste) | `data/moduleDeBase.ts` | ⬜ bloquant |
+
+### Sprints 10 + 15 — CardGame pool switch ✅
+
+| # | Tâche | Statut |
 |---|---|---|
-| 11.1 | `moduleProgressStore` Zustand + persist | `stores/moduleProgressStore.ts` |
-| 11.2 | Export + `resetAllData` | `stores/index.ts` |
-| 11.3 | `computeModuleGain` pure function | `lib/computeModuleGain.ts` |
-| 11.4 | Tests `computeModuleGain` (easy/medium/hard, pool épuisé) | `lib/computeModuleGain.test.ts` |
-| 11.5 | `getProgressLevel` pure function | `lib/progressLevel.ts` |
-| 11.6 | Tests `getProgressLevel` (0 cartes → 1, 24 → 2, 50+ → 3) | `lib/progressLevel.test.ts` |
+| Pool `ownedCards` filtré par `theme` | `useCardSession.ts` complet | ✅ |
+| Guard vide → prompt quiz consentement | `EmptyDeckPrompt` dans `CardGame/index.tsx` | ✅ |
+| Nettoyage GooseGame triggers cartes | `useGooseGame.ts` | ✅ |
 
-### Sprint 12 — Wiring modules existants
+---
 
-| # | Tâche | Fichier |
-|---|---|---|
-| 12.1 | Quiz → `markModuleComplete` + `computeModuleGain` + flip reveal | `QuizConsentementScreen.tsx` |
-| 12.2 | Porno vs Réalité → trigger gain | `PornoVsRealiteScreen.tsx` |
-| 12.3 | Loi & consentement → trigger gain | `LoiConsentementScreen.tsx` |
-| 12.4 | Duo flow → trigger gain | `DuoSpaceScreen.tsx` |
+## Flip reveal — architecture implémentée (Sprint 12.6)
 
-### Sprint 13 — Home V3 composants
+Le flip reveal est déclenché automatiquement à l'arrivée sur `hall-of-cards` après complétion d'un module. Il est géré par 3 pièces :
 
-| # | Tâche | Fichier |
-|---|---|---|
-| 13.1 | `DiscoveryHome` (niveau 1) | `HomeScreen/DiscoveryHome.tsx` |
-| 13.2 | `LearningHome` (niveau 2) avec `ProgressBar` + `NextModuleSuggestion` | `HomeScreen/LearningHome.tsx` |
-| 13.3 | `MasteryHome` (niveau 3) avec collection summary + DeckB teaser | `HomeScreen/MasteryHome.tsx` |
-| 13.4 | `useProgressLevel` hook (wrapper de `getProgressLevel`) | `HomeScreen/index.tsx` |
-| 13.5 | Refactoring `HomeScreen.tsx` → dispatch vers les 3 sous-composants | `HomeScreen.tsx` |
-| 13.6 | i18n : nouvelles clés pour les 3 états de la home | `i18n/locales/*/home.ts` |
+### `revealStore.ts` — store éphémère (non persisté)
 
-### Sprint 14 — Module de base
+```ts
+// app/stores/revealStore.ts
+interface RevealStore {
+  pendingIds: string[];       // IDs des cartes à révéler
+  setPending: (ids: string[]) => void;
+  clearPending: () => void;
+}
+```
 
-| # | Tâche | Fichier |
-|---|---|---|
-| 14.1 | `ModuleDeBaseScreen` — contenu court, guidé (5 min) | `screens/ModuleDeBaseScreen.tsx` |
-| 14.2 | Complétion → 24 cartes starter → flip reveal séquentiel | idem |
-| 14.3 | Routing : premier lancement adulte → `module-de-base` avant home | `page.tsx` |
-| 14.4 | Contenu module de base (rédiger avec le juriste) | `data/moduleDeBase.ts` |
+Zustand **sans `persist`** — perdu au rechargement de page. C'est intentionnel : si l'utilisateur quitte l'app avant de voir le reveal, les cartes sont déjà dans `ownedCards` (persistées), le reveal ne se rejoue pas.
 
-### Sprint 15 — CardGame pool switch (Sprint 10 consolidé)
+### `useModuleComplete` — point d'entrée unique
 
-| # | Tâche | Fichier |
-|---|---|---|
-| 15.1 | `drawCard` pioche dans `ownedCards` | `game-engine/cards/useCardEngine.ts` |
-| 15.2 | Guard niveau 1 : si `ownedCards` vide → redirect `module-de-base` | `CardGame/index.tsx` |
-| 15.3 | Test : niveau 1 + CardGame → guard déclenché, pas de crash | test |
+```ts
+// app/lib/useModuleComplete.ts
+const newCards = computeModuleGain(moduleId, ownedIds, collectorCards);
+if (newCards.length > 0) {
+  unlockCards(newCards);             // persiste dans unlockStore
+  setPending(newCards.map(c => c.id)); // stocke pour le reveal
+}
+```
+
+Appelé depuis les 5 écrans de modules (Quiz, PornoVsRéalité, Loi, DuoFlow, AccompagnementMineur). Le store est rempli **avant** la navigation vers `hall-of-cards`.
+
+### `FlipRevealOverlay` — overlay séquentiel
+
+Affiché par `HallOfCardsScreen` si `pendingIds.length > 0` au montage.
+
+**Flow par carte :**
+1. Carte face cachée (fond sombre, icône `Sparkles` estompée)
+2. Auto-flip après **900ms** — animation `rotateY: 0 → 180deg` via framer-motion (durée 650ms, easing `[0.4, 0, 0.2, 1]`)
+3. Face avant : carte gradient complète (texture, watermarks, badge rareté, icône, texte)
+4. Bouton CTA apparaît après le flip (delay 300ms) : "Carte suivante" ou "Voir ma collection"
+5. Appuyer → carte suivante (état réinitialisé) ou `clearPending()` + fermeture overlay
+
+**CSS flip :** `transformStyle: preserve-3d` sur le conteneur animé · `backfaceVisibility: hidden` sur les deux faces · face arrière pré-rotée à `rotateY(180deg)`. La perspective (900px) est sur un wrapper non-animé.
+
+**i18n :** clés `flipReveal.*` dans le namespace `games` (FR/EN/ES).
+
+| Clé | FR | EN | ES |
+|---|---|---|---|
+| `titleOne` | Nouvelle carte ! | New card! | ¡Nueva carta! |
+| `titlePlural` | {count} nouvelles cartes ! | {count} new cards! | ¡{count} nuevas cartas! |
+| `progress` | {current} / {total} | {current} / {total} | {current} / {total} |
+| `tapToFlip` | Appuie pour révéler | Tap to reveal | Toca para revelar |
+| `next` | Carte suivante | Next card | Siguiente carta |
+| `done` | Voir ma collection | View my collection | Ver mi colección |
 
 ---
 
