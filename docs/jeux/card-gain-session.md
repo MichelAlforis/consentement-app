@@ -66,7 +66,7 @@ export interface ComputeParams {
   sessionMode: 'seance' | 'libre';  // guard — retourne [] si 'libre'
   cardCount: number;                // doit être >= seanceSize
   seanceSize: number;
-  sessionDecks: number[];           // ex: [2, 5] — decks explorés dans la session
+  sessionThemes: CardTheme[];       // ex: ['parlez', 'verite'] — thèmes explorés dans la session
   sessionCount: number;             // APRÈS increment — incrémenté avant l'appel
   ownedIds: Set<string>;            // ids déjà possédées (Set pour O(1))
   favorites: string[];              // ids des cartes mises en favori pendant la session
@@ -74,7 +74,8 @@ export interface ComputeParams {
 }
 ```
 
-> ⚠️ `sessionCount` est la valeur **après** increment (contrairement à l'ancienne `sessionsPlayed` qui était avant). Milestone : `sessionCount % 3 === 0`.
+> ⚠️ `sessionCount` est la valeur **après** increment. Milestone : `sessionCount % 3 === 0`.  
+> ⚠️ **Sprint 10.1** — `sessionDecks: number[]` remplacé par `sessionThemes: CardTheme[]`. Les thèmes profonds (`'et-si'`, `'defi'`, `'verite'`, `'douceur'`) déclenchent le bonus rare. Les thèmes premium (`'verite'`, `'douceur'`) déclenchent la chance unique.
 
 ---
 
@@ -137,25 +138,25 @@ pickOneUnique(collectorCards, ownedIds: Set<string>)       → CollectorCard | n
 
 **Règle 1 — Carte common garantie**
 - Toujours 1 carte `common` si séance complète
-- Prendre une carte `depth 1` des decks explorés (`sessionDecks`)
+- Prendre une carte `depth 1` des thèmes explorés (`sessionThemes`) en priorité
 - Exclure les cartes déjà dans `alreadyOwned`
-- Si pool vide dans les decks explorés → random dans `depth 1` global
+- Si pool vide dans les thèmes explorés → random dans `depth 1` global
 
 **Règle 2 — Bonus multiple de 3**
 - Si `sessionCount % 3 === 0` (sessionCount déjà incrémenté)
-- Si decks profonds joués (3–6) → +1 `rare` depth 2
+- Si thèmes profonds joués (`'et-si'`, `'defi'`, `'verite'`, `'douceur'`) → +1 `rare` depth 2
 - Sinon → +1 `common` depth 1 extra (pondérée favoris)
 - Ne jamais dépasser 2 cartes au total avant la règle 3
 
 **Règle 3 — Chance unique premium**
-- Si `isPremium && sessionDecks.some(d => d === 5 || d === 6)`
+- Si `isPremium && sessionThemes.some(th => th === 'verite' || th === 'douceur')`
 - 20% de chance d'une carte `unique` `depth 3`
 - S'ajoute aux précédentes — maximum 3 cartes au total
 - Ignorée si toutes les uniques disponibles sont déjà dans `alreadyOwned`
 
 **Règle 4 — Pondération favoris**
 - Si `favorites.length > 0`
-- Les decks représentés dans les favoris ont un poids × 2 lors du pick
+- Les thèmes représentés dans les favoris ont un poids × 2 lors du pick
 - Applicable à toutes les raretés
 
 **Règle 5 — Déduplication**
@@ -171,14 +172,14 @@ pickOneUnique(collectorCards, ownedIds: Set<string>)       → CollectorCard | n
 
 ```
 sessionMode='seance' && cardCount >= seanceSize ?
-  └─ oui → pick 1 common (decks explorés en priorité, hors ownedIds)
+  └─ oui → pick 1 common (thèmes explorés en priorité, hors ownedIds)
             │
             └─ sessionCount % 3 === 0 ?
-                  └─ oui → deck profond (3–6) joué ?
+                  └─ oui → thème profond (et-si|defi|verite|douceur) joué ?
                               ├─ oui → +1 rare depth 2
                               └─ non → +1 common extra
                             │
-                            └─ isPremium && deck 5|6 ?
+                            └─ isPremium && thème verite|douceur ?
                                   └─ oui → rand() < 0.2 → +1 unique depth 3
 ```
 
@@ -223,7 +224,7 @@ unlockCards: (newCards) => {
 Le calcul se déclenche sur le bouton "Terminer la séance" (`handleGoToEnd`), avant la transition vers le step `end`.
 
 ```ts
-// CardGame/index.tsx — réel
+// CardGame/index.tsx — réel (Sprint 10.1)
 const { ownedCards, sessionCount, unlockCards, incrementSessionCount } = useUnlockStore();
 const [gainedCards, setGainedCards] = useState<GainedCard[]>([]);
 
@@ -236,7 +237,7 @@ const handleGoToEnd = useCallback(() => {
     sessionMode: s.sessionMode,
     cardCount: s.cardCount,
     seanceSize: s.seanceSize,
-    sessionDecks: s.sessionDecks,
+    sessionThemes: s.sessionThemes,           // CardTheme[] — ex: ['osez', 'verite']
     sessionCount: nextSessionCount,           // post-increment
     ownedIds,
     favorites: s.favorites,

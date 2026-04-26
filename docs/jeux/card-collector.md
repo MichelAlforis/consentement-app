@@ -241,18 +241,28 @@ Le pool Deck B (juriste) sera ajouté en Level 3. Le Deck M est rédigé par l'�
 
 Les cartes du collector alimentent directement les jeux :
 
-- **Cartes à tirer** — pioche dans le deck acquis
-- **Jeu de l'oie** — cases `normal` tirent depuis le deck acquis (V3 méta-jeu)
+- **Cartes à tirer** ✅ — pioche dans `ownedCards` filtrée par `theme` et `deck` (Sprint 10.1)
+- **Jeu de l'oie** — cases `normal` tirent depuis le deck acquis (V3 méta-jeu, à venir)
 - **Dé** — non concerné (mécanique propre)
 
 ```ts
-// drawCard filtre sur les cartes possédées
-function drawCard(phase, history, ownedCards) {
-  const pool = ownedCards
-    .filter(c => matchesPhase(c, phase))
-    .filter(c => !history.session.has(c.id));
-  return weightedPick(pool, getWeights(phase));
-}
+// useCardSession.ts — implémentation réelle (Sprint 10.1)
+const available = useMemo(() => {
+  const ownedIds = new Set(ownedCards.map((c) => c.id));
+  return collectorCards.filter((c) => {
+    if (!ownedIds.has(c.id)) return false;
+    if (c.deck === 'A') return true;                 // tous âges
+    if (c.deck === 'B') return isAdult;              // adultes uniquement
+    if (c.deck === 'M') return isAdult && explicitMode;
+    return false;
+  });
+}, [ownedCards, isAdult, explicitMode]);
+
+// pickCard filtre par theme (CardTheme | 'random') + profondeur progressive
+let pool = available.filter((c) =>
+  (selectedTheme === 'random' || c.theme === selectedTheme) && !excluded.has(c.id)
+);
+// En mode séance random → progression par c.depth (early: ≤2, late: ≥2)
 ```
 
 ---
@@ -337,13 +347,17 @@ Action : retirer de `useGooseGame.ts` + supprimer tests 5.7a–5.7c — Sprint 1
 | Entrée depuis hub jeux et profil | `GamesHubScreen`, `ProfileScreen` | 🔲 autre agent |
 | Tap carte verrouillée → CTA module | idem | 🔲 autre agent |
 
-### Phase 4 — CardGame pool switch 🔲 (Sprint 10)
+### Phase 4 — CardGame pool switch ✅ Sprint 10.1 · 🔲 Sprint 10.2
 
-| Tâche | Fichier |
-|---|---|
-| `drawCard` pioche dans `ownedCards` (remplace `diePractices`) | `game-engine/cards/useCardEngine.ts` |
-| Guard : si `ownedCards` vide → prompt "Module de base requis" | `CardGame/index.tsx` |
-| Compteur cartes possédées dans le hub | `GamesHubScreen` |
+| Tâche | Fichier | Statut |
+|---|---|---|
+| `useCardSession` : pool = `ownedCards` → `collectorCards` lookup, filtré par `deck: 'A'\|'B'\|'M'` | `CardGame/hooks/useCardSession.ts` | ✅ |
+| `selectedDeck (1–6)` → `selectedTheme (CardTheme \| 'random')` | idem | ✅ |
+| `sessionDecks: number[]` → `sessionThemes: CardTheme[]` | idem + `computeGainedCards.ts` | ✅ |
+| `THEME_CATEGORIES` (gradient/icon/border keyed by `CardTheme`) | `data/cards-collector.ts` | ✅ |
+| Picker 6 boutons thèmes (compteur depuis `ownedCards`) | `CardGame/index.tsx` | ✅ |
+| `PlayingCard` : `CardData` → `CollectorCard`, `depth` direct | `CardGame/PlayingCard.tsx` | ✅ |
+| Guard : `ownedCards` vide → `EmptyDeckPrompt` CTA module de base | `CardGame/index.tsx` | 🔲 Sprint 10.2 |
 
 ---
 
@@ -393,8 +407,6 @@ Même logique que le dé (`DiceRenderer` CSS + `DiceCanvas` R3F).
 
 ## Prochaine action immédiate
 
-> **Sprint 6** — Rédiger les 24 cartes starter Deck A (`data/cards-collector.ts`).  
-> **Sprint 7** — `computeModuleGain()` pure function + tests.  
-> **Sprint 8** — Module de base : screen + complétion → 24 cartes → flip reveal.  
-> **Sprint 9** — Brancher quiz, porno, loi, duo sur les triggers de gain.  
-> **Sprint 10** — CardGame pioche dans `ownedCards` (switch pool `diePractices` → `ownedCards`).
+> **Sprint 10.2** — Guard : `ownedCards` vide → `EmptyDeckPrompt` CTA module de base.  
+> **Sprint 12** — Flip reveal animé à l'entrée du Hall of Cards après complétion de module.  
+> **Sprint 14** — `ModuleDeBaseScreen` : onboarding skippable + 24 cartes starter au 1er lancement.
