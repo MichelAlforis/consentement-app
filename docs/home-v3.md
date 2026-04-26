@@ -2,7 +2,7 @@
 
 > Créé : 25 avril 2026  
 > Mis à jour : 26 avril 2026  
-> Statut : ✅ Sprints 11–13 implémentés · Sprint 12.6 (flip reveal) ✅ · Sprint 14 ⬜  
+> Statut : ✅ Sprints 6+8+11–13 implémentés · Sprint 12.6 (flip reveal) ✅ · Sprint 14 ✅ (placeholder équipe)  
 > Scope : refonte structurelle des **deux Homes** (adulte ET mineur) — **même logique, quel que soit l'âge**
 
 ---
@@ -346,14 +346,28 @@ La barrière premium est sur la profondeur du contenu, pas sur l'accès au syst�
 | 13.5 | `HomeScreen.tsx` — dispatch vers les 3 niveaux | `HomeScreen.tsx` | ✅ |
 | 13.6 | i18n `homeV3.*` (FR/EN/ES) | `i18n/locales/*/home.ts` | ✅ |
 
-### Sprint 14 — Module de base ⬜
+### Sprint 6 — Données cartes ✅
+
+| # | Tâche | Statut |
+|---|---|---|
+| 24 cartes Deck A common depth 1 (6 thèmes × 4) | `cards-collector.ts` — textes placeholder | ✅ |
+| 24 cartes Deck M common depth 1 (langue 13-14 ans) | idem | ✅ |
+| 2 cartes Deck M rare depth 2 (`accompagnement-mineur` + `loi-consentement-mineur`) | idem | ✅ |
+
+> **À corriger par l'équipe :** les champs `text` dans `app/data/cards-collector.ts` pour les IDs `ca-001` à `ca-024` (Deck A) et `cm-001` à `cm-026` (Deck M). Le reste (visuels, IDs, deck, rarity) est définitif.
+
+### Sprint 14 — Module de base ✅
 
 | # | Tâche | Fichier | Statut |
 |---|---|---|---|
-| 14.1 | `ModuleDeBaseScreen` — contenu court, guidé (5 min) | `screens/ModuleDeBaseScreen.tsx` | ⬜ contenu requis |
-| 14.2 | Complétion → 24 cartes starter → flip reveal séquentiel | idem | ⬜ |
-| 14.3 | Routing : premier lancement → `module-de-base` avant home | `page.tsx` | ⬜ |
-| 14.4 | Rédiger le contenu (équipe — pas le juriste) | `data/moduleDeBase.ts` | ⬜ bloquant |
+| 14.1 | `ModuleDeBaseScreen` — 4 slides, progress dots, skip possible | `screens/ModuleDeBaseScreen.tsx` | ✅ |
+| 14.2 | Complétion → `useModuleComplete(moduleId)` → flip reveal 24 cartes | idem | ✅ |
+| 14.3 | Routing : `case 'home'` intercepté si `!hasOnboarded` → `ModuleDeBaseScreen` | `page.tsx` | ✅ |
+| 14.4 | Contenu slides (adulte + mineur) | `data/moduleDeBase.ts` | ✅ placeholder équipe |
+
+**Skip** → `markModuleComplete('module-de-base-skip')` → home direct (aucune carte). Le check `hasOnboarded` couvre les IDs `module-de-base`, `module-de-base-mineur` et `module-de-base-skip` via `startsWith('module-de-base')`.
+
+> **À corriger par l'équipe :** les textes dans `app/data/moduleDeBase.ts` — `MODULE_DE_BASE_SLIDES` (adulte) et `MODULE_DE_BASE_SLIDES_MINEUR`.
 
 ### Sprints 10 + 15 — CardGame pool switch ✅
 
