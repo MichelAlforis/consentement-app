@@ -24,164 +24,119 @@ export interface CollectorCard {
 // Deck A — Non-explicite (connexion, communication, exploration émotionnelle)
 // ---------------------------------------------------------------------------
 
+// ── Visuels par thème (réutilisés ci-dessous) ────────────────────────────────
+const V = {
+  osez:    { gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', iconName: 'Layers',        border: '#fbbf24' },
+  parlez:  { gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', iconName: 'MessageCircle', border: '#a78bfa' },
+  'et-si': { gradient: 'linear-gradient(135deg, #ec4899, #db2777)', iconName: 'HelpCircle',    border: '#f9a8d4' },
+  defi:    { gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', iconName: 'Target',        border: '#93c5fd' },
+  verite:  { gradient: 'linear-gradient(135deg, #10b981, #059669)', iconName: 'Sparkles',      border: '#6ee7b7' },
+  douceur: { gradient: 'linear-gradient(135deg, #be123c, #9f1239)', iconName: 'Heart',         border: '#fda4af' },
+} satisfies Record<CardTheme, { gradient: string; iconName: string; border: string }>;
+
 export const collectorCards: CollectorCard[] = [
-  // ── common · depth 1 ───────────────────────────────────────────────────
-  {
-    id: 'ca-001',
-    deck: 'A',
-    theme: 'parlez',
-    text: 'Dis à ton partenaire une chose que tu apprécies dans votre façon de communiquer.',
-    depth: 1,
-    tags: ['communication'],
-    rarity: 'common',
-    unlockedBy: 'quiz-consentement',
-    visual: {
-      gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-      iconName: 'MessageCircle',
-      border: '#a78bfa',
-    },
-  },
-  {
-    id: 'ca-002',
-    deck: 'A',
-    theme: 'osez',
-    text: 'Qu\'est-ce qui te fait te sentir en sécurité avec ton partenaire ?',
-    depth: 1,
-    tags: ['confiance'],
-    rarity: 'common',
-    unlockedBy: 'quiz-consentement',
-    visual: {
-      gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
-      iconName: 'Layers',
-      border: '#fbbf24',
-    },
-  },
-  {
-    id: 'ca-003',
-    deck: 'A',
-    theme: 'parlez',
-    text: 'Décris un moment où tu as senti que votre lien était particulièrement fort.',
-    depth: 1,
-    tags: ['confiance', 'duo'],
-    rarity: 'common',
-    unlockedBy: 'porno-vs-realite',
-    visual: {
-      gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-      iconName: 'MessageCircle',
-      border: '#a78bfa',
-    },
-  },
-  {
-    id: 'ca-004',
-    deck: 'A',
-    theme: 'douceur',
-    text: 'Quel petit geste de ton partenaire te touche le plus ?',
-    depth: 1,
-    tags: ['communication'],
-    rarity: 'common',
-    unlockedBy: 'porno-vs-realite',
-    visual: {
-      gradient: 'linear-gradient(135deg, #be123c, #9f1239)',
-      iconName: 'Heart',
-      border: '#fda4af',
-    },
-  },
 
-  // ── rare · depth 2 ─────────────────────────────────────────────────────
-  {
-    id: 'ca-005',
-    deck: 'A',
-    theme: 'verite',
-    text: 'Parle d\'un désir que tu n\'as jamais encore exprimé à voix haute.',
-    depth: 2,
-    tags: ['exploration', 'confiance'],
-    rarity: 'rare',
-    unlockedBy: 'duo-flow',
-    visual: {
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
-      iconName: 'Sparkles',
-      border: '#6ee7b7',
-    },
-  },
-  {
-    id: 'ca-006',
-    deck: 'A',
-    theme: 'et-si',
-    text: 'Qu\'est-ce que tu voudrais que ton partenaire comprenne mieux de toi ?',
-    depth: 2,
-    tags: ['communication', 'duo'],
-    rarity: 'rare',
-    unlockedBy: 'duo-flow',
-    visual: {
-      gradient: 'linear-gradient(135deg, #ec4899, #db2777)',
-      iconName: 'HelpCircle',
-      border: '#f9a8d4',
-    },
-  },
-  {
-    id: 'ca-007',
-    deck: 'A',
-    theme: 'defi',
-    text: 'Décris une limite que tu voudrais explorer ensemble, à votre rythme.',
-    depth: 2,
-    tags: ['cadre', 'exploration'],
-    rarity: 'rare',
-    unlockedBy: 'loi-consentement',
-    visual: {
-      gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-      iconName: 'Target',
-      border: '#93c5fd',
-    },
-  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // DECK A — Adultes · non-explicite (connexion, communication, exploration)
+  // ═══════════════════════════════════════════════════════════════════════
 
-  // ── unique · depth 3 ───────────────────────────────────────────────────
-  {
-    id: 'ca-008',
-    deck: 'A',
-    theme: 'verite',
-    text: 'Inventez ensemble un rituel intime qui n\'appartient qu\'à vous deux.',
-    depth: 3,
-    tags: ['duo', 'exploration'],
-    rarity: 'unique',
-    unlockedBy: 'module-pratiques-adultes',
-    visual: {
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
-      iconName: 'Sparkles',
-      border: '#6ee7b7',
-    },
-  },
-  {
-    id: 'ca-009',
-    deck: 'A',
-    theme: 'douceur',
-    text: 'Partagez chacun une fantasy que vous n\'avez jamais osé nommer.',
-    depth: 3,
-    tags: ['désir', 'confiance'],
-    rarity: 'unique',
-    unlockedBy: 'module-pratiques-adultes',
-    visual: {
-      gradient: 'linear-gradient(135deg, #be123c, #9f1239)',
-      iconName: 'Heart',
-      border: '#fda4af',
-    },
-  },
+  // ── common · depth 1 · 24 cartes · débloquées par module-de-base ──────
 
-  // ── Deck B · unique · depth 3 (stub — contenu juriste à venir) ─────────
-  {
-    id: 'cb-001',
-    deck: 'B',
-    theme: 'verite',
-    text: 'À venir — contenu rédigé par le juriste.',
-    depth: 3,
-    tags: ['pratique'],
-    rarity: 'unique',
-    unlockedBy: 'decouverte-desirs',
-    visual: {
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
-      iconName: 'Sparkles',
-      border: '#6ee7b7',
-    },
-  },
+  // Osez (4) — dépasser la gêne, demander ce qu'on veut vraiment
+  { id: 'ca-001', deck: 'A', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['confiance'],      visual: V.osez,   text: "Qu'est-ce qui te fait te sentir en sécurité avec ton partenaire ?" },
+  { id: 'ca-002', deck: 'A', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['désir'],          visual: V.osez,   text: "Nomme une chose que tu aimerais faire mais que tu n'as jamais osé proposer." },
+  { id: 'ca-003', deck: 'A', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['communication'],  visual: V.osez,   text: "Qu'est-ce qui te retient parfois d'exprimer ce que tu veux vraiment ?" },
+  { id: 'ca-004', deck: 'A', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['communication'],  visual: V.osez,   text: "Dis à voix haute quelque chose que tu trouves difficile à demander." },
+
+  // Parlez (4) — communication explicite, exprimer ses besoins
+  { id: 'ca-005', deck: 'A', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['communication'],  visual: V.parlez, text: "Dis à ton partenaire une chose que tu apprécies dans votre façon de communiquer." },
+  { id: 'ca-006', deck: 'A', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['confiance'],      visual: V.parlez, text: "Décris un moment où tu as senti que votre lien était particulièrement fort." },
+  { id: 'ca-007', deck: 'A', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['écoute'],         visual: V.parlez, text: "Qu'est-ce que ton partenaire fait qui te fait te sentir vraiment entendu·e ?" },
+  { id: 'ca-008', deck: 'A', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['consentement'],   visual: V.parlez, text: "Comment préfères-tu qu'on te dise non ? Montre-lui." },
+
+  // Et si… (4) — imagination, scénarios hypothétiques, exploration douce
+  { id: 'ca-009', deck: 'A', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['consentement'],   visual: V['et-si'], text: "Et si vous inventiez un mot de code pour dire 'j'ai besoin d'une pause' ?" },
+  { id: 'ca-010', deck: 'A', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['duo'],            visual: V['et-si'], text: "Et si chacun décrivait l'endroit parfait pour se retrouver ?" },
+  { id: 'ca-011', deck: 'A', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['relation'],       visual: V['et-si'], text: "Et si tu pouvais changer une habitude dans votre relation — laquelle ?" },
+  { id: 'ca-012', deck: 'A', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['connexion'],      visual: V['et-si'], text: "Et si vous passiez 24h sans écrans ensemble — qu'est-ce que vous feriez ?" },
+
+  // Défi (4) — défis doux, proposer quelque chose de nouveau
+  { id: 'ca-013', deck: 'A', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['communication'],  visual: V.defi,   text: "Fais un compliment sincère sur quelque chose que tu n'as jamais dit." },
+  { id: 'ca-014', deck: 'A', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['consentement'],   visual: V.defi,   text: "Décris ce que représente le consentement pour toi en trois mots." },
+  { id: 'ca-015', deck: 'A', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['exploration'],    visual: V.defi,   text: "Propose quelque chose que vous n'avez jamais fait ensemble — même simple." },
+  { id: 'ca-016', deck: 'A', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['désir'],          visual: V.defi,   text: "Dis à ton partenaire ce que tu voudrais qu'il/elle fasse plus souvent." },
+
+  // Vérité (4) — sincérité, révélations, vulnérabilité
+  { id: 'ca-017', deck: 'A', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['vulnérabilité'],  visual: V.verite, text: "Qu'est-ce qui te rend le plus vulnérable dans une relation intime ?" },
+  { id: 'ca-018', deck: 'A', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['relation'],       visual: V.verite, text: "Y a-t-il quelque chose dans notre relation que tu veux qu'on améliore ?" },
+  { id: 'ca-019', deck: 'A', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['confiance'],      visual: V.verite, text: "Partage un moment où tu as changé d'avis sur quelque chose d'important." },
+  { id: 'ca-020', deck: 'A', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['communication'],  visual: V.verite, text: "Qu'est-ce que tu n'as jamais dit mais que tu ressens souvent ?" },
+
+  // Douceur (4) — tendresse, soin, gestes d'amour
+  { id: 'ca-021', deck: 'A', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['affection'],     visual: V.douceur, text: "Quel petit geste de ton partenaire te touche le plus ?" },
+  { id: 'ca-022', deck: 'A', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['soin'],          visual: V.douceur, text: "Qu'est-ce qui te fait te sentir choyé·e sans avoir besoin de le demander ?" },
+  { id: 'ca-023', deck: 'A', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['affection'],     visual: V.douceur, text: "Nomme quelque chose que tu aimes faire juste pour faire plaisir à l'autre." },
+  { id: 'ca-024', deck: 'A', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['connexion'],     visual: V.douceur, text: "Décris le moment idéal pour se retrouver après une journée difficile." },
+
+  // ── rare · depth 2 · débloquées par modules medium ────────────────────
+  { id: 'ca-025', deck: 'A', theme: 'verite', depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',         tags: ['désir'],          visual: V.verite, text: "Parle d'un désir que tu n'as jamais encore exprimé à voix haute." },
+  { id: 'ca-026', deck: 'A', theme: 'et-si',  depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',         tags: ['communication'],  visual: V['et-si'], text: "Qu'est-ce que tu voudrais que ton partenaire comprenne mieux de toi ?" },
+  { id: 'ca-027', deck: 'A', theme: 'defi',   depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement', tags: ['exploration'],    visual: V.defi,   text: "Décris une limite que tu voudrais explorer ensemble, à votre rythme." },
+
+  // ── unique · depth 3 · débloquées par module hard ─────────────────────
+  { id: 'ca-028', deck: 'A', theme: 'verite', depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['intimité'], visual: V.verite, text: "Inventez ensemble un rituel intime qui n'appartient qu'à vous deux." },
+  { id: 'ca-029', deck: 'A', theme: 'douceur', depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['désir'],  visual: V.douceur, text: "Partagez chacun une envie que vous n'avez jamais osé nommer." },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // DECK M — Mineurs 13-14 ans · langue adaptée, consentement & relations saines
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // ── common · depth 1 · 24 cartes · débloquées par module-de-base-mineur
+
+  // Osez (4) — dire ce qu'on veut/ne veut pas, résister à la pression
+  { id: 'cm-001', deck: 'M', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.osez,   text: "Y a-t-il quelque chose que tu voudrais dire à quelqu'un mais que tu n'oses pas ?" },
+  { id: 'cm-002', deck: 'M', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['pression'],     visual: V.osez,   text: "Qu'est-ce qui te retient de dire non quand quelqu'un t'insiste ?" },
+  { id: 'cm-003', deck: 'M', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['limites'],       visual: V.osez,   text: "Nomme une chose que tu aimerais qu'on te demande avant de faire." },
+  { id: 'cm-004', deck: 'M', theme: 'osez',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.osez,   text: "As-tu déjà dit oui à quelque chose juste pour faire plaisir ? Comment tu t'es senti·e ?" },
+
+  // Parlez (4) — communication, écoute, exprimer ses limites
+  { id: 'cm-005', deck: 'M', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['respect'],       visual: V.parlez, text: "Comment tu sais qu'une personne te respecte vraiment ?" },
+  { id: 'cm-006', deck: 'M', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.parlez, text: "Qu'est-ce que tu fais quand tu veux arrêter quelque chose et que l'autre n'écoute pas ?" },
+  { id: 'cm-007', deck: 'M', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['limites'],       visual: V.parlez, text: "Qu'est-ce qui te rend plus facile de parler de tes limites à quelqu'un ?" },
+  { id: 'cm-008', deck: 'M', theme: 'parlez', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['respect'],       visual: V.parlez, text: "Comment tu réagis quand quelqu'un te dit non ? Est-ce que ça te semble normal ?" },
+
+  // Et si… (4) — situations hypothétiques, empathie
+  { id: 'cm-009', deck: 'M', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['respect'],       visual: V['et-si'], text: "Et si tu pouvais créer une règle dans ta classe sur le respect — laquelle ?" },
+  { id: 'cm-010', deck: 'M', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V['et-si'], text: "Et si tu devais expliquer le consentement à un enfant de 8 ans — comment tu ferais ?" },
+  { id: 'cm-011', deck: 'M', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['amitié'],        visual: V['et-si'], text: "Et si un·e ami·e te parlait d'une situation où il/elle n'était pas à l'aise — que lui dirais-tu ?" },
+  { id: 'cm-012', deck: 'M', theme: 'et-si',  depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['relation'],      visual: V['et-si'], text: "Et si tu pouvais changer une chose dans la façon dont les gens se parlent autour de toi ?" },
+
+  // Défi (4) — affirmation de soi, poser des limites
+  { id: 'cm-013', deck: 'M', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['confiance'],    visual: V.defi,   text: "Dis une chose positive sur toi sans minimiser — juste un fait." },
+  { id: 'cm-014', deck: 'M', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['pression'],     visual: V.defi,   text: "Nomme deux choses que tu ne voudrais jamais faire même si tout le monde le fait." },
+  { id: 'cm-015', deck: 'M', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['limites'],      visual: V.defi,   text: "Raconte un moment où tu as dit non et tu en étais fier·ère." },
+  { id: 'cm-016', deck: 'M', theme: 'defi',   depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.defi,   text: "Propose une façon de vérifier que l'autre est vraiment ok avant de faire quelque chose ensemble." },
+
+  // Vérité (4) — relations saines, reconnaître les signaux
+  { id: 'cm-017', deck: 'M', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['relation'],     visual: V.verite, text: "C'est quoi pour toi une relation saine — avec un·e ami·e ou un·e amoureux·se ?" },
+  { id: 'cm-018', deck: 'M', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['respect'],      visual: V.verite, text: "Y a-t-il quelqu'un dans ta vie qui te respecte toujours ? Pourquoi tu penses ça ?" },
+  { id: 'cm-019', deck: 'M', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['amitié'],       visual: V.verite, text: "Qu'est-ce que tu ferais si un·e ami·e te disait que quelqu'un le/la met mal à l'aise ?" },
+  { id: 'cm-020', deck: 'M', theme: 'verite', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['limites'],      visual: V.verite, text: "As-tu déjà ressenti que quelqu'un franchissait tes limites sans le réaliser ?" },
+
+  // Douceur (4) — bienveillance, soin, connexion non-romantique
+  { id: 'cm-021', deck: 'M', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['affection'],   visual: V.douceur, text: "C'est quoi pour toi un geste qui montre qu'on tient à quelqu'un sans être amoureux·se ?" },
+  { id: 'cm-022', deck: 'M', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['soutien'],     visual: V.douceur, text: "Qu'est-ce qui te fait du bien quand tu ne vas pas bien — et que les autres peuvent faire ?" },
+  { id: 'cm-023', deck: 'M', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['connexion'],   visual: V.douceur, text: "Nomme quelqu'un qui te donne de l'énergie juste par sa présence. Pourquoi ?" },
+  { id: 'cm-024', deck: 'M', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.douceur, text: "Qu'est-ce qui rend un câlin ou une accolade OK ou pas OK selon toi ?" },
+
+  // ── rare · depth 2 · débloquées par modules medium mineurs ────────────
+  { id: 'cm-025', deck: 'M', theme: 'verite', depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['aide'],         visual: V.verite, text: "Y a-t-il une situation qui te fait peur mais dont tu n'oses pas parler à un adulte ?" },
+  { id: 'cm-026', deck: 'M', theme: 'et-si',  depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['droits'],        visual: V['et-si'], text: "Si un·e ami·e subissait quelque chose d'illégal, tu saurais vers qui l'orienter ?" },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // DECK B — Adultes · explicite (stub — contenu juriste à venir)
+  // ═══════════════════════════════════════════════════════════════════════
+  { id: 'cb-001', deck: 'B', theme: 'verite', depth: 3, rarity: 'unique', unlockedBy: 'decouverte-desirs', tags: ['pratique'], visual: V.verite, text: 'À venir — contenu rédigé par le juriste.' },
 ];
 
 export type ThemeCategory = {

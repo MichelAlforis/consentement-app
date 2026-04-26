@@ -156,9 +156,9 @@ export interface CollectorCard {
 | # | Tâche | Statut |
 |---|---|---|
 | 6.1 | Ajouter `deck: 'A'\|'B'\|'M'` et `theme` au type `CollectorCard` | ✅ |
-| 6.2 | Rédiger 24 textes Deck A common depth 1 (6 thèmes × 4) | 🔲 contenu équipe |
-| 6.3 | Rédiger 24 textes Deck M common depth 1 (même structure, langue 13-14 ans) | 🔲 contenu équipe |
-| 6.4 | Ajouter les 48 cartes avec visuels dans `cards-collector.ts` | 🔲 après 6.2-6.3 |
+| 6.2 | Rédiger 24 textes Deck A common depth 1 (6 thèmes × 4) | ✅ placeholder équipe |
+| 6.3 | Rédiger 24 textes Deck M common depth 1 (même structure, langue 13-14 ans) | ✅ placeholder équipe |
+| 6.4 | Ajouter les 48 cartes avec visuels dans `cards-collector.ts` | ✅ |
 
 ### Sprint 7 — `computeModuleGain`
 **Livrable :** pure function testée + config modules
@@ -174,9 +174,9 @@ export interface CollectorCard {
 
 | # | Tâche |
 |---|---|
-| 8.1 | Créer `ModuleDeBaseScreen` — présentation app, philosophie, skip possible |
-| 8.2 | Routing : premier lancement adulte/mineur → `module-de-base` (skippable) |
-| 8.3 | Complétion → `computeModuleGain('module-de-base', ...)` → flip reveal 24 cartes |
+| 8.1 | Créer `ModuleDeBaseScreen` — présentation app, philosophie, skip possible | ✅ |
+| 8.2 | Routing : premier lancement adulte/mineur → `module-de-base` (skippable) | ✅ |
+| 8.3 | Complétion → `computeModuleGain('module-de-base', ...)` → flip reveal 24 cartes | ✅ |
 
 ### Sprint 9 — Wiring modules existants ✅
 **Livrable :** 5 modules branchés sur `useModuleComplete` · testé Playwright en dev

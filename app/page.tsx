@@ -24,6 +24,7 @@ import {
   selectCanGoBack,
   resetAllData,
 } from './stores';
+import { useModuleProgressStore } from './stores/moduleProgressStore';
 
 // ─── Lazy screen imports (code splitting automatique) ────────────────────────
 
@@ -46,6 +47,7 @@ const DiceGameScreen = lazy(() => import('./components/screens/DiceGame').then(m
 const GooseGameScreen = lazy(() => import('./components/screens/GooseGameScreen').then(m => ({ default: m.GooseGameScreen })));
 const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
 const HallOfCardsScreen = lazy(() => import('./components/screens/HallOfCardsScreen').then(m => ({ default: m.HallOfCardsScreen })));
+const ModuleDeBaseScreen = lazy(() => import('./components/screens/ModuleDeBaseScreen').then(m => ({ default: m.ModuleDeBaseScreen })));
 const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 const ApprendreScreen = lazy(() => import('./components/screens/ApprendreScreen').then(m => ({ default: m.ApprendreScreen })));
@@ -105,6 +107,8 @@ function AppShell() {
   const currentScreen = useNavigationStore((s) => s.currentScreen);
   const { navigateTo, goBack } = useNavigationStore();
   const { isAdult, handleAgeSelect, handleAuth } = useAuthStore();
+  const completedModules = useModuleProgressStore((s) => s.completedModules);
+  const hasOnboarded = completedModules.some((id) => id.startsWith('module-de-base'));
   const { themeMode, selectTheme } = useSettingsStore();
   const { personalProfile } = useProfileStore();
   const { updateComfortLevel, updateSafeword } = useProfileStore();
@@ -152,6 +156,9 @@ function AppShell() {
         return <AuthScreen onAuth={handleAuth} />;
 
       case 'home':
+        if (!hasOnboarded) {
+          return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
+        }
         return (
           <HomeScreen
             isAdult={isAdult}
@@ -253,7 +260,7 @@ function AppShell() {
         return <MoiScreen isAdult={isAdult} onNavigate={navigateTo} />;
 
       case 'module-de-base':
-        return <WelcomeScreen onStart={() => navigateTo('home')} />;
+        return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
 
       default:
         return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
