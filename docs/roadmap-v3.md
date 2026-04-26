@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -249,6 +249,20 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 | 15.1 | `ownedCards` vide → `EmptyDeckPrompt` (CTA quiz consentement) | ✅ |
 | 15.2 | Tests : pool vide → `available.length===0`, `startPlaying` sans crash, `currentCard` null | ✅ 4 tests |
 
+### Bugfix — Deck M invisible (post Sprint 15) ✅
+
+Trois couches de bugs empêchaient les cartes Deck M d'être accessibles aux mineurs.
+
+| Fichier | Problème | Correction |
+|---|---|---|
+| `app/lib/useModuleComplete.ts` | `moduleId` adulte transmis sans résolution → donnait des cartes Deck A aux mineurs | `resolveModuleId()` + `MINEUR_VARIANTS` map : `module-de-base → module-de-base-mineur`, etc. |
+| `app/components/screens/CardGame/hooks/useCardSession.ts` | Filtre `Deck M` : `isAdult && explicitMode` (toujours `false` pour mineurs) | Corrigé en `!isAdult` |
+| `app/components/screens/HallOfCardsScreen.tsx` | Seuls Deck A + B affichés — Deck M jamais rendu | `deckM` ajouté, `primaryDeck = isAdult ? deckA : deckM`, `Deck B` conditionnel `{isAdult && …}` |
+
+Tests `useCardSession` mis à jour : fixture `ALL_OWNED` enrichie (cm-001, cm-002), assertions mineur → Deck M, adulte → Deck A uniquement.
+
+---
+
 ### Sprint 16 — Navigation Tab Bar V3 ✅
 **Livrable :** 4 onglets persistants remplaçant les MenuCards de la Home
 
@@ -300,6 +314,16 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | 16.5 | `page.tsx` — constante `TAB_ROOTS`, lazy load nouveaux écrans, afficher `TabBar` |
 | 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar |
 | 16.7 | i18n — clés `tab.home` · `tab.learn` · `tab.play` · `tab.me` (FR / EN / ES) |
+
+### Sprint 17 — i18n polish ✅
+**Livrable :** zéro chaîne FR hardcodée dans les écrans principaux
+
+| # | Fichier | Chaînes extraites | Statut |
+|---|---|---|---|
+| 17.1 | `HallOfCardsScreen.tsx` | `title`, `subtitle`, `deckALabel`, `deckMLabel`, `deckBLabel`, `rarityRare`, `rarityUnique`, `appAdulte` | ✅ |
+
+Namespace `hallOfCards` ajouté dans `app/i18n/locales/fr|en|es/games.ts`.  
+`AcquiredCard`, `LockedCard`, `FlipRevealOverlay` et `HallOfCardsScreen` utilisent maintenant tous `t()`.
 
 ---
 
