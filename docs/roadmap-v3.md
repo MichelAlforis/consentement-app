@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards + Sprint 18 tests)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards + Sprint 18 tests + Sprint 19 CardMesh dans DiceScene)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -332,6 +332,19 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | 18.13–18.14 | `ownedCards` append-only sans dédoublons · `gainedOn` ISO valide | ✅ |
 
 **16 tests · 6 fichiers · 79 tests total — tous verts.**
+
+---
+
+### Sprint 19 — `CardMesh` dans la scène R3F DiceGame ✅
+**Livrable :** après l'atterrissage du dé, une carte de la collection de l'utilisateur apparaît dans la même scène R3F
+
+| Fichier | Changement |
+|---|---|
+| `game-engine/dice/DiceCanvas.tsx` | `CameraUpdater` (pull-back z=3.2, fov=52) · `DiceScene` décale le dé à x=-0.55 · groupe carte à x=0.72 scale=0.55 · `enableBloom={false}` |
+| `game-engine/dice/DiceRenderer.tsx` | Thread `previewCard?` + `showCard?` vers `DiceCanvas` |
+| `components/screens/DiceGame/index.tsx` | `useUnlockStore` · `samplePreviewCard()` · `showCard` state · clear sur reroll/reset |
+
+**Architecture :** un seul WebGL context, pas de Canvas imbriqué. `CardMesh` intégré directement dans `DiceScene` via le pattern API : `<group position scale><Suspense><CardMesh enableBloom={false}/></Suspense><RarityLights/></group>`
 
 ---
 
