@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprint 18 tests + Sprint 19–20 DiceGame)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprint 18 tests + Sprint 19–21 DiceGame + GooseGame Accord card)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -357,6 +357,19 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | `components/screens/CardGame/index.tsx` | Badge `"PREMIUM"` → `t('games.premium')` |
 
 **Invariant :** tous les écrans principaux sont désormais 100 % i18n — aucune chaîne FR hardcodée restante.
+
+---
+
+### Sprint 21 — GooseGame Accord + carte collector ✅
+**Livrable :** quand les deux joueurs votent OUI sur une case Accord, une carte de la collection apparaît en 3D dans l'overlay de résultat
+
+| Fichier | Changement |
+|---|---|
+| `overlays/AccordFlow.tsx` | `useUnlockStore` + `useMemo(bothYes)` → `previewCard` · `CollectorCardCanvas size=120 autoFlip` animé (delay 350ms, spring) |
+
+**Décision d'architecture :** `CollectorCardCanvas` (scène perspective dédiée) plutôt que `CardMesh` inline dans le Canvas orthographique du plateau — la caméra orthographique à 40° d'élévation ne permet pas un rendu satisfaisant d'une carte dressée. L'overlay AccordFlow couvre déjà le plateau ; son propre WebGL context est marginal.
+
+**UX :** dos face visible → flip automatique (`autoFlip`) → face dévoilée · aucune carte si `ownedCards` vide.
 
 ---
 

@@ -1,9 +1,14 @@
 'use client';
+import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, X, EyeOff, Sparkles, Smile, Handshake } from 'lucide-react';
 import { Overlay } from '../components/Overlay';
 import { Player, TurnStep } from '../types';
 import { useTranslation } from '../../../../i18n';
+import { useUnlockStore } from '../../../../stores';
+import { collectorCards } from '../../../../data/cards-collector';
+import type { GainedCard } from '../../../../lib/computeGainedCards';
+import { CollectorCardCanvas } from '../../../../game-engine/cards/CollectorCardCanvas';
 
 type AccordStep = Extract<TurnStep, 'accord-intro' | 'accord-p1' | 'accord-hidden' | 'accord-p2' | 'accord-result'>;
 
@@ -29,6 +34,16 @@ export function AccordFlow({
 }: AccordFlowProps) {
   const { t } = useTranslation();
   const bothYes = accordVote0 === true && accordVote1 === true;
+  const ownedCards = useUnlockStore((s) => s.ownedCards);
+
+  const previewCard = useMemo((): GainedCard | null => {
+    if (!bothYes || ownedCards.length === 0) return null;
+    const owned = ownedCards[Math.floor(Math.random() * ownedCards.length)];
+    const cc = collectorCards.find((c) => c.id === owned.id);
+    if (!cc) return null;
+    return { id: cc.id, text: cc.text, rarity: cc.rarity, gradient: cc.visual.gradient, iconName: cc.visual.iconName, border: cc.visual.border };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bothYes]);
 
   return (
     <AnimatePresence mode="wait">
@@ -125,9 +140,19 @@ export function AccordFlow({
                   {t('gooseGame.accord.bothYesPlayers', { p1: player1.name, p2: player2.name })}
                   <Check size={14} className="text-green-400 shrink-0" />
                 </p>
-                <p className="text-white/55 text-sm mb-7">
+                <p className="text-white/55 text-sm mb-4">
                   {t('gooseGame.accord.accordNum', { count: accordsCount + 1 })}
                 </p>
+                {previewCard && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: 0.35, type: 'spring', stiffness: 240, damping: 20 }}
+                    className="flex justify-center mb-5"
+                  >
+                    <CollectorCardCanvas card={previewCard} isFlipped={false} autoFlip size={120} />
+                  </motion.div>
+                )}
               </>
             ) : (
               <>
