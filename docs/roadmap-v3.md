@@ -105,13 +105,18 @@ function getProgressLevel(completedModules: string[]): 1 | 2 | 3 {
 | `app/components/screens/HomeScreen/MasteryHome.tsx` | Home niveau 3 |
 | `app/components/ui/ProgressBar.tsx` | Barre progression modules |
 | `app/components/ui/NextModuleSuggestion.tsx` | Card "Prochain module" |
+| `app/components/ui/TabBar.tsx` | 4 onglets persistants — Accueil / Apprendre / Jouer / Moi |
+| `app/components/screens/ApprendreScreen.tsx` | Hub modules éducatifs (remplace `resources-minor` + `learn`) |
+| `app/components/screens/MoiScreen.tsx` | Hub profil — personal-space, duo-space, help, settings |
 
 ### Fichiers modifiés
 
 | Fichier | Modification |
 |---|---|
+| `app/types/index.ts` | + `'apprendre'` · `'moi'` · `'module-de-base'` au type `Screen` |
 | `app/data/cards-collector.ts` | + `deck: 'A'\|'B'\|'M'` · + `theme` (6 catégories) · 24 cartes Deck A · 24 cartes Deck M |
-| `app/components/screens/HomeScreen.tsx` | `useProgressLevel` + dispatch vers 3 composants |
+| `app/components/screens/HomeScreen.tsx` | `useProgressLevel` + dispatch vers 3 composants + retrait MenuCards redondantes |
+| `app/page.tsx` | TabBar affiché sur écrans racines · lazy load `ApprendreScreen`, `MoiScreen` |
 | `app/stores/index.ts` | Export + reset `moduleProgressStore` |
 | `app/game-engine/cards/useCardEngine.ts` | `drawCard` pioche dans `ownedCards` filtré par `theme` |
 | `app/components/screens/CardGame/index.tsx` | Guard niveau 1 : ownedCards vide → prompt module de base |
@@ -254,6 +259,58 @@ const handleFinish = () => {
 | 15.1 | Si `ownedCards.length === 0` → afficher `EmptyDeckPrompt` (CTA vers module de base) |
 | 15.2 | Test : niveau 1 + accès CardGame → guard affiché, pas de crash |
 
+### Sprint 16 — Navigation Tab Bar V3
+**Livrable :** 4 onglets persistants remplaçant les MenuCards de la Home
+
+#### Arbre de navigation cible
+
+```
+Onboarding : welcome → age-check → auth → [module-de-base skippable] → APP
+
+APP — Tab Bar persistant (visible sur les 4 racines seulement)
+├── [Accueil]   HomeScreen V3        ← niveau 1 / 2 / 3 automatique
+├── [Apprendre] ApprendreScreen      ← hub modules
+│                  ├── quiz-consentement
+│                  ├── porno-vs-realite
+│                  ├── loi-consentement
+│                  ├── accompagnement-mineur   (mineur uniquement)
+│                  └── module-pratiques-adultes (adulte, juriste)
+├── [Jouer]     GamesHubScreen (jeux) ← existant
+│                  ├── jeu-des · jeu-oie · jeu-cartes
+│                  └── hall-of-cards
+└── [Moi]       MoiScreen
+                   ├── personal-space  (adulte)
+                   ├── duo-space       (adulte)
+                   ├── help            (mineur)
+                   └── settings → theme-select · premium
+```
+
+**Règle d'affichage du TabBar :** visible si `currentScreen ∈ ['home', 'apprendre', 'jeux', 'moi']`. Caché sur tous les sous-écrans (quiz, jeu-oie, duo-space, settings…).
+
+#### Migration
+
+| Avant | Après |
+|---|---|
+| `resources-minor` (écran racine) | sous-écran de `ApprendreScreen` (mineur) |
+| `learn` (écran racine) | sous-écran de `ApprendreScreen` (adulte) |
+| `personal-space` depuis HomeScreen MenuCards | accessible depuis onglet Moi |
+| `duo-space` depuis HomeScreen MenuCards | accessible depuis onglet Moi |
+| `settings` depuis HomeScreen MenuCards | accessible depuis onglet Moi |
+| `jeux` (hub jeux existant) | onglet Jouer — inchangé structurellement |
+| MenuCards dans HomeScreen | supprimées — navigation assurée par le TabBar |
+
+#### Tâches
+
+| # | Tâche |
+|---|---|
+| 16.1 | `app/types/index.ts` — ajouter `'apprendre'` · `'moi'` · `'module-de-base'` au type `Screen` |
+| 16.2 | `TabBar.tsx` — 4 onglets avec icônes + état actif, caché hors racines |
+| 16.3 | `ApprendreScreen.tsx` — liste des modules (cartes cliquables) + badge progression par module |
+| 16.4 | `MoiScreen.tsx` — personal-space + duo-space (adulte) / help (mineur) + settings |
+| 16.5 | `page.tsx` — constante `TAB_ROOTS`, lazy load nouveaux écrans, afficher `TabBar` |
+| 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar |
+| 16.7 | i18n — clés `tab.home` · `tab.learn` · `tab.play` · `tab.me` (FR / EN / ES) |
+
 ---
 
 ## Ordre d'exécution
@@ -278,10 +335,14 @@ Sprint 6 (données)
                             └─ Sprint 14 (ModuleDeBaseScreen)
                                         │
                                         └─ Sprint 15 (guard CardGame)
+
+Sprint 16 (Tab Bar) — parallèle à 6–15, bloque sur rien
+                      mais lisible seulement quand HomeScreen V3 existe (Sprint 13)
 ```
 
 Sprints 6–10 peuvent avancer en parallèle.  
-Sprints 11–15 dépendent de 6–10.
+Sprints 11–15 dépendent de 6–10.  
+Sprint 16 est indépendant structurellement — recommandé après Sprint 13 pour tester les 3 niveaux depuis le TabBar.
 
 ---
 
@@ -293,6 +354,7 @@ Sprints 11–15 dépendent de 6–10.
 | `markModuleComplete` est idempotent | Sécurité double-appel |
 | `getProgressLevel` est une pure function | Testable, sans React |
 | Le déclencheur de module est toujours intentionnel | Bouton explicite — jamais sur scroll seul |
-| Deck M rédigé par l'équipe (pas le juriste) | Non bloquant pour les Sprints 6–15 |
+| TabBar visible sur racines seulement | Jamais dans un sous-écran (jeu, module, settings…) |
+| Deck M rédigé par l'équipe (pas le juriste) | Non bloquant pour les Sprints 6–16 |
 | Deck B rédigé par le juriste | Bloquant pour le contenu Deck B uniquement |
 | `ownedCards` append-only | Jamais de suppression de cartes |
