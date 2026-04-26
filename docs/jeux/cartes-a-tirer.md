@@ -107,24 +107,29 @@ Composant dans `CardGame/index.tsx` qui anime les cartes collector gagnées en f
 
 **Timeline d'animation :**
 ```
-t = 300ms          → carte 0 apparaît (scale 0.72 → 1, opacity 0 → 1)
-t = 300 + 800ms    → carte 0 s'auto-retourne (dos → face)
-t = 850ms          → carte 1 apparaît (stagger +550ms par carte)
-t = 850 + 800ms    → carte 1 s'auto-retourne
-t = lastFlip+600ms → hint "Touche une carte pour la retourner" apparaît
+t = 300ms         → carte 0 apparaît (scale 0.72 → 1, opacity 0 → 1)
+t = 300 + 800ms   → carte 0 s'auto-retourne (dos → face)
+t = 1400ms        → hint apparaît (juste après le 1er flip — pas en dernier)
+t = 850ms         → carte 1 apparaît (stagger +550ms par carte)
+t = 850 + 800ms   → carte 1 s'auto-retourne
 ```
 
-Tap sur une carte → toggle flip dans les deux sens.
+Tap sur une carte → `vibrate('light')` + toggle flip (retourner dans les deux sens). `whileTap={{ scale: 0.94 }}` donne un retour visuel immédiat.
+
+**Hint contextuel :**
+- 2 cartes ou moins : *"Touche une carte pour la retourner"*
+- 3+ cartes : *"Glisse pour voir toutes les cartes · Touche pour retourner"*
+- Opacity `0.50` (vs 0.25 avant — plus lisible)
 
 **Taille dynamique des cartes :**
 
-| Cartes gagnées | `size` | Hauteur |
-|---|---|---|
-| 1 | 160 px | 240 px |
-| 2 | 140 px | 210 px |
-| 3+ | 110 px | 165 px |
+| Cartes gagnées | `size` | Hauteur | Layout |
+|---|---|---|---|
+| 1 | 160 px | 240 px | centré |
+| 2 | 150 px | 225 px | centré, gap-4 |
+| 3+ | 140 px | 210 px | scroll horizontal snap |
 
-Taille choisie pour que 3 cartes côte à côte tiennent dans 375 px (iPhone SE).
+**Règle mobile — taille minimale 140 px :** en dessous, le texte canvas descend sous 13 px — illisible sur smartphone. Pour 3+ cartes, le layout passe en scroll horizontal (`overflow-x-auto snap-x snap-mandatory`) avec 2 cartes visibles et le bord du 3e pour signaler le scroll. `scrollbarWidth: none` masque la scrollbar native iOS/Android.
 
 **Quand des cartes sont gagnées :**
 `computeGainedCards()` est appelé dans `handleGoToEnd()` avec `sessionMode`, `cardCount`, `seanceSize`, `sessionThemes`, `sessionCount` (après incrément), `ownedIds`, `favorites`, `isPremium`. La logique de gain est dans `app/lib/computeGainedCards.ts` (voir `docs/jeux/card-gain-session.md`).
