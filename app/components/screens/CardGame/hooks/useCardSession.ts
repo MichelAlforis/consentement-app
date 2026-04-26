@@ -96,7 +96,9 @@ export function useCardSession(isAdult: boolean): CardSession {
   }, [available, selectedTheme, seanceSize]);
 
   const startPlaying = useCallback(() => {
+    if (available.length === 0) return;
     const card = pickCard(0, [], sessionMode);
+    if (!card) return;
     setCurrentCard(card);
     setCardCount(1);
     setDrawnIds([card.id]);
@@ -105,7 +107,7 @@ export function useCardSession(isAdult: boolean): CardSession {
     setStep('playing');
     const timer = setTimeout(() => setIsRevealed(true), 350);
     animTimers.current.push(timer);
-  }, [pickCard, sessionMode]);
+  }, [available, pickCard, sessionMode]);
 
   const drawNewCard = useCallback(() => {
     if (isAnimating) return;

@@ -85,17 +85,49 @@ Le bouton ❤️ apparaît sous chaque carte révélée. Il permet de marquer la
 
 ## Écran de fin (mode Séance)
 
-Affiché après la dernière carte de la séance :
+Affiché après la dernière carte de la séance. Fond cinématique via `GameEndCinematic` (orbes + particules R3F, voir `docs/jeux/EndScreen.md`).
 
-1. Emoji ✨ animé (spring bounce)
-2. Titre "Belle séance !" + ligne de stats (N cartes, paquets explorés, favoris)
-3. **Badges paquets explorés** : affiche les catégories effectivement rencontrées avec leur gradient couleur
-4. **Message d'insight contextuel** :
-   - Si Vérité ou Douceur explorés → message sur la profondeur atteinte
-   - Si Parlez ou Et si… → invitation à aller vers Vérité/Douceur
-   - Sinon → invitation à essayer le mode aléatoire
-5. "Nouvelle séance" → retour à l'écran de sélection (reset complet)
-6. "Continuer en mode libre" → continue avec la même carte sans recommencer
+### Layout complet (ordre d'affichage)
+
+1. `Sparkles` icon animé (spring bounce)
+2. **"Belle séance !"** + stats (N cartes · N paquets explorés · N favoris)
+3. **Badges paquets explorés** : catégories rencontrées avec gradient couleur
+4. **CardUnlockReveal** — si des cartes collector ont été gagnées (voir ci-dessous)
+5. **Message d'insight contextuel** :
+   - Si Vérité ou Douceur explorés → "Vous avez osé aller dans les sujets profonds."
+   - Si Parlez ou Et si… → "Bonne séance. Les paquets Vérité et Douceur vous attendent…"
+   - Sinon → "Belle entrée en matière — essayez le mode aléatoire pour explorer toutes les nuances."
+6. **[Nouvelle séance]** → reset complet, retour sélection *(primary CTA)*
+7. **[Continuer en mode libre]** → mode libre avec deck actuel *(secondary)*
+8. **[Voir ma collection →]** → navigue vers `hall-of-cards` *(tertiary, visible si gainedCards > 0)*
+
+### CardUnlockReveal — révélation de cartes collector
+
+Composant dans `CardGame/index.tsx` qui anime les cartes collector gagnées en fin de séance.
+
+**Timeline d'animation :**
+```
+t = 300ms          → carte 0 apparaît (scale 0.72 → 1, opacity 0 → 1)
+t = 300 + 800ms    → carte 0 s'auto-retourne (dos → face)
+t = 850ms          → carte 1 apparaît (stagger +550ms par carte)
+t = 850 + 800ms    → carte 1 s'auto-retourne
+t = lastFlip+600ms → hint "Touche une carte pour la retourner" apparaît
+```
+
+Tap sur une carte → toggle flip dans les deux sens.
+
+**Taille dynamique des cartes :**
+
+| Cartes gagnées | `size` | Hauteur |
+|---|---|---|
+| 1 | 160 px | 240 px |
+| 2 | 140 px | 210 px |
+| 3+ | 110 px | 165 px |
+
+Taille choisie pour que 3 cartes côte à côte tiennent dans 375 px (iPhone SE).
+
+**Quand des cartes sont gagnées :**
+`computeGainedCards()` est appelé dans `handleGoToEnd()` avec `sessionMode`, `cardCount`, `seanceSize`, `sessionThemes`, `sessionCount` (après incrément), `ownedIds`, `favorites`, `isPremium`. La logique de gain est dans `app/lib/computeGainedCards.ts` (voir `docs/jeux/card-gain-session.md`).
 
 ---
 

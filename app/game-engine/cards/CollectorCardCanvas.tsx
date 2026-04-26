@@ -4,6 +4,7 @@ import {
   useRef, useMemo, useState, useEffect, useCallback,
   Suspense, Component, type ReactNode,
 } from 'react';
+import { motion } from 'framer-motion';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
 import { EffectComposer, SelectiveBloom, Vignette, Selection, Select } from '@react-three/postprocessing';
@@ -623,15 +624,25 @@ function CardMesh({
   const triggerFlip = useCallback((toFace: boolean, cb?: () => void) => {
     const flip = flipRef.current;
     if (!flip) return;
-    vibrate(48);
+    vibrate('light'); // start of flip — always light
     anim.current = {
       active: true, startRot: flip.rotation.y,
       targetRot: toFace ? Math.PI : 0,
       elapsed: 0, duration: flipDuration, done: false,
       bouncing: false, bounceElapsed: 0,
-      onComplete: () => { vibrate(18); cb?.(); },
+      onComplete: () => {
+        // Haptic by rarity when card is revealed face-up
+        if (toFace) {
+          if (card.rarity === 'unique')     vibrate('heavy');
+          else if (card.rarity === 'rare') vibrate('medium');
+          else                             vibrate('light');
+        } else {
+          vibrate('light');
+        }
+        cb?.();
+      },
     };
-  }, [flipDuration, vibrate]);
+  }, [card.rarity, flipDuration, vibrate]);
 
   const prevFlipped = useRef(isFlipped);
   useEffect(() => {
@@ -912,6 +923,114 @@ function CSSCardFallback({ card, isFlipped }: { card: GainedCard; isFlipped: boo
   );
 }
 
+// ─── LightOverlay — shimmer sweep + gyroscope radial highlight ───────────────
+
+function LightOverlay({ rarity, isFlipped }: { rarity: string; isFlipped: boolean }) {
+  const gyroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isFlipped) return;
+
+    const getGyroGradient = (x: number, y: number) => {
+      if (rarity === 'unique') {
+        const hue = (x * 2.4 + y * 1.2) % 360;
+        return `radial-gradient(ellipse 55% 65% at ${x}% ${y}%, hsla(${hue},100%,82%,0.32) 0%, hsla(${(hue + 80) % 360},100%,78%,0.14) 40%, transparent 70%)`;
+      }
+      if (rarity === 'rare') {
+        return `radial-gradient(ellipse 50% 60% at ${x}% ${y}%, rgba(192,132,252,0.40) 0%, rgba(167,139,250,0.15) 40%, transparent 70%)`;
+      }
+      return `radial-gradient(ellipse 45% 55% at ${x}% ${y}%, rgba(255,255,255,0.28) 0%, transparent 60%)`;
+    };
+
+    let rafId = 0;
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma === null || e.beta === null) return;
+      // gamma = left/right tilt (-90..90), beta = front/back tilt (-180..180)
+      // Map to card position % — typical portrait hold: beta ≈ 60°, gamma ≈ 0°
+      const x = Math.round(Math.min(100, Math.max(0, 50 + (e.gamma / 30) * 35)));
+      const y = Math.round(Math.min(100, Math.max(0, 50 - ((e.beta - 60) / 30) * 30)));
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (gyroRef.current) {
+          gyroRef.current.style.background = getGyroGradient(x, y);
+          gyroRef.current.style.opacity = '1';
+        }
+      });
+    };
+
+    const register = () => {
+      window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+    };
+
+    // iOS 13+ requires requestPermission() inside a user gesture
+    type DOE = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<'granted' | 'denied'> };
+    if (typeof (DeviceOrientationEvent as DOE).requestPermission === 'function') {
+      const onGesture = () => {
+        (DeviceOrientationEvent as DOE).requestPermission!()
+          .then(state => { if (state === 'granted') register(); })
+          .catch(() => { /* denied or unavailable */ });
+      };
+      document.addEventListener('click',      onGesture, { capture: true, once: true });
+      document.addEventListener('touchstart', onGesture, { capture: true, once: true, passive: true });
+      return () => {
+        document.removeEventListener('click',      onGesture, true);
+        document.removeEventListener('touchstart', onGesture, true);
+        window.removeEventListener('deviceorientation', handleOrientation);
+        cancelAnimationFrame(rafId);
+      };
+    }
+
+    // Android / desktop — no permission needed
+    register();
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+      cancelAnimationFrame(rafId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFlipped]);
+
+  const shimmerGradient =
+    rarity === 'unique'
+      ? 'linear-gradient(108deg, transparent 18%, rgba(255,200,80,0.22) 36%, rgba(200,80,255,0.24) 50%, rgba(80,210,255,0.22) 64%, transparent 82%)'
+      : rarity === 'rare'
+      ? 'linear-gradient(108deg, transparent 30%, rgba(192,132,252,0.30) 50%, transparent 70%)'
+      : 'linear-gradient(108deg, transparent 30%, rgba(255,255,255,0.20) 50%, transparent 70%)';
+  const shimmerDuration    = rarity === 'unique' ? 1.0 : 1.3;
+  const shimmerRepeatDelay = rarity === 'unique' ? 1.6 : rarity === 'rare' ? 2.2 : 3.5;
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, overflow: 'hidden',
+      borderRadius: 14, pointerEvents: 'none', zIndex: 2,
+    }}>
+      {/* Gyro radial — updated directly via DOM ref at rAF rate, no React re-renders */}
+      <div
+        ref={gyroRef}
+        style={{
+          position: 'absolute', inset: 0,
+          background: 'transparent', opacity: 0,
+          transition: 'opacity 0.4s',
+          mixBlendMode: 'screen',
+        }}
+      />
+      {/* Shimmer sweep — diagonal, always runs when card is face-up */}
+      <motion.div
+        style={{ position: 'absolute', top: 0, bottom: 0, width: '100%', background: shimmerGradient }}
+        initial={{ x: '-110%' }}
+        animate={isFlipped ? { x: ['-110%', '110%'] } : { x: '-110%' }}
+        transition={isFlipped ? {
+          duration: shimmerDuration,
+          delay: 0.55,
+          repeat: Infinity,
+          repeatDelay: shimmerRepeatDelay,
+          ease: [0.4, 0, 0.2, 1],
+          repeatType: 'loop',
+        } : { duration: 0 }}
+      />
+    </div>
+  );
+}
+
 // ─── Export public ────────────────────────────────────────────────────────────
 
 export interface CollectorCardCanvasProps {
@@ -945,7 +1064,7 @@ export function CollectorCardCanvas({
   const fallback = <CSSCardFallback card={card} isFlipped={isFlipped} />;
 
   return (
-    <div style={{ width: w, height: h }}>
+    <div style={{ width: w, height: h, position: 'relative' }}>
       {mounted ? (
         <CanvasBoundary fallback={fallback}>
           <Canvas
@@ -965,6 +1084,7 @@ export function CollectorCardCanvas({
           </Canvas>
         </CanvasBoundary>
       ) : fallback}
+      <LightOverlay rarity={card.rarity} isFlipped={isFlipped} />
     </div>
   );
 }

@@ -11,6 +11,9 @@ const ALL_OWNED: OwnedCard[] = [
   { id: 'cb-001', rarity: 'common', gainedOn: '2026-01-01', unlockedBy: 'porno-vs-realite' },
 ];
 
+// Mutable — permet de passer [] dans les tests "pool vide"
+let currentOwnedCards: OwnedCard[] = ALL_OWNED;
+
 vi.mock('../../../../stores/settingsStore', () => ({
   useSettingsStore: (selector: (s: { explicitMode: boolean }) => unknown) =>
     selector({ explicitMode: false }),
@@ -18,7 +21,7 @@ vi.mock('../../../../stores/settingsStore', () => ({
 
 vi.mock('../../../../stores/unlockStore', () => ({
   useUnlockStore: (selector: (s: { ownedCards: OwnedCard[] }) => unknown) =>
-    selector({ ownedCards: ALL_OWNED }),
+    selector({ ownedCards: currentOwnedCards }),
 }));
 
 // localStorage minimal mock
@@ -38,9 +41,13 @@ const FAV_KEY = 'consentement_card_favorites';
 describe('useCardSession', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    currentOwnedCards = ALL_OWNED;
     Object.keys(storage).forEach((k) => delete storage[k]);
   });
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    currentOwnedCards = ALL_OWNED;
+  });
 
   // ── État initial ───────────────────────────────────────────────────────────
 
@@ -173,5 +180,33 @@ describe('useCardSession', () => {
     act(() => { result.current.startPlaying(); });
     act(() => { result.current.goToEnd(); });
     expect(result.current.step).toBe('end');
+  });
+
+  // ── Guard pool vide (Sprint 15.2) ──────────────────────────────────────────
+
+  describe('pool vide — ownedCards=[]', () => {
+    beforeEach(() => { currentOwnedCards = []; });
+
+    it('available.length === 0 quand aucune carte possédée', () => {
+      const { result } = renderHook(() => useCardSession(false));
+      expect(result.current.available.length).toBe(0);
+    });
+
+    it('step reste pick — startPlaying ne crashe pas avec pool vide', () => {
+      const { result } = renderHook(() => useCardSession(false));
+      // startPlaying avec pool vide ne doit pas lever d'exception
+      expect(() => act(() => { result.current.startPlaying(); })).not.toThrow();
+    });
+
+    it('currentCard reste null si pool vide', () => {
+      const { result } = renderHook(() => useCardSession(false));
+      act(() => { result.current.startPlaying(); });
+      expect(result.current.currentCard).toBeNull();
+    });
+
+    it('adulte avec pool vide : available.length === 0', () => {
+      const { result } = renderHook(() => useCardSession(true));
+      expect(result.current.available.length).toBe(0);
+    });
   });
 });

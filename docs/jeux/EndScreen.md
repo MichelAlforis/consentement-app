@@ -145,11 +145,15 @@ Le Level 3 n'est pertinent que si les tests sur devices cibles (iPhone SE 2, Mot
   primaryColor={colors.accent}   // dépend du thème actif
   secondaryColor="#60a5fa"
   intensity="medium"
+  darkOverlay
 />
 ```
 
 - `colors.accent` adapte la cinématique au thème sans condition — warm = corail, calm = bleu ardoise, dark-luxury = or, etc.
 - Intensité fixe `medium` : le CardGame n'a pas de score, donc pas de graduation
+- `darkOverlay` : assombrit le fond pour que les cartes collector blanches/colorées ressortent
+
+**Spécificité CardGame** : l'écran de fin contient un `CardUnlockReveal` qui affiche les cartes collector gagnées en séance (stagger 550ms, auto-flip à 800ms, tap-to-toggle). Voir `docs/jeux/cartes-a-tirer.md` section "Écran de fin".
 
 ### DiceGame (duo-reveal)
 

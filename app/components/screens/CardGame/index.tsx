@@ -504,6 +504,17 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
               >
                 <Shuffle size={14} />{t('cardGame.continueLibre')}
               </motion.button>
+              {gainedCards.length > 0 && (
+                <motion.button
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => onNavigate?.('hall-of-cards')}
+                  className="w-full py-2.5 text-xs font-medium text-center"
+                  style={{ color: 'rgba(167,139,250,0.7)' }}
+                >
+                  {t('cardGame.viewCollection')}
+                </motion.button>
+              )}
             </div>
             </div>
           </motion.div>
