@@ -2,7 +2,7 @@
 
 > Créé : 26 avril 2026  
 > Mis à jour : 26 avril 2026  
-> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 11 · 13 · 16 ✅ · Sprints 9 · 10 · 12 en cours  
+> Statut global : 🔄 En cours — Sprints 6.1 · 7 · 9 · 10(partiel) · 11 · 13 · 16 ✅ · Sprint 10.1–10.2 · 14 · 15 à faire  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -178,16 +178,18 @@ export interface CollectorCard {
 | 8.2 | Routing : premier lancement adulte/mineur → `module-de-base` (skippable) |
 | 8.3 | Complétion → `computeModuleGain('module-de-base', ...)` → flip reveal 24 cartes |
 
-### Sprint 9 — Wiring modules existants
-**Livrable :** 4 modules adultes + 1 mineur branchés sur `markModuleComplete`
+### Sprint 9 — Wiring modules existants ✅
+**Livrable :** 5 modules branchés sur `useModuleComplete` · testé Playwright en dev
 
-| # | Écran | Déclencheur |
-|---|---|---|
-| 9.1 | `QuizConsentementScreen` | Score affiché → bouton "Voir ma carte" |
-| 9.2 | `PornoVsRealiteScreen` | Bouton "J'ai lu" en bas |
-| 9.3 | `LoiConsentementScreen` | Bouton "J'ai lu" en bas |
-| 9.4 | `DuoSpaceScreen` | Étape 9 validée |
-| 9.5 | `AccompagnementMineurScreen` | Dernière étape de l'arbre |
+| # | Écran | Déclencheur | Statut |
+|---|---|---|---|
+| 9.1 | `QuizConsentementScreen` | Score affiché → bouton "Voir ma carte" | ✅ |
+| 9.2 | `PornoVsRealiteScreen` | Bouton "J'ai lu — Voir ma carte" en bas | ✅ |
+| 9.3 | `LoiConsentementScreen` | Bouton "J'ai lu — Voir ma carte" en bas | ✅ |
+| 9.4 | `DuoSpaceScreen` | Bouton "Voir ma carte" à l'étape summary | ✅ |
+| 9.5 | `AccompagnementMineurScreen` | Bouton "Voir ma carte" à l'étape guide | ✅ |
+
+Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `computeModuleGain`. Tous naviguent vers `hall-of-cards`.
 
 ### Sprint 10 — CardGame pool switch + nettoyage GooseGame
 **Livrable :** CardGame pioche dans ownedCards · triggers jeu supprimés
@@ -207,39 +209,15 @@ export interface CollectorCard {
 |---|---|---|
 | 11.1 | `moduleProgressStore` : `completedModules[]` + `markModuleComplete(id)` (idempotent) | ✅ |
 | 11.2 | Export + `reset()` dans `resetAllData()` | ✅ |
-| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) | ✅ implémentée, tests 🔲 |
+| 11.3 | `getProgressLevel(completedModules)` — pure function + tests (niveaux 1/2/3) | ✅ implémentée, tests ⬜ |
 
-### Sprint 9 — Wiring modules existants
-**Livrable :** 4 modules adultes + 1 mineur branchés sur `markModuleComplete`
+### Sprint 12 — Flip reveal animation *(partiel — logique ✅, animation ⬜)*
+**Livrable :** animation flip card au déverrouillage (le wiring logique est fait dans Sprint 9)
 
-| # | Écran | Déclencheur | Statut |
-|---|---|---|---|
-| 9.1 | `QuizConsentementScreen` | Score affiché → bouton "Voir ma carte" | ✅ |
-| 9.2 | `PornoVsRealiteScreen` | Bouton "J'ai lu" en bas | ✅ |
-| 9.3 | `LoiConsentementScreen` | Bouton "J'ai lu" en bas | ✅ |
-| 9.4 | `DuoSpaceScreen` | Étape 9 validée | 🔲 |
-| 9.5 | `AccompagnementMineurScreen` | Dernière étape de l'arbre | 🔲 |
-
-### Sprint 12 — Wiring `markModuleComplete` dans tous les modules
-**Livrable :** chaque module appelle `markModuleComplete` + `computeModuleGain` + flip reveal
-
-Pattern :
-```ts
-const handleFinish = () => {
-  if (completedModules.includes(moduleId)) return;
-  markModuleComplete(moduleId);
-  const newCards = computeModuleGain(moduleId, new Set(ownedCards.map(c => c.id)), collectorCards);
-  if (newCards.length > 0) { unlockCards(newCards); /* → flip reveal */ }
-};
-```
-
-| # | Écran | Module ID |
+| # | Tâche | Statut |
 |---|---|---|
-| 12.1 | `QuizConsentementScreen` | `quiz-consentement` |
-| 12.2 | `PornoVsRealiteScreen` | `porno-vs-realite` |
-| 12.3 | `LoiConsentementScreen` | `loi-consentement` |
-| 12.4 | `DuoSpaceScreen` | `duo-flow` |
-| 12.5 | `AccompagnementMineurScreen` | `accompagnement-mineur` |
+| 12.1–12.5 | `useModuleComplete` branché sur les 5 écrans | ✅ (fait Sprint 9) |
+| 12.6 | Animation flip reveal séquentielle au retour vers `hall-of-cards` | ⬜ |
 
 ### Sprint 13 — Composants Home V3
 **Livrable :** 3 composants Home + `HomeScreen` refactoré
