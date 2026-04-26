@@ -20,6 +20,12 @@ import type { GainedCard } from '../../../lib/computeGainedCards';
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
 
+const RARITY_COLOR: Record<string, string> = {
+  common: '#94a3b8',
+  rare: '#a78bfa',
+  unique: '#f59e0b',
+};
+
 const DICE_CONFIG: DiceConfig = {
   faces: ([1, 2, 3, 4, 5, 6] as const).map((n) => ({
     id: n,
@@ -202,6 +208,25 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     <DynamicIcon name={currentCat.iconName} size={24} color="white" />
                     <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
+                  </motion.div>
+                )}
+                {mode === 'practice' && showCard && previewCard && (
+                  <motion.div
+                    key="card-label"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="mt-2 px-3 py-2 rounded-xl flex items-start gap-2"
+                    style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, maxWidth: 210 }}
+                  >
+                    <span
+                      className="mt-0.5 w-2 h-2 rounded-full shrink-0"
+                      style={{ background: RARITY_COLOR[previewCard.rarity] }}
+                    />
+                    <p className="text-xs leading-snug line-clamp-2" style={{ color: colors.textSecondary }}>
+                      {previewCard.text}
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>

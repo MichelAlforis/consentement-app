@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–23 — stores testés + DiceGame + GooseGame Accord card)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–24 — stores testés + DiceGame card label + GooseGame Accord card)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -401,6 +401,38 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 **Note :** `unlockCards` ne déduplique pas dans un même batch (callers fournissent des listes uniques — comportement documenté et correct).
 
 **10 fichiers · 122 tests · tous verts.**
+
+---
+
+### Sprint 24 — DiceGame card label ✅
+**Livrable :** label contextuel sous le canvas 3D après chaque lancer
+
+Quand `mode === 'practice' && showCard && previewCard`, un label animé apparaît sous le canvas avec :
+- un **dot de rareté** (common=`#94a3b8` · rare=`#a78bfa` · unique=`#f59e0b`)
+- le **texte de la carte** (2 lignes max, `line-clamp-2`)
+- entrée en fondu + montée (délai 0.6 s pour laisser la carte se retourner)
+
+```tsx
+const RARITY_COLOR: Record<string, string> = {
+  common: '#94a3b8', rare: '#a78bfa', unique: '#f59e0b',
+};
+
+{mode === 'practice' && showCard && previewCard && (
+  <motion.div key="card-label" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0 }} transition={{ delay: 0.6 }}
+    className="mt-2 px-3 py-2 rounded-xl flex items-start gap-2"
+    style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, maxWidth: 210 }}>
+    <span className="mt-0.5 w-2 h-2 rounded-full shrink-0"
+      style={{ background: RARITY_COLOR[previewCard.rarity] }} />
+    <p className="text-xs leading-snug line-clamp-2" style={{ color: colors.textSecondary }}>
+      {previewCard.text}
+    </p>
+  </motion.div>
+)}
+```
+
+**Fichier modifié :** `app/components/screens/DiceGame/index.tsx`  
+**122 tests · tous verts.**
 
 ---
 
