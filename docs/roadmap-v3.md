@@ -1,7 +1,7 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards)  
+> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n HallOfCards + Sprint 18 tests)  
 > Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
@@ -314,6 +314,26 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | 16.5 | `page.tsx` — constante `TAB_ROOTS`, lazy load nouveaux écrans, afficher `TabBar` |
 | 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar |
 | 16.7 | i18n — clés `tab.home` · `tab.learn` · `tab.play` · `tab.me` (FR / EN / ES) |
+
+### Sprint 18 — Tests `useModuleComplete` ✅
+**Livrable :** couverture complète du flux critique module → cartes → reveal
+
+| # | Test | Statut |
+|---|---|---|
+| 18.1 | Adulte — module-de-base : 24 cartes Deck A communes | ✅ |
+| 18.2 | Adulte — quiz / loi / duo : count et rareté | ✅ |
+| 18.3 | Mineur — résolution `module-de-base → module-de-base-mineur` (24 cartes Deck M) | ✅ |
+| 18.4 | Mineur — résolution `quiz → quiz-consentement-mineur` | ✅ |
+| 18.5 | `accompagnement-mineur` : pas de double-résolution, 1 carte rare Deck M | ✅ |
+| 18.6 | `completedModules` contient l'`effectiveId` | ✅ |
+| 18.7 | Module inconnu : marqué dans `completedModules`, 0 cartes | ✅ |
+| 18.8–18.9 | Idempotence : deuxième appel → 0, `ownedCards` inchangé | ✅ |
+| 18.10–18.12 | `pendingIds` = IDs gagnés · vide si 0 cartes · non re-setté en cas de doublon | ✅ |
+| 18.13–18.14 | `ownedCards` append-only sans dédoublons · `gainedOn` ISO valide | ✅ |
+
+**16 tests · 6 fichiers · 79 tests total — tous verts.**
+
+---
 
 ### Sprint 17 — i18n polish ✅
 **Livrable :** zéro chaîne FR hardcodée dans les écrans principaux
