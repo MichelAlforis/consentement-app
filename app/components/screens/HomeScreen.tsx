@@ -21,18 +21,17 @@ interface HomeScreenProps {
 const ADULT_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'duo-flow'];
 const MINOR_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'accompagnement-mineur'];
 
-const MODULE_META: Record<string, { title: string; screen: Screen }> = {
-  'porno-vs-realite':    { title: 'Porno vs Réalité', screen: 'porno-vs-realite' },
-  'quiz-consentement':   { title: 'Quiz Consentement', screen: 'quiz-consentement' },
-  'loi-consentement':    { title: 'La loi & le consentement', screen: 'loi-consentement' },
-  'duo-flow':            { title: 'Duo Flow', screen: 'duo-space' },
-  'accompagnement-mineur': { title: 'Je me questionne', screen: 'accompagnement-mineur' },
+const MODULE_SCREEN: Record<string, Screen> = {
+  'porno-vs-realite':      'porno-vs-realite',
+  'quiz-consentement':     'quiz-consentement',
+  'loi-consentement':      'loi-consentement',
+  'duo-flow':              'duo-space',
+  'accompagnement-mineur': 'accompagnement-mineur',
 };
 
-function getNextModule(isAdult: boolean, completedModules: string[]) {
+function getNextModuleId(isAdult: boolean, completedModules: string[]): string | null {
   const seq = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
-  const id = seq.find((m) => !completedModules.includes(m)) ?? null;
-  return id ? MODULE_META[id] ?? null : null;
+  return seq.find((m) => !completedModules.includes(m)) ?? null;
 }
 
 // ── Shared sub-components ────────────────────────────────────────────────────
@@ -161,10 +160,10 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         </div>
         <div className="flex-1 text-left">
           <span className="font-bold text-base text-white block mb-0.5">
-            {isAdult ? 'Commence ton parcours' : 'Explore les modules'}
+            {isAdult ? t('homeV3.discovery.ctaAdult') : t('homeV3.discovery.ctaMinor')}
           </span>
           <p className="text-xs text-white/75">
-            Chaque module complété débloque des cartes
+            {t('homeV3.discovery.ctaDesc')}
           </p>
         </div>
         <ArrowRight size={20} className="text-white shrink-0" />
@@ -184,10 +183,10 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         </div>
         <div className="flex-1 min-w-0">
           <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
-            Ta collection t'attend
+            {t('homeV3.discovery.fomoTitle')}
           </span>
           <p className="text-xs" style={{ color: colors.textMuted }}>
-            Module de base → 24 cartes · Quiz → 1 carte · Loi → 1 rare…
+            {t('homeV3.discovery.fomoDesc')}
           </p>
         </div>
       </motion.div>
@@ -212,7 +211,9 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const { completedModules } = useModuleProgressStore();
   const sequence = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
   const progress = sequence.filter((m) => completedModules.includes(m)).length;
-  const nextModule = getNextModule(isAdult ?? true, completedModules);
+  const nextModuleId = getNextModuleId(isAdult ?? true, completedModules);
+  const nextModuleScreen = nextModuleId ? MODULE_SCREEN[nextModuleId] ?? null : null;
+  const nextModuleTitle = nextModuleId ? t(`homeV3.modules.${nextModuleId}`) : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -228,10 +229,10 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold" style={{ color: colors.textPrimary }}>
-            Progression
+            {t('homeV3.learning.progressLabel')}
           </span>
           <span className="text-xs font-medium" style={{ color: colors.accent }}>
-            {progress} / {sequence.length} modules
+            {t('homeV3.learning.moduleCount', { progress: String(progress), total: String(sequence.length) })}
           </span>
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>
@@ -244,18 +245,20 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           />
         </div>
         <p className="text-xs mt-2" style={{ color: colors.textMuted }}>
-          {ownedCards.length} carte{ownedCards.length > 1 ? 's' : ''} débloquée{ownedCards.length > 1 ? 's' : ''}
+          {ownedCards.length === 1
+            ? t('homeV3.learning.cardsOne')
+            : t('homeV3.learning.cardsPlural', { count: String(ownedCards.length) })}
         </p>
       </motion.div>
 
       {/* Prochain module suggéré */}
-      {nextModule && (
+      {nextModuleScreen && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => onNavigate(nextModule.screen)}
+          onClick={() => onNavigate(nextModuleScreen)}
           className="w-full rounded-2xl p-4 mb-3 flex items-center gap-3 text-left"
           style={{
             background: colors.bgCard,
@@ -268,9 +271,9 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
-              style={{ color: colors.accent }}>Prochain module</p>
+              style={{ color: colors.accent }}>{t('homeV3.learning.nextModuleLabel')}</p>
             <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
-              {nextModule.title}
+              {nextModuleTitle}
             </span>
           </div>
           <ArrowRight size={18} style={{ color: colors.accent, flexShrink: 0 }} />
@@ -300,7 +303,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
   const rareCount   = ownedCards.filter((c) => c.rarity === 'rare').length;
   const uniqueCount = ownedCards.filter((c) => c.rarity === 'unique').length;
-  const nextModule  = getNextModule(isAdult ?? true, completedModules);
+  const nextModuleId   = getNextModuleId(isAdult ?? true, completedModules);
+  const nextModuleScreen = nextModuleId ? MODULE_SCREEN[nextModuleId] ?? null : null;
+  const nextModuleTitle  = nextModuleId ? t(`homeV3.modules.${nextModuleId}`) : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -323,11 +328,17 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           </div>
           <div>
             <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
-              {ownedCards.length} cartes débloquées
+              {ownedCards.length === 1
+                ? t('homeV3.mastery.collectionOne')
+                : t('homeV3.mastery.collectionPlural', { count: String(ownedCards.length) })}
             </span>
             <p className="text-xs" style={{ color: colors.textMuted }}>
-              {rareCount > 0 ? `${rareCount} rare${rareCount > 1 ? 's' : ''} · ` : ''}
-              {uniqueCount > 0 ? `${uniqueCount} unique${uniqueCount > 1 ? 's' : ''}` : 'Voir ta collection →'}
+              {rareCount > 0
+                ? `${rareCount === 1 ? t('homeV3.mastery.rareOne') : t('homeV3.mastery.rarePlural', { count: String(rareCount) })} · `
+                : ''}
+              {uniqueCount > 0
+                ? (uniqueCount === 1 ? t('homeV3.mastery.uniqueOne') : t('homeV3.mastery.uniquePlural', { count: String(uniqueCount) }))
+                : t('homeV3.mastery.viewCollection')}
             </p>
           </div>
         </div>
@@ -353,10 +364,10 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           </div>
           <div className="flex-1 min-w-0">
             <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
-              Notre Espace
+              {t('homeV3.mastery.duoTitle')}
             </span>
             <p className="text-xs" style={{ color: colors.textSecondary }}>
-              Joue avec tes cartes débloquées en duo
+              {t('homeV3.mastery.duoDesc')}
             </p>
           </div>
           <ArrowRight size={18} style={{ color: '#ec4899', flexShrink: 0 }} />
@@ -364,13 +375,13 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
       )}
 
       {/* Prochain module s'il en reste */}
-      {nextModule && (
+      {nextModuleScreen && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => onNavigate(nextModule.screen)}
+          onClick={() => onNavigate(nextModuleScreen)}
           className="w-full rounded-2xl p-3.5 mb-3 flex items-center gap-3 text-left"
           style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
         >
@@ -380,9 +391,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
-              style={{ color: colors.accent }}>Aller plus loin</p>
+              style={{ color: colors.accent }}>{t('homeV3.mastery.goFurther')}</p>
             <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
-              {nextModule.title}
+              {nextModuleTitle}
             </span>
           </div>
           <ArrowRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />

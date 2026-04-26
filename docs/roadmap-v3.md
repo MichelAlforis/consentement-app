@@ -229,7 +229,7 @@ Hook `useModuleComplete` : idempotent, marque le module + débloque cartes via `
 | 13.3 | `MasteryHome({ isAdult, ownedCards, completedModules, onNavigate })` — niveau 3 | ✅ |
 | 13.4 | `ProgressBar` + `NextModuleSuggestion` — inline dans HomeScreen | ✅ |
 | 13.5 | `HomeScreen.tsx` — `useProgressLevel` + dispatch vers les 3 composants | ✅ |
-| 13.6 | i18n : nouvelles clés home pour les 3 états (FR/EN/ES) | 🔲 partiel |
+| 13.6 | i18n : nouvelles clés home pour les 3 états (FR/EN/ES) | ✅ |
 
 ### Sprint 14 — `ModuleDeBaseScreen`
 **Livrable :** écran d'intro skippable + 24 cartes au premier lancement

@@ -64,4 +64,40 @@ export const home = {
     },
     privacy: 'Your data is encrypted and you can delete it anytime.',
   },
+
+  homeV3: {
+    discovery: {
+      ctaAdult: 'Start your journey',
+      ctaMinor: 'Explore modules',
+      ctaDesc: 'Each completed module unlocks cards',
+      fomoTitle: 'Your collection awaits',
+      fomoDesc: 'Base module → 24 cards · Quiz → 1 card · Law → 1 rare…',
+    },
+    learning: {
+      progressLabel: 'Progress',
+      moduleCount: '{progress} / {total} modules',
+      cardsOne: '1 card unlocked',
+      cardsPlural: '{count} cards unlocked',
+      nextModuleLabel: 'Next module',
+    },
+    mastery: {
+      collectionOne: '1 card unlocked',
+      collectionPlural: '{count} cards unlocked',
+      rareOne: '1 rare',
+      rarePlural: '{count} rares',
+      uniqueOne: '1 unique',
+      uniquePlural: '{count} uniques',
+      viewCollection: 'View your collection →',
+      duoTitle: 'Our Space',
+      duoDesc: 'Play with your unlocked cards together',
+      goFurther: 'Go further',
+    },
+    modules: {
+      'porno-vs-realite': 'Porn vs Reality',
+      'quiz-consentement': 'Consent Quiz',
+      'loi-consentement': 'The law & consent',
+      'duo-flow': 'Duo Flow',
+      'accompagnement-mineur': 'I have questions',
+    },
+  },
 } as const;
