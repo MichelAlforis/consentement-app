@@ -89,7 +89,7 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
   useEffect(() => {
     if (!groupRef.current) return;
     groupRef.current.position.set(0, BOARD_DICE_REST_Y, 0);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!isRolling || !groupRef.current) return;

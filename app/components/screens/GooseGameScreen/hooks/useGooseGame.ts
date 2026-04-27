@@ -106,7 +106,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
         return;
       }
     }
-  }, [isAdult, triggerConfetti, vibrate]);
+  }, [isAdult, explicitMode, triggerConfetti, vibrate]);
 
   // ── Dé ─────────────────────────────────────────────────────────────────────
   const onDiceLanded = useCallback((face: 1 | 2 | 3 | 4 | 5 | 6) => {

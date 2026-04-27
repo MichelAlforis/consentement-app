@@ -12,7 +12,7 @@
  * Commande   : npx tsx scripts/migrate-locales.mjs
  */
 
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 

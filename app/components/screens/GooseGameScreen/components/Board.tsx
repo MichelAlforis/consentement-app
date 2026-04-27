@@ -466,8 +466,11 @@ function buildIconTexture(iconName: string): THREE.CanvasTexture | null {
     else if (tag === 'rect') {
       const rx = parseFloat(a.rx ?? '0');
       const [x, y, w, h] = [a.x, a.y, a.width, a.height].map(parseFloat);
-      if (rx > 0 && (ctx as CanvasRenderingContext2D & { roundRect?: Function }).roundRect) {
-        (ctx as any).roundRect(x, y, w, h, rx);
+      const roundedCtx = ctx as CanvasRenderingContext2D & {
+        roundRect?: (x: number, y: number, w: number, h: number, radii: number) => void;
+      };
+      if (rx > 0 && roundedCtx.roundRect) {
+        roundedCtx.roundRect(x, y, w, h, rx);
       } else { ctx.rect(x, y, w, h); }
       ctx.fill();
     }

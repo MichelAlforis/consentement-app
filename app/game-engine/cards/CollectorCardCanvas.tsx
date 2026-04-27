@@ -7,7 +7,7 @@ import {
 import { motion } from 'framer-motion';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
-import { EffectComposer, SelectiveBloom, Vignette, Selection } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
@@ -619,7 +619,6 @@ export function CardMesh({
   );
   const faceTex = useMemo(
     () => makeFaceTexture(card, 512, refTex.image as HTMLImageElement),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [card, refTex],
   );
 
@@ -640,7 +639,6 @@ export function CardMesh({
 
   const faceMat = useMemo((): THREE.Material =>
     new THREE.MeshBasicMaterial({ map: faceTex }),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   [faceTex]);
 
   const anim = useRef({
@@ -841,8 +839,7 @@ function CardScene({
   onFlipComplete?: () => void;
 }) {
   return (
-    // Selection — contexte pour SelectiveBloom (seul le glow ring est sélectionné)
-    <Selection>
+    <>
       <ambientLight intensity={0.04} />
       <pointLight position={[ 3.5,  4, -1.0]} intensity={0.16} />
       <pointLight position={[-3.0,  1, -0.5]} intensity={0.06} />
@@ -858,14 +855,14 @@ function CardScene({
         <ContactShadows position={[0, -0.80, 0]} opacity={0.55} blur={3.2} far={2.5} scale={4} />
       </Suspense>
 
-      {/* SelectiveBloom — isolé dans PostFXBoundary → si ça crash (Safari/WebGL1), cartes restent visibles */}
+      {/* Bloom — isolé dans PostFXBoundary → si ça crash (Safari/WebGL1), cartes restent visibles */}
       <PostFXBoundary>
         <EffectComposer>
-          <SelectiveBloom intensity={1.20} luminanceThreshold={0.30} luminanceSmoothing={0.60} />
+          <Bloom intensity={0.60} luminanceThreshold={0.55} luminanceSmoothing={0.40} />
           <Vignette eskil={false} offset={0.40} darkness={0.50} />
         </EffectComposer>
       </PostFXBoundary>
-    </Selection>
+    </>
   );
 }
 
