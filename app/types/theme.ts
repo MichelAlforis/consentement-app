@@ -68,7 +68,6 @@ export interface ThemeEffects {
 export interface Theme {
   id: ThemeMode;
   name: string;
-  emoji: string;
   description: string;
   colors: ThemeColors;
   effects: ThemeEffects;
@@ -87,7 +86,6 @@ const freeEffects: ThemeEffects = {
 export const warmTheme: Theme = {
   id: 'warm',
   name: 'Chaleureux',
-  emoji: '🌅',
   description: 'Tons chauds et doux',
   effects: freeEffects,
   colors: {
@@ -149,7 +147,6 @@ export const warmTheme: Theme = {
 export const calmTheme: Theme = {
   id: 'calm',
   name: 'Apaisant',
-  emoji: '🌙',
   description: 'Tons sombres et sereins',
   effects: freeEffects,
   colors: {
@@ -211,7 +208,6 @@ export const calmTheme: Theme = {
 export const darkLuxuryTheme: Theme = {
   id: 'dark-luxury',
   name: 'Sombre & Luxe',
-  emoji: '✨',
   description: 'Intimiste et sophistiqué',
   effects: {
     shimmer: true,
@@ -273,7 +269,6 @@ export const darkLuxuryTheme: Theme = {
 export const nudeTheme: Theme = {
   id: 'nude',
   name: 'Nude & Doux',
-  emoji: '🤍',
   description: 'Élégant et épuré',
   effects: {
     shimmer: false,
@@ -335,7 +330,6 @@ export const nudeTheme: Theme = {
 export const youthTheme: Theme = {
   id: 'youth',
   name: 'Jeunesse',
-  emoji: '🌈',
   description: 'Coloré et bienveillant',
   effects: freeEffects,
   colors: {

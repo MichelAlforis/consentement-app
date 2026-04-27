@@ -81,9 +81,11 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
               style={{ background: themeGradients[mode], boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}
             >
               <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px"
                   style={{ background: theme.colors.accentGradient }}>
-                  <span className="text-2xl">{theme.emoji}</span>
+                  {themePreviewColors[mode].map((color) => (
+                    <div key={color} className="rounded-[3px]" style={{ backgroundColor: color }} />
+                  ))}
                 </div>
                 <div>
                   <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
@@ -173,9 +175,11 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
               )}
 
               <div className="flex items-center gap-4 mb-3" style={{ position: 'relative', zIndex: 5 }}>
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px"
                   style={{ background: theme.colors.accentGradient }}>
-                  <span className="text-2xl">{theme.emoji}</span>
+                  {themePreviewColors[mode].map((color) => (
+                    <div key={color} className="rounded-[3px]" style={{ backgroundColor: color }} />
+                  ))}
                 </div>
                 <div>
                   <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
