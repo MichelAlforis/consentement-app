@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, Check, ArrowLeft, CreditCard, Lock, Sparkles, Dices, Palette } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { AppLogo } from '../ui';
 
 interface PremiumScreenProps {
   onActivate: () => void;
@@ -63,10 +64,8 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               className="rounded-3xl p-6 mb-6 text-center"
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
-              <div className="flex justify-center mb-3">
-                <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <Crown size={32} className="text-yellow-300" />
-                </div>
+              <div className="flex justify-center mb-4">
+                <AppLogo height={100} variant="dark" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-1">{t('premium.heroTitle')}</h2>
               <p className="text-white/80 text-sm mb-4">{t('premium.heroSubtitle')}</p>

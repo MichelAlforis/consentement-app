@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart } from 'lucide-react';
+import { AppLogo } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore, usePremiumStore } from '../../stores';
@@ -70,25 +71,31 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
-      {/* Header */}
+      {/* Brand card */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="mb-6"
+        className="rounded-2xl p-4 mb-6 flex items-center gap-4"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
-        <div className="flex items-center gap-2 mb-1">
-          <User size={20} style={{ color: colors.accent }} />
-          <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
-            {userName || t('moi.defaultName')}
-          </h1>
-        </div>
-        {isPremium && (
-          <div className="flex items-center gap-1.5">
-            <Crown size={12} style={{ color: '#f59e0b' }} />
-            <span className="text-xs font-medium" style={{ color: '#f59e0b' }}>{t('games.premium')}</span>
+        <AppLogo height={56} variant="theme" />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <User size={15} style={{ color: colors.accent }} />
+            <h1 className="text-base font-bold truncate" style={{ color: colors.textPrimary }}>
+              {userName || t('moi.defaultName')}
+            </h1>
           </div>
-        )}
+          {isPremium ? (
+            <div className="flex items-center gap-1">
+              <Crown size={11} style={{ color: '#f59e0b' }} />
+              <span className="text-xs font-medium" style={{ color: '#f59e0b' }}>{t('games.premium')}</span>
+            </div>
+          ) : (
+            <span className="text-xs" style={{ color: colors.textMuted }}>Consentement</span>
+          )}
+        </div>
       </motion.div>
 
       <div className="space-y-3">

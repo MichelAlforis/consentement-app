@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ErrorBoundary } from '../ui/ErrorBoundary';
 import type { Screen } from '../../types';
@@ -30,8 +30,7 @@ import {
   ApprendreScreen,
   MoiScreen,
 } from '../../routes';
-import type { Theme } from '../../types/theme';
-import type { ThemeMode } from '../../types/theme';
+import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
 
 type RouteRendererProps = {
@@ -52,23 +51,126 @@ type RouteRendererProps = {
   activatePremium: () => void;
 };
 
-export function RouteRenderer({
-  currentScreen,
-  isAdult,
-  hasOnboarded,
-  userName,
-  personalProfile,
-  isPremium,
-  theme,
-  navigateTo,
-  goBack,
-  selectTheme,
-  handleAgeSelect,
-  handleAuth,
-  updateComfortLevel,
-  updateSafeword,
-  activatePremium,
-}: RouteRendererProps) {
+type ShellCtx = Omit<RouteRendererProps, 'currentScreen' | 'theme'>;
+
+// Record<Screen, ...> enforces exhaustiveness: adding a new Screen without a render entry is a compile error.
+const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
+  welcome: (ctx) =>
+    <WelcomeScreen onStart={() => ctx.navigateTo('age-check')} />,
+
+  'age-check': (ctx) => (
+    <AgeCheckScreen
+      onSelectMinor={() => { ctx.handleAgeSelect(false); ctx.selectTheme('youth'); ctx.navigateTo('home'); }}
+      onSelectAdult={() => { ctx.handleAgeSelect(true); ctx.navigateTo('auth'); }}
+    />
+  ),
+
+  auth: (ctx) =>
+    <AuthScreen onAuth={(name) => { ctx.handleAuth(name); ctx.navigateTo('home'); }} />,
+
+  home: (ctx) =>
+    ctx.hasOnboarded
+      ? <HomeScreen isAdult={ctx.isAdult} userName={ctx.userName} onNavigate={ctx.navigateTo} />
+      : <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+
+  settings: (ctx) =>
+    <SettingsScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} onNavigate={ctx.navigateTo} />,
+
+  'personal-space': (ctx) => (
+    <PersonalSpaceScreen
+      profile={ctx.personalProfile}
+      onUpdateLevel={ctx.updateComfortLevel}
+      onUpdateSafeword={ctx.updateSafeword}
+      onSave={() => ctx.goBack()}
+    />
+  ),
+
+  'duo-space': (ctx) => (
+    <DuoSpaceScreen
+      personalProfile={ctx.personalProfile}
+      onUpdateComfort={ctx.updateComfortLevel}
+      onUpdateSafeword={ctx.updateSafeword}
+      onBack={() => ctx.goBack()}
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  // Legacy routes — AppShell redirects to screenMeta.legacy.replacement before first render.
+  learn: () => null,
+  'scenarios-minor': () => null,
+  feelings: () => null,
+
+  help: () => <HelpScreen />,
+
+  'resources-minor': (ctx) =>
+    <ResourcesMinorScreen onNavigate={ctx.navigateTo} />,
+
+  'porno-vs-realite': (ctx) =>
+    <PornoVsRealiteScreen onBack={() => ctx.goBack()} onComplete={() => ctx.navigateTo('hall-of-cards')} />,
+
+  'loi-consentement': (ctx) =>
+    <LoiConsentementScreen onComplete={() => ctx.navigateTo('hall-of-cards')} />,
+
+  'quiz-consentement': (ctx) =>
+    <QuizConsentementScreen onComplete={() => ctx.navigateTo('hall-of-cards')} />,
+
+  'accompagnement-mineur': (ctx) => (
+    <AccompagnementMineurScreen onNavigate={ctx.navigateTo} onComplete={() => ctx.navigateTo('hall-of-cards')} />
+  ),
+
+  jeux: (ctx) => (
+    <GamesHubScreen
+      onNavigate={ctx.navigateTo}
+      isPremium={ctx.isPremium}
+      isAdult={ctx.isAdult ?? false}
+      onGoPremium={() => ctx.navigateTo('premium')}
+    />
+  ),
+
+  'jeu-des': (ctx) =>
+    <DiceGameScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} />,
+
+  'jeu-oie': (ctx) =>
+    <GooseGameScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} />,
+
+  'jeu-cartes': (ctx) => (
+    <CardGameScreen
+      isPremium={ctx.isPremium}
+      isAdult={ctx.isAdult ?? false}
+      onNavigate={(s) => ctx.navigateTo(s as Screen)}
+    />
+  ),
+
+  'hall-of-cards': (ctx) => (
+    <HallOfCardsScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} onNavigate={ctx.navigateTo} />
+  ),
+
+  apprendre: (ctx) =>
+    <ApprendreScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+
+  moi: (ctx) =>
+    <MoiScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+
+  'module-de-base': (ctx) =>
+    <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+
+  'theme-select': (ctx) => (
+    <ThemeSelectScreen
+      onSelectTheme={(mode) => { ctx.selectTheme(mode); ctx.navigateTo('home'); }}
+      isPremium={ctx.isPremium}
+      onGoPremium={() => ctx.navigateTo('premium')}
+    />
+  ),
+
+  premium: (ctx) => (
+    <PremiumScreen
+      onActivate={() => { ctx.activatePremium(); ctx.navigateTo('theme-select'); }}
+      onBack={() => ctx.goBack()}
+    />
+  ),
+};
+
+export function RouteRenderer({ currentScreen, theme, ...ctx }: RouteRendererProps) {
   const pageTransition =
     theme.effects.pageTransition === 'fade'
       ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.45, ease: 'easeInOut' } }
@@ -76,94 +178,12 @@ export function RouteRenderer({
         ? { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 }, transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } }
         : { initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -20 }, transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] } };
 
-  const renderScreen = () => {
-    switch (currentScreen) {
-      case 'welcome':
-        return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
-      case 'age-check':
-        return (
-          <AgeCheckScreen
-            onSelectMinor={() => { handleAgeSelect(false); selectTheme('youth'); navigateTo('home'); }}
-            onSelectAdult={() => { handleAgeSelect(true); navigateTo('auth'); }}
-          />
-        );
-      case 'auth':
-        return <AuthScreen onAuth={(name) => { handleAuth(name); navigateTo('home'); }} />;
-      case 'home':
-        if (!hasOnboarded) {
-          return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
-        }
-        return <HomeScreen isAdult={isAdult} userName={userName} onNavigate={navigateTo} />;
-      case 'settings':
-        return <SettingsScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={navigateTo} />;
-      case 'personal-space':
-        return (
-          <PersonalSpaceScreen
-            profile={personalProfile}
-            onUpdateLevel={updateComfortLevel}
-            onUpdateSafeword={updateSafeword}
-            onSave={() => goBack()}
-          />
-        );
-      case 'duo-space':
-        return (
-          <DuoSpaceScreen
-            personalProfile={personalProfile}
-            onUpdateComfort={updateComfortLevel}
-            onUpdateSafeword={updateSafeword}
-            onBack={() => goBack()}
-            onComplete={() => navigateTo('hall-of-cards')}
-          />
-        );
-      case 'learn':
-      case 'scenarios-minor':
-      case 'feelings':
-        // Legacy routes — AppShell redirects to screenMeta.legacy.replacement on mount.
-        // Return null to avoid a flash of the old content during that one frame.
-        return null;
-      case 'help':
-        return <HelpScreen />;
-      case 'resources-minor':
-        return <ResourcesMinorScreen onNavigate={navigateTo} />;
-      case 'porno-vs-realite':
-        return <PornoVsRealiteScreen onBack={() => goBack()} onComplete={() => navigateTo('hall-of-cards')} />;
-      case 'loi-consentement':
-        return <LoiConsentementScreen onComplete={() => navigateTo('hall-of-cards')} />;
-      case 'quiz-consentement':
-        return <QuizConsentementScreen onComplete={() => navigateTo('hall-of-cards')} />;
-      case 'accompagnement-mineur':
-        return <AccompagnementMineurScreen onNavigate={navigateTo} onComplete={() => navigateTo('hall-of-cards')} />;
-      case 'jeux':
-        return <GamesHubScreen onNavigate={navigateTo} isPremium={isPremium} isAdult={isAdult ?? false} onGoPremium={() => navigateTo('premium')} />;
-      case 'jeu-des':
-        return <DiceGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
-      case 'jeu-oie':
-        return <GooseGameScreen isPremium={isPremium} isAdult={isAdult ?? false} />;
-      case 'jeu-cartes':
-        return <CardGameScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={(s) => navigateTo(s as Screen)} />;
-      case 'hall-of-cards':
-        return <HallOfCardsScreen isPremium={isPremium} isAdult={isAdult ?? false} onNavigate={navigateTo} />;
-      case 'theme-select':
-        return <ThemeSelectScreen onSelectTheme={(mode) => { selectTheme(mode); navigateTo('home'); }} isPremium={isPremium} onGoPremium={() => navigateTo('premium')} />;
-      case 'premium':
-        return <PremiumScreen onActivate={() => { activatePremium(); navigateTo('theme-select'); }} onBack={() => goBack()} />;
-      case 'apprendre':
-        return <ApprendreScreen isAdult={isAdult} onNavigate={navigateTo} />;
-      case 'moi':
-        return <MoiScreen isAdult={isAdult} onNavigate={navigateTo} />;
-      case 'module-de-base':
-        return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
-      default:
-        return <WelcomeScreen onStart={() => navigateTo('age-check')} />;
-    }
-  };
-
   return (
     <AnimatePresence mode="wait">
       <motion.div key={currentScreen} {...pageTransition}>
         <Suspense fallback={<ScreenLoader />}>
           <ErrorBoundary label={currentScreen}>
-            {renderScreen()}
+            {SCREEN_RENDERS[currentScreen](ctx)}
           </ErrorBoundary>
         </Suspense>
       </motion.div>

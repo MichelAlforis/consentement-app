@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShieldCheck, BookOpen, MessageCircle, ArrowRight, HeartHandshake, BadgeCheck } from 'lucide-react';
-import { Button } from '../ui';
+import { ShieldCheck, BookOpen, MessageCircle, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Button, AppLogo } from '../ui';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -28,34 +28,23 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     >
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         <motion.div
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="relative mb-8"
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 180, damping: 18 }}
+          className="relative mb-8 flex items-center justify-center"
         >
           <motion.div
             animate={{
-              boxShadow: [
-                '0 0 40px rgba(139, 92, 246, 0.2)',
-                '0 0 70px rgba(244, 114, 182, 0.38)',
-                '0 0 40px rgba(139, 92, 246, 0.2)',
+              filter: [
+                'drop-shadow(0 0 18px rgba(124,58,237,0.22))',
+                'drop-shadow(0 0 38px rgba(124,58,237,0.48))',
+                'drop-shadow(0 0 18px rgba(124,58,237,0.22))',
               ],
             }}
-            transition={{ duration: 3.2, repeat: Infinity }}
-            className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-violet-500 via-purple-500 to-rose-400 flex items-center justify-center"
+            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <HeartHandshake size={52} className="text-white" strokeWidth={1.5} />
+            <AppLogo height={180} variant="light" />
           </motion.div>
-
-          {[...Array(4)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: [0, 1, 0], scale: [0, 1, 0], y: [-10, -55], x: [-15 + i * 10, -20 + i * 14] }}
-              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6 }}
-              className={`absolute top-2 left-1/2 w-2 h-2 rounded-full ${i % 2 === 0 ? 'bg-rose-300' : 'bg-violet-300'}`}
-            />
-          ))}
         </motion.div>
 
         <motion.div

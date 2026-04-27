@@ -34,6 +34,15 @@ describe('navigationStore', () => {
     expect(store().history).toEqual(['home']);
   });
 
+  it('replaceWith is idempotent — no state change when already on target', () => {
+    store().navigateTo('apprendre');
+    const before = store();
+    store().replaceWith('apprendre');
+
+    expect(store().currentScreen).toBe(before.currentScreen);
+    expect(store().history).toEqual(before.history);
+  });
+
   it('selectCanGoBack requires both history and a non-root screen', () => {
     expect(selectCanGoBack('quiz-consentement', ['apprendre'])).toBe(true);
     expect(selectCanGoBack('quiz-consentement', [])).toBe(false);

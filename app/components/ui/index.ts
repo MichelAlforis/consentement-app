@@ -9,3 +9,5 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { Toast } from './Toast';
 export { AdBanner } from './AdBanner';
 export { ExplicitModeToggle } from './ExplicitModeToggle';
+export { AppLogo } from './AppLogo';
+export type { LogoVariant } from './AppLogo';

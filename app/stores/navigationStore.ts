@@ -24,10 +24,10 @@ export const useNavigationStore = create<NavigationStore>((set) => ({
     };
   }),
 
-  replaceWith: (screen) => set((state) => ({
-    currentScreen: screen,
-    history: state.history,
-  })),
+  replaceWith: (screen) => set((state) => {
+    if (state.currentScreen === screen) return state;
+    return { currentScreen: screen, history: state.history };
+  }),
 
   goBack: () => set((state) => {
     const previous = state.history.at(-1);
