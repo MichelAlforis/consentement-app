@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, Wifi, WifiOff, QrCode } from 'lucide-react';
+import { Smartphone, Wifi, WifiOff, QrCode, Check } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -156,14 +156,13 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               transition={{ duration: 0.5 }}
               className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center"
             >
-              <motion.span
+              <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-4xl"
               >
-                ✓
-              </motion.span>
+                <Check size={40} color="white" strokeWidth={3} />
+              </motion.div>
             </motion.div>
             <h2 className="text-xl font-bold text-green-600">
               {t('duo.bump.success')}
