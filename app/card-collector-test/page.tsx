@@ -7,6 +7,8 @@ import type { GainedCard } from '../components/screens/CardGame/index';
 import { ThemeProvider } from '../context/ThemeContext';
 import { PlayingCard } from '../components/screens/CardGame/PlayingCard';
 import type { CollectorCard } from '../data/cards-collector';
+import { DynamicIcon } from '../utils/iconFromName';
+import { CARD_LAYOUT } from '../game-engine/cards/CollectorCardCanvas';
 
 const CollectorCardCanvas = dynamic(
   () => import('../game-engine/cards/CollectorCardCanvas').then(m => ({ default: m.CollectorCardCanvas })),
@@ -230,6 +232,12 @@ function CardSlot({
 function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFlipped: boolean; size: number }) {
   const w = size;
   const h = Math.round(size * 1.5);
+  const gradientBg = (() => {
+    const m = card.gradient.match(/#[0-9a-f]{6}/i);
+    const c1 = m ? m[0] : '#3b1f85';
+    return `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`;
+  })();
+
   return (
     <div style={{ width: w, height: h, perspective: 600 }}>
       <div style={{
@@ -238,6 +246,7 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
         transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
         transition: 'transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}>
+        {/* Dos */}
         <div style={{
           position: 'absolute', inset: 0, borderRadius: 20,
           background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
@@ -247,27 +256,89 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
         }}>
           <span style={{ fontSize: size * 0.22, fontWeight: 900, color: 'rgba(255,255,255,0.09)' }}>C</span>
         </div>
+
+        {/* Face — positions absolues calquées sur CARD_LAYOUT */}
         <div style={{
           position: 'absolute', inset: 0, borderRadius: 20,
-          background: (() => {
-            const m = card.gradient.match(/#[0-9a-f]{6}/i);
-            const c1 = m ? m[0] : '#3b1f85';
-            return `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`;
-          })(),
+          background: gradientBg,
           border: '1.5px solid rgba(255,255,255,0.10)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
           overflow: 'hidden',
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: card.gradient }} />
-          <p style={{
-            position: 'absolute', top: 16, bottom: 10, left: 10, right: 10,
-            fontSize: size * 0.09, fontWeight: 500, color: 'rgba(255,255,255,0.90)',
-            textAlign: 'left', lineHeight: 1.5, margin: 0,
-            display: 'flex', alignItems: 'center', overflow: 'hidden',
+
+          {/* Header */}
+          <div style={{
+            position: 'absolute', top: 5, left: 0, right: 0,
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: `${Math.round(size * 0.045)}px ${Math.round(size * 0.06)}px 0`,
           }}>
-            {card.text}
-          </p>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 3,
+              padding: `${Math.round(size * 0.022)}px ${Math.round(size * 0.05)}px ${Math.round(size * 0.022)}px ${Math.round(size * 0.037)}px`,
+              borderRadius: size, background: card.gradient,
+            }}>
+              <DynamicIcon name={card.iconName} size={Math.round(size * 0.075)} color="white" />
+            </div>
+            {card.rarity !== 'common' && (
+              <div style={{
+                marginLeft: 'auto',
+                padding: `${Math.round(size * 0.018)}px ${Math.round(size * 0.037)}px`,
+                borderRadius: 6,
+                background: card.rarity === 'unique'
+                  ? 'linear-gradient(135deg, #b45309, #f59e0b)'
+                  : 'linear-gradient(135deg, #7c3aed, #a855f7)',
+              }}>
+                <span style={{ fontSize: Math.round(size * 0.044), fontWeight: 800, color: 'white' }}>
+                  {card.rarity === 'unique' ? 'UNIQUE' : 'RARE'}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Icône — CARD_LAYOUT.iconCenterY */}
+          <div style={{
+            position: 'absolute',
+            top: `${CARD_LAYOUT.iconCenterY * 100}%`,
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            filter: `drop-shadow(0 0 ${Math.round(size * 0.06)}px ${card.border})`,
+          }}>
+            <DynamicIcon name={card.iconName} size={Math.round(size * 0.24)} color="rgba(255,255,255,0.88)" />
+          </div>
+
+          {/* Panneau texte — CARD_LAYOUT.panelTop / panelHeight */}
+          <div style={{
+            position: 'absolute',
+            top: `${CARD_LAYOUT.panelTop * 100}%`,
+            left: Math.round(size * 0.075),
+            right: Math.round(size * 0.075),
+            height: `${CARD_LAYOUT.panelHeight * 100}%`,
+            boxSizing: 'border-box',
+            padding: `${Math.round(size * 0.045)}px ${Math.round(size * 0.05)}px`,
+            borderRadius: Math.round(size * 0.05),
+            background: 'rgba(5,5,12,0.52)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden',
+          }}>
+            <p style={{
+              margin: 0,
+              fontSize: Math.round(size * 0.082),
+              fontWeight: 700,
+              color: 'rgba(255,255,255,0.90)',
+              lineHeight: 1.32,
+              textAlign: 'center',
+              display: '-webkit-box',
+              WebkitLineClamp: 4,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            } as React.CSSProperties}>
+              {card.text}
+            </p>
+          </div>
+
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: card.gradient }} />
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart } from 'lucide-react';
+import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHeart, BookUser } from 'lucide-react';
 import { AppLogo } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -116,6 +116,28 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
               desc={t('moi.duoSpaceDesc')}
               iconBg={colors.secondaryGradient}
               onClick={() => onNavigate('duo-space')}
+              index={++cardIndex}
+            />
+          </>
+        )}
+
+        {/* Adult-only: support + annuaire */}
+        {isAdult && (
+          <>
+            <ProfileCard
+              icon={<HandHeart size={20} className="text-white" />}
+              title={t('headers.accompagnementAdulte')}
+              desc={t('moi.accompagnementAdulteDesc')}
+              iconBg="linear-gradient(135deg, #ec4899, #db2777)"
+              onClick={() => onNavigate('accompagnement-adulte')}
+              index={++cardIndex}
+            />
+            <ProfileCard
+              icon={<BookUser size={20} className="text-white" />}
+              title="Annuaire sexologues"
+              desc="Trouver un·e professionnel·le — présentiel ou téléconsultation"
+              iconBg={colors.accentGradient}
+              onClick={() => onNavigate('annuaire-sexologues')}
               index={++cardIndex}
             />
           </>

@@ -73,6 +73,48 @@ export const education = {
     },
   },
 
+  accompagnementAdulte: {
+    title: 'Tu traverses quelque chose ?',
+    subtitle: 'Un espace confidentiel, sans jugement.',
+    intro: {
+      text: "Que tu aies vécu quelque chose de difficile, que tu t'interroges sur ton comportement ou que tu aies été témoin d'une situation, tu n'as pas à rester seul·e avec ça.",
+      note: "Aucune information n'est enregistrée. Ce qui est dit ici reste ici.",
+      cta: 'Continuer',
+    },
+    situation: {
+      question: 'De quoi as-tu besoin ?',
+      victim: {
+        title: "J'ai vécu quelque chose qui m'a perturbé·e",
+        desc: 'Une situation qui ne semblait pas normale, ou qui t\'a mis·e mal à l\'aise',
+      },
+      self: {
+        title: 'Je m\'interroge sur mon propre comportement',
+        desc: 'Je veux comprendre ou m\'améliorer',
+      },
+      witness: {
+        title: 'J\'ai été témoin d\'une situation',
+        desc: 'Je ne savais pas quoi faire ou je me pose des questions',
+      },
+    },
+    victim: {
+      message: "Ce que tu as vécu compte. Tu n'as pas à le minimiser. Des personnes formées peuvent t'écouter et t'aider à comprendre tes droits — sans te juger, sans te forcer à porter plainte.",
+    },
+    self: {
+      message: "Le fait de te poser ces questions est déjà un premier pas. Parler à un professionnel peut t'aider à comprendre ce qui s'est passé et à agir autrement à l'avenir.",
+    },
+    witness: {
+      message: "Tu peux faire quelque chose. Signaler, écouter, ou simplement orienter la personne vers les bonnes ressources — chaque geste compte.",
+    },
+    resources: {
+      violences: 'Violences Femmes Info',
+      police: 'Police / Gendarmerie',
+      signalement: 'Signaler en ligne',
+      planning: 'Planning Familial',
+      sexologue: 'Parler à un·e professionnel·le',
+      sexologueDesc: 'Sexologue, thérapeute ou médecin — bientôt dans l\'app',
+    },
+  },
+
   accompagnement: {
     title: 'Je veux avoir un rapport',
     subtitle: 'Des questions à se poser. Sans jugement.',
