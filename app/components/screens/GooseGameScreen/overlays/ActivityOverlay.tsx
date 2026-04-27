@@ -1,5 +1,4 @@
 'use client';
-import { DICE_CATEGORIES } from '../../../../data';
 import { getSquareIconName, BoardSquare } from '../../../../data/goose-game';
 import { Zone } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
@@ -21,7 +20,6 @@ export function ActivityOverlay({
   step, activity, activeName, currentSquare, squareBg, currentZone, onContinue,
 }: ActivityOverlayProps) {
   const { t } = useTranslation();
-  const isNormal     = step === 'normal';
   const isPause      = step === 'pause';
   const isComplicite = step === 'complicite';
 

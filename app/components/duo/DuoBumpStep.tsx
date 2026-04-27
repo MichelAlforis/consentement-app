@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Wifi, WifiOff, QrCode } from 'lucide-react';
 import { Button, Card } from '../ui';
@@ -18,16 +18,6 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [bumpState, setBumpState] = useState<BumpState>('waiting');
-  const [pulseCount, setPulseCount] = useState(0);
-
-  useEffect(() => {
-    if (bumpState === 'waiting') {
-      const interval = setInterval(() => {
-        setPulseCount(prev => prev + 1);
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [bumpState]);
 
   const handleSimulateBump = () => {
     setBumpState('detecting');

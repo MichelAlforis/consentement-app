@@ -405,7 +405,7 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
 export function HomeScreen({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const { completedModules } = useModuleProgressStore();
-  const level = getProgressLevel(completedModules, isAdult);
+  const level = getProgressLevel(completedModules);
 
   if (level === 3) return <MasteryHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
   if (level === 2) return <LearningHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;

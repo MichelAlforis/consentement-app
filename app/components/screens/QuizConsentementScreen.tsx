@@ -62,7 +62,6 @@ export function QuizConsentementScreen({ onComplete }: QuizConsentementScreenPro
   };
 
   const getScoreLabel = () => {
-    const plural = score > 1 ? 's' : '';
     if (score >= 7) return { label: t('quizScreen.scoreLabels.excellent'), color: '#22c55e', Icon: Trophy };
     if (score >= 5) return { label: t('quizScreen.scoreLabels.good'), color: '#3b82f6', Icon: ThumbsUp };
     if (score >= 3) return { label: t('quizScreen.scoreLabels.notBad'), color: '#f59e0b', Icon: BookOpen };

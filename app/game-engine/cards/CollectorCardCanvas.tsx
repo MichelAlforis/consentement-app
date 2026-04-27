@@ -119,26 +119,6 @@ function drawIconNodes(
   ctx.restore();
 }
 
-function buildIconTexture(iconName: string): THREE.CanvasTexture | null {
-  if (!ICON_NODES[iconName]) return null;
-  const S = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = S;
-  const ctx = canvas.getContext('2d')!;
-  ctx.clearRect(0, 0, S, S);
-  drawIconNodes(ctx, iconName, S / 2, S / 2, S, 'rgba(255,255,255,0.96)');
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.needsUpdate = true;
-  return tex;
-}
-
-const iconCache = new Map<string, THREE.CanvasTexture | null>();
-function getCachedIcon(name: string): THREE.CanvasTexture | null {
-  if (!iconCache.has(name)) iconCache.set(name, buildIconTexture(name));
-  return iconCache.get(name) ?? null;
-}
-
 // ─── Canvas helpers ───────────────────────────────────────────────────────────
 
 function parseGradient(gradient: string): [string, string] {
@@ -186,30 +166,6 @@ function makeRoundedCardGeometry(w: number, h: number, r: number): THREE.ShapeGe
   }
   uv.needsUpdate = true;
   return geo;
-}
-
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string, x: number, y: number, maxWidth: number, lineHeight: number,
-  stroke = false,
-) {
-  const words = text.split(' ');
-  let line = '';
-  const drawLine = (l: string, ly: number) => {
-    if (stroke) ctx.strokeText(l, x, ly);
-    ctx.fillText(l, x, ly);
-  };
-  for (const word of words) {
-    const test = line ? `${line} ${word}` : word;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      drawLine(line, y);
-      line = word;
-      y += lineHeight;
-    } else {
-      line = test;
-    }
-  }
-  if (line) drawLine(line, y);
 }
 
 function drawWrappedTextBlock(
@@ -645,7 +601,6 @@ export function CardMesh({
   const outerRef  = useRef<THREE.Group>(null); // world-space arc + Z wobble
   const flipRef   = useRef<THREE.Group>(null); // rotation Y (le flip)
   const styleRef  = useRef<THREE.Group>(null); // squash-stretch atterrissage
-  const iridAngle = useRef(0);
   const idleT     = useRef(0);
 
   const geometry      = useMemo(() => makeRoundedCardGeometry(1, 1.5, 0.15), []);

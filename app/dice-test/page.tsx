@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { DiceRenderer } from '../game-engine/dice/DiceRenderer';
 import { DICE_CATEGORIES } from '../data';
 import type { DiceConfig, DiceFace } from '../game-engine/dice/types';
@@ -146,8 +147,8 @@ export default function DiceTestPage() {
 
       {/* Links */}
       <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <a href="/plateau-test" style={linkStyle}>Plateau →</a>
-        <a href="/" style={linkStyle}>App →</a>
+        <Link href="/plateau-test" style={linkStyle}>Plateau →</Link>
+        <Link href="/" style={linkStyle}>App →</Link>
       </div>
     </div>
   );

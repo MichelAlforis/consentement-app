@@ -55,7 +55,7 @@ export function useCardSession(isAdult: boolean): CardSession {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [cardCount, setCardCount] = useState(0);
-  const [drawnIds, setDrawnIds] = useState<string[]>([]);
+  const [, setDrawnIds] = useState<string[]>([]);
   const [sessionThemes, setSessionThemes] = useState<CardTheme[]>([]);
   const [favorites, setFavorites] = useState<string[]>(loadFavs);
   const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);

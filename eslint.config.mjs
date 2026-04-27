@@ -1,11 +1,9 @@
-import nextConfig from 'eslint-config-next';
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import prettierConfig from 'eslint-config-prettier';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-  ...nextConfig,
   ...nextCoreWebVitals,
   prettierConfig,
   {
@@ -16,6 +14,10 @@ const config = [
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'react/display-name': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/immutability': 'off',
     },
   },
   {

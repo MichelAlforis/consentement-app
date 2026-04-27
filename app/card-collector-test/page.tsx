@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { CardBack } from '../game-engine/cards/CardBack';
 import type { GainedCard } from '../components/screens/CardGame/index';
@@ -160,9 +161,9 @@ export default function CardCollectorTestPage() {
 
       {/* Nav */}
       <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-        <a href="/dice-test" style={linkStyle}>Dé →</a>
-        <a href="/plateau-test" style={linkStyle}>Plateau →</a>
-        <a href="/" style={linkStyle}>App →</a>
+        <Link href="/dice-test" style={linkStyle}>Dé →</Link>
+        <Link href="/plateau-test" style={linkStyle}>Plateau →</Link>
+        <Link href="/" style={linkStyle}>App →</Link>
       </div>
     </div>
   );

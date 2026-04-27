@@ -1,9 +1,9 @@
 # Pion — Modélisation & Mouvement → 2026
 
 **Fichiers clés :**
-- `app/components/screens/GooseGameScreen/components/Board.tsx` — rendu pion dans `BoardCell`
+- `app/components/screens/GooseGameScreen/components/Board.tsx` — rendu pion dans `PawnSvg`
 - `app/components/screens/GooseGameScreen/hooks/usePawnAnimation.ts` — logique de déplacement
-- `app/data/goose-game.ts` — `PAWN_EMOJIS`
+- `app/data/goose-game.ts` — `PAWN_ICONS`
 - `app/components/screens/GooseGameScreen/phases/SetupPlayer.tsx` — choix du pion
 
 ---
@@ -25,11 +25,11 @@ Un pion = un emoji dans un badge translucide, anti-transformé pour rester lisib
     transform: 'rotateZ(-45deg) rotateX(-45deg) scale(1.4)',
   }}
 >
-  {p0Emoji}
+  {p0Pawn}
 </motion.span>
 ```
 
-- 6 emojis : `['🦊', '🐼', '🦋', '🌙', '🌟', '🎲']` — le pion de J1 retiré du choix de J2
+- 6 icônes Lucide : `['Zap', 'Leaf', 'Wind', 'Moon', 'Star', 'Dice5']` (`PAWN_ICONS`) — le pion de J1 retiré du choix de J2
 - Deux pions sur la même case : affichage côte à côte
 
 ### Mouvement
@@ -48,8 +48,9 @@ Un pion = un emoji dans un badge translucide, anti-transformé pour rester lisib
 
 ### Modélisation ✅ Livré
 
-- Pion = SVG 75 px, forme pion classique : base ellipse + corps trapèze + tête sphère + emoji
+- Pion = SVG 75 px, forme pion classique : base ellipse + corps trapèze + tête sphère + icône Lucide
 - Couleurs distinctes J1 / J2 via `PAWN_COLORS` dans `app/data/goose-game.ts`
+- Identité visuelle : `Player.pawn` = nom d'icône Lucide (ex. `"Zap"`, `"Moon"`)
 
 Structure SVG (couches) :
 ```svg
@@ -67,8 +68,10 @@ Structure SVG (couches) :
 <!-- Tête : radialGradient highlight haut-gauche -->
 <circle cx="30" cy="22" r="13" fill="url(#head-gradient)" />
 
-<!-- Emoji -->
-<text x="30" y="23" fontSize="15">{emoji}</text>
+<!-- Icône Lucide via foreignObject (remplace l'ancien <text>{emoji}) -->
+<foreignObject x="17" y="9" width="26" height="26">
+  <DynamicIcon name={pawn} size={14} color="rgba(255,255,255,0.92)" />
+</foreignObject>
 ```
 
 ### Flottaison 2.5D — clé technique
@@ -193,7 +196,7 @@ Offset diagonal fixe par pion (jamais dynamique) :
 | Feature | Niveau 1 ✅ | Niveau 2 ✅ | Niveau 3 ✅ |
 |---------|-----------|---------|---------|
 | Forme | Emoji + badge | Pion SVG (trapèze + tête) | Pion R3F 4 meshes |
-| Identité J1 / J2 | emoji seul | couleur + emoji | couleur (clearcoat) |
+| Identité J1 / J2 | icône Lucide seule | couleur + icône Lucide | couleur (clearcoat) |
 | Ombre portée | ❌ | ✅ ellipse SVG | ✅ ContactShadows + disc |
 | Flottaison 2.5D | ❌ | ✅ `translateZ` CSS | ✅ Y natif Three.js |
 | Éclairage unifié cases+pions | ❌ | ❌ | ✅ même scène |

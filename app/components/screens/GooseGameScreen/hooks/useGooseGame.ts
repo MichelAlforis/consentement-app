@@ -57,14 +57,14 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   const { show: showConfetti, key: confettiKey, trigger: triggerConfetti } = useConfetti();
 
   // ── Persistance ────────────────────────────────────────────────────────────
-  const persistGame = useCallback((p0: number, p1c: number, cp: 0 | 1, ac: number) => {
+  const persistGame = useCallback((_p0: number, _p1c: number, _cp: 0 | 1, _ac: number) => {
     const { p1: pl1, p2: pl2 } = gameRef.current;
     if (!pl1 || !pl2) return;
-    saveGame({ players: [pl1, pl2], positions: [p0, p1c], currentPlayer: cp, accordsCount: ac });
+    saveGame({ players: [pl1, pl2], positions: [_p0, _p1c], currentPlayer: _cp, accordsCount: _ac });
   }, []);
 
   // ── Logique de case ────────────────────────────────────────────────────────
-  const processSquare = useCallback((squareIndex: number, p0: number, p1c: number, cp: 0 | 1, ac: number) => {
+  const processSquare = useCallback((squareIndex: number) => {
     const square = BOARD[squareIndex];
     switch (square.type) {
       case 'arrivee': {
@@ -120,7 +120,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
       if (cp === 0) setPos0(newPos);
       else          setPos1(newPos);
       persistGame(newPos0, newPos1, cp, ac);
-      processSquare(newPos, newPos0, newPos1, cp, ac);
+      processSquare(newPos);
     });
   }, [animatePawn, persistGame, processSquare]);
 
@@ -143,7 +143,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
       if (cp === 0) setPos0(newPos);
       else          setPos1(newPos);
       persistGame(newPos0, newPos1, cp, ac);
-      processSquare(newPos, newPos0, newPos1, cp, ac);
+      processSquare(newPos);
     });
   }, [animatePawn, persistGame, processSquare]);
 

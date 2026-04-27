@@ -15,7 +15,7 @@ interface PornoVsRealiteScreenProps {
   onComplete?: () => void;
 }
 
-export function PornoVsRealiteScreen({ onBack, onComplete }: PornoVsRealiteScreenProps) {
+export function PornoVsRealiteScreen({ onComplete }: PornoVsRealiteScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const complete = useModuleComplete();

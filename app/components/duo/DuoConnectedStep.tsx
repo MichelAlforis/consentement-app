@@ -11,7 +11,7 @@ interface DuoConnectedStepProps {
   onComplete: () => void;
 }
 
-export function DuoConnectedStep({ partnerName, onComplete }: DuoConnectedStepProps) {
+export function DuoConnectedStep({ onComplete }: DuoConnectedStepProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 

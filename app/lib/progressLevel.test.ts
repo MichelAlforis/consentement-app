@@ -17,7 +17,7 @@ describe('getProgressLevel', () => {
   });
 
   it('returns 3 with minor variant of loi-consentement', () => {
-    expect(getProgressLevel(['loi-consentement-mineur'], false)).toBe(3);
+    expect(getProgressLevel(['loi-consentement-mineur'])).toBe(3);
   });
 
   it('returns 3 with duo-flow', () => {

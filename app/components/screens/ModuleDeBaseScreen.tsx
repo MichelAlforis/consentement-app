@@ -7,7 +7,6 @@ import { useTheme } from '../../context/ThemeContext';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/moduleDeBase';
-import { resolveModuleId } from '../../modules';
 import type { Screen } from '../../types';
 
 interface ModuleDeBaseScreenProps {
@@ -21,7 +20,6 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
 
   const slides = isAdult === false ? MODULE_DE_BASE_SLIDES_MINEUR : MODULE_DE_BASE_SLIDES;
-  const moduleId = resolveModuleId('module-de-base', isAdult);
 
   const [index, setIndex] = useState(0);
   const isLast = index === slides.length - 1;
@@ -31,7 +29,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
     if (!isLast) {
       setIndex((i) => i + 1);
     } else {
-      completeModule(moduleId);
+      completeModule('module-de-base');
       onNavigate('hall-of-cards');
     }
   };
