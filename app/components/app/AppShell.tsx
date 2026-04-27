@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { TabBar } from '../ui/TabBar';
 import { Toast } from '../ui';
@@ -83,6 +83,13 @@ export function AppShell() {
   useAndroidBackButton();
   useAppDiagnostics(currentScreen);
 
+  // Minimum splash duration — prevents sub-100ms flash on fast devices
+  const [minDone, setMinDone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMinDone(true), 600);
+    return () => clearTimeout(t);
+  }, []);
+
   // Returning-user redirect: language is the default starting screen (navigationStore not persisted).
   // history.length === 0 means we're at the initial launch, not navigated here from settings.
   useEffect(() => {
@@ -117,16 +124,15 @@ export function AppShell() {
     }
   }, [currentScreen, isAdult, replaceWith]);
 
-  if (!isHydrated) {
-    return (
-      <AnimatePresence>
-        <SplashScreen />
-      </AnimatePresence>
-    );
-  }
+  const showSplash = !isHydrated || !minDone;
 
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
+    <>
+      <AnimatePresence>
+        {showSplash && <SplashScreen key="splash" />}
+      </AnimatePresence>
+
+      {!showSplash && <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
       <HeaderController isAdult={isAdult} theme={theme} />
 
       <div className="flex-1 overflow-y-auto">
@@ -166,6 +172,7 @@ export function AppShell() {
           theme={theme}
         />
       )}
-    </div>
+    </div>}
+    </>
   );
 }
