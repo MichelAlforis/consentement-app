@@ -6,18 +6,24 @@ import { Shield, Lock, Check, KeyRound, Landmark, Flag } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuthStore } from '../../stores';
 
 interface AuthScreenProps {
   onAuth: (name: string) => void;
 }
 
+const PRONOUNS = ['il', 'elle', 'iel', 'neutre'] as const;
+type PronounKey = typeof PRONOUNS[number];
+
 export function AuthScreen({ onAuth }: AuthScreenProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { setPronouns } = useAuthStore();
   const [name, setName] = useState('');
   const [showNameInput, setShowNameInput] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [selectedPronoun, setSelectedPronoun] = useState<PronounKey | null>(null);
 
   const handleConnect = () => {
     if (!showNameInput) {
@@ -25,6 +31,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
       return;
     }
     if (name.trim()) {
+      setPronouns(selectedPronoun);
       onAuth(name.trim());
     } else {
       setHasError(true);
@@ -75,7 +82,7 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
         <motion.div
           initial={{ opacity: 0, y: 20, height: 0 }}
           animate={{ opacity: 1, y: 0, height: 'auto' }}
-          className="mb-4"
+          className="mb-4 space-y-3"
         >
           <Card variant="default" padding="lg">
             <label className="block text-sm font-medium mb-2" style={{ color: colors.textSecondary }}>
@@ -106,6 +113,32 @@ export function AuthScreen({ onAuth }: AuthScreenProps) {
             <p className="text-xs mt-2" style={{ color: hasError ? colors.error : colors.textMuted }}>
               {hasError ? t('auth.nameRequired') : t('auth.namePrivacy')}
             </p>
+          </Card>
+
+          <Card variant="default" padding="lg">
+            <p className="text-sm font-medium mb-3" style={{ color: colors.textSecondary }}>
+              {t('auth.pronounsLabel')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {PRONOUNS.map((p) => {
+                const active = selectedPronoun === p;
+                return (
+                  <motion.button
+                    key={p}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setSelectedPronoun(active ? null : p)}
+                    className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
+                    style={{
+                      background: active ? colors.accent : colors.bgSecondary,
+                      color: active ? '#fff' : colors.textMuted,
+                      border: `1px solid ${active ? colors.accent : colors.divider}`,
+                    }}
+                  >
+                    {t(`auth.pronounOptions.${p}`)}
+                  </motion.button>
+                );
+              })}
+            </div>
           </Card>
         </motion.div>
       )}

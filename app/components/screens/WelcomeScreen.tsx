@@ -28,23 +28,12 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     >
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         <motion.div
-          initial={{ scale: 0.6, opacity: 0 }}
+          initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 180, damping: 18 }}
+          transition={{ type: 'spring', stiffness: 160, damping: 20, delay: 0.1 }}
           className="relative mb-8 flex items-center justify-center"
         >
-          <motion.div
-            animate={{
-              filter: [
-                'drop-shadow(0 0 18px rgba(124,58,237,0.22))',
-                'drop-shadow(0 0 38px rgba(124,58,237,0.48))',
-                'drop-shadow(0 0 18px rgba(124,58,237,0.22))',
-              ],
-            }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <AppLogo height={180} variant="light" />
-          </motion.div>
+          <AppLogo height={180} variant="light" animated />
         </motion.div>
 
         <motion.div

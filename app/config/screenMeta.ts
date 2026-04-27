@@ -71,6 +71,13 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
     tab: { icon: 'me', labelKey: 'tabs.me', order: 40 },
   },
   'module-de-base': {},
+  'accompagnement-adulte': {},
+  'annuaire-sexologues': {},
+  // Onboarding wizard
+  language: { header: 'hidden' },
+  'onboarding-slides': { header: 'hidden' },
+  'personal-intro': { header: 'hidden' },
+  // Premium
   premium: {},
   'theme-select': {},
 };

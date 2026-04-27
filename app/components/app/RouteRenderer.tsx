@@ -18,6 +18,8 @@ import {
   LoiConsentementScreen,
   QuizConsentementScreen,
   AccompagnementMineurScreen,
+  AccompagnementAdulteScreen,
+  AnnuaireSexologuesScreen,
   ResourcesMinorScreen,
   GamesHubScreen,
   DiceGameScreen,
@@ -29,6 +31,8 @@ import {
   PremiumScreen,
   ApprendreScreen,
   MoiScreen,
+  LanguageScreen,
+  PersonalIntroScreen,
 } from '../../routes';
 import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
@@ -55,23 +59,49 @@ type ShellCtx = Omit<RouteRendererProps, 'currentScreen' | 'theme'>;
 
 // Record<Screen, ...> enforces exhaustiveness: adding a new Screen without a render entry is a compile error.
 const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
+  language: (ctx) =>
+    <LanguageScreen onContinue={() => ctx.navigateTo('welcome')} />,
+
   welcome: (ctx) =>
     <WelcomeScreen onStart={() => ctx.navigateTo('age-check')} />,
 
   'age-check': (ctx) => (
     <AgeCheckScreen
-      onSelectMinor={() => { ctx.handleAgeSelect(false); ctx.selectTheme('youth'); ctx.navigateTo('home'); }}
-      onSelectAdult={() => { ctx.handleAgeSelect(true); ctx.navigateTo('auth'); }}
+      onSelectMinor={() => { ctx.handleAgeSelect(false); ctx.selectTheme('youth'); ctx.navigateTo('theme-select'); }}
+      onSelectAdult={() => { ctx.handleAgeSelect(true); ctx.navigateTo('theme-select'); }}
+    />
+  ),
+
+  'theme-select': (ctx) => (
+    <ThemeSelectScreen
+      isAdult={ctx.isAdult}
+      onSelectTheme={(mode) => {
+        ctx.selectTheme(mode);
+        if (!ctx.hasOnboarded) {
+          ctx.navigateTo(ctx.isAdult === true ? 'auth' : 'onboarding-slides');
+        } else {
+          ctx.goBack();
+        }
+      }}
+      isPremium={ctx.isPremium}
+      onGoPremium={() => ctx.navigateTo('premium')}
     />
   ),
 
   auth: (ctx) =>
-    <AuthScreen onAuth={(name) => { ctx.handleAuth(name); ctx.navigateTo('home'); }} />,
+    <AuthScreen onAuth={(name) => {
+      ctx.handleAuth(name);
+      ctx.navigateTo(!ctx.hasOnboarded ? 'personal-intro' : 'home');
+    }} />,
+
+  'personal-intro': (ctx) =>
+    <PersonalIntroScreen onContinue={() => ctx.navigateTo('onboarding-slides')} />,
+
+  'onboarding-slides': (ctx) =>
+    <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
 
   home: (ctx) =>
-    ctx.hasOnboarded
-      ? <HomeScreen isAdult={ctx.isAdult} userName={ctx.userName} onNavigate={ctx.navigateTo} />
-      : <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+    <HomeScreen isAdult={ctx.isAdult} userName={ctx.userName} onNavigate={ctx.navigateTo} />,
 
   settings: (ctx) =>
     <SettingsScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} onNavigate={ctx.navigateTo} />,
@@ -118,6 +148,12 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
     <AccompagnementMineurScreen onNavigate={ctx.navigateTo} onComplete={() => ctx.navigateTo('hall-of-cards')} />
   ),
 
+  'accompagnement-adulte': (ctx) =>
+    <AccompagnementAdulteScreen onBack={() => ctx.goBack()} onGoAnnuaire={() => ctx.navigateTo('annuaire-sexologues')} />,
+
+  'annuaire-sexologues': (ctx) =>
+    <AnnuaireSexologuesScreen onBack={() => ctx.goBack()} />,
+
   jeux: (ctx) => (
     <GamesHubScreen
       onNavigate={ctx.navigateTo}
@@ -153,14 +189,6 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
 
   'module-de-base': (ctx) =>
     <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
-
-  'theme-select': (ctx) => (
-    <ThemeSelectScreen
-      onSelectTheme={(mode) => { ctx.selectTheme(mode); ctx.navigateTo('home'); }}
-      isPremium={ctx.isPremium}
-      onGoPremium={() => ctx.navigateTo('premium')}
-    />
-  ),
 
   premium: (ctx) => (
     <PremiumScreen

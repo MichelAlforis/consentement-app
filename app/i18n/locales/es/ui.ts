@@ -34,6 +34,26 @@ export const ui = {
   },
 
   settings: {
+    sections: {
+      profile: 'Mi perfil',
+      appearance: 'Apariencia',
+      content: 'Contenido',
+      app: 'App',
+    },
+    profile: {
+      name: 'Nombre',
+      namePlaceholder: 'Tu nombre',
+      pronouns: 'Pronombres',
+      pronounsOptional: '(opcional)',
+      pronounOptions: {
+        il: 'él',
+        elle: 'ella',
+        iel: 'elle',
+        neutre: 'neutro',
+      },
+      personalSpace: 'Mi espacio personal',
+      personalSpaceDesc: 'Perfil de comodidad y palabra de seguridad',
+    },
     language: {
       title: 'Idioma',
       desc: 'Elegir el idioma de la aplicación',
@@ -65,6 +85,17 @@ export const ui = {
         confirm: 'Activar modo explícito',
         cancel: 'Cancelar',
       },
+    },
+    replayIntro: {
+      title: 'Ver introducción de nuevo',
+      desc: 'Volver a ver las diapositivas de presentación',
+    },
+    reset: {
+      title: 'Restablecer la app',
+      desc: 'Borrar todos los datos locales',
+      confirm: 'Todos tus datos locales serán borrados. Esta acción es irreversible.',
+      cta: 'Restablecer',
+      cancel: 'Cancelar',
     },
   },
 

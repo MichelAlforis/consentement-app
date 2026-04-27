@@ -20,7 +20,7 @@ import { initialPersonalProfile } from '../data';
 
 export function resetAllData() {
   useNavigationStore.setState({ currentScreen: 'welcome', history: [] });
-  useAuthStore.setState({ isAuthenticated: false, isAdult: null, userName: '' });
+  useAuthStore.setState({ isAuthenticated: false, isAdult: null, userName: '', pronouns: null });
   useSettingsStore.setState({ themeMode: null, theme: null, explicitMode: false });
   useProfileStore.setState({ personalProfile: initialPersonalProfile });
   usePremiumStore.setState({ isPremium: false });

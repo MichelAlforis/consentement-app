@@ -19,6 +19,8 @@ export type Screen =
   | 'loi-consentement'
   | 'quiz-consentement'
   | 'accompagnement-mineur'
+  | 'accompagnement-adulte'
+  | 'annuaire-sexologues'
   // Jeux
   | 'jeux'
   | 'jeu-des'
@@ -29,6 +31,10 @@ export type Screen =
   | 'apprendre'
   | 'moi'
   | 'module-de-base'
+  // Onboarding wizard
+  | 'language'
+  | 'onboarding-slides'
+  | 'personal-intro'
   // Premium
   | 'premium'
   | 'theme-select';

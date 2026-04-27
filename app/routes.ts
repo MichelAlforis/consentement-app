@@ -23,6 +23,8 @@ export const PornoVsRealiteScreen = lazy(() => import('./components/screens/Porn
 export const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen').then(m => ({ default: m.LoiConsentementScreen })));
 export const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen').then(m => ({ default: m.QuizConsentementScreen })));
 export const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen').then(m => ({ default: m.AccompagnementMineurScreen })));
+export const AccompagnementAdulteScreen = lazy(() => import('./components/screens/AccompagnementAdulteScreen').then(m => ({ default: m.AccompagnementAdulteScreen })));
+export const AnnuaireSexologuesScreen = lazy(() => import('./components/screens/AnnuaireSexologuesScreen').then(m => ({ default: m.AnnuaireSexologuesScreen })));
 export const ResourcesMinorScreen = lazy(() => import('./components/screens/ResourcesMinorScreen').then(m => ({ default: m.ResourcesMinorScreen })));
 export const GamesHubScreen = lazy(() => import('./components/screens/GamesHubScreen').then(m => ({ default: m.GamesHubScreen })));
 export const DiceGameScreen = lazy(() => import('./components/screens/DiceGame').then(m => ({ default: m.DiceGameScreen })));
@@ -34,6 +36,8 @@ export const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSe
 export const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 export const ApprendreScreen = lazy(() => import('./components/screens/ApprendreScreen').then(m => ({ default: m.ApprendreScreen })));
 export const MoiScreen = lazy(() => import('./components/screens/MoiScreen').then(m => ({ default: m.MoiScreen })));
+export const LanguageScreen = lazy(() => import('./components/screens/LanguageScreen').then(m => ({ default: m.LanguageScreen })));
+export const PersonalIntroScreen = lazy(() => import('./components/screens/PersonalIntroScreen').then(m => ({ default: m.PersonalIntroScreen })));
 
 const baseRoute = (
   component: unknown,
@@ -69,6 +73,8 @@ export const ROUTES = {
   'loi-consentement': baseRoute(LoiConsentementScreen, { titleKey: 'headers.loi', showAd: true }),
   'quiz-consentement': baseRoute(QuizConsentementScreen, { titleKey: 'headers.quiz', showAd: true }),
   'accompagnement-mineur': baseRoute(AccompagnementMineurScreen, { titleKey: 'headers.accompagnement', showAd: true }),
+  'accompagnement-adulte': baseRoute(AccompagnementAdulteScreen, { titleKey: 'headers.accompagnementAdulte', requiresAdult: true, showAd: true }),
+  'annuaire-sexologues': baseRoute(AnnuaireSexologuesScreen, { titleKey: 'headers.annuaireSexologues', requiresAdult: true }),
   jeux: baseRoute(GamesHubScreen, { titleKey: 'headers.games' }),
   'jeu-des': baseRoute(DiceGameScreen, { titleKey: 'headers.jeuDes' }),
   'jeu-oie': baseRoute(GooseGameScreen, { titleKey: 'headers.jeuOie' }),
@@ -77,6 +83,9 @@ export const ROUTES = {
   apprendre: baseRoute(ApprendreScreen, { titleKey: 'tabs.learn' }),
   moi: baseRoute(MoiScreen, { titleKey: 'tabs.me' }),
   'module-de-base': baseRoute(ModuleDeBaseScreen),
+  language: baseRoute(LanguageScreen),
+  'onboarding-slides': baseRoute(ModuleDeBaseScreen),
+  'personal-intro': baseRoute(PersonalIntroScreen),
   premium: baseRoute(PremiumScreen),
   'theme-select': baseRoute(ThemeSelectScreen),
 } satisfies Record<Screen, RouteConfig>;

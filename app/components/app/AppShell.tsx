@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { TabBar } from '../ui/TabBar';
 import { Toast } from '../ui';
 import { GrainOverlay } from '../ui/ThemeEffects';
@@ -23,6 +24,7 @@ import { RouteRenderer } from './RouteRenderer';
 import { AdController } from './AdController';
 import { DevBar } from './DevBar';
 import { ScreenLoader } from './ScreenLoader';
+import { SplashScreen } from './SplashScreen';
 
 function useAndroidBackButton() {
   const { goBack } = useNavigationStore();
@@ -69,8 +71,9 @@ function useAppDiagnostics(currentScreen: string) {
 export function AppShell() {
   const theme = useTheme();
   const currentScreen = useNavigationStore((s) => s.currentScreen);
+  const history = useNavigationStore((s) => s.history);
   const { navigateTo, replaceWith, goBack } = useNavigationStore();
-  const { isAdult, userName, setAgeGroup, authenticate } = useAuthStore();
+  const { isAdult, isHydrated, userName, setAgeGroup, authenticate } = useAuthStore();
   const onboardingStatus = useModuleProgressStore((s) => s.onboardingStatus);
   const hasOnboarded = onboardingStatus !== 'not_started';
   const { themeMode, selectTheme } = useSettingsStore();
@@ -80,17 +83,29 @@ export function AppShell() {
   useAndroidBackButton();
   useAppDiagnostics(currentScreen);
 
+  // Returning-user redirect: language is the default starting screen (navigationStore not persisted).
+  // history.length === 0 means we're at the initial launch, not navigated here from settings.
   useEffect(() => {
-    if (currentScreen !== 'welcome') return;
+    if (currentScreen !== 'language') return;
+    if (history.length > 0) return;
+
     if (isAdultApp) {
-      replaceWith(userName ? 'home' : 'auth');
+      if (userName) replaceWith('home');
       return;
     }
-    if ((isAdult && userName) || isAdult === false) {
+    if (themeMode && (userName || isAdult === false)) {
       replaceWith('home');
     }
-  }, [currentScreen, isAdult, replaceWith, userName]);
+  }, [currentScreen, history.length, isAdult, themeMode, userName, replaceWith]);
 
+  // If a returning user somehow lands on home without onboarding, complete it.
+  useEffect(() => {
+    if (currentScreen === 'home' && !hasOnboarded) {
+      replaceWith('onboarding-slides');
+    }
+  }, [currentScreen, hasOnboarded, replaceWith]);
+
+  // Legacy routes + adult-only guard
   useEffect(() => {
     const legacyReplacement = screenMeta[currentScreen]?.legacy?.replacement;
     if (legacyReplacement) {
@@ -102,27 +117,11 @@ export function AppShell() {
     }
   }, [currentScreen, isAdult, replaceWith]);
 
-  if (!themeMode) {
+  if (!isHydrated) {
     return (
-      <Suspense fallback={<ScreenLoader />}>
-        <RouteRenderer
-          currentScreen="theme-select"
-          isAdult={isAdult}
-          hasOnboarded={hasOnboarded}
-          userName={userName}
-          personalProfile={personalProfile}
-          isPremium={isPremium}
-          theme={theme}
-          navigateTo={navigateTo}
-          goBack={goBack}
-          selectTheme={selectTheme}
-          handleAgeSelect={setAgeGroup}
-          handleAuth={authenticate}
-          updateComfortLevel={updateComfortLevel}
-          updateSafeword={updateSafeword}
-          activatePremium={activatePremium}
-        />
-      </Suspense>
+      <AnimatePresence>
+        <SplashScreen />
+      </AnimatePresence>
     );
   }
 
@@ -131,23 +130,25 @@ export function AppShell() {
       <HeaderController isAdult={isAdult} theme={theme} />
 
       <div className="flex-1 overflow-y-auto">
-        <RouteRenderer
-          currentScreen={currentScreen}
-          isAdult={isAdult}
-          hasOnboarded={hasOnboarded}
-          userName={userName}
-          personalProfile={personalProfile}
-          isPremium={isPremium}
-          theme={theme}
-          navigateTo={navigateTo}
-          goBack={goBack}
-          selectTheme={selectTheme}
-          handleAgeSelect={setAgeGroup}
-          handleAuth={authenticate}
-          updateComfortLevel={updateComfortLevel}
-          updateSafeword={updateSafeword}
-          activatePremium={activatePremium}
-        />
+        <Suspense fallback={<ScreenLoader />}>
+          <RouteRenderer
+            currentScreen={currentScreen}
+            isAdult={isAdult}
+            hasOnboarded={hasOnboarded}
+            userName={userName}
+            personalProfile={personalProfile}
+            isPremium={isPremium}
+            theme={theme}
+            navigateTo={navigateTo}
+            goBack={goBack}
+            selectTheme={selectTheme}
+            handleAgeSelect={setAgeGroup}
+            handleAuth={authenticate}
+            updateComfortLevel={updateComfortLevel}
+            updateSafeword={updateSafeword}
+            activatePremium={activatePremium}
+          />
+        </Suspense>
       </div>
 
       {shouldShowTabBar(currentScreen) && <TabBar currentScreen={currentScreen} onNavigate={navigateTo} />}

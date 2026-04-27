@@ -10,9 +10,11 @@ interface ThemeSelectScreenProps {
   onSelectTheme: (theme: ThemeMode) => void;
   isPremium?: boolean;
   onGoPremium?: () => void;
+  isAdult?: boolean | null;
 }
 
-const freeThemes: ThemeMode[] = ['warm', 'calm'];
+const adultFreeThemes: ThemeMode[] = ['warm', 'calm'];
+const minorThemes: ThemeMode[] = ['youth', 'warm', 'calm'];
 const premiumThemes: ThemeMode[] = ['dark-luxury', 'nude'];
 
 const themePreviewColors: Record<ThemeMode, string[]> = {
@@ -31,8 +33,10 @@ const themeGradients: Record<ThemeMode, string> = {
   'youth':       'linear-gradient(135deg, #f0f7ff 0%, #e8f0ff 100%)',
 };
 
-export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremium }: ThemeSelectScreenProps) {
+export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremium, isAdult }: ThemeSelectScreenProps) {
   const { t } = useTranslation();
+  const isMinor = isAdult === false;
+  const freeThemes = isMinor ? minorThemes : adultFreeThemes;
 
   return (
     <motion.div
@@ -62,7 +66,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
       </motion.div>
 
       <div className="max-w-sm mx-auto w-full space-y-3 mb-4">
-        {freeThemes.map((mode, i) => {
+        {(freeThemes as ThemeMode[]).map((mode, i) => {
           const theme = themes[mode];
           return (
             <motion.button
@@ -96,21 +100,23 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
         })}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.55 }}
-        className="max-w-sm mx-auto w-full flex items-center gap-3 mb-4"
-      >
-        <div className="flex-1 h-px bg-gray-200" />
-        <span className="text-xs text-gray-400 flex items-center gap-1">
-          <Lock size={11} /> {t('premium.title').split(' ').pop()}
-        </span>
-        <div className="flex-1 h-px bg-gray-200" />
-      </motion.div>
+      {!isMinor && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.55 }}
+            className="max-w-sm mx-auto w-full flex items-center gap-3 mb-4"
+          >
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 flex items-center gap-1">
+              <Lock size={11} /> {t('premium.title').split(' ').pop()}
+            </span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </motion.div>
 
-      <div className="max-w-sm mx-auto w-full space-y-3">
-        {premiumThemes.map((mode, i) => {
+          <div className="max-w-sm mx-auto w-full space-y-3">
+            {premiumThemes.map((mode, i) => {
           const theme = themes[mode];
           const locked = !isPremium;
           const isDarkLuxury = mode === 'dark-luxury';
@@ -183,17 +189,19 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
               </div>
             </motion.button>
           );
-        })}
-      </div>
+          })}
+          </div>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        className="text-center text-xs text-gray-400 mt-6 mb-2"
-      >
-        {t('premium.themesNote')}
-      </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+            className="text-center text-xs text-gray-400 mt-6 mb-2"
+          >
+            {t('premium.themesNote')}
+          </motion.p>
+        </>
+      )}
     </motion.div>
   );
 }

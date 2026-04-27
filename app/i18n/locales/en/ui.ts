@@ -34,6 +34,26 @@ export const ui = {
   },
 
   settings: {
+    sections: {
+      profile: 'My profile',
+      appearance: 'Appearance',
+      content: 'Content',
+      app: 'App',
+    },
+    profile: {
+      name: 'First name',
+      namePlaceholder: 'Your name',
+      pronouns: 'Pronouns',
+      pronounsOptional: '(optional)',
+      pronounOptions: {
+        il: 'he/him',
+        elle: 'she/her',
+        iel: 'they/them',
+        neutre: 'neutral',
+      },
+      personalSpace: 'My personal space',
+      personalSpaceDesc: 'Comfort profile and safe word',
+    },
     language: {
       title: 'Language',
       desc: 'Choose the app language',
@@ -65,6 +85,17 @@ export const ui = {
         confirm: 'Enable explicit mode',
         cancel: 'Cancel',
       },
+    },
+    replayIntro: {
+      title: 'Replay introduction',
+      desc: 'Watch the intro slides again',
+    },
+    reset: {
+      title: 'Reset app',
+      desc: 'Erase all local data',
+      confirm: 'All your local data will be erased. This action cannot be undone.',
+      cta: 'Reset',
+      cancel: 'Cancel',
     },
   },
 

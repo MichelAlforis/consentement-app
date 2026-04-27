@@ -48,5 +48,28 @@ export const onboarding = {
       rgpd: 'RGPD',
       official: 'Officiel',
     },
+    pronounsLabel: 'Pronoms (optionnel)',
+    pronounOptions: {
+      il: 'il/lui',
+      elle: 'elle',
+      iel: 'iel',
+      neutre: 'neutre',
+    },
+  },
+
+  language: {
+    title: 'Choisis ta langue',
+    subtitle: 'Tu pourras changer à tout moment dans les paramètres',
+    cta: 'Continuer',
+  },
+
+  personalIntro: {
+    title: 'Ton espace personnel',
+    subtitle: 'Dis-nous ce qui te correspond. Tu pourras ajuster à tout moment.',
+    tenderness: 'Tendresse',
+    intensity: 'Intensité',
+    trust: 'Confiance',
+    ctaNow: 'Personnaliser maintenant',
+    ctaLater: 'Configurer plus tard',
   },
 } as const;

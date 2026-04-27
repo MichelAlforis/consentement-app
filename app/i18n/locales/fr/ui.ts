@@ -16,6 +16,8 @@ export const ui = {
     loi: 'La Loi',
     quiz: 'Quiz',
     accompagnement: 'Je me pose des questions',
+    accompagnementAdulte: 'Soutien & accompagnement',
+    annuaireSexologues: 'Annuaire sexologues',
     games: 'Jeux',
     jeuDes: 'Le Dé du Consentement',
     jeuOie: "Jeu de l'Oie",
@@ -34,6 +36,26 @@ export const ui = {
   },
 
   settings: {
+    sections: {
+      profile: 'Mon profil',
+      appearance: 'Apparence',
+      content: 'Contenu',
+      app: 'App',
+    },
+    profile: {
+      name: 'Prénom',
+      namePlaceholder: 'Ton prénom',
+      pronouns: 'Pronoms',
+      pronounsOptional: '(optionnel)',
+      pronounOptions: {
+        il: 'il/lui',
+        elle: 'elle',
+        iel: 'iel',
+        neutre: 'neutre',
+      },
+      personalSpace: 'Mon espace perso',
+      personalSpaceDesc: 'Profil de confort et mot de sécurité',
+    },
     language: {
       title: 'Langue',
       desc: 'Choisir la langue de l\'application',
@@ -65,6 +87,17 @@ export const ui = {
         confirm: 'Activer le mode explicite',
         cancel: 'Annuler',
       },
+    },
+    replayIntro: {
+      title: 'Revoir l\'introduction',
+      desc: 'Refaire les slides de présentation',
+    },
+    reset: {
+      title: 'Réinitialiser l\'app',
+      desc: 'Effacer toutes les données locales',
+      confirm: 'Toutes tes données locales seront effacées. Cette action est irréversible.',
+      cta: 'Réinitialiser',
+      cancel: 'Annuler',
     },
   },
 
@@ -108,5 +141,6 @@ export const ui = {
     helpDesc:         'Numéros gratuits, anonymes, disponibles 24h/24',
     settingsDesc:     'Thème, langue, données personnelles',
     premiumDesc:      'Tous les jeux · contenus profonds · sans limite',
+    accompagnementAdulteDesc: 'Tu traverses quelque chose ? Des ressources confidentielles.',
   },
 } as const;
