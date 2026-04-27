@@ -289,7 +289,11 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
                    └── settings → theme-select · premium
 ```
 
-**Règle d'affichage du TabBar :** visible si `currentScreen ∈ ['home', 'apprendre', 'jeux', 'moi']`. Caché sur tous les sous-écrans (quiz, jeu-oie, duo-space, settings…).
+**Architecture menu :** les écrans racine, les onglets, l'affichage du header et les routes legacy sont centralisés dans `app/config/screenMeta.ts`. `TabBar`, le store de navigation, le retour Android et `routes.ts` lisent cette config au lieu de maintenir des listes locales.
+
+**Règle d'affichage du TabBar :** visible si `currentScreen` possède une entrée `tab` dans `screenMeta`. Caché sur tous les sous-écrans (quiz, jeu-oie, duo-space, settings…).
+
+**Menu Jeux :** les entrées du hub sont déclarées dans `app/config/gamesMenu.ts` avec section, ordre, disponibilité (`available`, `premium`, `coming-soon`) et audience (`adult`, `minor`, `all`). `GamesHubScreen` ne porte plus l'ordre ni les règles d'affichage en dur.
 
 #### Migration
 
@@ -311,7 +315,7 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 | 16.2 | `TabBar.tsx` — 4 onglets avec icônes + état actif, caché hors racines |
 | 16.3 | `ApprendreScreen.tsx` — liste des modules (cartes cliquables) + badge progression par module |
 | 16.4 | `MoiScreen.tsx` — personal-space + duo-space (adulte) / help (mineur) + settings |
-| 16.5 | `page.tsx` — constante `TAB_ROOTS`, lazy load nouveaux écrans, afficher `TabBar` |
+| 16.5 | `screenMeta.ts` — racines, onglets, header, routes legacy et affichage `TabBar` |
 | 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar |
 | 16.7 | i18n — clés `tab.home` · `tab.learn` · `tab.play` · `tab.me` (FR / EN / ES) |
 

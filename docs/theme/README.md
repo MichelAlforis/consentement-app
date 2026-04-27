@@ -8,13 +8,13 @@ L'app dispose d'un système de thèmes dynamiques qui change **toutes** les coul
 
 ## Thèmes disponibles
 
-| ID | Nom | Accès | Description |
-|----|-----|-------|-------------|
-| `warm` | Chaleureux 🌅 | Gratuit | Tons chauds — terracotta, pêche, corail |
-| `calm` | Apaisant 🌙 | Gratuit | Tons froids — bleu nuit, ardoise, lavande |
-| `dark-luxury` | Sombre & Luxe ✨ | **Premium** | Noir profond, or, bordeaux + shimmer doré |
-| `nude` | Nude & Doux 🤍 | **Premium** | Crème, taupe, nude + grain cinématographique |
-| `youth` | Jeunesse 🌈 | Auto (mineurs) | Coloré, lumineux — interface 13-17 ans |
+| ID            | Nom              | Accès          | Description                                  |
+| ------------- | ---------------- | -------------- | -------------------------------------------- |
+| `warm`        | Chaleureux 🌅    | Gratuit        | Tons chauds — terracotta, pêche, corail      |
+| `calm`        | Apaisant 🌙      | Gratuit        | Tons froids — bleu nuit, ardoise, lavande    |
+| `dark-luxury` | Sombre & Luxe ✨ | **Premium**    | Noir profond, or, bordeaux + shimmer doré    |
+| `nude`        | Nude & Doux 🤍   | **Premium**    | Crème, taupe, nude + grain cinématographique |
+| `youth`       | Jeunesse 🌈      | Auto (mineurs) | Coloré, lumineux — interface 13-17 ans       |
 
 Le thème `youth` est appliqué automatiquement quand l'utilisateur sélectionne le mode mineur. Il ne peut pas être choisi manuellement.
 
@@ -81,19 +81,63 @@ useToast()  → { show }              dans n'importe quel composant
 
 ---
 
-## Interface ThemeColors (28 propriétés)
+## Interface ThemeColors
 
 ```typescript
 interface ThemeColors {
-  bgPrimary, bgSecondary, bgGradient, bgCard, bgCardHover  // Fonds
-  accent, accentLight, accentGradient, accentShadow         // Accent principal
-  secondary, secondaryLight, secondaryGradient              // Accent secondaire
-  textPrimary, textSecondary, textMuted                     // Textes
-  border, divider                                           // UI
-  success, warning, error                                   // Statuts
-  comfortNo, comfortWait, comfortCurious, comfortOk, comfortLove  // Slider confort
+  bgPrimary;
+  bgSecondary;
+  bgGradient;
+  bgCard;
+  bgCardHover; // Fonds
+  accent;
+  accentLight;
+  accentGradient;
+  accentShadow; // Accent principal
+  secondary;
+  secondaryLight;
+  secondaryGradient; // Accent secondaire
+  textPrimary;
+  textSecondary;
+  textMuted; // Textes
+  border;
+  divider; // UI
+  success;
+  warning;
+  error;
+  danger; // Statuts
+  premium;
+  premiumLight;
+  premiumGradient;
+  premiumShadow; // Accès premium
+  locked;
+  lockedOverlay; // État verrouillé
+  rare;
+  rareBg;
+  unique;
+  uniqueBg; // Raretés de cartes/modules
+  comfortNo;
+  comfortWait;
+  comfortCurious;
+  comfortOk;
+  comfortLove; // Slider confort
 }
 ```
+
+### Tokens sémantiques
+
+Les composants UI doivent privilégier les tokens sémantiques quand la couleur exprime un état produit plutôt qu'une identité visuelle locale.
+
+| Token                                         | Usage recommandé                                     |
+| --------------------------------------------- | ---------------------------------------------------- |
+| `success`                                     | Validation, gratuit inclus, action réussie           |
+| `danger`                                      | Action destructive, alerte forte, refus hors urgence |
+| `premium`, `premiumGradient`, `premiumShadow` | CTA premium, cartes premium, badge d'offre           |
+| `locked`, `lockedOverlay`                     | Contenu verrouillé, overlay d'accès                  |
+| `rare`, `rareBg`                              | Récompense rare, badge de rareté                     |
+| `unique`, `uniqueBg`                          | Récompense unique, badge de rareté supérieure        |
+
+Les dégradés propres à une mécanique de jeu restent acceptables s'ils sont documentés comme identité visuelle du jeu. Pour les cartes de navigation et les badges, utiliser un composant partagé (`GameMenuCard`, `MenuCard`, `Card`) plutôt que recréer des couleurs locales.
 
 ---
 
@@ -101,70 +145,75 @@ interface ThemeColors {
 
 ```typescript
 interface ThemeEffects {
-  shimmer: boolean;                              // Reflet diagonal animé
-  shimmerColor: string;                          // Couleur du shimmer (hex)
-  grain: boolean;                                // Grain cinématographique pleine page
-  pageTransition: 'slide' | 'fade' | 'drift';   // Type de transition entre écrans
-  cardGlow: string | null;                       // Halo lumineux autour des cartes
-  cardInnerBorder: string | null;                // Liseré intérieur sur les cartes
+  shimmer: boolean; // Reflet diagonal animé
+  shimmerColor: string; // Couleur du shimmer (hex)
+  grain: boolean; // Grain cinématographique pleine page
+  pageTransition: 'slide' | 'fade' | 'drift'; // Type de transition entre écrans
+  cardGlow: string | null; // Halo lumineux autour des cartes
+  cardInnerBorder: string | null; // Liseré intérieur sur les cartes
 }
 ```
 
 ### Effets par thème
 
-| Thème | shimmer | grain | pageTransition | cardGlow | cardInnerBorder |
-|-------|---------|-------|----------------|----------|-----------------|
-| warm | ✗ | ✗ | `slide` | — | — |
-| calm | ✗ | ✗ | `slide` | — | — |
-| **dark-luxury** | ✓ or `#c9a84c` | ✗ | `fade` | or 7% | or 22% |
-| **nude** | ✗ | ✓ | `drift` | — | taupe 18% |
-| youth | ✗ | ✗ | `slide` | — | — |
+| Thème           | shimmer        | grain | pageTransition | cardGlow | cardInnerBorder |
+| --------------- | -------------- | ----- | -------------- | -------- | --------------- |
+| warm            | ✗              | ✗     | `slide`        | —        | —               |
+| calm            | ✗              | ✗     | `slide`        | —        | —               |
+| **dark-luxury** | ✓ or `#c9a84c` | ✗     | `fade`         | or 7%    | or 22%          |
+| **nude**        | ✗              | ✓     | `drift`        | —        | taupe 18%       |
+| youth           | ✗              | ✗     | `slide`        | —        | —               |
 
 ---
 
 ## Couleurs par thème
 
 ### Warm 🌅
-| Rôle | Valeur |
-|------|--------|
-| accent | `#e07a5f` Terracotta |
-| secondary | `#8fb996` Sauge |
-| bgGradient | Bloom terracotta NE + linéaire crème → pêche |
-| textPrimary | `#3d3d3d` |
+
+| Rôle        | Valeur                                       |
+| ----------- | -------------------------------------------- |
+| accent      | `#e07a5f` Terracotta                         |
+| secondary   | `#8fb996` Sauge                              |
+| bgGradient  | Bloom terracotta NE + linéaire crème → pêche |
+| textPrimary | `#3d3d3d`                                    |
 
 ### Calm 🌙
-| Rôle | Valeur |
-|------|--------|
-| accent | `#5c6ac4` Indigo |
-| secondary | `#9d8cd9` Lavande |
-| bgGradient | Bloom lavande SO + linéaire gris clair → gris bleuté |
-| textPrimary | `#2d3142` |
+
+| Rôle        | Valeur                                               |
+| ----------- | ---------------------------------------------------- |
+| accent      | `#5c6ac4` Indigo                                     |
+| secondary   | `#9d8cd9` Lavande                                    |
+| bgGradient  | Bloom lavande SO + linéaire gris clair → gris bleuté |
+| textPrimary | `#2d3142`                                            |
 
 ### Dark Luxury ✨ (Premium)
-| Rôle | Valeur |
-|------|--------|
-| accent | `#c9a84c` Or |
-| secondary | `#8b1a3a` Bordeaux |
-| bgGradient | Bloom bordeaux NE + bloom or SO + linéaire `#0f0d0e` → `#1a1020` |
-| bgCard | `rgba(30,24,28,0.95)` Noir chaud |
-| textPrimary | `#f0ece4` Crème |
-| textMuted | `#8a8078` Gris chaud — contraste 5:1 sur `#0f0d0e` (WCAG AA ✓) |
+
+| Rôle        | Valeur                                                           |
+| ----------- | ---------------------------------------------------------------- |
+| accent      | `#c9a84c` Or                                                     |
+| secondary   | `#8b1a3a` Bordeaux                                               |
+| bgGradient  | Bloom bordeaux NE + bloom or SO + linéaire `#0f0d0e` → `#1a1020` |
+| bgCard      | `rgba(30,24,28,0.95)` Noir chaud                                 |
+| textPrimary | `#f0ece4` Crème                                                  |
+| textMuted   | `#8a8078` Gris chaud — contraste 5:1 sur `#0f0d0e` (WCAG AA ✓)   |
 
 ### Nude 🤍 (Premium)
-| Rôle | Valeur |
-|------|--------|
-| accent | `#b07d6a` Nude rosé |
-| secondary | `#8c7860` Taupe |
-| bgGradient | Bloom rosé NE + linéaire crème → ivoire chaud |
-| textPrimary | `#2e2420` Brun foncé |
+
+| Rôle        | Valeur                                        |
+| ----------- | --------------------------------------------- |
+| accent      | `#b07d6a` Nude rosé                           |
+| secondary   | `#8c7860` Taupe                               |
+| bgGradient  | Bloom rosé NE + linéaire crème → ivoire chaud |
+| textPrimary | `#2e2420` Brun foncé                          |
 
 ### Youth 🌈
-| Rôle | Valeur |
-|------|--------|
-| accent | `#3b82f6` Bleu |
-| secondary | `#8b5cf6` Violet |
-| bgGradient | Bloom violet S + linéaire bleu très clair → ciel |
-| textPrimary | `#1e3a5f` |
+
+| Rôle        | Valeur                                           |
+| ----------- | ------------------------------------------------ |
+| accent      | `#3b82f6` Bleu                                   |
+| secondary   | `#8b5cf6` Violet                                 |
+| bgGradient  | Bloom violet S + linéaire bleu très clair → ciel |
+| textPrimary | `#1e3a5f`                                        |
 
 ---
 
@@ -206,10 +255,11 @@ Types disponibles : `'default'` (accent) · `'success'` (colors.success) · `'er
 ### Positionnement mobile (iOS + Android)
 
 ```css
-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 80px), 96px)
+bottom: max(calc(env(safe-area-inset-bottom, 0px) + 80px), 96px);
 ```
 
 Requiert `viewportFit: 'cover'` dans le viewport meta — déjà configuré dans `layout.tsx`.
+
 - iOS iPhone 14+ (34px safe area) : ~114px du bas → au-dessus du home indicator
 - Android (0px safe area) : 96px du bas → au-dessus des barres de navigation
 
@@ -230,7 +280,7 @@ background: 'rgba(0,0,0,0.55)',     // fallback si backdrop-filter non supporté
 ### Safe area (panneau)
 
 ```css
-padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), 44px)
+padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), 44px);
 ```
 
 Minimum garanti de 44px — couvre le home indicator iOS (34px) avec marge confortable.
@@ -240,12 +290,15 @@ Minimum garanti de 44px — couvre le home indicator iOS (34px) avec marge confo
 ## Composants d'effets — ThemeEffects.tsx
 
 ### `<GrainOverlay />`
+
 Overlay fixe pleine page avec texture fractalNoise SVG. `mixBlendMode: overlay`, opacité 3.8%. Rendu uniquement si `effects.grain === true` (nude). Placé dans `page.tsx` après le contenu principal.
 
 ### `<ShimmerLayer color />`
+
 Reflet diagonal animé (`-120% → 350%`, 3.2s, repeat toutes les ~9s). Positionné `absolute inset-0` dans `Card` et `MenuCard`. Activé sur les variants `elevated`, `default` (Card) et `accent`, `secondary` (MenuCard) quand `effects.shimmer === true`.
 
 ### `<PreviewShimmer color />`
+
 Identique à `ShimmerLayer` mais avec cycle plus court (2.8s, repeat delay 3.5s). Utilisé exclusivement dans `ThemeSelectScreen` sur les cartes premium verrouillées pour montrer l'effet avant achat.
 
 ---
@@ -254,11 +307,11 @@ Identique à `ShimmerLayer` mais avec cycle plus court (2.8s, repeat delay 3.5s)
 
 Configurées dans `page.tsx` via `theme.effects.pageTransition` :
 
-| Type | Thème | Comportement |
-|------|-------|-------------|
-| `slide` | warm, calm, youth | `x: ±20px` + opacity — 0.3s |
-| `fade` | dark-luxury | opacity seule — 0.45s easeInOut (cinématographique) |
-| `drift` | nude | `y: 14px → 0` + opacity — 0.75s easing exponentiel (respiratoire) |
+| Type    | Thème             | Comportement                                                      |
+| ------- | ----------------- | ----------------------------------------------------------------- |
+| `slide` | warm, calm, youth | `x: ±20px` + opacity — 0.3s                                       |
+| `fade`  | dark-luxury       | opacity seule — 0.45s easeInOut (cinématographique)               |
+| `drift` | nude              | `y: 14px → 0` + opacity — 0.75s easing exponentiel (respiratoire) |
 
 ---
 
@@ -267,11 +320,13 @@ Configurées dans `page.tsx` via `theme.effects.pageTransition` :
 Les thèmes premium verrouillés sont affichés à **pleine intensité** (pas de dimming) avec :
 
 **Dark Luxury verrouillé :**
+
 - `<PreviewShimmer color="#c9a84c" />` en continu
 - Overlay sombre (`rgba(0,0,0,0.45)`)
 - Badge doré avec `backdrop-blur` et border or
 
 **Nude verrouillé :**
+
 - Animation `scale: 1 ↔ 1.008` cycle 4s (respiration lente)
 - Overlay crème translucide (`rgba(255,255,255,0.18)`)
 - Badge taupe avec border rosé
@@ -310,24 +365,24 @@ function MonComposant() {
 
 ### MenuCard
 
-| Variant | Couleur | Shimmer premium |
-|---------|---------|-----------------|
-| `accent` | `accentGradient` | ✓ si `effects.shimmer` |
+| Variant     | Couleur             | Shimmer premium        |
+| ----------- | ------------------- | ---------------------- |
+| `accent`    | `accentGradient`    | ✓ si `effects.shimmer` |
 | `secondary` | `secondaryGradient` | ✓ si `effects.shimmer` |
-| `amber` | Orange fixe (jeux) | ✗ |
-| `green` | Vert fixe (santé) | ✗ |
-| `default` | `bgCard` + `border` | ✗ |
+| `amber`     | Orange fixe (jeux)  | ✗                      |
+| `green`     | Vert fixe (santé)   | ✗                      |
+| `default`   | `bgCard` + `border` | ✗                      |
 
 ### Card
 
-| Variant | Couleur | Effets premium |
-|---------|---------|----------------|
-| `default` | `bgCard` + `border` | glow + inner border si `effects.cardGlow/cardInnerBorder` |
-| `elevated` | `bgCard` + ombre | glow + inner border + shimmer si `effects.shimmer` |
-| `accent` | `accentGradient` | — |
-| `secondary` | `secondaryGradient` | — |
-| `warning` | `warning` transparent | — |
-| `success` | `success` transparent | — |
+| Variant     | Couleur               | Effets premium                                            |
+| ----------- | --------------------- | --------------------------------------------------------- |
+| `default`   | `bgCard` + `border`   | glow + inner border si `effects.cardGlow/cardInnerBorder` |
+| `elevated`  | `bgCard` + ombre      | glow + inner border + shimmer si `effects.shimmer`        |
+| `accent`    | `accentGradient`      | —                                                         |
+| `secondary` | `secondaryGradient`   | —                                                         |
+| `warning`   | `warning` transparent | —                                                         |
+| `success`   | `success` transparent | —                                                         |
 
 ---
 

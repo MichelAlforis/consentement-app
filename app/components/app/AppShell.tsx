@@ -9,6 +9,7 @@ import { logger } from '../../lib/logger';
 import { getPlatform, isCapacitor } from '../../lib/platform';
 import { isAdultApp } from '../../lib/appVariant';
 import { getRoute, shouldShowTabBar } from '../../routes';
+import { isRootScreen } from '../../config/screenMeta';
 import {
   useAuthStore,
   useNavigationStore,
@@ -33,10 +34,9 @@ function useAndroidBackButton() {
   useEffect(() => {
     if (!isCapacitor()) return;
     let cleanup: (() => void) | undefined;
-    const noBack = ['welcome', 'age-check', 'home', 'apprendre', 'jeux', 'moi'];
     import('@capacitor/app')
       .then(({ App }) => App.addListener('backButton', () => {
-        if (!noBack.includes(currentScreen)) goBackRef.current();
+        if (!isRootScreen(currentScreen)) goBackRef.current();
       }))
       .then((handle) => { cleanup = () => handle.remove(); })
       .catch((err) => logger.warn('Capacitor back button unavailable', err));

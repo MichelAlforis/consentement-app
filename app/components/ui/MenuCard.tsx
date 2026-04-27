@@ -15,7 +15,14 @@ interface MenuCardProps {
   delay?: number;
 }
 
-export function MenuCard({ icon, title, description, onClick, variant = 'default', delay = 0 }: MenuCardProps) {
+export function MenuCard({
+  icon,
+  title,
+  description,
+  onClick,
+  variant = 'default',
+  delay = 0,
+}: MenuCardProps) {
   const { colors, effects } = useTheme();
 
   const premiumInnerBorder = effects.cardInnerBorder
@@ -36,13 +43,13 @@ export function MenuCard({ icon, title, description, onClick, variant = 'default
         };
       case 'green':
         return {
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-          boxShadow: '0 8px 24px rgba(16,185,129,0.3)',
+          background: `linear-gradient(135deg, ${colors.success} 0%, ${colors.comfortOk} 100%)`,
+          boxShadow: `0 8px 24px ${colors.success}4d`,
         };
       case 'amber':
         return {
-          background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
-          boxShadow: '0 8px 24px rgba(245,158,11,0.3)',
+          background: `linear-gradient(135deg, ${colors.warning} 0%, ${colors.unique} 100%)`,
+          boxShadow: `0 8px 24px ${colors.warning}4d`,
         };
       default:
         return {
@@ -71,22 +78,34 @@ export function MenuCard({ icon, title, description, onClick, variant = 'default
 
       <div
         className="relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0"
-        style={{ background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient, zIndex: 2 }}
+        style={{
+          background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient,
+          zIndex: 2,
+        }}
       >
         {icon}
       </div>
 
       <div className="relative flex-1 min-w-0" style={{ zIndex: 2 }}>
-        <h3 className="font-semibold text-base" style={{ color: isColored ? '#ffffff' : colors.textPrimary }}>
+        <h3
+          className="font-semibold text-base"
+          style={{ color: isColored ? '#ffffff' : colors.textPrimary }}
+        >
           {title}
         </h3>
-        <p className="text-sm mt-0.5" style={{ color: isColored ? 'rgba(255,255,255,0.82)' : colors.textSecondary }}>
+        <p
+          className="text-sm mt-0.5"
+          style={{ color: isColored ? 'rgba(255,255,255,0.82)' : colors.textSecondary }}
+        >
           {description}
         </p>
       </div>
 
       {!isColored && (
-        <ChevronRight size={24} style={{ color: colors.textMuted, zIndex: 2, position: 'relative' }} />
+        <ChevronRight
+          size={24}
+          style={{ color: colors.textMuted, zIndex: 2, position: 'relative' }}
+        />
       )}
     </motion.button>
   );

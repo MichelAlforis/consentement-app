@@ -8,7 +8,18 @@ import { ShimmerLayer } from './ThemeEffects';
 interface CardProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: 'default' | 'elevated' | 'accent' | 'secondary' | 'success' | 'warning';
+  variant?:
+    | 'default'
+    | 'elevated'
+    | 'accent'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'premium'
+    | 'locked'
+    | 'rare'
+    | 'unique'
+    | 'danger';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   className?: string;
   delay?: number;
@@ -21,7 +32,14 @@ const paddingStyles = {
   lg: 'p-6',
 };
 
-export function Card({ children, onClick, variant = 'default', padding = 'md', className = '', delay = 0 }: CardProps) {
+export function Card({
+  children,
+  onClick,
+  variant = 'default',
+  padding = 'md',
+  className = '',
+  delay = 0,
+}: CardProps) {
   const { colors, effects } = useTheme();
 
   const premiumInnerBorder = effects.cardInnerBorder
@@ -47,6 +65,19 @@ export function Card({ children, onClick, variant = 'default', padding = 'md', c
         return { background: `${colors.success}18`, border: `1px solid ${colors.success}30` };
       case 'warning':
         return { background: `${colors.warning}18`, border: `1px solid ${colors.warning}30` };
+      case 'premium':
+        return {
+          background: colors.premiumGradient,
+          boxShadow: `0 8px 28px ${colors.premiumShadow}`,
+        };
+      case 'locked':
+        return { background: colors.lockedOverlay, border: `1px solid ${colors.locked}` };
+      case 'rare':
+        return { background: colors.rareBg, border: `1px solid ${colors.rare}30` };
+      case 'unique':
+        return { background: colors.uniqueBg, border: `1px solid ${colors.unique}30` };
+      case 'danger':
+        return { background: `${colors.danger}18`, border: `1px solid ${colors.danger}30` };
       default:
         return {
           background: colors.bgCard,

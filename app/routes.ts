@@ -1,13 +1,12 @@
 import { lazy } from 'react';
 import type { Screen } from './types';
+import { isTabRootScreen, shouldScreenShowHeader } from './config/screenMeta';
 
 export interface RouteConfig<Component = unknown> {
   component: Component;
   titleKey?: string;
   subtitleKey?: string;
   requiresAdult?: boolean;
-  showHeader: boolean;
-  showTabBar: boolean;
   showAd: boolean;
 }
 
@@ -41,17 +40,15 @@ const baseRoute = (
   options: Partial<Omit<RouteConfig, 'component'>> = {}
 ) => ({
   component,
-  showHeader: true,
-  showTabBar: false,
   showAd: false,
   ...options,
 });
 
 export const ROUTES = {
-  welcome: baseRoute(WelcomeScreen, { showHeader: false }),
-  'age-check': baseRoute(AgeCheckScreen, { showHeader: false }),
-  auth: baseRoute(AuthScreen, { showHeader: false }),
-  home: baseRoute(HomeScreen, { showHeader: false, showTabBar: true }),
+  welcome: baseRoute(WelcomeScreen),
+  'age-check': baseRoute(AgeCheckScreen),
+  auth: baseRoute(AuthScreen),
+  home: baseRoute(HomeScreen),
   settings: baseRoute(SettingsScreen, { titleKey: 'headers.settings' }),
   'personal-space': baseRoute(PersonalSpaceScreen, {
     titleKey: 'headers.personalSpace',
@@ -72,13 +69,13 @@ export const ROUTES = {
   'loi-consentement': baseRoute(LoiConsentementScreen, { titleKey: 'headers.loi', showAd: true }),
   'quiz-consentement': baseRoute(QuizConsentementScreen, { titleKey: 'headers.quiz', showAd: true }),
   'accompagnement-mineur': baseRoute(AccompagnementMineurScreen, { titleKey: 'headers.accompagnement', showAd: true }),
-  jeux: baseRoute(GamesHubScreen, { titleKey: 'headers.games', showTabBar: true }),
+  jeux: baseRoute(GamesHubScreen, { titleKey: 'headers.games' }),
   'jeu-des': baseRoute(DiceGameScreen, { titleKey: 'headers.jeuDes' }),
   'jeu-oie': baseRoute(GooseGameScreen, { titleKey: 'headers.jeuOie' }),
   'jeu-cartes': baseRoute(CardGameScreen, { titleKey: 'headers.jeuCartes' }),
   'hall-of-cards': baseRoute(HallOfCardsScreen, { titleKey: 'headers.hallOfCards' }),
-  apprendre: baseRoute(ApprendreScreen, { titleKey: 'tabs.learn', showHeader: false, showTabBar: true }),
-  moi: baseRoute(MoiScreen, { titleKey: 'tabs.me', showHeader: false, showTabBar: true }),
+  apprendre: baseRoute(ApprendreScreen, { titleKey: 'tabs.learn' }),
+  moi: baseRoute(MoiScreen, { titleKey: 'tabs.me' }),
   'module-de-base': baseRoute(ModuleDeBaseScreen),
   premium: baseRoute(PremiumScreen),
   'theme-select': baseRoute(ThemeSelectScreen),
@@ -89,11 +86,11 @@ export function getRoute(screen: Screen): RouteConfig {
 }
 
 export function shouldShowHeader(screen: Screen): boolean {
-  return getRoute(screen).showHeader;
+  return shouldScreenShowHeader(screen);
 }
 
 export function shouldShowTabBar(screen: Screen): boolean {
-  return getRoute(screen).showTabBar;
+  return isTabRootScreen(screen);
 }
 
 export function shouldShowAd(screen: Screen): boolean {

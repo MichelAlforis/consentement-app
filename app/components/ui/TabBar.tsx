@@ -5,50 +5,32 @@ import { motion } from 'framer-motion';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
-
-export const TAB_ROOTS: Screen[] = ['home', 'apprendre', 'jeux', 'moi'];
-const TAB_ROOTS_SET = new Set<Screen>(TAB_ROOTS);
+import { isTabRootScreen, tabScreens, type TabIconId } from '../../config/screenMeta';
 
 interface TabBarProps {
   currentScreen: Screen;
   onNavigate: (screen: Screen) => void;
 }
 
-const TABS: { screen: Screen; icon: (active: boolean, color: string) => React.ReactNode; labelKey: string }[] = [
-  {
-    screen: 'home',
-    icon: (active, color) => <Home size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-    labelKey: 'tabs.home',
-  },
-  {
-    screen: 'apprendre',
-    icon: (active, color) => <BookOpen size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-    labelKey: 'tabs.learn',
-  },
-  {
-    screen: 'jeux',
-    icon: (active, color) => <Gamepad2 size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-    labelKey: 'tabs.play',
-  },
-  {
-    screen: 'moi',
-    icon: (active, color) => <User size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-    labelKey: 'tabs.me',
-  },
-];
+const TAB_ICONS: Record<TabIconId, (active: boolean, color: string) => React.ReactNode> = {
+  home: (active, color) => <Home size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  learn: (active, color) => <BookOpen size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  play: (active, color) => <Gamepad2 size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  me: (active, color) => <User size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+};
 
 export function TabBar({ currentScreen, onNavigate }: TabBarProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  if (!TAB_ROOTS_SET.has(currentScreen)) return null;
+  if (!isTabRootScreen(currentScreen)) return null;
 
   return (
     <div
       className="flex items-stretch safe-area-bottom"
       style={{ background: colors.bgCard, borderTop: `1px solid ${colors.border}` }}
     >
-      {TABS.map((tab) => {
+      {tabScreens.map((tab) => {
         const active = currentScreen === tab.screen;
         const color = active ? colors.accent : colors.textMuted;
         return (
@@ -58,7 +40,7 @@ export function TabBar({ currentScreen, onNavigate }: TabBarProps) {
             onClick={() => onNavigate(tab.screen)}
             className="flex-1 flex flex-col items-center justify-center gap-1 py-3"
           >
-            {tab.icon(active, color)}
+            {TAB_ICONS[tab.icon](active, color)}
             <span
               className="text-[10px] font-medium leading-none"
               style={{ color }}

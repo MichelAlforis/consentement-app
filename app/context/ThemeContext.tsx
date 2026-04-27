@@ -25,6 +25,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--color-text-muted', c.textMuted);
     root.style.setProperty('--color-border', c.border);
     root.style.setProperty('--color-divider', c.divider);
+    root.style.setProperty('--color-success', c.success);
+    root.style.setProperty('--color-warning', c.warning);
+    root.style.setProperty('--color-danger', c.danger);
+    root.style.setProperty('--color-premium', c.premium);
+    root.style.setProperty('--color-premium-light', c.premiumLight);
+    root.style.setProperty('--color-premium-shadow', c.premiumShadow);
+    root.style.setProperty('--color-locked', c.locked);
+    root.style.setProperty('--color-rare', c.rare);
+    root.style.setProperty('--color-unique', c.unique);
     root.style.setProperty('--color-comfort-no', c.comfortNo);
     root.style.setProperty('--color-comfort-wait', c.comfortWait);
     root.style.setProperty('--color-comfort-curious', c.comfortCurious);
@@ -34,11 +43,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const activeTheme = theme ?? (themeMode ? themes[themeMode] : warmTheme);
 
-  return (
-    <ThemeContext.Provider value={activeTheme}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={activeTheme}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme(): Theme {

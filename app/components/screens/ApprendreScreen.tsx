@@ -1,7 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, CheckCircle, Lock, ChevronRight, Sparkles, Brain, Film, Scale, HeartHandshake } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle,
+  Lock,
+  ChevronRight,
+  Sparkles,
+  Brain,
+  Film,
+  Scale,
+  HeartHandshake,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -29,18 +39,6 @@ type ModuleMeta = {
   available: boolean;
 };
 
-const RARITY = {
-  common: { bg: 'rgba(107,114,128,0.15)', text: '#9ca3af' },
-  rare:   { bg: 'rgba(139,92,246,0.15)',  text: '#8b5cf6' },
-  unique: { bg: 'rgba(245,158,11,0.15)',  text: '#f59e0b' },
-};
-
-const ICON_BG = {
-  common: 'linear-gradient(135deg, #6b7280, #4b5563)',
-  rare:   'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-  unique: 'linear-gradient(135deg, #f59e0b, #d97706)',
-};
-
 const MODULE_ICONS: Record<string, ReactNode> = {
   'quiz-consentement': <Brain size={20} className="text-white" />,
   'porno-vs-realite': <Film size={20} className="text-white" />,
@@ -62,7 +60,24 @@ function ModuleCard({
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const r = RARITY[module.rarity];
+  const rarity = {
+    common: {
+      bg: `color-mix(in srgb, ${colors.textMuted} 15%, transparent)`,
+      text: colors.textMuted,
+      iconBg: `linear-gradient(135deg, ${colors.textMuted}, ${colors.locked})`,
+    },
+    rare: {
+      bg: colors.rareBg,
+      text: colors.rare,
+      iconBg: `linear-gradient(135deg, ${colors.rare}, ${colors.premium})`,
+    },
+    unique: {
+      bg: colors.uniqueBg,
+      text: colors.unique,
+      iconBg: `linear-gradient(135deg, ${colors.unique}, ${colors.warning})`,
+    },
+  } satisfies Record<Rarity, { bg: string; text: string; iconBg: string }>;
+  const r = rarity[module.rarity];
 
   return (
     <motion.button
@@ -81,7 +96,12 @@ function ModuleCard({
     >
       <div
         className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-        style={{ background: completed || !module.available ? ICON_BG[module.rarity] : 'rgba(107,114,128,0.2)' }}
+        style={{
+          background:
+            completed || !module.available
+              ? r.iconBg
+              : `color-mix(in srgb, ${colors.locked} 20%, transparent)`,
+        }}
       >
         {module.icon}
       </div>
@@ -102,7 +122,8 @@ function ModuleCard({
           {module.desc}
         </p>
         <p className="text-[10px] mt-1 font-medium" style={{ color: r.text }}>
-          {t('apprendre.rewardPrefix')}{module.reward}
+          {t('apprendre.rewardPrefix')}
+          {module.reward}
         </p>
       </div>
 
@@ -124,8 +145,12 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { t } = useTranslation();
   const { completedModules } = useModuleProgressStore();
   const audience = moduleAudience(isAdult);
-  const modules: ModuleMeta[] = MODULES
-    .filter((module) => module.id !== 'module-de-base' && (module.available[audience] || (audience === 'adult' && module.id === 'module-pratiques-adultes')))
+  const modules: ModuleMeta[] = MODULES.filter(
+    (module) =>
+      module.id !== 'module-de-base' &&
+      (module.available[audience] ||
+        (audience === 'adult' && module.id === 'module-pratiques-adultes'))
+  )
     .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99))
     .map((module) => ({
       id: module.id,
@@ -135,16 +160,24 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
       desc: 'descriptionKey' in module && module.descriptionKey ? t(module.descriptionKey) : '',
       reward: t(module.rewardKey),
       rarity: module.reward.rarity,
-      rarityLabel: t(`apprendre.rarity${module.reward.rarity[0].toUpperCase()}${module.reward.rarity.slice(1)}`),
+      rarityLabel: t(
+        `apprendre.rarity${module.reward.rarity[0].toUpperCase()}${module.reward.rarity.slice(1)}`
+      ),
       available: module.available[audience],
     }));
-  const completedCount = modules.filter((m) => isModuleCompleted(m.id, completedModules, isAdult)).length;
+  const completedCount = modules.filter((m) =>
+    isModuleCompleted(m.id, completedModules, isAdult)
+  ).length;
 
-  const subtitle = completedCount === 0
-    ? t('apprendre.subtitleEmpty')
-    : completedCount === 1
-      ? t('apprendre.subtitleOne', { total: String(modules.length) })
-      : t('apprendre.subtitleMany', { count: String(completedCount), total: String(modules.length) });
+  const subtitle =
+    completedCount === 0
+      ? t('apprendre.subtitleEmpty')
+      : completedCount === 1
+        ? t('apprendre.subtitleOne', { total: String(modules.length) })
+        : t('apprendre.subtitleMany', {
+            count: String(completedCount),
+            total: String(modules.length),
+          });
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -160,7 +193,9 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
             {t('tabs.learn')}
           </h1>
         </div>
-        <p className="text-sm" style={{ color: colors.textSecondary }}>{subtitle}</p>
+        <p className="text-sm" style={{ color: colors.textSecondary }}>
+          {subtitle}
+        </p>
       </motion.div>
 
       <div className="space-y-3">

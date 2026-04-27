@@ -2,9 +2,7 @@
 
 import { create } from 'zustand';
 import { Screen } from '../types';
-
-const NO_HEADER_SCREENS: Screen[] = ['welcome', 'age-check', 'auth', 'home', 'apprendre', 'moi'];
-const ROOT_SCREENS: Screen[] = ['welcome', 'age-check', 'home', 'apprendre', 'jeux', 'moi'];
+import { isRootScreen, shouldScreenShowHeader } from '../config/screenMeta';
 
 interface NavigationStore {
   currentScreen: Screen;
@@ -42,7 +40,7 @@ export const useNavigationStore = create<NavigationStore>((set) => ({
 }));
 
 export const selectShowHeader = (screen: Screen) =>
-  !NO_HEADER_SCREENS.includes(screen);
+  shouldScreenShowHeader(screen);
 
 export const selectCanGoBack = (screen: Screen, history: Screen[] = []) =>
-  history.length > 0 && !ROOT_SCREENS.includes(screen);
+  history.length > 0 && !isRootScreen(screen);

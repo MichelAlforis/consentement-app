@@ -8,6 +8,7 @@ export type Screen =
   | 'settings'
   | 'personal-space'
   | 'duo-space'
+  // Legacy routes kept for persisted navigation and old deep links.
   | 'learn'
   | 'help'
   | 'scenarios-minor'

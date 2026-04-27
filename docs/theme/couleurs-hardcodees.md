@@ -1,8 +1,8 @@
 # Audit Couleurs Hardcodées — État & Décisions
 
-> Dernière mise à jour : 2026-04-22 — 7 passes effectuées.
+> Dernière mise à jour : 2026-04-27 — 8 passes effectuées.
 
-Sept passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
+Huit passes d'audit effectuées. Ce document trace ce qui a été corrigé, ce qui reste intentionnellement fixe, et ce qui est en attente.
 
 ---
 
@@ -11,6 +11,7 @@ Sept passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été c
 ### Créé
 
 **`app/context/ThemeContext.tsx`**
+
 - `ThemeProvider` wrappant l'app dans `page.tsx`
 - `useTheme()` hook accessible dans tous les composants enfants
 - Remplace le prop-drilling du thème
@@ -18,16 +19,19 @@ Sept passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été c
 ### Refactorisés
 
 **`app/components/ui/MenuCard.tsx`**
+
 - Supprimé : `from-pink-400 to-rose-500`, `from-violet-400 to-purple-600`, `bg-white/80 border-gray-100`, `text-gray-800/500`
 - Remplacé par : `colors.accentGradient`, `colors.secondaryGradient`, `colors.bgCard`, `colors.textPrimary/Secondary`
 - Variants renommés : `pink` → `accent`, `purple` → `secondary`
 
 **`app/components/ui/Card.tsx`**
+
 - Supprimé : `bg-white/80 border-gray-100`, `from-pink-400`, `from-violet-400`, `from-emerald-50`, `from-amber-50`
 - Remplacé par : inline styles via `colors.*`
 - Variants renommés : `gradient-pink` → `accent`, `gradient-purple` → `secondary`, `gradient-green` → `success`, `gradient-amber` → `warning`
 
 **`app/components/screens/HomeAdultScreen.tsx`**
+
 - Supprimé : `from-rose-50/80 to-pink-50/80 border-pink-100`, `text-pink-500`, `text-gray-800/600/400`, `bg-gray-50 border-gray-100`
 - Remplacé par : `colors.bgCard`, `colors.accent`, `colors.textPrimary/Secondary/Muted`
 
@@ -38,24 +42,29 @@ Sept passes d'audit effectuées (2026-04-22). Ce document trace ce qui a été c
 ### Refactorisés
 
 **`app/components/ui/Button.tsx`**
+
 - Supprimé : `from-pink-400 to-rose-500 shadow-pink-300/40`, `from-violet-400 to-purple-500 shadow-purple-300/40`, `bg-white/80 border-gray-200 text-gray-800`, `text-gray-600`
 - Remplacé par : `colors.accentGradient + accentShadow`, `colors.secondaryGradient`, `colors.bgCard + border + textPrimary`, `colors.textSecondary`
 
 **`app/components/ui/ComfortSlider.tsx`**
+
 - Supprimé : `#f3f4f6` (gris fixe pour cases inactives)
 - Remplacé par : `colors.bgSecondary`
 
 **`app/components/screens/PersonalSpaceScreen.tsx`**
+
 - Supprimé : `text-pink-500`, `text-gray-800/500/600/700/400`, `bg-white/80`, `border-gray-100`, `border-amber-200`, `from-rose-50 via-rose-50 to-transparent`
 - Remplacé par : `colors.accent`, `colors.textPrimary/Secondary/Muted`, `colors.bgCard`, `colors.divider`, `colors.warning`, `colors.bgPrimary`
 
 **`app/components/screens/GamesHubScreen.tsx`**
+
 - Supprimé : `text-gray-800`, `text-gray-500`, `text-gray-400` (x2, labels sections)
 - Remplacé par : `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
 
 ### Variants Card mis à jour dans les écrans existants
 
 Fichiers mis à jour via sed (anciens noms → nouveaux noms) :
+
 - `app/components/screens/HelpScreen.tsx` : `gradient-amber` → `warning`
 - `app/components/screens/PersonalSpaceScreen.tsx` : `gradient-amber` → `warning`
 - `app/components/screens/DuoSpaceScreen.tsx` : `gradient-amber` → `warning`
@@ -67,37 +76,40 @@ Fichiers mis à jour via sed (anciens noms → nouveaux noms) :
 ## Couleurs intentionnellement fixes (ne pas modifier)
 
 ### Couleurs sémantiques de sécurité
+
 Ces couleurs doivent rester fixes pour la lisibilité et la convention universelle :
 
-| Composant | Couleur | Raison |
-|-----------|---------|--------|
-| DiceGameScreen — bouton "Oui" | `green-*` | Convention universelle consentement |
-| DiceGameScreen — bouton "Non" | `red-*` | Convention universelle refus |
-| HelpScreen — numéros urgence (15, 17, 114) | `text-red-500` | Signalement d'urgence |
-| HelpScreen — icônes ambulance/police | `text-red-500` | Identité visuelle services d'urgence |
+| Composant                                  | Couleur        | Raison                               |
+| ------------------------------------------ | -------------- | ------------------------------------ |
+| DiceGameScreen — bouton "Oui"              | `green-*`      | Convention universelle consentement  |
+| DiceGameScreen — bouton "Non"              | `red-*`        | Convention universelle refus         |
+| HelpScreen — numéros urgence (15, 17, 114) | `text-red-500` | Signalement d'urgence                |
+| HelpScreen — icônes ambulance/police       | `text-red-500` | Identité visuelle services d'urgence |
 
 ### Couleurs d'activité des jeux
-Les dégradés des cartes de jeux (`GamesHubScreen`, `DiceGameScreen`) sont des identités visuelles propres à chaque jeu, indépendantes du thème :
 
-| Jeu | Dégradé | Raison |
-|-----|---------|--------|
-| Dé du Consentement | Amber → Orange | Énergie, chaleur |
-| Jeu de l'Oie | Indigo → Violet | Mystère, aventure |
-| Cartes à tirer | Violet → Fuchsia | Créativité |
-| Scénarios guidés | Bleu → Cyan | Clarté, dialogue |
+Les dégradés d'activité des jeux (`DiceGameScreen`, cartes de tirage, plateau) sont des identités visuelles propres à chaque jeu, indépendantes du thème. Les cartes de navigation du hub doivent en revanche utiliser les tokens sémantiques et le composant partagé `GameMenuCard`.
+
+| Surface            | Dégradé                   | Raison                           |
+| ------------------ | ------------------------- | -------------------------------- |
+| Dé du Consentement | Amber → Orange            | Énergie, chaleur de la mécanique |
+| Cartes à tirer     | Violet → Fuchsia          | Identité de la carte jouable     |
+| Plateau / cases    | Couleurs par type de case | Lisibilité immédiate du jeu      |
 
 ### Identité visuelle Duo
+
 Les couleurs de la session Duo incarnent la rencontre de deux personnes — elles restent fixes indépendamment du thème :
 
-| Composant | Couleur | Raison |
-|-----------|---------|--------|
-| `DuoBumpStep` — bouton principal | `from-purple-500 to-pink-500` | Identité Bump : fusion deux individus |
+| Composant                             | Couleur                                    | Raison                                             |
+| ------------------------------------- | ------------------------------------------ | -------------------------------------------------- |
+| `DuoBumpStep` — bouton principal      | `from-purple-500 to-pink-500`              | Identité Bump : fusion deux individus              |
 | `DuoConnectedStep` — cercle de fusion | `accent → secondary` via dégradé dynamique | S'adapte au thème tout en conservant la symbolique |
-| `DuoSpaceScreen` — badge "Recommandé" | `from-purple-500 to-pink-500` | Continuité identité Bump |
-| `DuoSpaceScreen` — fond caméra | `bg-gray-900` | Sémantique viewfinder (doit rester sombre) |
+| `DuoSpaceScreen` — badge "Recommandé" | `from-purple-500 to-pink-500`              | Continuité identité Bump                           |
+| `DuoSpaceScreen` — fond caméra        | `bg-gray-900`                              | Sémantique viewfinder (doit rester sombre)         |
 
 ### Écrans pré-thème
-⚠️ **Important** : le thème persiste via localStorage. Même les écrans "pré-thème" s'affichent sur le fond dark-luxury (`#0f0d0e`) si l'utilisateur revient à cet écran. Seules les couleurs d'*identité de marque* peuvent rester fixes.
+
+⚠️ **Important** : le thème persiste via localStorage. Même les écrans "pré-thème" s'affichent sur le fond dark-luxury (`#0f0d0e`) si l'utilisateur revient à cet écran. Seules les couleurs d'_identité de marque_ peuvent rester fixes.
 
 - `WelcomeScreen.tsx` — dégradé bleu/violet du logo app (identité marque — acceptable)
 - `AuthScreen.tsx` — bleu FranceConnect (identité marque externe — fixe)
@@ -108,15 +120,18 @@ Les couleurs de la session Duo incarnent la rencontre de deux personnes — elle
 ## Passe 3 — Contraste dark-luxury (2026-04-22)
 
 ### Problème résolu
+
 `text-gray-800/700/600/500/400` sur fond `#0f0d0e` (dark-luxury) = contraste 1.5–4:1 → quasi-invisible.
 `textMuted` du thème dark-luxury `#7a7068` = contraste ~4:1, sous le seuil WCAG AA (4.5:1).
 
 ### Corrigés
 
 **`app/types/theme.ts`**
+
 - `textMuted` dark-luxury : `#7a7068` → `#8a8078` (contraste ~5:1)
 
 **Écrans de contenu (tous thématisés) :**
+
 - `HelpScreen.tsx` — textes + boutons urgence `bg-white/80` → `colors.bgCard`
 - `LearnScreen.tsx` — tous les textes
 - `PremiumScreen.tsx` — textes + feature list container `bg-white` → `colors.bgCard`
@@ -125,13 +140,14 @@ Les couleurs de la session Duo incarnent la rencontre de deux personnes — elle
 - `PornoVsRealiteScreen.tsx` — textes + cards comparaison + explication dépliable
 
 **Composants Duo (tous thématisés) :**
+
 - `DuoBumpStep.tsx`, `DuoConnectedStep.tsx`, `DuoFillingStep.tsx`, `DuoReadyStep.tsx`
 - `DuoPactStep.tsx`, `DuoRevealStep.tsx`, `DuoSummaryStep.tsx`, `DuoWaitingStep.tsx`
 
 ### Écrans non encore thématisés (priorité basse)
 
-| Fichier | Problème principal | Priorité |
-|---------|--------------------|----------|
+| Fichier               | Problème principal                 | Priorité                 |
+| --------------------- | ---------------------------------- | ------------------------ |
 | `HomeMinorScreen.tsx` | `text-gray-800/500`, `bg-white/80` | Basse (thème youth fixe) |
 
 ---
@@ -139,11 +155,13 @@ Les couleurs de la session Duo incarnent la rencontre de deux personnes — elle
 ## Passe 4 — Composants Duo + UI partagés (2026-04-22)
 
 ### Contexte
+
 Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. Cause : composants Duo et UI partagés encore 0 % thématisés, rendant le thème dark-luxury incohérent dans les flux principaux.
 
 ### Refactorisés
 
 **`app/components/duo/DuoNavBar.tsx`** — réécriture complète (0% → 100% thématisé)
+
 - Supprimé : `bg-gray-900/90`, `text-white`, `text-gray-400`, `bg-gray-700`, `bg-gray-800`, Tailwind color classes sur tous les boutons/étapes
 - Remplacé par :
   - Fond barre : `colors.bgCard` + `backdrop-blur-sm`
@@ -154,6 +172,7 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
   - Bouton reset : `hover:text-red-400` conservé (sémantique destructive)
 
 **`app/components/duo/DuoConnectedStep.tsx`** — animations de fusion thématisées
+
 - Supprimé : `from-purple-400 to-pink-400` (cercle gauche), `from-violet-400 to-purple-400` (cercle droit), `bg-purple-200` (pulses), couleurs hardcodées sur le cercle fusionné et la particule centrale
 - Remplacé par :
   - Cercle gauche : `background: colors.accentGradient`
@@ -164,6 +183,7 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
   - Particule centrale : `background: colors.accentLight`
 
 **`app/components/duo/DuoWaitingStep.tsx`** — animation d'attente thématisée
+
 - Supprimé : `border-purple-300` (anneaux concentriques), couleurs hardcodées particules et cœur
 - Remplacé par :
   - Anneaux : `borderColor: colors.border` (fusionné dans l'objet `style` existant)
@@ -172,11 +192,13 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
   - Particules : `background: colors.accentLight` (fusionné dans l'objet `style` existant)
 
 **`app/components/duo/DuoPactStep.tsx`** — items du pacte thématisés
+
 - Supprimé : tableau `pactItems` statique à scope module avec couleurs hardcodées `#c9a84c` et `#8b1a3a`
 - Remplacé par : config statique `pactItemsConfig` (structure uniquement) + tableau dynamique `pactItems` calculé à l'intérieur du composant avec `colors.accent` et `colors.secondary`
 - Fond conteneur : `colors.bgSecondary`
 
 **`app/components/ui/QRCode.tsx`** — thématisation complète
+
 - Supprimé : `from-gray-800 to-gray-900` (cadre), `bg-white` (fond intérieur), `bg-gray-900` (modules remplis), `border-purple-400` (anneau pulsé)
 - Remplacé par :
   - Cadre : `colors.bgSecondary`
@@ -186,11 +208,13 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
   - Anneau pulsé : `borderColor: colors.accent`
 
 **`app/components/screens/LearnScreen.tsx`** — icônes déplacées dans le composant
+
 - Supprimé : tableau `principleIcons` à scope module (inaccessible à `colors`)
 - Remplacé par : tableau `principleIcons` déclaré à l'intérieur de `LearnScreen()`, utilisant `colors.accent` pour tous les 5 icônes
 - Fond icône : `colors.bgSecondary`
 
 **`app/components/screens/DuoSpaceScreen.tsx`** — 26 occurrences corrigées
+
 - Supprimé : `text-gray-800/500/400`, `bg-gray-200`, `text-gray-400`, `border-gray-200`, `bg-purple-50/text-purple-600`, `border-purple-400/bg-purple-400`, toutes les classes Tailwind de couleur sur les icônes, séparateurs, inputs
 - Remplacé par :
   - Titres/textes : `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
@@ -203,11 +227,11 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
 
 ### Erreurs rencontrées et solutions
 
-| Composant | Erreur | Solution |
-|-----------|--------|---------|
-| `DuoWaitingStep` | Attribut `style` en double sur `motion.div` | Fusionner toutes les props CSS dans un seul objet `style` |
-| `DuoBumpStep` | `Button` n'accepte pas la prop `style` | Remplacer `!text-gray-400` par `className="opacity-50"` |
-| `DuoSpaceScreen` | `Card` n'accepte pas la prop `style` | Supprimer le style override — `Card variant="elevated"` se thématise lui-même |
+| Composant        | Erreur                                      | Solution                                                                      |
+| ---------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| `DuoWaitingStep` | Attribut `style` en double sur `motion.div` | Fusionner toutes les props CSS dans un seul objet `style`                     |
+| `DuoBumpStep`    | `Button` n'accepte pas la prop `style`      | Remplacer `!text-gray-400` par `className="opacity-50"`                       |
+| `DuoSpaceScreen` | `Card` n'accepte pas la prop `style`        | Supprimer le style override — `Card variant="elevated"` se thématise lui-même |
 
 ---
 
@@ -216,6 +240,7 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
 ### Typographie
 
 **`app/layout.tsx`**
+
 - Ajout de `Inter` via `next/font/google` (téléchargée au build, zéro dépendance npm)
 - Remplace la pile système `font-sans` (ui-sans-serif, system-ui…)
 - Appliquée via `inter.className` sur `<body>` — s'applique à toute l'app
@@ -223,6 +248,7 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
 ### Refactorisés
 
 **`app/components/screens/DiceGameScreen.tsx`** — ~25 occurrences corrigées
+
 - Supprimé : `text-gray-800/700/500/400`, `bg-white` (cartes Solo/À deux), `bg-gray-50/100` (fonds activité, écran rideau)
 - Remplacé par :
   - Titres/textes : `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
@@ -237,6 +263,7 @@ Audit visuel global : l'app paraissait "2020" malgré les 3 premières passes. C
   - Gradients catégories (identité visuelle jeu)
 
 **`app/components/screens/CardGameScreen.tsx`** — ~25 occurrences corrigées
+
 - Supprimé : `text-gray-900/400`, `bg-gray-50` (container réglages), `bg-white border-gray-200` (toggle, bouton retour), `#fff`/`#9ca3af`/`#f3f4f6`/`#e5e7eb`/`#fafafa` hardcodés dans les ternaires
 - Remplacé par :
   - Titres/labels : `colors.textPrimary`, `colors.textMuted`
@@ -271,6 +298,7 @@ Textes affectés : titre, sous-titre, labels des deux cards, conteneur confident
 ### Corrigé
 
 **`app/components/screens/AgeCheckScreen.tsx`**
+
 - Ajout de `useTheme()` + `const { colors } = useTheme()`
 - `text-gray-800` × 3 → `style={{ color: colors.textPrimary }}`
 - `text-gray-500` × 2 → `style={{ color: colors.textMuted }}`
@@ -278,6 +306,7 @@ Textes affectés : titre, sous-titre, labels des deux cards, conteneur confident
 - `text-gray-400` × 2 (icône + texte confidentialité) → `style={{ color: colors.textMuted }}`
 
 ### Conservé (identité âge)
+
 - `from-amber-100 to-orange-200 text-amber-600` — icône Calendrier
 - `from-green-100 to-emerald-200 text-emerald-600` — icône Sprout (mineur)
 - `from-green-200 to-emerald-300 text-emerald-700` — icône TreeDeciduous (adulte)
@@ -293,6 +322,7 @@ Même faille que la Passe 6 : WelcomeScreen et AuthScreen étaient classées "pr
 ### Corrigé
 
 **`app/components/screens/WelcomeScreen.tsx`**
+
 - Ajout de `useTheme()` + `const { colors } = useTheme()`
 - `text-gray-800` (titre h1) → `style={{ color: colors.textPrimary }}`
 - `text-gray-500` (description) → `style={{ color: colors.textMuted }}`
@@ -300,6 +330,7 @@ Même faille que la Passe 6 : WelcomeScreen et AuthScreen étaient classées "pr
 - `text-gray-400` (note confidentialité) → `style={{ color: colors.textMuted }}`
 
 **`app/components/screens/AuthScreen.tsx`**
+
 - Ajout de `useTheme()` + `const { colors } = useTheme()`
 - `text-gray-800` (titre h2) → `style={{ color: colors.textPrimary }}`
 - `text-gray-500` (sous-titre) → `style={{ color: colors.textMuted }}`
@@ -309,19 +340,75 @@ Même faille que la Passe 6 : WelcomeScreen et AuthScreen étaient classées "pr
 - `text-gray-600` (icône Lock, items liste) → `style={{ color: colors.textMuted/textSecondary }}`
 
 ### Conservé (identité marque)
+
 - `text-violet-500` — tagline WelcomeScreen (identité app)
 - `bg-blue-50 text-blue-600` × 3 — badges Chiffré / RGPD / Officiel (FranceConnect — identité marque externe)
 - `bg-green-100 text-green-600` — puces ✓ de la liste (sémantique validation)
 
 ### État final — couverture complète
 
-| Écran | Statut |
-|-------|--------|
-| WelcomeScreen | ✅ thématisé (Passe 7) |
-| AgeCheckScreen | ✅ thématisé (Passe 6) |
-| AuthScreen | ✅ thématisé (Passe 7) |
-| HomeMinorScreen | ✅ sûr — thème `youth` forcé automatiquement |
+| Écran           | Statut                                                          |
+| --------------- | --------------------------------------------------------------- |
+| WelcomeScreen   | ✅ thématisé (Passe 7)                                          |
+| AgeCheckScreen  | ✅ thématisé (Passe 6)                                          |
+| AuthScreen      | ✅ thématisé (Passe 7)                                          |
+| HomeMinorScreen | ✅ sûr — thème `youth` forcé automatiquement                    |
 | GooseGameScreen | ✅ sûr — fond violet/indigo propre au jeu, indépendant du thème |
+
+---
+
+## Passe 8 — Tokens sémantiques + cartes de hub (2026-04-27)
+
+### Problème
+
+Plusieurs écrans recréaient des variantes locales de cartes ou contournaient le thème avec des couleurs d'état hardcodées :
+
+- `GamesHubScreen.tsx` définissait `FreeCard` et `PremiumCard` localement.
+- `GamesHubScreen.tsx`, `MenuCard.tsx` et `ApprendreScreen.tsx` utilisaient des verts, violets, ambres ou overlays figés pour exprimer des états produit.
+- `globals.css` supprimait le focus clavier globalement sans style de remplacement visible.
+
+### Corrigé
+
+**`app/types/theme.ts`**
+
+- Ajout des tokens sémantiques : `danger`, `premium`, `premiumLight`, `premiumGradient`, `premiumShadow`, `locked`, `lockedOverlay`, `rare`, `rareBg`, `unique`, `uniqueBg`.
+- Déclinaison de ces tokens pour les 5 thèmes.
+
+**`app/context/ThemeContext.tsx`**
+
+- Injection des tokens sémantiques en variables CSS `--color-*` pour les styles globaux.
+
+**`app/components/ui/GameMenuCard.tsx`**
+
+- Nouveau composant partagé pour les cartes de hub gratuites, premium et verrouillées.
+- Utilise `colors.success`, `colors.premiumGradient`, `colors.premiumShadow` et `colors.lockedOverlay`.
+
+**`app/components/screens/GamesHubScreen.tsx`**
+
+- Suppression des cartes locales `FreeCard` et `PremiumCard`.
+- Remplacement par `GameMenuCard`.
+- Le CTA premium utilise `colors.premiumGradient`.
+
+**`app/components/ui/Card.tsx`**
+
+- Ajout des variantes `premium`, `locked`, `rare`, `unique`, `danger`.
+
+**`app/components/ui/MenuCard.tsx`**
+
+- Variantes `green` et `amber` remplacées par les tokens `success`, `warning` et `unique`.
+
+**`app/components/screens/ApprendreScreen.tsx`**
+
+- Raretés `rare` et `unique` migrées vers les tokens de thème.
+
+**`app/globals.css`**
+
+- Remplacement de la suppression globale du focus par `*:focus:not(:focus-visible)`.
+- Ajout d'un style `:focus-visible` visible pour liens, boutons, champs et éléments interactifs.
+
+### Règle ajoutée
+
+Pour les états produit (`premium`, `locked`, `rare`, `unique`, `danger`, `success`), utiliser les tokens sémantiques du thème. Les couleurs fixes restent réservées aux identités de jeu, aux marques externes et aux conventions universelles documentées.
 
 ---
 
