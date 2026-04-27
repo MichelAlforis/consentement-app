@@ -297,21 +297,21 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
             )}
           </div>
 
-          {/* Icône — CARD_LAYOUT.iconCenterY */}
+          {/* Icône — +2% correction optique */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.iconCenterY * 100}%`,
+            top: `${CARD_LAYOUT.iconCenterY * 100 + 2}%`,
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            filter: `drop-shadow(0 0 ${Math.round(size * 0.06)}px ${card.border})`,
+            filter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
           }}>
-            <DynamicIcon name={card.iconName} size={Math.round(size * 0.24)} color="rgba(255,255,255,0.88)" />
+            <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
           </div>
 
-          {/* Panneau texte — CARD_LAYOUT.panelTop / panelHeight */}
+          {/* Panneau texte — +1% correction optique */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.panelTop * 100}%`,
+            top: `${CARD_LAYOUT.panelTop * 100 + 1}%`,
             left: Math.round(size * 0.075),
             right: Math.round(size * 0.075),
             height: `${CARD_LAYOUT.panelHeight * 100}%`,
@@ -328,7 +328,7 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
               fontSize: Math.round(size * 0.082),
               fontWeight: 700,
               color: 'rgba(255,255,255,0.90)',
-              lineHeight: 1.32,
+              lineHeight: 1.30,
               textAlign: 'center',
               display: '-webkit-box',
               WebkitLineClamp: 4,

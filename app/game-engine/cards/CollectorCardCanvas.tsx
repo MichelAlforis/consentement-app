@@ -970,21 +970,21 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
             )}
           </div>
 
-          {/* Icône — centrée à CARD_LAYOUT.iconCenterY, identique R3F */}
+          {/* Icône — +2% correction optique : texte DOM plus lourd visuellement que canvas */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.iconCenterY * 100}%`,
+            top: `${CARD_LAYOUT.iconCenterY * 100 + 2}%`,
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            filter: `drop-shadow(0 0 ${Math.round(size * 0.06)}px ${card.border})`,
+            filter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
           }}>
-            <DynamicIcon name={card.iconName} size={Math.round(size * 0.24)} color="rgba(255,255,255,0.88)" />
+            <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
           </div>
 
-          {/* Panneau texte — top/height calqués sur CARD_LAYOUT, identique R3F */}
+          {/* Panneau texte — +1% correction optique, CARD_LAYOUT sinon intact */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.panelTop * 100}%`,
+            top: `${CARD_LAYOUT.panelTop * 100 + 1}%`,
             left: Math.round(size * 0.075),
             right: Math.round(size * 0.075),
             height: `${CARD_LAYOUT.panelHeight * 100}%`,
@@ -1001,7 +1001,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
               fontSize: Math.round(size * 0.082),
               fontWeight: 700,
               color: 'rgba(255,255,255,0.90)',
-              lineHeight: 1.32,
+              lineHeight: 1.30,
               textAlign: 'center',
               display: '-webkit-box',
               WebkitLineClamp: 4,

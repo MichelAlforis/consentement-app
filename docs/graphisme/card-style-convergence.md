@@ -194,9 +194,66 @@ C2 est un sprint dédié avec test device obligatoire.
 
 ---
 
-## Tokens visuels partagés cibles
+## Architecture layout — source de vérité partagée (2026-04-27)
 
-Après C1 + C2 + C3, les deux cartes partageront :
+### `CARD_LAYOUT` — constante exportée depuis `CollectorCardCanvas.tsx`
+
+```ts
+export const CARD_LAYOUT = {
+  iconCenterY: 0.43,  // centre vertical icône — identique R3F (iconCy = h * 0.43)
+  panelTop:    0.65,  // début panneau texte  — identique R3F (h * (1 - 0.30 - 0.05))
+  panelHeight: 0.30,  // hauteur panneau texte — identique R3F (panelH = h * 0.30)
+} as const;
+```
+
+**Principe :** les ratios R3F (canvas px) et CSS (position absolue %) partagent la même source. Modifier `CARD_LAYOUT` met à jour les deux systèmes simultanément.
+
+### Layout CSS — `position: absolute` (pas flex)
+
+`CSSCardFallback` et `CSSFallbackPreview` utilisent des positions absolues calquées sur `CARD_LAYOUT` :
+
+```tsx
+// Icône — +2% correction optique (texte DOM visuellement plus lourd que canvas)
+top: `${CARD_LAYOUT.iconCenterY * 100 + 2}%`   // → 45%
+
+// Panneau texte — +1% correction optique
+top: `${CARD_LAYOUT.panelTop * 100 + 1}%`       // → 66%
+height: `${CARD_LAYOUT.panelHeight * 100}%`     // → 30%
+```
+
+**Correction optique séparée du ratio logique :** les +2% / +1% compensent la densité visuelle supérieure du texte DOM vs rendu canvas. Le `CARD_LAYOUT` reste fidèle aux valeurs R3F.
+
+### `makeFaceTexture` (R3F) — utilise `CARD_LAYOUT` directement
+
+```ts
+const iconCy = h * CARD_LAYOUT.iconCenterY;
+const panelH = h * CARD_LAYOUT.panelHeight;
+const panelY = h * CARD_LAYOUT.panelTop;
+```
+
+### `panneau texte` R3F — agrandissement (2026-04-27)
+
+- `panelH` : `h * 0.245` → `h * 0.30` (= `CARD_LAYOUT.panelHeight`)
+- `panelY` : calculé via `CARD_LAYOUT.panelTop` (au lieu de `h - panelH - h*0.07`)
+- `maxLines` : 4 → **5**
+- `textSize` : 3 paliers — `size * 0.084` / `0.074` (>72c) / `0.065` (>100c)
+
+### `PlayingCard.tsx` — fix backface-visibility Safari (2026-04-27)
+
+**Problème :** le texte du DOS (back) transparaissait à travers la face dans Safari/WebKit — `backface-visibility: hidden` inefficace dans un contexte `preserve-3d` imbriqué.
+
+**Cause :** le tilt wrapper avait à la fois `transformStyle: 'preserve-3d'` et `backfaceVisibility: 'hidden'`, ce qui corrompt le rendu WebKit des enfants.
+
+**Fix :**
+- `backfaceVisibility: 'hidden'` retiré du tilt wrapper (inutile — le tilt n'atteint jamais 180°)
+- `transform: 'translateZ(0.001px)'` ajouté sur le DOS → force le GPU à honorer le backface masking
+- `transform: 'rotateY(180deg) translateZ(0.001px)'` sur la FACE
+
+---
+
+## Tokens visuels partagés — état final
+
+Après C1 + C2 + C3 + corrections 2026-04-27 :
 
 | Token | Valeur |
 |---|---|
@@ -207,3 +264,5 @@ Après C1 + C2 + C3, les deux cartes partageront :
 | Dos | Gradient + pattern + watermark symbol |
 | Badge overlay | Gradient pill arrondi, texte blanc, typographie bold |
 | Effet de profondeur | Foil / shimmer — même intention, déclinaisons techniques différentes |
+| Icône centre | 43% (R3F) / 45% CSS (correction optique +2%) |
+| Panneau texte | top 65% (R3F) / 66% CSS (+1%), hauteur 30% |

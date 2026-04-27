@@ -186,15 +186,13 @@ export function PlayingCard({
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
         <div style={{ perspective: '1200px', width: '100%', height: '100%' }}>
-          {/* Tilt wrapper — Framer useSpring tracks pointer with physical decay */}
+          {/* Tilt wrapper — backfaceVisibility retiré : corrompt le rendu Safari dans un contexte preserve-3d imbriqué */}
           <motion.div
             style={{
               rotateX: tiltRotateX,
               rotateY: tiltRotateY,
               transformStyle: 'preserve-3d',
               WebkitTransformStyle: 'preserve-3d',
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
               width: '100%',
               height: '100%',
               willChange: 'transform',
@@ -221,6 +219,7 @@ export function PlayingCard({
                   background: cat.gradient,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
+                  transform: 'translateZ(0.001px)',
                   overflow: 'hidden',
                   boxShadow: `0 20px 56px ${cat.border}44, 0 4px 16px rgba(0,0,0,0.12)`,
                 }}
@@ -280,7 +279,7 @@ export function PlayingCard({
                   background: buildFaceBg(cat.gradient),
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg)',
+                  transform: 'rotateY(180deg) translateZ(0.001px)',
                   display: 'flex',
                   flexDirection: 'column',
                   overflow: 'hidden',
