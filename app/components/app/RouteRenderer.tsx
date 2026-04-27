@@ -13,7 +13,6 @@ import {
   SettingsScreen,
   PersonalSpaceScreen,
   DuoSpaceScreen,
-  LearnScreen,
   HelpScreen,
   PornoVsRealiteScreen,
   LoiConsentementScreen,
@@ -119,7 +118,9 @@ export function RouteRenderer({
       case 'learn':
       case 'scenarios-minor':
       case 'feelings':
-        return <LearnScreen />;
+        // Legacy routes — AppShell redirects to screenMeta.legacy.replacement on mount.
+        // Return null to avoid a flash of the old content during that one frame.
+        return null;
       case 'help':
         return <HelpScreen />;
       case 'resources-minor':

@@ -1,6 +1,6 @@
 # Convergence visuelle — PlayingCard ↔ CollectorCard
 
-**Statut :** ✅ Complété (C1 + C2 + C3)  
+**Statut :** ✅ Complété (C1 + C2 + C3) + corrections 2026-04-27  
 **Date :** 2026-04-26  
 **Fichiers concernés :**
 - `app/components/screens/CardGame/PlayingCard.tsx`
@@ -170,6 +170,27 @@ C2 est un sprint dédié avec test device obligatoire.
 | Stack de rendu | CSS vs R3F — décision architecturale validée, les deux ont leurs raisons. |
 | Taille | PlayingCard = 290px (plein écran); CollectorCard = 140-160px (révélation). Pas comparables. |
 | Fond global Canvas | CollectorCard a `#0a0810` comme fond Canvas WebGL — non modifiable sans impact PostFX. |
+
+---
+
+## Corrections post-sprint (2026-04-27)
+
+### Bug `Select` → infinite loop (CollectorCardCanvas)
+
+**Cause :** `@react-three/postprocessing` v3 met `children` dans les deps du `useEffect` de `<Select>`. Les enfants JSX créant de nouveaux objets à chaque render, l'effet se re-exécute → cleanup retire les meshes → re-add → `selected` change → re-render → boucle infinie.
+
+**Fix :** suppression de tous les `<Select enabled>` dans `CardMesh`. Les glow rings restent visibles (`meshBasicMaterial` + dark bg). `SelectiveBloom` remplacé par `Bloom` standard (supprime le warning "requires lights to work"). `Selection` context retiré. `enableBloom` prop supprimé.
+
+### CSSCardFallback face — refonte (CollectorCardCanvas + sandbox)
+
+**Problème :** après crash WebGL, `CanvasBoundary` affichait `CSSCardFallback` avec `background: card.gradient` (vif), texte trop petit, icône à position variable selon la longueur du texte.
+
+**Fix :**
+- Fond sombre : même formule que `buildFaceBg` de `PlayingCard` — `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`
+- Icône fixée en `position: absolute` (pill catégorie en haut gauche)
+- Texte en `position: absolute` avec zone dédiée (top: 36 → bottom: 14), `font-size: size * 0.09`, sans troncature
+- Stripes colorées top/bottom pour cohérence visuelle
+- `CSSFallbackPreview` du sandbox aligné sur le même style
 
 ---
 

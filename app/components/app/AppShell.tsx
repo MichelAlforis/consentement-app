@@ -9,7 +9,7 @@ import { logger } from '../../lib/logger';
 import { getPlatform, isCapacitor } from '../../lib/platform';
 import { isAdultApp } from '../../lib/appVariant';
 import { getRoute, shouldShowTabBar } from '../../routes';
-import { isRootScreen } from '../../config/screenMeta';
+import { isRootScreen, screenMeta } from '../../config/screenMeta';
 import {
   useAuthStore,
   useNavigationStore,
@@ -92,6 +92,11 @@ export function AppShell() {
   }, [currentScreen, isAdult, replaceWith, userName]);
 
   useEffect(() => {
+    const legacyReplacement = screenMeta[currentScreen]?.legacy?.replacement;
+    if (legacyReplacement) {
+      replaceWith(legacyReplacement);
+      return;
+    }
     if (isAdult === false && getRoute(currentScreen).requiresAdult) {
       replaceWith('home');
     }

@@ -36,6 +36,16 @@ export const useModuleProgressStore = create<ModuleProgressStore>()(
     {
       name: 'consentement-modules',
       version: 1,
+      // Without migrate, Zustand v5 discards stored state on version mismatch
+      // and calls merge(undefined, initialState) — losing all progress.
+      migrate: (persistedState, fromVersion) => {
+        if (fromVersion === 0) {
+          const s = persistedState as { completedModules?: string[] };
+          const completedModules = s.completedModules ?? [];
+          return { completedModules, onboardingStatus: resolveOnboardingStatus(completedModules) };
+        }
+        return persistedState;
+      },
       merge: (persisted, current) => {
         const state = { ...current, ...(persisted as Partial<ModuleProgressStore>) };
         return {
