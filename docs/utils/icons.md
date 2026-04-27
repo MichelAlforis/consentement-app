@@ -1,7 +1,7 @@
 # Système d'icônes — DynamicIcon
 
-> Mis à jour : 2026-04-26  
-> Statut : **Migration complète** — zéro emoji dans l'UI rendue (hors identifiants thèmes décoratifs)
+> Mis à jour : 2026-04-27  
+> Statut : **Migration complète** — zéro emoji dans l'UI rendue (drapeaux langue conservés, voir ci-dessous)
 
 ---
 
@@ -135,6 +135,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 | Composant | Emoji retiré | Remplacement |
 |---|---|---|
 | `DuoRevealStep` — fin de révélation | 💜 | `Heart size={40} fill="#a855f7"` |
+| `DuoBumpStep` — succès connexion | ✓ | `Check size={40} strokeWidth={3} color="white"` |
 
 ### Confetti
 
@@ -166,7 +167,16 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 | Élément | Raison |
 |---|---|
-| `theme.emoji` dans `theme.ts` | Identifiant décoratif du système de thèmes (🌅🌙✨🤍🌈) — non rendu en UI |
+| `lang.flag` dans `LanguageScreen` | Drapeaux nationaux (🇫🇷🇬🇧🇪🇸) — pas d'équivalent Lucide ; rendu correct sur iOS 13+ / Android API 22+ |
+| Contenu éditorial dé (`index.ts`) | `👀 😄` dans les textes de pratiques — contenu, pas icône |
+
+### Migré (2026-04-27)
+
+| Élément | → |
+|---|---|
+| `theme.emoji` (🌅🌙✨🤍🌈) dans `ThemeSelectScreen` | Grille 2×2 de pastilles `themePreviewColors` |
+| `Theme.emoji: string` dans l'interface | Champ supprimé |
+| `DuoBumpStep` — ✓ unicode `text-4xl` | `Check size={40} strokeWidth={3}` |
 
 ### Migré (2026-04-26)
 
@@ -177,6 +187,12 @@ const ICON_MAP: Record<string, LucideIcon> = {
 | `CONFETTI_EMOJIS` → `CONFETTI_ITEMS` | objets `{ icon, color }`, rendu via `DynamicIcon` |
 | `PawnSvg` — `<text>{emoji}` | `<foreignObject>` + `DynamicIcon` dans le SVG |
 | Clé de sauvegarde | `consentement_jeu_oie` → `consentement_jeu_oie_v2` (invalidation localStorage) |
+
+---
+
+## Résidu à migrer (game-engine générique)
+
+`BoardPlayerState.emoji` et `boardConfig.pawnEmojis` dans `app/game-engine/board/` sont encore en `string` emoji. Non bloquant (le GooseGame passe par ses propres types), à nettoyer lors du prochain travail sur le game-engine générique.
 
 ---
 
@@ -198,6 +214,7 @@ Tous ces types ont eu `emoji: string` → `iconName: string` (ou `pawn: string`)
 | `LegendEntry` | `app/game-engine/board/BoardRenderer.tsx` | `iconName` |
 | `Player` | `app/components/screens/GooseGameScreen/types.ts` | `pawn` (nom Lucide) |
 | `SavedGooseGame` | `app/data/goose-game.ts` | `pawn` |
+| `Theme` | `app/types/theme.ts` | champ `emoji` supprimé |
 
 ---
 
