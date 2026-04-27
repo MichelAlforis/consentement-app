@@ -16,6 +16,7 @@ import { computeGainedCards } from '../../../lib/computeGainedCards';
 import type { GainedCard } from '../../../lib/computeGainedCards';
 import { collectorCards } from '../../../data/cards-collector';
 import { useUnlockStore } from '../../../stores/unlockStore';
+import type { Screen } from '../../../types';
 
 export type { GainedCard };
 
@@ -106,7 +107,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
 interface CardGameScreenProps {
   isPremium: boolean;
   isAdult: boolean;
-  onNavigate?: (screen: string) => void;
+  onNavigate?: (screen: Screen) => void;
 }
 
 export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScreenProps) {

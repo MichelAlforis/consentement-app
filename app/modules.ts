@@ -153,7 +153,12 @@ export function getModuleSequence(isAdult: boolean | null): ModuleConfig[] {
 export function getModuleReward(effectiveId: string): (ModuleReward & { deck: 'A' | 'M' }) | null {
   const mod = MODULE_BY_EFFECTIVE_ID[effectiveId as EffectiveModuleId];
   if (!mod) return null;
-  const audience = mod.effectiveId.minor === effectiveId ? 'minor' : 'adult';
+  // When adult and minor share the same effectiveId, audience can't be inferred — fall back to 'adult'.
+  // Invariant: such modules must have deck.adult === deck.minor.
+  const sharedId = mod.effectiveId.adult === mod.effectiveId.minor;
+  const audience: 'adult' | 'minor' = sharedId
+    ? 'adult'
+    : mod.effectiveId.minor === effectiveId ? 'minor' : 'adult';
   return {
     ...mod.reward,
     deck: mod.deck[audience],

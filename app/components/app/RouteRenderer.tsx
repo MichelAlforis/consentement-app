@@ -137,7 +137,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
     <CardGameScreen
       isPremium={ctx.isPremium}
       isAdult={ctx.isAdult ?? false}
-      onNavigate={(s) => ctx.navigateTo(s as Screen)}
+      onNavigate={ctx.navigateTo}
     />
   ),
 

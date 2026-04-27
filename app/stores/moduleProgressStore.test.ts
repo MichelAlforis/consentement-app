@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useModuleProgressStore } from './moduleProgressStore';
+import { resolveOnboardingStatus } from '../lib/moduleIds';
 
 const store = () => useModuleProgressStore.getState();
 
@@ -67,5 +68,38 @@ describe('moduleProgressStore', () => {
     store().markOnboardingSkipped();
     expect(store().completedModules).toEqual([]);
     expect(store().onboardingStatus).toBe('skipped');
+  });
+});
+
+describe('moduleProgressStore — migration storage v0 → v1', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('migrate reconstruit onboardingStatus depuis completedModules v0', () => {
+    const completedModules = ['module-de-base'];
+    // Simule un payload version 0 en storage (Zustand v5 l'appelle avec fromVersion=0)
+    const migrated = useModuleProgressStore.persist.getOptions().migrate!(
+      { completedModules },
+      0,
+    ) as { completedModules: string[]; onboardingStatus: string };
+
+    expect(migrated.completedModules).toEqual(completedModules);
+    expect(migrated.onboardingStatus).toBe(resolveOnboardingStatus(completedModules));
+  });
+
+  it('migrate v0 avec modules vides → not_started', () => {
+    const migrated = useModuleProgressStore.persist.getOptions().migrate!(
+      { completedModules: [] },
+      0,
+    ) as { onboardingStatus: string };
+
+    expect(migrated.onboardingStatus).toBe('not_started');
+  });
+
+  it('migrate version inconnue → passe-plat (pas de transformation)', () => {
+    const state = { completedModules: ['quiz-consentement'], onboardingStatus: 'completed' };
+    const migrated = useModuleProgressStore.persist.getOptions().migrate!(state, 99);
+    expect(migrated).toBe(state);
   });
 });
