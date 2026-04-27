@@ -7,6 +7,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/moduleDeBase';
+import { ONBOARDING_ICON_MAP } from '../../utils/onboardingIcons';
 import type { Screen } from '../../types';
 
 interface ModuleDeBaseScreenProps {
@@ -83,9 +84,12 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
               initial={{ scale: 0.7 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 20 }}
-              className="text-7xl"
+              className="flex justify-center"
             >
-              {slide.emoji}
+              {(() => {
+                const Icon = ONBOARDING_ICON_MAP[slide.iconName];
+                return Icon ? <Icon size={72} color={colors.accent} /> : null;
+              })()}
             </motion.div>
 
             <h1

@@ -5,7 +5,7 @@ import {
   Link2, Layers, Crown, Gift, PhoneOff, XCircle, Pause, HelpCircle, CheckCircle,
   Star, Flag, Rocket, Film, Scale, AlertTriangle, ShieldAlert, AlertCircle,
   Users, Smartphone, BellOff, LifeBuoy, Calendar, Target, Shield, Dices, Smile,
-  Lock, Waves, Leaf, type LucideIcon,
+  Lock, Waves, Leaf, Wind, Dice5, Hand, type LucideIcon,
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -13,7 +13,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Handshake, Moon, Clock, Zap, Lightbulb, Eye, EyeOff, Compass, MessageSquare,
   Link2, Layers, Crown, Gift, PhoneOff, XCircle, Pause, HelpCircle, CheckCircle,
   Star, Flag, Rocket, Film, Scale, AlertTriangle, ShieldAlert, AlertCircle,
-  Users, Smartphone, BellOff, LifeBuoy, Calendar, Target, Shield, Dices, Smile, Lock, Waves, Leaf,
+  Users, Smartphone, BellOff, LifeBuoy, Calendar, Target, Shield, Dices, Smile,
+  Lock, Waves, Leaf, Wind, Dice5, Hand,
 };
 
 interface DynamicIconProps {

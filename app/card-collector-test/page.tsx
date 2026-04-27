@@ -249,25 +249,26 @@ function CSSFallbackPreview({ card, isFlipped, size }: { card: GainedCard; isFli
         </div>
         <div style={{
           position: 'absolute', inset: 0, borderRadius: 20,
-          background: card.gradient, border: `2px solid ${card.border}`,
+          background: (() => {
+            const m = card.gradient.match(/#[0-9a-f]{6}/i);
+            const c1 = m ? m[0] : '#3b1f85';
+            return `linear-gradient(160deg, #0c0a16 0%, ${c1}18 100%)`;
+          })(),
+          border: '1.5px solid rgba(255,255,255,0.10)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 6, padding: '8px 6px', overflow: 'hidden',
+          overflow: 'hidden',
         }}>
-          <div style={{
-            position: 'absolute', inset: 0, borderRadius: 20,
-            background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.28) 0%, transparent 55%)',
-            pointerEvents: 'none',
-          }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 5, background: card.gradient }} />
           <p style={{
-            fontSize: size * 0.055, fontWeight: 700, color: 'rgba(255,255,255,0.88)',
-            textAlign: 'center', lineHeight: 1.35, position: 'relative', margin: 0,
-            padding: '0 6px',
+            position: 'absolute', top: 16, bottom: 10, left: 10, right: 10,
+            fontSize: size * 0.09, fontWeight: 500, color: 'rgba(255,255,255,0.90)',
+            textAlign: 'left', lineHeight: 1.5, margin: 0,
+            display: 'flex', alignItems: 'center', overflow: 'hidden',
           }}>
             {card.text}
           </p>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: card.gradient }} />
         </div>
       </div>
     </div>
