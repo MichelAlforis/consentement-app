@@ -89,8 +89,8 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           </div>
           {isPremium ? (
             <div className="flex items-center gap-1">
-              <Crown size={11} style={{ color: '#f59e0b' }} />
-              <span className="text-xs font-medium" style={{ color: '#f59e0b' }}>{t('games.premium')}</span>
+              <Crown size={11} style={{ color: colors.unique }} />
+              <span className="text-xs font-medium" style={{ color: colors.unique }}>{t('games.premium')}</span>
             </div>
           ) : (
             <span className="text-xs" style={{ color: colors.textMuted }}>Consentement</span>
@@ -106,7 +106,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
               icon={<Heart size={20} className="text-white" />}
               title={t('headers.personalSpace')}
               desc={t('moi.personalSpaceDesc')}
-              iconBg="linear-gradient(135deg, #8b5cf6, #7c3aed)"
+              iconBg={colors.premiumGradient}
               onClick={() => onNavigate('personal-space')}
               index={++cardIndex}
             />
@@ -114,7 +114,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
               icon={<Users size={20} className="text-white" />}
               title={t('headers.duoSpace')}
               desc={t('moi.duoSpaceDesc')}
-              iconBg="linear-gradient(135deg, #ec4899, #db2777)"
+              iconBg={colors.secondaryGradient}
               onClick={() => onNavigate('duo-space')}
               index={++cardIndex}
             />
@@ -127,7 +127,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
             icon={<HelpCircle size={20} className="text-white" />}
             title={t('settings.help.title')}
             desc={t('moi.helpDesc')}
-            iconBg="linear-gradient(135deg, #f59e0b, #d97706)"
+            iconBg={`linear-gradient(135deg, ${colors.unique}, ${colors.warning})`}
             onClick={() => onNavigate('help')}
             index={++cardIndex}
           />
@@ -152,25 +152,25 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
             onClick={() => onNavigate('premium')}
             className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
             style={{
-              background: 'linear-gradient(135deg, rgba(245,158,11,0.1), rgba(217,119,6,0.06))',
-              border: '1px solid rgba(245,158,11,0.3)',
+              background: colors.uniqueBg,
+              border: `1px solid ${colors.unique}4d`,
             }}
           >
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+              style={{ background: `linear-gradient(135deg, ${colors.unique}, ${colors.warning})` }}
             >
               <Crown size={20} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <span className="font-semibold text-sm block" style={{ color: '#f59e0b' }}>
+              <span className="font-semibold text-sm block" style={{ color: colors.unique }}>
                 {t('settings.premium.title')}
               </span>
               <p className="text-xs" style={{ color: colors.textSecondary }}>
                 {t('moi.premiumDesc')}
               </p>
             </div>
-            <ChevronRight size={16} style={{ color: '#f59e0b' }} />
+            <ChevronRight size={16} style={{ color: colors.unique }} />
           </motion.button>
         )}
       </div>

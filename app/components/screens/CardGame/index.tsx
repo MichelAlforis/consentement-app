@@ -170,7 +170,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
               >
                 <div
                   className="w-20 h-20 rounded-3xl flex items-center justify-center shadow-lg"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
+                  style={{ background: colors.premiumGradient }}
                 >
                   <Sparkles size={36} className="text-white" />
                 </div>
@@ -186,7 +186,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={() => onNavigate?.('quiz-consentement')}
                   className="w-full py-4 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 6px 24px #8b5cf655' }}
+                  style={{ background: colors.premiumGradient, boxShadow: `0 6px 24px ${colors.premiumShadow}` }}
                 >
                   <ChevronRight size={18} />
                   {t('cardGame.emptyCTA')}
@@ -205,7 +205,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                 </p>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm shrink-0"
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
+                style={{ background: colors.premiumGradient }}>
                 <Sparkles size={11} className="text-white" />
                 <span className="text-xs font-bold text-white tracking-widest">{t('games.premium')}</span>
               </div>
@@ -224,7 +224,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                       onClick={() => s.setIsSolo(solo)}
                       className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 text-xs font-bold transition-all"
                       style={active
-                        ? { borderColor: '#8b5cf6', background: '#f5f3ff', color: '#7c3aed' }
+                        ? { borderColor: colors.premium, background: colors.premiumLight, color: colors.premium }
                         : { borderColor: 'transparent', background: colors.bgCard, color: colors.textMuted }}
                     >
                       {icon}{label}
@@ -238,7 +238,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                   <button key={mode} onClick={() => s.setSessionMode(mode)}
                     className="flex-1 py-2 rounded-[10px] text-xs font-bold transition-all"
                     style={s.sessionMode === mode
-                      ? { background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: '#fff' }
+                      ? { background: colors.premiumGradient, color: '#fff' }
                       : { color: colors.textMuted }}
                   >
                     {label}
@@ -252,7 +252,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                     <button key={n} onClick={() => s.setSeanceSize(n)}
                       className="py-2 rounded-xl text-xs font-bold border-2 transition-all"
                       style={s.seanceSize === n
-                        ? { borderColor: '#8b5cf6', background: '#f5f3ff', color: '#7c3aed' }
+                        ? { borderColor: colors.premium, background: colors.premiumLight, color: colors.premium }
                         : { borderColor: colors.border, color: colors.textMuted }}
                     >
                       {n} {t('cardGame.cardUnit')}
@@ -268,7 +268,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
               onClick={() => s.setSelectedTheme('random')}
               className="w-full mb-3 p-4 rounded-2xl border-2 flex items-center gap-4 transition-all"
               style={s.selectedTheme === 'random'
-                ? { borderColor: '#8b5cf6', background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)' }
+                ? { borderColor: colors.premium, background: colors.premiumLight }
                 : { borderColor: colors.border, background: colors.bgSecondary }}
             >
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
@@ -276,7 +276,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                 <Shuffle size={22} className="text-white" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-sm" style={{ color: s.selectedTheme === 'random' ? '#7c3aed' : colors.textPrimary }}>{t('cardGame.random')}</p>
+                <p className="font-bold text-sm" style={{ color: s.selectedTheme === 'random' ? colors.premium : colors.textPrimary }}>{t('cardGame.random')}</p>
                 <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>{t('cardGame.randomDesc', { count: s.available.length })}</p>
               </div>
               {s.selectedTheme === 'random' && (
@@ -300,7 +300,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                       aspectRatio: '2 / 3',
                       background: c.gradient,
                       boxShadow: isSelected
-                        ? `0 0 0 3px #8b5cf6, 0 8px 24px ${c.border}70`
+                        ? `0 0 0 3px ${colors.premium}, 0 8px 24px ${c.border}70`
                         : `0 2px 10px ${c.border}40`,
                     }}
                   >
@@ -319,7 +319,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               onClick={s.startPlaying}
               className="w-full py-4 rounded-2xl font-bold text-white text-base flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 6px 24px #8b5cf655' }}
+              style={{ background: colors.premiumGradient, boxShadow: `0 6px 24px ${colors.premiumShadow}` }}
             >
               {s.sessionMode === 'seance' ? t('cardGame.startSeance', { count: s.seanceSize }) : t('cardGame.drawCard')}
               <ChevronRight size={20} />
@@ -356,7 +356,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                     style={{
                       width: i < s.cardCount ? 8 : 6, height: i < s.cardCount ? 8 : 6,
                       borderRadius: 999,
-                      background: i < s.cardCount ? 'linear-gradient(135deg, #7c3aed, #a855f7)' : colors.border,
+                      background: i < s.cardCount ? colors.premiumGradient : colors.border,
                       transition: 'width 0.3s, height 0.3s',
                     }}
                   />
@@ -423,8 +423,8 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                     disabled={s.isAnimating}
                     className="w-full py-4 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
                     style={{
-                      background: s.isSeanceDone ? 'linear-gradient(135deg, #059669, #10b981)' : 'linear-gradient(135deg, #7c3aed, #a855f7)',
-                      boxShadow: s.isSeanceDone ? '0 6px 24px #10b98140' : '0 6px 24px #8b5cf640',
+                      background: s.isSeanceDone ? `linear-gradient(135deg, ${colors.success}, ${colors.success}bb)` : colors.premiumGradient,
+                      boxShadow: s.isSeanceDone ? `0 6px 24px ${colors.success}40` : `0 6px 24px ${colors.premiumShadow}`,
                       opacity: s.isAnimating ? 0.55 : 1,
                       transition: 'background 0.4s, box-shadow 0.4s, opacity 0.2s',
                     }}
@@ -456,7 +456,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             className="relative"
           >
-            <GameEndCinematic primaryColor={colors.accent} secondaryColor="#60a5fa" intensity="medium" darkOverlay />
+            <GameEndCinematic primaryColor={colors.accent} secondaryColor={colors.accentLight} intensity="medium" darkOverlay />
             <div className="relative z-10 flex flex-col items-center px-6 pt-8 pb-10 text-center">
             <motion.div
               initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
@@ -493,7 +493,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
 
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
               className="w-full p-4 rounded-2xl mb-7"
-              style={{ background: 'rgba(167,139,250,0.18)', border: '1px solid rgba(167,139,250,0.3)' }}>
+              style={{ background: colors.rareBg, border: `1px solid ${colors.rare}4d` }}>
               <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>{endInsight}</p>
             </motion.div>
 
@@ -503,7 +503,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                 onClick={s.reset}
                 className="w-full py-4 rounded-2xl font-bold text-white text-sm flex items-center justify-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', boxShadow: '0 6px 24px #8b5cf640' }}
+                style={{ background: colors.premiumGradient, boxShadow: `0 6px 24px ${colors.premiumShadow}` }}
               >
                 <Sparkles size={18} />{t('cardGame.newSeance')}
               </motion.button>
@@ -522,7 +522,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onNavigate?.('hall-of-cards')}
                   className="w-full py-2.5 text-xs font-medium text-center"
-                  style={{ color: 'rgba(167,139,250,0.7)' }}
+                  style={{ color: colors.premium }}
                 >
                   {t('cardGame.viewCollection')}
                 </motion.button>

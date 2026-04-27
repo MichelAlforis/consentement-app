@@ -21,11 +21,6 @@ import { FlipRevealOverlay } from '../../ui/FlipRevealOverlay';
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
 
-const RARITY_COLOR: Record<string, string> = {
-  common: '#94a3b8',
-  rare: '#a78bfa',
-  unique: '#f59e0b',
-};
 
 const DICE_CONFIG: DiceConfig = {
   faces: ([1, 2, 3, 4, 5, 6] as const).map((n) => ({
@@ -46,6 +41,7 @@ interface DiceGameScreenProps {
 export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const rarityColor: Record<string, string> = { common: colors.textMuted, rare: colors.rare, unique: colors.unique };
   const explicitMode = useSettingsStore((s) => s.explicitMode);
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
@@ -230,7 +226,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                   >
                     <span
                       className="mt-0.5 w-2 h-2 rounded-full shrink-0"
-                      style={{ background: RARITY_COLOR[previewCard.rarity] }}
+                      style={{ background: rarityColor[previewCard.rarity] }}
                     />
                     <p className="text-xs leading-snug line-clamp-2 flex-1" style={{ color: colors.textSecondary }}>
                       {previewCard.text}
@@ -376,8 +372,8 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             className="relative flex-1"
           >
             <GameEndCinematic
-              primaryColor={bothYes ? '#22c55e' : '#94a3b8'}
-              secondaryColor={bothYes ? '#60a5fa' : '#64748b'}
+              primaryColor={bothYes ? colors.success : colors.textMuted}
+              secondaryColor={bothYes ? colors.accentLight : colors.textSecondary}
               intensity={bothYes ? 'high' : 'low'}
             />
             <div className="relative z-10 flex flex-col items-center justify-center text-center h-full">
