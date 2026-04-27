@@ -19,7 +19,7 @@ import { useModuleProgressStore } from './moduleProgressStore';
 import { initialPersonalProfile } from '../data';
 
 export function resetAllData() {
-  useNavigationStore.setState({ currentScreen: 'welcome' });
+  useNavigationStore.setState({ currentScreen: 'welcome', history: [] });
   useAuthStore.setState({ isAuthenticated: false, isAdult: null, userName: '' });
   useSettingsStore.setState({ themeMode: null, theme: null, explicitMode: false });
   useProfileStore.setState({ personalProfile: initialPersonalProfile });

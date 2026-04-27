@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sparkles } from 'lucide-react';
-import { DynamicIcon } from '../../utils/iconFromName';
+import { ChevronRight, Sparkles, X } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import { CollectorCardFace } from './CollectorCardFace';
 
 interface FlipRevealOverlayProps {
   cards: GainedCard[];
@@ -20,111 +20,12 @@ function getRarityLabel(card: GainedCard, t: (key: string) => string) {
   return null;
 }
 
-function truncateCardText(text: string, max = 86) {
-  return text.length > max ? `${text.slice(0, max).trim()}...` : text;
-}
-
-function RevealedCardFace({
-  card,
-  rarityLabel,
-  compact = false,
-}: {
-  card: GainedCard;
-  rarityLabel: string | null;
-  compact?: boolean;
-}) {
-  return (
-    <div style={{
-      position: 'absolute', inset: 0, borderRadius: compact ? 14 : 20,
-      backfaceVisibility: 'hidden',
-      transform: compact ? undefined : 'rotateY(180deg)',
-      background: card.gradient,
-      boxShadow: `0 8px 32px ${card.border}66`,
-      display: 'grid',
-      gridTemplateRows: compact ? '28px 1fr 82px' : '40px 1fr 112px',
-      justifyItems: 'center',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.18) ${compact ? 1 : 1.5}px, transparent ${compact ? 1 : 1.5}px)`,
-        backgroundSize: compact ? '9px 9px' : '12px 12px',
-      }} />
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.18) 100%)',
-      }} />
-      <span style={{
-        position: 'absolute',
-        top: compact ? 8 : 12,
-        left: compact ? 8 : 12,
-        width: compact ? 20 : 24,
-        height: compact ? 20 : 24,
-        borderRadius: 999,
-        display: 'grid',
-        placeItems: 'center',
-        background: 'rgba(255,255,255,0.10)',
-        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)',
-      }}>
-        <DynamicIcon name={card.iconName} size={compact ? 12 : 14} color="rgba(255,255,255,0.34)" />
-      </span>
-      {rarityLabel && (
-        <div style={{
-          position: 'absolute', top: compact ? 8 : 12, right: compact ? 8 : 12,
-          borderRadius: 6, padding: compact ? '2px 5px' : '3px 6px',
-          background: card.rarity === 'unique'
-            ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
-            : 'linear-gradient(135deg, #7c3aed, #a855f7)',
-        }}>
-          <span style={{ fontSize: compact ? 6 : 8, fontWeight: 900, color: 'white', letterSpacing: 1 }}>
-            {rarityLabel}
-          </span>
-        </div>
-      )}
-      <span style={{
-        position: 'relative',
-        zIndex: 1,
-        gridRow: '2',
-        alignSelf: 'end',
-        width: compact ? 38 : 54,
-        height: compact ? 38 : 54,
-        borderRadius: 999,
-        display: 'grid',
-        placeItems: 'center',
-        background: 'rgba(0,0,0,0.13)',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.18)',
-      }}>
-        <DynamicIcon name={card.iconName} size={compact ? 24 : 34} color="white" />
-      </span>
-      <p style={{
-        gridRow: '3',
-        alignSelf: 'start',
-        color: 'white',
-        fontWeight: 800,
-        fontSize: compact ? 9 : 13,
-        textAlign: 'center',
-        lineHeight: compact ? 1.16 : 1.22,
-        padding: compact ? '8px 10px 0' : '12px 18px 0',
-        margin: 0,
-        position: 'relative',
-        zIndex: 1,
-        textShadow: '0 2px 8px rgba(0,0,0,0.50)',
-        overflow: 'hidden',
-        overflowWrap: 'break-word',
-        hyphens: 'auto',
-      }}>
-        {compact ? truncateCardText(card.text) : card.text}
-      </p>
-    </div>
-  );
-}
-
 export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [page, setPage] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [focusedCard, setFocusedCard] = useState<GainedCard | null>(null);
 
   const card = cards[index];
   const total = cards.length;
@@ -205,11 +106,14 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               transition={{ delay: itemIndex * 0.035, duration: 0.25 }}
               style={{ width: 118, height: 177, position: 'relative' }}
             >
-              <RevealedCardFace
-                card={item}
-                rarityLabel={getRarityLabel(item, t)}
-                compact
-              />
+              <button
+                type="button"
+                aria-label={item.text}
+                onClick={() => setFocusedCard(item)}
+                style={{ position: 'absolute', inset: 0, border: 0, padding: 0, background: 'transparent' }}
+              >
+                <CollectorCardFace card={item} rarityLabel={getRarityLabel(item, t)} size="compact" />
+              </button>
             </motion.div>
           ))}
         </motion.div>
@@ -233,7 +137,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               <Sparkles size={52} color="rgba(255,255,255,0.12)" />
             </div>
 
-            <RevealedCardFace card={card} rarityLabel={rarityLabel} />
+            <CollectorCardFace card={card} rarityLabel={rarityLabel} size="full" flippedFace />
           </motion.div>
         </div>
       )}
@@ -272,6 +176,42 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             {batchMode ? (isLastPage ? t('flipReveal.done') : 'Cartes suivantes') : t('flipReveal.done')}
             <ChevronRight size={16} />
           </motion.button>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {focusedCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-10 grid place-items-center px-6"
+            style={{ background: 'rgba(0,0,0,0.62)', backdropFilter: 'blur(8px)' }}
+            onClick={() => setFocusedCard(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.78, y: 24 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.82, y: 18 }}
+              transition={{ duration: 0.22 }}
+              style={{ width: 220, height: 330, position: 'relative' }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <CollectorCardFace
+                card={focusedCard}
+                rarityLabel={getRarityLabel(focusedCard, t)}
+                size="full"
+              />
+              <button
+                type="button"
+                onClick={() => setFocusedCard(null)}
+                className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full"
+                style={{ background: 'rgba(255,255,255,0.94)', color: '#111827' }}
+              >
+                <X size={18} />
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>

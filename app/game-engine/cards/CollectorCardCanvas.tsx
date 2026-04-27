@@ -212,6 +212,48 @@ function wrapText(
   if (line) drawLine(line, y);
 }
 
+function drawWrappedTextBlock(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  maxLines: number,
+  stroke = false,
+) {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let line = '';
+
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+
+  const visible = lines.slice(0, maxLines);
+  if (lines.length > maxLines) {
+    let last = visible[visible.length - 1];
+    while (last.length > 0 && ctx.measureText(`${last}...`).width > maxWidth) {
+      last = last.slice(0, -1).trim();
+    }
+    visible[visible.length - 1] = `${last}...`;
+  }
+
+  const startY = y - ((visible.length - 1) * lineHeight) / 2;
+  visible.forEach((l, idx) => {
+    const ly = startY + idx * lineHeight;
+    if (stroke) ctx.strokeText(l, x, ly);
+    ctx.fillText(l, x, ly);
+  });
+}
+
 // ─── Textures ─────────────────────────────────────────────────────────────────
 
 // prettier-ignore
@@ -443,48 +485,79 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
 
 
   // Couleur adaptée à la luminance du fond — partagée par icône ET texte
-  const lm = (rgb: number[]) => 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-  const toRgb01 = (hex: string) => [
-    parseInt(hex.slice(1, 3), 16) / 255,
-    parseInt(hex.slice(3, 5), 16) / 255,
-    parseInt(hex.slice(5, 7), 16) / 255,
-  ];
-  const avgLum   = (lm(toRgb01(c1)) + lm(toRgb01(c2))) / 2;
   const inkColor = '#f1f3f5';
-  const textShad = avgLum > 0.38 ? 'rgba(0,0,0,0.70)' : 'rgba(0,0,0,0.92)';
+  const themeLabel = card.themeName ?? card.theme ?? '';
 
-  const iconCy = h * 0.30;
-  const iconR  = size * 0.165;
+  // Badge thème
+  if (themeLabel) {
+    const pillX = size * 0.075;
+    const pillY = h * 0.058;
+    const pillW = size * 0.38;
+    const pillH = h * 0.057;
+    roundedRectPath(ctx, pillX, pillY, pillW, pillH, pillH / 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
 
-  // Icône
-  drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.6, inkColor);
+    drawIconNodes(ctx, card.iconName, pillX + pillH * 0.55, pillY + pillH / 2, pillH * 0.45, 'rgba(255,255,255,0.58)');
+    ctx.fillStyle = 'rgba(255,255,255,0.78)';
+    ctx.font = `800 ${Math.round(size * 0.042)}px system-ui, sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(themeLabel.toUpperCase(), pillX + pillH * 0.93, pillY + pillH / 2);
+  }
 
-  // Séparateur
-  const sepY   = iconCy + iconR * 1.72;
-  const sepPad = size * 0.14;
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 1;
+  // Icône centrale
+  const iconCy = h * 0.43;
+  const iconR  = size * 0.145;
+  const iconBg = ctx.createRadialGradient(size / 2, iconCy, 0, size / 2, iconCy, iconR * 1.35);
+  iconBg.addColorStop(0, 'rgba(0,0,0,0.18)');
+  iconBg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = iconBg;
   ctx.beginPath();
-  ctx.moveTo(sepPad, sepY);
-  ctx.lineTo(size - sepPad, sepY);
+  ctx.arc(size / 2, iconCy, iconR * 1.35, 0, Math.PI * 2);
+  ctx.fill();
+  drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.65, inkColor);
+
+  // Panneau texte
+  const panelX = size * 0.075;
+  const panelW = size * 0.85;
+  const panelH = h * 0.245;
+  const panelY = h - panelH - h * 0.07;
+  roundedRectPath(ctx, panelX, panelY, panelW, panelH, size * 0.045);
+  const panelGrad = ctx.createLinearGradient(0, panelY, 0, panelY + panelH);
+  panelGrad.addColorStop(0, 'rgba(5,5,12,0.36)');
+  panelGrad.addColorStop(1, 'rgba(5,5,12,0.58)');
+  ctx.fillStyle = panelGrad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1.2;
   ctx.stroke();
 
-  // Texte
-  ctx.font = `500 ${Math.round(size * 0.108)}px system-ui, sans-serif`;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (ctx as any).letterSpacing = `${Math.round(size * 0.008)}px`;
+  // Texte dans le panneau
+  const textSize = card.text.length > 72 ? size * 0.074 : size * 0.084;
+  ctx.font = `800 ${Math.round(textSize)}px system-ui, sans-serif`;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round';
-  ctx.strokeStyle = 'rgba(0,0,0,0.30)';
-  ctx.lineWidth   = Math.round(size * 0.0028);
+  ctx.strokeStyle = 'rgba(0,0,0,0.24)';
+  ctx.lineWidth   = Math.round(size * 0.0024);
   ctx.fillStyle   = inkColor;
-  ctx.shadowColor = textShad;
-  ctx.shadowBlur  = size * 0.028;
-  wrapText(ctx, card.text, size / 2, h * 0.58, size - size * 0.18, size * 0.148, true);
+  ctx.shadowColor = 'rgba(0,0,0,0.82)';
+  ctx.shadowBlur  = size * 0.022;
+  drawWrappedTextBlock(
+    ctx,
+    card.text,
+    size / 2,
+    panelY + panelH / 2,
+    panelW - size * 0.12,
+    textSize * 1.18,
+    4,
+    true,
+  );
   ctx.shadowBlur = 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (ctx as any).letterSpacing = '0px';
 
   // Bordure — rare/unique épais (Bloom), common discret
   ctx.strokeStyle = card.border;

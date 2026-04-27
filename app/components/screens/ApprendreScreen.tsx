@@ -2,10 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle, Lock, ChevronRight, Sparkles, Brain, Film, Scale, HeartHandshake } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useTranslation } from '../../i18n';
+import { isModuleCompleted } from '../../lib/moduleIds';
+import { MODULES, moduleAudience } from '../../modules';
 
 interface ApprendreScreenProps {
   isAdult: boolean | null;
@@ -17,7 +20,7 @@ type Rarity = 'common' | 'rare' | 'unique';
 type ModuleMeta = {
   id: string;
   screen: Screen | null;
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   desc: string;
   reward: string;
@@ -36,6 +39,14 @@ const ICON_BG = {
   common: 'linear-gradient(135deg, #6b7280, #4b5563)',
   rare:   'linear-gradient(135deg, #8b5cf6, #7c3aed)',
   unique: 'linear-gradient(135deg, #f59e0b, #d97706)',
+};
+
+const MODULE_ICONS: Record<string, ReactNode> = {
+  'quiz-consentement': <Brain size={20} className="text-white" />,
+  'porno-vs-realite': <Film size={20} className="text-white" />,
+  'loi-consentement': <Scale size={20} className="text-white" />,
+  'module-pratiques-adultes': <Sparkles size={20} className="text-white" />,
+  'accompagnement-mineur': <HeartHandshake size={20} className="text-white" />,
 };
 
 function ModuleCard({
@@ -112,63 +123,22 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { completedModules } = useModuleProgressStore();
-
-  const ADULT_MODULES: ModuleMeta[] = [
-    {
-      id: 'quiz-consentement', screen: 'quiz-consentement',
-      icon: <Brain size={20} className="text-white" />,
-      title: t('apprendre.quiz.title'), desc: t('apprendre.quiz.desc'),
-      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
-    },
-    {
-      id: 'porno-vs-realite', screen: 'porno-vs-realite',
-      icon: <Film size={20} className="text-white" />,
-      title: t('apprendre.porno.title'), desc: t('apprendre.porno.desc'),
-      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
-    },
-    {
-      id: 'loi-consentement', screen: 'loi-consentement',
-      icon: <Scale size={20} className="text-white" />,
-      title: t('apprendre.loi.title'), desc: t('apprendre.loi.desc'),
-      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
-    },
-    {
-      id: 'module-pratiques-adultes', screen: null,
-      icon: <Sparkles size={20} className="text-white" />,
-      title: t('apprendre.pratiques.title'), desc: t('apprendre.pratiques.desc'),
-      reward: t('apprendre.rewardUnique'), rarity: 'unique', rarityLabel: t('apprendre.rarityUnique'), available: false,
-    },
-  ];
-
-  const MINOR_MODULES: ModuleMeta[] = [
-    {
-      id: 'quiz-consentement', screen: 'quiz-consentement',
-      icon: <Brain size={20} className="text-white" />,
-      title: t('apprendre.quiz.title'), desc: t('apprendre.quiz.desc'),
-      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
-    },
-    {
-      id: 'porno-vs-realite', screen: 'porno-vs-realite',
-      icon: <Film size={20} className="text-white" />,
-      title: t('apprendre.porno.title'), desc: t('apprendre.porno.desc'),
-      reward: t('apprendre.rewardCommon'), rarity: 'common', rarityLabel: t('apprendre.rarityCommon'), available: true,
-    },
-    {
-      id: 'loi-consentement', screen: 'loi-consentement',
-      icon: <Scale size={20} className="text-white" />,
-      title: t('apprendre.loi.title'), desc: t('apprendre.loi.desc'),
-      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
-    },
-    {
-      id: 'accompagnement-mineur', screen: 'accompagnement-mineur',
-      icon: <HeartHandshake size={20} className="text-white" />,
-      title: t('apprendre.accompagnement.title'), desc: t('apprendre.accompagnement.desc'),
-      reward: t('apprendre.rewardRare'), rarity: 'rare', rarityLabel: t('apprendre.rarityRare'), available: true,
-    },
-  ];
-
-  const modules = isAdult ? ADULT_MODULES : MINOR_MODULES;
-  const completedCount = modules.filter((m) => completedModules.includes(m.id)).length;
+  const audience = moduleAudience(isAdult);
+  const modules: ModuleMeta[] = MODULES
+    .filter((module) => module.id !== 'module-de-base' && (module.available[audience] || (audience === 'adult' && module.id === 'module-pratiques-adultes')))
+    .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99))
+    .map((module) => ({
+      id: module.id,
+      screen: module.screen,
+      icon: MODULE_ICONS[module.id],
+      title: t(module.titleKey),
+      desc: 'descriptionKey' in module && module.descriptionKey ? t(module.descriptionKey) : '',
+      reward: t(module.rewardKey),
+      rarity: module.reward.rarity,
+      rarityLabel: t(`apprendre.rarity${module.reward.rarity[0].toUpperCase()}${module.reward.rarity.slice(1)}`),
+      available: module.available[audience],
+    }));
+  const completedCount = modules.filter((m) => isModuleCompleted(m.id, completedModules, isAdult)).length;
 
   const subtitle = completedCount === 0
     ? t('apprendre.subtitleEmpty')
@@ -198,7 +168,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
           <ModuleCard
             key={module.id}
             module={module}
-            completed={completedModules.includes(module.id)}
+            completed={isModuleCompleted(module.id, completedModules, isAdult)}
             index={i + 1}
             onNavigate={onNavigate}
           />

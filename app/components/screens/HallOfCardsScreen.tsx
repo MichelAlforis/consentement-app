@@ -6,14 +6,14 @@ import { Lock, X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useUnlockStore } from '../../stores/unlockStore';
 import { useRevealStore } from '../../stores/revealStore';
-import { collectorCards } from '../../data/cards-collector';
+import { collectorCards, THEME_CATEGORIES } from '../../data/cards-collector';
 import type { CollectorCard } from '../../data/cards-collector';
 import { CollectorCardCanvas } from '../../game-engine/cards/CollectorCardCanvas';
-import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
 import type { Screen } from '../../types';
 import { useTranslation } from '../../i18n';
 import { FlipRevealOverlay } from '../ui/FlipRevealOverlay';
+import { CollectorCardFace } from '../ui/CollectorCardFace';
 
 function getUnlockScreen(card: CollectorCard): Screen {
   return card.depth === 3 ? 'jeu-oie' : 'jeu-cartes';
@@ -23,6 +23,8 @@ function toGainedCard(card: CollectorCard): GainedCard {
   return {
     id: card.id,
     text: card.text,
+    theme: card.theme,
+    themeName: THEME_CATEGORIES[card.theme].name,
     rarity: card.rarity,
     gradient: card.visual.gradient,
     iconName: card.visual.iconName,
@@ -38,6 +40,12 @@ function AcquiredCard({ card, index, onTap }: {
   onTap: (c: GainedCard) => void;
 }) {
   const { t } = useTranslation();
+  const rarityLabel = card.rarity === 'common'
+    ? null
+    : card.rarity === 'unique'
+      ? t('hallOfCards.rarityUnique')
+      : t('hallOfCards.rarityRare');
+
   return (
     <motion.button
       initial={{ opacity: 0, y: 12 }}
@@ -45,45 +53,13 @@ function AcquiredCard({ card, index, onTap }: {
       transition={{ delay: index * 0.04 }}
       whileTap={{ scale: 0.93 }}
       onClick={() => onTap(card)}
-      className="relative overflow-hidden rounded-2xl flex flex-col items-center justify-end pb-3 shadow-sm"
+      className="relative overflow-hidden rounded-2xl shadow-sm"
       style={{
         aspectRatio: '2 / 3',
-        background: card.gradient,
         boxShadow: `0 4px 16px ${card.border}55`,
       }}
     >
-      {/* Texture */}
-      <div className="absolute inset-0" style={{
-        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px)',
-        backgroundSize: '12px 12px',
-      }} />
-      {/* Watermarks */}
-      <span className="absolute top-2 left-2">
-        <DynamicIcon name={card.iconName} size={10} color="rgba(255,255,255,0.25)" />
-      </span>
-      <span className="absolute bottom-9 right-2" style={{ transform: 'rotate(180deg)' }}>
-        <DynamicIcon name={card.iconName} size={10} color="rgba(255,255,255,0.25)" />
-      </span>
-      {/* Rareté badge */}
-      {card.rarity !== 'common' && (
-        <div className="absolute top-1.5 right-1.5 rounded px-1 py-0.5" style={{
-          background: card.rarity === 'unique'
-            ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
-            : 'linear-gradient(135deg, #7c3aed, #a855f7)',
-        }}>
-          <span className="text-[6px] font-black text-white tracking-wider">
-            {card.rarity === 'unique' ? t('hallOfCards.rarityUnique') : t('hallOfCards.rarityRare')}
-          </span>
-        </div>
-      )}
-      {/* Icône + texte */}
-      <span className="relative z-10 mb-0.5">
-        <DynamicIcon name={card.iconName} size={24} color="white" />
-      </span>
-      <p className="text-white font-black text-[7px] text-center leading-tight relative z-10 px-1.5"
-        style={{ textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>
-        {card.text.length > 30 ? card.text.slice(0, 30) + '…' : card.text}
-      </p>
+      <CollectorCardFace card={card} rarityLabel={rarityLabel} size="mini" />
     </motion.button>
   );
 }

@@ -1,3 +1,4 @@
+import { THEME_CATEGORIES } from '../data/cards-collector';
 import type { CollectorCard, Rarity, CardTheme } from '../data/cards-collector';
 import type { OwnedCard } from '../stores/unlockStore';
 
@@ -8,6 +9,8 @@ import type { OwnedCard } from '../stores/unlockStore';
 export interface GainedCard {
   id: string;
   text: string;
+  theme?: CardTheme;
+  themeName?: string;
   rarity: Rarity;
   gradient: string;
   iconName: string;
@@ -33,6 +36,8 @@ function toGainedCard(card: CollectorCard): GainedCard {
   return {
     id: card.id,
     text: card.text,
+    theme: card.theme,
+    themeName: THEME_CATEGORIES[card.theme].name,
     rarity: card.rarity,
     gradient: card.visual.gradient,
     iconName: card.visual.iconName,
@@ -170,4 +175,3 @@ export function computeGainedCards(
 
   return { gained, ownedCards };
 }
-

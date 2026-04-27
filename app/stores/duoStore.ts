@@ -1,9 +1,8 @@
 'use client';
 
 import { create } from 'zustand';
-import { PartnerProfile, CommonGround } from '../types';
+import { PartnerProfile, CommonGround, PersonalProfile } from '../types';
 import { comfortCategories } from '../data';
-import { useProfileStore } from './profileStore';
 
 interface DuoStore {
   duoConnected: boolean;
@@ -13,7 +12,7 @@ interface DuoStore {
   connectDuo: (code: string) => void;
   updateDuoCode: (code: string) => void;
   setShowComparison: (show: boolean) => void;
-  getCommonGround: () => CommonGround | null;
+  getCommonGround: (personalProfile: PersonalProfile) => CommonGround | null;
   reset: () => void;
 }
 
@@ -50,11 +49,10 @@ export const useDuoStore = create<DuoStore>((set, get) => ({
 
   setShowComparison: (show) => set({ showComparison: show }),
 
-  getCommonGround: () => {
+  getCommonGround: (personalProfile) => {
     const { partnerProfile } = get();
     if (!partnerProfile) return null;
 
-    const { personalProfile } = useProfileStore.getState();
     const common: CommonGround = { tenderness: {}, intensity: {}, trust: {} };
 
     (Object.keys(comfortCategories) as Array<keyof typeof comfortCategories>).forEach((cat) => {

@@ -75,6 +75,7 @@ describe('useModuleComplete', () => {
     expect(owned().ownedCards.every((c) => c.id.startsWith('cm-'))).toBe(true);
     expect(modules().completedModules).toContain('module-de-base-mineur');
     expect(modules().completedModules).not.toContain('module-de-base');
+    expect(modules().onboardingStatus).toBe('completed');
   });
 
   it('mineur — quiz-consentement → résout vers quiz-consentement-mineur', () => {

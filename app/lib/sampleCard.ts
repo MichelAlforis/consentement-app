@@ -1,4 +1,5 @@
 import { collectorCards as defaultCards } from '../data/cards-collector';
+import { THEME_CATEGORIES } from '../data/cards-collector';
 import type { CollectorCard, CardTheme } from '../data/cards-collector';
 import type { OwnedCard } from '../stores/unlockStore';
 import type { GainedCard } from './computeGainedCards';
@@ -16,6 +17,8 @@ function toGainedCard(cc: CollectorCard): GainedCard {
   return {
     id: cc.id,
     text: cc.text,
+    theme: cc.theme,
+    themeName: THEME_CATEGORIES[cc.theme].name,
     rarity: cc.rarity,
     gradient: cc.visual.gradient,
     iconName: cc.visual.iconName,

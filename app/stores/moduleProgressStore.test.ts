@@ -11,6 +11,7 @@ beforeEach(() => {
 describe('moduleProgressStore', () => {
   it('état initial : completedModules vide', () => {
     expect(store().completedModules).toEqual([]);
+    expect(store().onboardingStatus).toBe('not_started');
   });
 
   it('markModuleComplete ajoute le module', () => {
@@ -42,9 +43,11 @@ describe('moduleProgressStore', () => {
 
   it('reset vide completedModules', () => {
     store().markModuleComplete('module-de-base');
+    store().markOnboardingCompleted('module-de-base');
     store().markModuleComplete('loi-consentement');
     store().reset();
     expect(store().completedModules).toEqual([]);
+    expect(store().onboardingStatus).toBe('not_started');
   });
 
   it('peut marquer un module après reset', () => {
@@ -52,5 +55,17 @@ describe('moduleProgressStore', () => {
     store().reset();
     store().markModuleComplete('quiz-consentement');
     expect(store().completedModules).toEqual(['quiz-consentement']);
+  });
+
+  it('markOnboardingCompleted marque le module et le statut completed', () => {
+    store().markOnboardingCompleted('module-de-base-mineur');
+    expect(store().completedModules).toEqual(['module-de-base-mineur']);
+    expect(store().onboardingStatus).toBe('completed');
+  });
+
+  it("markOnboardingSkipped différencie le skip d'un module complété", () => {
+    store().markOnboardingSkipped();
+    expect(store().completedModules).toEqual([]);
+    expect(store().onboardingStatus).toBe('skipped');
   });
 });

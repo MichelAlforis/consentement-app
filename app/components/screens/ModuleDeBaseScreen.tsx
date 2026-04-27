@@ -7,6 +7,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/moduleDeBase';
+import { resolveModuleId } from '../../modules';
 import type { Screen } from '../../types';
 
 interface ModuleDeBaseScreenProps {
@@ -17,10 +18,10 @@ interface ModuleDeBaseScreenProps {
 export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenProps) {
   const { colors } = useTheme();
   const completeModule = useModuleComplete();
-  const markModuleComplete = useModuleProgressStore((s) => s.markModuleComplete);
+  const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
 
   const slides = isAdult === false ? MODULE_DE_BASE_SLIDES_MINEUR : MODULE_DE_BASE_SLIDES;
-  const moduleId = isAdult === false ? 'module-de-base-mineur' : 'module-de-base';
+  const moduleId = resolveModuleId('module-de-base', isAdult);
 
   const [index, setIndex] = useState(0);
   const isLast = index === slides.length - 1;
@@ -36,7 +37,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
   };
 
   const handleSkip = () => {
-    markModuleComplete('module-de-base-skip');
+    markOnboardingSkipped();
     onNavigate('home');
   };
 
@@ -52,7 +53,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
           className="text-sm font-medium px-4 py-2 rounded-full"
           style={{ color: colors.textMuted, background: colors.bgSecondary }}
         >
-          Passer pour l'instant
+          Passer pour l&apos;instant
         </button>
       </div>
 
@@ -120,7 +121,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
         >
           {isLast ? (
             <>
-              J'ai compris · Voir mes cartes
+              J&apos;ai compris · Voir mes cartes
               <ChevronRight size={18} />
             </>
           ) : (

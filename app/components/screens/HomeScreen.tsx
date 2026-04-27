@@ -8,7 +8,9 @@ import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useUnlockStore, useModuleProgressStore } from '../../stores';
 import { getProgressLevel } from '../../lib/progressLevel';
+import { isModuleCompleted } from '../../lib/moduleIds';
 import { collectorCards } from '../../data/cards-collector';
+import { getModuleSequence } from '../../modules';
 
 interface HomeScreenProps {
   isAdult: boolean | null;
@@ -16,22 +18,8 @@ interface HomeScreenProps {
   onNavigate: (screen: Screen) => void;
 }
 
-// ── Module sequence (for next-module suggestion) ─────────────────────────────
-
-const ADULT_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'duo-flow'];
-const MINOR_SEQUENCE = ['porno-vs-realite', 'quiz-consentement', 'loi-consentement', 'accompagnement-mineur'];
-
-const MODULE_SCREEN: Record<string, Screen> = {
-  'porno-vs-realite':      'porno-vs-realite',
-  'quiz-consentement':     'quiz-consentement',
-  'loi-consentement':      'loi-consentement',
-  'duo-flow':              'duo-space',
-  'accompagnement-mineur': 'accompagnement-mineur',
-};
-
 function getNextModuleId(isAdult: boolean, completedModules: string[]): string | null {
-  const seq = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
-  return seq.find((m) => !completedModules.includes(m)) ?? null;
+  return getModuleSequence(isAdult).find((module) => !isModuleCompleted(module.id, completedModules, isAdult))?.id ?? null;
 }
 
 // ── Shared sub-components ────────────────────────────────────────────────────
@@ -209,11 +197,12 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const { t } = useTranslation();
   const { ownedCards } = useUnlockStore();
   const { completedModules } = useModuleProgressStore();
-  const sequence = isAdult ? ADULT_SEQUENCE : MINOR_SEQUENCE;
-  const progress = sequence.filter((m) => completedModules.includes(m)).length;
+  const sequence = getModuleSequence(isAdult);
+  const progress = sequence.filter((module) => isModuleCompleted(module.id, completedModules, isAdult)).length;
   const nextModuleId = getNextModuleId(isAdult ?? true, completedModules);
-  const nextModuleScreen = nextModuleId ? MODULE_SCREEN[nextModuleId] ?? null : null;
-  const nextModuleTitle = nextModuleId ? t(`homeV3.modules.${nextModuleId}`) : null;
+  const nextModule = sequence.find((module) => module.id === nextModuleId);
+  const nextModuleScreen = nextModule?.screen ?? null;
+  const nextModuleTitle = nextModule ? t(nextModule.titleKey) : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -304,8 +293,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const rareCount   = ownedCards.filter((c) => c.rarity === 'rare').length;
   const uniqueCount = ownedCards.filter((c) => c.rarity === 'unique').length;
   const nextModuleId   = getNextModuleId(isAdult ?? true, completedModules);
-  const nextModuleScreen = nextModuleId ? MODULE_SCREEN[nextModuleId] ?? null : null;
-  const nextModuleTitle  = nextModuleId ? t(`homeV3.modules.${nextModuleId}`) : null;
+  const nextModule = getModuleSequence(isAdult).find((module) => module.id === nextModuleId);
+  const nextModuleScreen = nextModule?.screen ?? null;
+  const nextModuleTitle  = nextModule ? t(nextModule.titleKey) : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
@@ -415,7 +405,7 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
 export function HomeScreen({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const { completedModules } = useModuleProgressStore();
-  const level = getProgressLevel(completedModules);
+  const level = getProgressLevel(completedModules, isAdult);
 
   if (level === 3) return <MasteryHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
   if (level === 2) return <LearningHome isAdult={isAdult} userName={userName} onNavigate={onNavigate} />;
