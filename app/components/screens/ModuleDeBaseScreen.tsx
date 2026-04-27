@@ -42,11 +42,11 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
 
   return (
     <div
-      className="min-h-dvh flex flex-col"
+      className="h-dvh min-h-0 flex flex-col overflow-hidden"
       style={{ background: colors.bgGradient ?? colors.bgPrimary }}
     >
       {/* Skip button */}
-      <div className="flex justify-end px-5 pt-5">
+      <div className="shrink-0 flex justify-end px-5 pt-5 safe-area-top">
         <button
           onClick={handleSkip}
           className="text-sm font-medium px-4 py-2 rounded-full"
@@ -57,7 +57,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
       </div>
 
       {/* Progress dots */}
-      <div className="flex justify-center gap-2 mt-4">
+      <div className="shrink-0 flex justify-center gap-2 mt-4">
         {slides.map((_, i) => (
           <motion.div
             key={i}
@@ -70,7 +70,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
       </div>
 
       {/* Slide content */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-8">
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 scrollbar-hide">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.id}
@@ -78,7 +78,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="flex flex-col items-center text-center gap-6"
+            className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center text-center gap-5 py-2"
           >
             <motion.div
               initial={{ scale: 0.7 }}
@@ -88,14 +88,11 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
             >
               {(() => {
                 const Icon = ONBOARDING_ICON_MAP[slide.iconName];
-                return Icon ? <Icon size={72} color={colors.accent} /> : null;
+                return Icon ? <Icon size={64} color={colors.accent} /> : null;
               })()}
             </motion.div>
 
-            <h1
-              className="text-2xl font-black leading-tight"
-              style={{ color: colors.textPrimary }}
-            >
+            <h1 className="text-2xl font-black leading-tight" style={{ color: colors.textPrimary }}>
               {slide.title}
             </h1>
 
@@ -110,7 +107,12 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
       </div>
 
       {/* CTA */}
-      <div className="px-6 pb-10 flex flex-col gap-3">
+      <div
+        className="shrink-0 px-6 pb-6 pt-3 safe-area-bottom flex flex-col gap-3"
+        style={{
+          background: `linear-gradient(180deg, transparent, ${colors.bgPrimary} 18%)`,
+        }}
+      >
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={handleNext}

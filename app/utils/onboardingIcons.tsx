@@ -1,6 +1,6 @@
 'use client';
 
-import { Lock } from 'lucide-react';
+import { Hand, Lock } from 'lucide-react';
 
 interface IconProps {
   size?: number;
@@ -33,31 +33,9 @@ export function WaveIcon({ size = 64, color = 'currentColor', className }: IconP
   );
 }
 
-/**
- * ✋ Paume ouverte — slide Consentement
- * 4 doigts avec arcs Q aux extrémités + pouce + paume en bezier
- * Chaque doigt = 2 côtés + demi-cercle au sommet, tous connectés en y=18
- */
+/** ✋ Paume ouverte — slide Consentement */
 export function OpenPalmIcon({ size = 64, color = 'currentColor', className }: IconProps) {
-  return (
-    <svg
-      width={size} height={size} viewBox="0 0 24 24"
-      fill="none" stroke={color} strokeWidth="1.5"
-      strokeLinecap="round" strokeLinejoin="round"
-      className={className}
-    >
-      {/* Auriculaire — centre x=6.25 */}
-      <path d="M5 18V13Q5 10 6.25 10Q7.5 10 7.5 13V18" />
-      {/* Annulaire — centre x=10.75 */}
-      <path d="M9.5 18V10Q9.5 7 10.75 7Q12 7 12 10V18" />
-      {/* Majeur — centre x=15.25, le plus haut */}
-      <path d="M14 18V8Q14 5 15.25 5Q16.5 5 16.5 8V18" />
-      {/* Index — centre x=19.75 */}
-      <path d="M18.5 18V10Q18.5 7 19.75 7Q21 7 21 10V18" />
-      {/* Pouce + paume — chemin unique qui relie tout */}
-      <path d="M5 18Q2 16 2 21Q2 23 13 23Q23 23 21 18" />
-    </svg>
-  );
+  return <Hand size={size} color={color} className={className} />;
 }
 
 /**

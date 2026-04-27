@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { useNormalizedPointer } from './CardGame/hooks/useNormalizedPointer';
 import { Lock, X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useUnlockStore } from '../../stores/unlockStore';
@@ -40,6 +41,23 @@ function AcquiredCard({ card, index, onTap }: {
   onTap: (c: GainedCard) => void;
 }) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const ref = useRef<HTMLButtonElement>(null);
+  const { x, y } = useNormalizedPointer(ref);
+
+  const tiltX = useSpring(useTransform(y, [-1, 1], [5, -5]), { stiffness: 400, damping: 30 });
+  const tiltY = useSpring(useTransform(x, [-1, 1], [-5, 5]), { stiffness: 400, damping: 30 });
+
+  const foilGX = useTransform(x, [-1, 1], [15, 85]);
+  const foilGY = useTransform(y, [-1, 1], [15, 85]);
+  const foilHue = useTransform(x, [-1, 1], [200, 340]);
+  const foilBg = useMotionTemplate`radial-gradient(circle at ${foilGX}% ${foilGY}%, hsl(${foilHue}, 55%, 78%), transparent 65%)`;
+
+  const foilOpacity =
+    theme.id === 'youth' ? 0 :
+    card.rarity === 'unique' ? 0.16 :
+    card.rarity === 'rare' ? 0.10 : 0;
+
   const rarityLabel = card.rarity === 'common'
     ? null
     : card.rarity === 'unique'
@@ -48,18 +66,44 @@ function AcquiredCard({ card, index, onTap }: {
 
   return (
     <motion.button
+      ref={ref}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
       whileTap={{ scale: 0.93 }}
       onClick={() => onTap(card)}
-      className="relative overflow-hidden rounded-2xl shadow-sm"
+      className="relative rounded-2xl shadow-sm"
       style={{
         aspectRatio: '2 / 3',
         boxShadow: `0 4px 16px ${card.border}55`,
+        perspective: '500px',
       }}
     >
-      <CollectorCardFace card={card} rarityLabel={rarityLabel} size="mini" />
+      <motion.div
+        style={{
+          width: '100%',
+          height: '100%',
+          rotateX: tiltX,
+          rotateY: tiltY,
+          borderRadius: 16,
+          overflow: 'hidden',
+        }}
+      >
+        <CollectorCardFace card={card} rarityLabel={rarityLabel} size="mini" />
+        {foilOpacity > 0 && (
+          <motion.div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 16,
+              mixBlendMode: 'screen',
+              opacity: foilOpacity,
+              background: foilBg,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+      </motion.div>
     </motion.button>
   );
 }
