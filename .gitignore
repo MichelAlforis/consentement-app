@@ -33,3 +33,5 @@ yarn-error.log*
 next-env.d.ts
 *.png
 .playwright-mcp/
+playwright-report/
+test-results/
