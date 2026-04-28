@@ -77,16 +77,13 @@ export function MenuCard({
       {showShimmer && <ShimmerLayer color={effects.shimmerColor} />}
 
       <div
-        className="relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0"
-        style={{
-          background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient,
-          zIndex: 2,
-        }}
+        className="relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner shrink-0 z-[2]"
+        style={{ background: isColored ? 'rgba(255,255,255,0.2)' : colors.accentGradient }}
       >
         {icon}
       </div>
 
-      <div className="relative flex-1 min-w-0" style={{ zIndex: 2 }}>
+      <div className="relative flex-1 min-w-0 z-[2]">
         <h3
           className="font-semibold text-base"
           style={{ color: isColored ? '#ffffff' : colors.textPrimary }}
@@ -104,7 +101,8 @@ export function MenuCard({
       {!isColored && (
         <ChevronRight
           size={24}
-          style={{ color: colors.textMuted, zIndex: 2, position: 'relative' }}
+          className="relative z-[2]"
+          style={{ color: colors.textMuted }}
         />
       )}
     </motion.button>

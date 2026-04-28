@@ -69,12 +69,8 @@ export function AppLogo({
       viewBox="0 0 96 96"
       width={width}
       height={size}
-      className={className}
-      style={{
-        display: 'block',
-        flexShrink: 0,
-        filter: `drop-shadow(0 16px 28px ${palette.shadow})`,
-      }}
+      className={`block shrink-0${className ? ` ${className}` : ''}`}
+      style={{ filter: `drop-shadow(0 16px 28px ${palette.shadow})` }}
       animate={pulse}
       transition={animated ? { duration: 5.5, repeat: Infinity, ease: 'easeInOut' } : undefined}
     >

@@ -84,7 +84,7 @@ export function GameMenuCard({
         </p>
       </div>
 
-      {!isPremium && <ChevronRight size={16} style={{ color: colors.textMuted, flexShrink: 0 }} />}
+      {!isPremium && <ChevronRight size={16} className="shrink-0" style={{ color: colors.textMuted }} />}
 
       {locked && (
         <div
@@ -92,8 +92,8 @@ export function GameMenuCard({
           style={{ background: colors.lockedOverlay }}
         >
           <div
-            className="px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg"
-            style={{ background: colors.premiumGradient, color: '#fff' }}
+            className="px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg text-white"
+            style={{ background: colors.premiumGradient }}
           >
             <Sparkles size={14} />
             {lockedLabel ?? tag}
