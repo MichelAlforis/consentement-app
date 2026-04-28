@@ -1092,10 +1092,11 @@ export function CollectorCardCanvas({
   const fallback = <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />;
 
   return (
-    <div style={{ width: w, height: h, position: 'relative' }}>
+    <div style={{ width: w, height: h, position: 'relative', overflow: 'hidden' }}>
       {mounted ? (
         <CanvasBoundary fallback={fallback}>
           <Canvas
+            style={{ width: w, height: h, display: 'block' }}
             dpr={[1, 1.5]}
             gl={{ antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
             frameloop={frameloop}

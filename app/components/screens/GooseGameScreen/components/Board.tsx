@@ -705,7 +705,7 @@ function BoardGridR3F({
   return (
     <div style={{ overflowX: 'hidden', width: '100%' }}>
       <div style={{ width: '100%', padding: '8px 0 48px' }}>
-        <div style={{ position: 'relative', height: CANVAS_H }}>
+        <div style={{ position: 'relative', height: CANVAS_H, overflow: 'hidden' }}>
           <Canvas
             style={{ position: 'absolute', inset: 0 }}
             shadows
