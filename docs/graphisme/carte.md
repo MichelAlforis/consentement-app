@@ -1,7 +1,8 @@
 # CollectorCardCanvas — Documentation technique
 
 > Composant R3F de la carte collector — flip 3D, textures Midjourney, logo watermark.  
-> Sandbox de test : `/card-collector-test`
+> Sandbox de test : `/card-collector-test`  
+> Tests de régression visuelle : `e2e/visual-regression.spec.ts` — **6/6 passed** (2026-04-28)
 
 ---
 

@@ -20,4 +20,5 @@ Objectif: garder les cartes lisibles, identifiables et cohérentes entre onboard
 
 - Revoir le dos des cartes: logo centre, bordure nette, texture moins bruitee.
 - Enrichir le zoom Hall avec tags, module de debloquage et niveau.
-- Ajouter des captures Playwright de non-regression: onboarding 24 cartes, Hall mobile, zoom carte.
+- ✅ Captures Playwright CSS renderer (common/rare/unique × dos/face) — `e2e/visual-regression.spec.ts`, 6/6 passed (2026-04-28)
+- Captures Playwright manquantes : onboarding 24 cartes, Hall mobile, zoom carte.
