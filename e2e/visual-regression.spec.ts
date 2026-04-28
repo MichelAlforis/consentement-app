@@ -16,7 +16,7 @@ test.describe('Visual regression — Collector cards (CSS renderer)', () => {
   test.beforeEach(async ({ page }) => {
     // Flag posé avant que React tourne — useState lazy initializer le lit au premier render
     await page.addInitScript(() => {
-      (window as Record<string, unknown>).__VR_CSS_MODE__ = true;
+      (window as unknown as Record<string, unknown>).__VR_CSS_MODE__ = true;
     });
     await page.goto('/card-collector-test');
     await page.waitForLoadState('networkidle');

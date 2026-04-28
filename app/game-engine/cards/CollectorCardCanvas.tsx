@@ -15,6 +15,7 @@ import { useHaptics } from '../shared/useHaptics';
 import { drawIconNodes } from '../../utils/iconPaths';
 import { DURATION, EASING } from '../../constants/motion';
 import { RADIUS } from '../../constants/tokens';
+import { initGrain, getGrainCanvas } from '../../utils/grainTexture';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -230,26 +231,8 @@ function makeBackTexture(size = 512, refImage?: HTMLImageElement): THREE.CanvasT
   return tex;
 }
 
-// Grain partagé — généré une fois, réutilisé pour toutes les textures de la session
-const grainCache = new Map<string, HTMLCanvasElement>();
-function getSharedGrain(w: number, h: number): HTMLCanvasElement {
-  const key = `${w}x${h}`;
-  if (grainCache.has(key)) return grainCache.get(key)!;
-  const cv = document.createElement('canvas');
-  cv.width = w; cv.height = h;
-  const gc = cv.getContext('2d')!;
-  for (let y = 0; y < h; y++) {
-    const a = 0.02 + 0.04 * Math.sin(y * 0.8 + Math.random() * 0.6);
-    gc.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
-    gc.fillRect(0, y, w, 1);
-  }
-  for (let i = 0; i < 650; i++) {
-    gc.fillStyle = `rgba(255,255,255,${(0.02 + Math.random() * 0.05).toFixed(3)})`;
-    gc.fillRect(Math.random() * w, Math.random() * h, 1, 1);
-  }
-  grainCache.set(key, cv);
-  return cv;
-}
+// Prewarm grain — feTurbulence rasterisé en background dès le premier import côté client
+if (typeof window !== 'undefined') initGrain();
 
 function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageElement): THREE.CanvasTexture {
   const h = Math.round(size * 1.5);
@@ -284,7 +267,16 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ctx.globalAlpha = 1;
   ctx.restore();
 
-  ctx.drawImage(getSharedGrain(size, h), 0, 0);
+  const grain = getGrainCanvas();
+  if (grain) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.globalAlpha = 0.06;
+    for (let dy = 0; dy < h; dy += 256) {
+      for (let dx = 0; dx < size; dx += 256) ctx.drawImage(grain, dx, dy);
+    }
+    ctx.restore();
+  }
 
   // Highlight spéculaire top-left (réduit — évite le blow-out PBR)
   const spec = ctx.createRadialGradient(size * 0.25, h * 0.13, 0, size * 0.25, h * 0.13, size * 0.65);
