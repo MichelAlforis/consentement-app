@@ -1,0 +1,124 @@
+/* CSS custom properties injectées par le composant pour les valeurs de SIZE */
+
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--ccf-radius, 20px);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: grid;
+  grid-template-rows: var(--ccf-rows);
+  justify-items: center;
+  overflow: hidden;
+}
+
+.dotPattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.18) var(--ccf-dot),
+    transparent var(--ccf-dot)
+  );
+  background-size: var(--ccf-dot-grid);
+}
+
+.topGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+}
+
+.badge {
+  position: absolute;
+  top: var(--ccf-badge-top);
+  left: var(--ccf-badge-left);
+  min-width: var(--ccf-badge-min-w);
+  height: var(--ccf-badge-h);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ccf-badge-gap);
+  padding: var(--ccf-badge-pad);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.badgeLabel {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: var(--ccf-badge-font);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+.rarityBadge {
+  position: absolute;
+  top: var(--ccf-badge-top);
+  right: var(--ccf-badge-left);
+  border-radius: 6px;
+  padding: var(--ccf-rarity-pad);
+}
+
+.rarityCommonRare {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+.rarityUnique {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+}
+
+.rarityBadgeLabel {
+  font-size: var(--ccf-rarity-font);
+  font-weight: 900;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.iconBox {
+  position: relative;
+  z-index: 1;
+  grid-row: 2;
+  align-self: center;
+  width: var(--ccf-icon-box);
+  height: var(--ccf-icon-box);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.13);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.textPanel {
+  grid-row: 3;
+  align-self: stretch;
+  color: white;
+  font-weight: 800;
+  font-size: var(--ccf-text-font);
+  text-align: center;
+  line-height: var(--ccf-text-line);
+  padding: var(--ccf-text-pad);
+  margin: var(--ccf-text-margin);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--ccf-text-radius);
+  background: linear-gradient(180deg, rgba(5, 5, 12, 0.34), rgba(5, 5, 12, 0.52));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+  overflow: hidden;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}

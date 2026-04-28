@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import s from './CollectorCardFace.module.css';
 
 type CollectorCardFaceSize = 'mini' | 'compact' | 'full';
 
@@ -100,138 +101,60 @@ export function CollectorCardFace({
   className,
   style,
 }: CollectorCardFaceProps) {
-  const s = SIZE[size];
+  const v = SIZE[size];
   const themeLabel = getThemeLabel(card);
 
   return (
     <div
-      className={className}
+      className={`${s.face}${className ? ` ${className}` : ''}`}
       style={{
-        position: 'absolute',
-        inset: 0,
-        borderRadius: s.radius,
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
-        transform: flippedFace ? 'rotateY(180deg)' : undefined,
+        '--ccf-radius': `${v.radius}px`,
+        '--ccf-rows': v.rows,
+        '--ccf-dot': `${v.dot}px`,
+        '--ccf-dot-grid': v.dotGrid,
+        '--ccf-badge-top': `${v.badgeTop}px`,
+        '--ccf-badge-left': `${v.badgeLeft}px`,
+        '--ccf-badge-h': `${v.badgeHeight}px`,
+        '--ccf-badge-min-w': `${v.badgeMinWidth}px`,
+        '--ccf-badge-gap': `${v.badgeGap}px`,
+        '--ccf-badge-pad': size === 'mini' ? '0 7px' : '0 9px',
+        '--ccf-badge-font': `${v.badgeFont}px`,
+        '--ccf-rarity-pad': size === 'mini' ? '2px 5px' : '3px 6px',
+        '--ccf-rarity-font': `${v.rarityFont}px`,
+        '--ccf-icon-box': `${v.iconBox}px`,
+        '--ccf-text-font': `${v.textFont}px`,
+        '--ccf-text-line': v.textLine,
+        '--ccf-text-pad': v.textPad,
+        '--ccf-text-margin': v.textMargin,
+        '--ccf-text-radius': `${v.textRadius}px`,
         background: card.gradient,
         boxShadow: `0 8px 32px ${card.border}66`,
-        display: 'grid',
-        gridTemplateRows: s.rows,
-        justifyItems: 'center',
-        overflow: 'hidden',
+        transform: flippedFace ? 'rotateY(180deg)' : undefined,
         ...style,
-      }}
+      } as CSSProperties}
     >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.18) ${s.dot}px, transparent ${s.dot}px)`,
-          backgroundSize: s.dotGrid,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.18) 100%)',
-        }}
-      />
+      <div className={s.dotPattern} />
+      <div className={s.topGradient} />
+
       {themeLabel && (
-        <span
-          style={{
-            position: 'absolute',
-            top: s.badgeTop,
-            left: s.badgeLeft,
-            minWidth: s.badgeMinWidth,
-            height: s.badgeHeight,
-            borderRadius: 999,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: s.badgeGap,
-            padding: size === 'mini' ? '0 7px' : '0 9px',
-            background: 'rgba(255,255,255,0.10)',
-            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)',
-          }}
-        >
-          <DynamicIcon name={card.iconName} size={Number(s.badgeIcon)} color="rgba(255,255,255,0.50)" />
-          <span
-            style={{
-              color: 'rgba(255,255,255,0.78)',
-              fontSize: s.badgeFont,
-              fontWeight: 900,
-              textTransform: 'uppercase',
-              letterSpacing: 0.4,
-              lineHeight: 1,
-            }}
-          >
-            {themeLabel}
-          </span>
+        <span className={s.badge}>
+          <DynamicIcon name={card.iconName} size={Number(v.badgeIcon)} color="rgba(255,255,255,0.50)" />
+          <span className={s.badgeLabel}>{themeLabel}</span>
         </span>
       )}
+
       {rarityLabel && (
-        <div
-          style={{
-            position: 'absolute',
-            top: s.badgeTop,
-            right: s.badgeLeft,
-            borderRadius: 6,
-            padding: size === 'mini' ? '2px 5px' : '3px 6px',
-            background: card.rarity === 'unique'
-              ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
-              : 'linear-gradient(135deg, #7c3aed, #a855f7)',
-          }}
-        >
-          <span style={{ fontSize: s.rarityFont, fontWeight: 900, color: 'white', letterSpacing: 1 }}>
-            {rarityLabel}
-          </span>
+        <div className={`${s.rarityBadge} ${card.rarity === 'unique' ? s.rarityUnique : s.rarityCommonRare}`}>
+          <span className={s.rarityBadgeLabel}>{rarityLabel}</span>
         </div>
       )}
-      <span
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          gridRow: '2',
-          alignSelf: 'center',
-          width: s.iconBox,
-          height: s.iconBox,
-          borderRadius: 999,
-          display: 'grid',
-          placeItems: 'center',
-          background: 'rgba(0,0,0,0.13)',
-          boxShadow: '0 8px 20px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.18)',
-        }}
-      >
-        <DynamicIcon name={card.iconName} size={Number(s.icon)} color="white" />
+
+      <span className={s.iconBox}>
+        <DynamicIcon name={card.iconName} size={Number(v.icon)} color="white" />
       </span>
-      <p
-        style={{
-          gridRow: '3',
-          alignSelf: 'stretch',
-          color: 'white',
-          fontWeight: 800,
-          fontSize: s.textFont,
-          textAlign: 'center',
-          lineHeight: s.textLine,
-          padding: s.textPad,
-          margin: s.textMargin,
-          position: 'relative',
-          zIndex: 1,
-          display: 'grid',
-          placeItems: 'center',
-          borderRadius: s.textRadius,
-          background: 'linear-gradient(180deg, rgba(5,5,12,0.34), rgba(5,5,12,0.52))',
-          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.10)',
-          backdropFilter: 'blur(2px)',
-          WebkitBackdropFilter: 'blur(2px)',
-          textShadow: '0 2px 8px rgba(0,0,0,0.50)',
-          overflow: 'hidden',
-          overflowWrap: 'break-word',
-          hyphens: 'auto',
-        }}
-      >
-        {truncateCardText(card.text, s.maxText as number | null)}
+
+      <p className={s.textPanel}>
+        {truncateCardText(card.text, v.maxText as number | null)}
       </p>
     </div>
   );

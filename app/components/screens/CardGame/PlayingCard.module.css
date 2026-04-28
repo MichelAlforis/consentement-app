@@ -1,0 +1,165 @@
+.root {
+  max-width: 290px;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  margin: 0 auto;
+  position: relative;
+  user-select: none;
+}
+
+.stackLayer {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+}
+
+.dragWrapper {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.perspective {
+  perspective: 1200px;
+  width: 100%;
+  height: 100%;
+}
+
+.tiltWrapper {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.flipContainer {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Shared by dos + face */
+.cardSide {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.cardBack {
+  transform: translateZ(0.001px);
+}
+
+.cardFront {
+  transform: rotateY(180deg) translateZ(0.001px);
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid rgba(255, 255, 255, 0.10);
+}
+
+.dotTexture {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+}
+
+.watermark {
+  position: absolute;
+  width: 45%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.backLabel {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  margin: 0;
+  z-index: 1;
+}
+
+.stripe {
+  flex-shrink: 0;
+}
+.stripeTop    { height: 8px; }
+.stripeBottom { height: 5px; }
+
+.cardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 22px;
+  gap: 14px;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.categoryBadgeLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cardText {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.65;
+  margin: 0;
+  text-align: left;
+}
+
+.depthDots {
+  display: flex;
+  gap: 4px;
+}
+
+.depthDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.deckBadge {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  font-size: 9px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.45);
+  user-select: none;
+  opacity: 0.4;
+}
+
+.foil {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}

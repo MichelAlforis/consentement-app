@@ -7,6 +7,7 @@ import type { CollectorCard } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
 import type { IconName } from '../../../utils/iconFromName';
 import { BACK_SYMBOL_PATH } from '../../../game-engine/cards/CollectorCardCanvas';
+import s from './PlayingCard.module.css';
 
 type Cat = { name: string; iconName: IconName; gradient: string; border: string };
 
@@ -36,15 +37,13 @@ function DeckStack({
         return (
           <motion.div
             key={i}
+            className={s.stackLayer}
             animate={{
               y: isAnimating ? depth * 2.5 : depth * 5,
               scale: isAnimating ? 1 - depth * 0.015 : 1 - depth * 0.03,
             }}
             transition={{ type: 'spring', stiffness: 280, damping: 22 }}
             style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 20,
               background: gradient,
               zIndex: -depth,
               opacity: 1 - depth * 0.22,
@@ -78,7 +77,6 @@ export function PlayingCard({
   themeId,
 }: PlayingCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  // useNormalizedPointer still drives the foil gradient (Framer MotionValues)
   const { x: tiltX, y: tiltY } = useNormalizedPointer(cardRef);
   const controls = useAnimation();
   const dragX = useMotionValue(0);
@@ -86,13 +84,11 @@ export function PlayingCard({
   const [hideAll, setHideAll] = useState(false);
   const hasNudged = useRef(false);
 
-  // Framer Motion spring tracks pointer — physical decay on pointerleave
   const rawRotateX = useTransform(tiltY, [-1, 1], [6, -6]);
   const rawRotateY = useTransform(tiltX, [-1, 1], [-6, 6]);
   const tiltRotateX = useSpring(rawRotateX, { stiffness: 400, damping: 30 });
   const tiltRotateY = useSpring(rawRotateY, { stiffness: 400, damping: 30 });
 
-  // Reset on new card
   useEffect(() => {
     setIsExiting(false);
     setHideAll(false);
@@ -114,7 +110,7 @@ export function PlayingCard({
   const dragRotate = useTransform(dragX, [-200, 200], [-10, 10]);
   const dragOpacity = useTransform(dragX, [-120, 0, 120], [0.5, 1, 0.5]);
 
-  // Foil: soft pastel rainbow with screen blend — works on light AND dark bgCard
+  // Foil: soft pastel rainbow with screen blend
   const hue = useTransform(tiltX, [-1, 1], [0, 360]);
   const foilBg = useTransform(
     [tiltX, tiltY, hue] as MotionValue<number>[],
@@ -153,13 +149,8 @@ export function PlayingCard({
 
   return (
     <div
+      className={s.root}
       style={{
-        maxWidth: 290,
-        width: '100%',
-        aspectRatio: '2 / 3',
-        margin: '0 auto',
-        position: 'relative',
-        userSelect: 'none',
         opacity: hideAll ? 0 : undefined,
         pointerEvents: hideAll ? 'none' : undefined,
       }}
@@ -169,6 +160,7 @@ export function PlayingCard({
       {/* Drag wrapper */}
       <motion.div
         ref={cardRef}
+        className={s.dragWrapper}
         drag={canDrag ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
@@ -179,218 +171,78 @@ export function PlayingCard({
           x: dragX,
           rotate: dragRotate,
           opacity: dragOpacity,
-          position: 'absolute',
-          inset: 0,
-          willChange: 'transform',
           cursor: canDrag ? 'grab' : 'default',
         }}
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
-        <div style={{ perspective: '1200px', width: '100%', height: '100%' }}>
+        <div className={s.perspective}>
           {/* Tilt wrapper — backfaceVisibility retiré : corrompt le rendu Safari dans un contexte preserve-3d imbriqué */}
           <motion.div
-            style={{
-              rotateX: tiltRotateX,
-              rotateY: tiltRotateY,
-              transformStyle: 'preserve-3d',
-              WebkitTransformStyle: 'preserve-3d',
-              width: '100%',
-              height: '100%',
-              willChange: 'transform',
-            }}
+            className={s.tiltWrapper}
+            style={{ rotateX: tiltRotateX, rotateY: tiltRotateY }}
           >
             {/* Flip container */}
             <motion.div
+              className={s.flipContainer}
               animate={{ rotateY: isRevealed ? 180 : 0 }}
               transition={{ duration: 0.52, ease: [0.22, 0.61, 0.36, 1] }}
-              style={{
-                transformStyle: 'preserve-3d',
-                WebkitTransformStyle: 'preserve-3d',
-                width: '100%',
-                height: '100%',
-                position: 'relative',
-              }}
             >
               {/* ── DOS ──────────────────────────────────────── */}
               <div
+                className={`${s.cardSide} ${s.cardBack}`}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: 20,
                   background: cat.gradient,
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transform: 'translateZ(0.001px)',
-                  overflow: 'hidden',
                   boxShadow: `0 20px 56px ${cat.border}44, 0 4px 16px rgba(0,0,0,0.12)`,
                 }}
               >
-                {/* Dot texture */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage:
-                      'radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px)',
-                    backgroundSize: '18px 18px',
-                  }}
-                />
-                {/* Watermark symbol */}
-                <svg
-                  viewBox="0 0 336 1044"
-                  style={{
-                    position: 'absolute',
-                    width: '45%',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    opacity: 0.05,
-                    pointerEvents: 'none',
-                  }}
-                >
+                <div className={s.dotTexture} />
+                <svg viewBox="0 0 336 1044" className={s.watermark}>
                   <path d={BACK_SYMBOL_PATH} fill="white" fillRule="evenodd" />
                 </svg>
-                {/* Category name — bottom, subtle */}
-                <p
-                  style={{
-                    position: 'absolute',
-                    bottom: 14,
-                    left: 0,
-                    right: 0,
-                    textAlign: 'center',
-                    color: 'rgba(255,255,255,0.45)',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    letterSpacing: '0.20em',
-                    textTransform: 'uppercase',
-                    margin: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  {cat.name}
-                </p>
+                <p className={s.backLabel}>{cat.name}</p>
               </div>
 
               {/* ── FACE ─────────────────────────────────────── */}
               <div
+                className={`${s.cardSide} ${s.cardFront}`}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: 20,
                   background: buildFaceBg(cat.gradient),
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg) translateZ(0.001px)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  overflow: 'hidden',
                   boxShadow: `0 20px 56px ${cat.border}55, 0 4px 20px rgba(0,0,0,0.40)`,
-                  border: '1.5px solid rgba(255,255,255,0.10)',
                 }}
               >
-                {/* Top stripe */}
-                <div style={{ height: 8, background: cat.gradient, flexShrink: 0 }} />
+                <div className={`${s.stripe} ${s.stripeTop}`} style={{ background: cat.gradient }} />
 
-                {/* Card content */}
-                <div
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    padding: '20px 22px',
-                    gap: 14,
-                  }}
-                >
-                  {/* Category label */}
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      alignSelf: 'flex-start',
-                      padding: '4px 10px',
-                      borderRadius: 20,
-                      background: cat.gradient,
-                    }}
-                  >
+                <div className={s.cardContent}>
+                  <div className={s.categoryBadge} style={{ background: cat.gradient }}>
                     <DynamicIcon name={cat.iconName} size={12} color="white" />
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 700,
-                        color: '#fff',
-                        letterSpacing: '0.06em',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                      }}
-                    >
-                      {cat.name}
-                    </span>
+                    <span className={s.categoryBadgeLabel}>{cat.name}</span>
                   </div>
 
-                  {/* Card text — left-aligned for readability */}
-                  <p
-                    style={{
-                      color: 'rgba(255,255,255,0.92)',
-                      fontSize: 15,
-                      fontWeight: 500,
-                      lineHeight: 1.65,
-                      margin: 0,
-                      textAlign: 'left',
-                    }}
-                  >
-                    {card.text}
-                  </p>
+                  <p className={s.cardText}>{card.text}</p>
 
-                  {/* Depth indicator */}
                   {depth > 1 && (
-                    <div style={{ display: 'flex', gap: 4 }}>
+                    <div className={s.depthDots}>
                       {[1, 2, 3].map((d) => (
                         <div
                           key={d}
-                          style={{
-                            width: 5,
-                            height: 5,
-                            borderRadius: 3,
-                            background: d <= depth ? cat.border : 'rgba(255,255,255,0.15)',
-                          }}
+                          className={s.depthDot}
+                          style={{ background: d <= depth ? cat.border : 'rgba(255,255,255,0.15)' }}
                         />
                       ))}
                     </div>
                   )}
                 </div>
 
-                {/* Bottom stripe */}
-                <div style={{ height: 5, background: cat.gradient, flexShrink: 0 }} />
+                <div className={`${s.stripe} ${s.stripeBottom}`} style={{ background: cat.gradient }} />
 
-                {card.deck !== 'A' && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: 12,
-                      right: 14,
-                      fontSize: 9,
-                      fontWeight: 900,
-                      color: 'rgba(255,255,255,0.45)',
-                      userSelect: 'none',
-                      opacity: 0.4,
-                    }}
-                  >
-                    ✦
-                  </span>
-                )}
+                {card.deck !== 'A' && <span className={s.deckBadge}>✦</span>}
 
                 {/* Foil — screen blend works on any bgCard colour */}
                 <motion.div
+                  className={s.foil}
                   animate={{ opacity: isRevealed ? foilTargetOpacity : 0 }}
                   transition={{ duration: 0.5 }}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: foilBg,
-                    mixBlendMode: 'screen',
-                    pointerEvents: 'none',
-                  }}
+                  style={{ background: foilBg }}
                 />
               </div>
             </motion.div>
