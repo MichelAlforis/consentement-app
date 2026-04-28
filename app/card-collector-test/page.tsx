@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { CardBack } from '../game-engine/cards/CardBack';
@@ -74,6 +74,14 @@ export default function CardCollectorTestPage() {
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const [size, setSize] = useState(160);
   const [useFallback, setUseFallback] = useState(false);
+
+  // ?renderer=css permet de charger directement en mode CSS (utile pour les tests Playwright)
+  // qui ne peuvent pas basculer depuis WebGL sans bloquer le main thread
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('renderer=css')) {
+      setUseFallback(true);
+    }
+  }, []);
 
   const toggle = (id: string) => setFlipped(f => ({ ...f, [id]: !f[id] }));
   const flipAll = () => {
