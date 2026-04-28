@@ -76,7 +76,7 @@ export default function CardCollectorTestPage() {
   // Lazy initializer — lit le flag AVANT le premier render, Three.js ne monte jamais en test
   const [useFallback, setUseFallback] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    return !!(window as Record<string, unknown>).__VR_CSS_MODE__;
+    return !!(window as unknown as Record<string, unknown>).__VR_CSS_MODE__;
   });
 
   // ?renderer=css pour usage manuel dans le navigateur (flag window non disponible)
