@@ -33,6 +33,7 @@ export type Screen =
   | 'moi'
   | 'module-de-base'
   // Onboarding wizard
+  | 'onboarding'
   | 'language'
   | 'onboarding-slides'
   | 'personal-intro'

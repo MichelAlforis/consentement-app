@@ -32,6 +32,7 @@ export const GooseGameScreen = lazy(() => import('./components/screens/GooseGame
 export const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
 export const HallOfCardsScreen = lazy(() => import('./components/screens/HallOfCardsScreen').then(m => ({ default: m.HallOfCardsScreen })));
 export const ModuleDeBaseScreen = lazy(() => import('./components/screens/ModuleDeBaseScreen').then(m => ({ default: m.ModuleDeBaseScreen })));
+export const OnboardingWizard = lazy(() => import('./components/screens/OnboardingWizard').then(m => ({ default: m.OnboardingWizard })));
 export const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 export const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
 export const ApprendreScreen = lazy(() => import('./components/screens/ApprendreScreen').then(m => ({ default: m.ApprendreScreen })));
@@ -84,6 +85,7 @@ export const ROUTES = {
   moi: baseRoute(MoiScreen, { titleKey: 'tabs.me' }),
   'module-de-base': baseRoute(ModuleDeBaseScreen),
   language: baseRoute(LanguageScreen),
+  onboarding: baseRoute(OnboardingWizard),
   'onboarding-slides': baseRoute(ModuleDeBaseScreen),
   'personal-intro': baseRoute(PersonalIntroScreen),
   premium: baseRoute(PremiumScreen),

@@ -74,6 +74,7 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
   'accompagnement-adulte': {},
   'annuaire-sexologues': {},
   // Onboarding wizard
+  onboarding: { header: 'hidden' },
   language: { header: 'hidden' },
   'onboarding-slides': { header: 'hidden' },
   'personal-intro': { header: 'hidden' },

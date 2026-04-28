@@ -31,7 +31,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
       setIndex((i) => i + 1);
     } else {
       completeModule('module-de-base');
-      onNavigate('hall-of-cards');
+      onNavigate('home');
     }
   };
 

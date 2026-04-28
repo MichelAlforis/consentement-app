@@ -90,11 +90,14 @@ export function AppShell() {
     return () => clearTimeout(t);
   }, []);
 
-  // Returning-user redirect: language is the default starting screen (navigationStore not persisted).
-  // history.length === 0 means we're at the initial launch, not navigated here from settings.
+  // Returning-user redirect: onboarding is the default starting screen (navigationStore not persisted).
+  // history.length === 0 means we're at the initial launch, not navigated here from within the app.
+  // hasOnboarded guard prevents a loop: guard redirects 'home'→'onboarding', this effect must not
+  // then redirect back to 'home' for a user who hasn't completed onboarding.
   useEffect(() => {
-    if (currentScreen !== 'language') return;
+    if (currentScreen !== 'onboarding' && currentScreen !== 'language') return;
     if (history.length > 0) return;
+    if (!hasOnboarded) return;
 
     if (isAdultApp) {
       if (userName) replaceWith('home');
@@ -103,12 +106,12 @@ export function AppShell() {
     if (themeMode && (userName || isAdult === false)) {
       replaceWith('home');
     }
-  }, [currentScreen, history.length, isAdult, themeMode, userName, replaceWith]);
+  }, [currentScreen, history.length, isAdult, themeMode, userName, hasOnboarded, replaceWith]);
 
-  // If a returning user somehow lands on home without onboarding, complete it.
+  // If a returning user somehow lands on home without onboarding, redirect to wizard.
   useEffect(() => {
     if (currentScreen === 'home' && !hasOnboarded) {
-      replaceWith('onboarding-slides');
+      replaceWith('onboarding');
     }
   }, [currentScreen, hasOnboarded, replaceWith]);
 

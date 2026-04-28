@@ -27,6 +27,7 @@ import {
   CardGameScreen,
   HallOfCardsScreen,
   ModuleDeBaseScreen,
+  OnboardingWizard,
   ThemeSelectScreen,
   PremiumScreen,
   ApprendreScreen,
@@ -36,6 +37,7 @@ import {
 } from '../../routes';
 import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
+
 
 type RouteRendererProps = {
   currentScreen: Screen;
@@ -59,6 +61,17 @@ type ShellCtx = Omit<RouteRendererProps, 'currentScreen' | 'theme'>;
 
 // Record<Screen, ...> enforces exhaustiveness: adding a new Screen without a render entry is a compile error.
 const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
+  onboarding: (ctx) => (
+    <OnboardingWizard
+      isAdult={ctx.isAdult}
+      isPremium={ctx.isPremium}
+      onSetAge={ctx.handleAgeSelect}
+      onSelectTheme={ctx.selectTheme}
+      onAuth={ctx.handleAuth}
+      onNavigate={ctx.navigateTo}
+    />
+  ),
+
   language: (ctx) =>
     <LanguageScreen onContinue={() => ctx.navigateTo('welcome')} />,
 

@@ -13,7 +13,7 @@ interface NavigationStore {
 }
 
 export const useNavigationStore = create<NavigationStore>((set) => ({
-  currentScreen: 'language',
+  currentScreen: 'onboarding',
   history: [],
 
   navigateTo: (screen) => set((state) => {
