@@ -72,4 +72,5 @@ export const onboarding = {
     ctaNow: 'Personalise now',
     ctaLater: 'Set up later',
   },
+  skip: 'Skip',
 } as const;
