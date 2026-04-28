@@ -73,14 +73,15 @@ const CARDS: GainedCard[] = [
 export default function CardCollectorTestPage() {
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const [size, setSize] = useState(160);
-  const [useFallback, setUseFallback] = useState(false);
+  // Lazy initializer — lit le flag AVANT le premier render, Three.js ne monte jamais en test
+  const [useFallback, setUseFallback] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return !!(window as Record<string, unknown>).__VR_CSS_MODE__;
+  });
 
-  // ?renderer=css permet de charger directement en mode CSS (utile pour les tests Playwright)
-  // qui ne peuvent pas basculer depuis WebGL sans bloquer le main thread
+  // ?renderer=css pour usage manuel dans le navigateur (flag window non disponible)
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.search.includes('renderer=css')) {
-      setUseFallback(true);
-    }
+    if (window.location.search.includes('renderer=css')) setUseFallback(true);
   }, []);
 
   const toggle = (id: string) => setFlipped(f => ({ ...f, [id]: !f[id] }));
