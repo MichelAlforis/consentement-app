@@ -12,7 +12,6 @@ import { DynamicIcon } from '../../../../utils/iconFromName';
 import type { IconName } from '../../../../utils/iconFromName';
 import { useTheme } from '../../../../context/ThemeContext';
 import { ICON_NODES } from '../../../../utils/iconPaths';
-import type { SvgNode } from '../../../../utils/iconPaths';
 
 // ─── CSS constants ────────────────────────────────────────────────────────────
 

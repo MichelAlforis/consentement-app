@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Video, X, ChevronRight, Phone, ExternalLink, Star, Shield } from 'lucide-react';
+import { Search, MapPin, Video, X, Phone, ExternalLink, Star, Shield } from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
 import { SEXOLOGUES, ALL_DEPARTEMENTS, type Sexologue } from '../../../data/sexologues';
 
@@ -283,7 +283,7 @@ function TarifRow({ label, value, duration }: { label: string; value: number; du
 
 // ── Main screen ───────────────────────────────────────────────────────────────
 
-export function AnnuaireSexologuesScreen({ onBack }: AnnuaireSexologuesScreenProps) {
+export function AnnuaireSexologuesScreen({ onBack: _onBack }: AnnuaireSexologuesScreenProps) {
   const { colors } = useTheme();
   const { search, setSearch, consult, setConsult, region, setRegion, filtered } = useFilters();
   const [selected, setSelected] = useState<Sexologue | null>(null);

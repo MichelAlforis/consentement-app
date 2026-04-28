@@ -12,8 +12,7 @@ import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
 import { useHaptics } from '../shared/useHaptics';
-import { ICON_NODES, drawIconNodes } from '../../utils/iconPaths';
-import type { SvgNode } from '../../utils/iconPaths';
+import { drawIconNodes } from '../../utils/iconPaths';
 import { DURATION, EASING } from '../../constants/motion';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────

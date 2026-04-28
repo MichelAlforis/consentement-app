@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Palette, LifeBuoy, Crown, ChevronRight, CheckCircle2, Globe,
-  Flame, User, Heart, RotateCcw, BookOpen,
+  Flame, Heart, RotateCcw, BookOpen,
 } from 'lucide-react';
 import { Screen } from '../../types';
 import type { Language } from '../../types';
