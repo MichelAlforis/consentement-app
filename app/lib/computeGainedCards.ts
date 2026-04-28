@@ -1,6 +1,7 @@
 import { THEME_CATEGORIES } from '../data/cards-collector';
 import type { CollectorCard, Rarity, CardTheme } from '../data/cards-collector';
 import type { OwnedCard } from '../stores/unlockStore';
+import type { IconName } from '../utils/iconFromName';
 
 // ---------------------------------------------------------------------------
 // Types publics
@@ -13,7 +14,7 @@ export interface GainedCard {
   themeName?: string;
   rarity: Rarity;
   gradient: string;
-  iconName: string;
+  iconName: IconName;
   border: string;
 }
 

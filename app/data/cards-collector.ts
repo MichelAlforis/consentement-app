@@ -1,3 +1,5 @@
+import type { IconName } from '../utils/iconFromName';
+
 export type Rarity = 'common' | 'rare' | 'unique';
 
 export type CardTheme = 'osez' | 'parlez' | 'et-si' | 'defi' | 'verite' | 'douceur';
@@ -15,7 +17,7 @@ export interface CollectorCard {
   sourceDeck?: number;
   visual: {
     gradient: string;
-    iconName: string;
+    iconName: IconName;
     border: string;
   };
 }
@@ -32,7 +34,7 @@ const V = {
   defi:    { gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)', iconName: 'Target',        border: '#93c5fd' },
   verite:  { gradient: 'linear-gradient(135deg, #10b981, #059669)', iconName: 'Sparkles',      border: '#6ee7b7' },
   douceur: { gradient: 'linear-gradient(135deg, #be123c, #9f1239)', iconName: 'Heart',         border: '#fda4af' },
-} satisfies Record<CardTheme, { gradient: string; iconName: string; border: string }>;
+} satisfies Record<CardTheme, { gradient: string; iconName: IconName; border: string }>;
 
 export const collectorCards: CollectorCard[] = [
 
@@ -141,7 +143,7 @@ export const collectorCards: CollectorCard[] = [
 
 export type ThemeCategory = {
   name: string;
-  iconName: string;
+  iconName: IconName;
   gradient: string;
   border: string;
 };

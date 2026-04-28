@@ -1,4 +1,5 @@
 // Types pour l'application Consentement V2
+import type { IconName } from '../utils/iconFromName';
 
 export type Screen =
   | 'welcome'
@@ -46,11 +47,11 @@ export type AgeGroup = 'minor' | 'adult';
 export interface ComfortItem {
   id: string;
   label: string;
-  iconName: string;
+  iconName: IconName;
 }
 
 export interface ComfortCategory {
-  iconName: string;
+  iconName: IconName;
   title: string;
   description: string;
   color: string;
@@ -67,7 +68,7 @@ export interface ComfortLevel {
   value: number;
   label: string;
   color: string;
-  iconName: string;
+  iconName: IconName;
 }
 
 export interface PersonalProfile {

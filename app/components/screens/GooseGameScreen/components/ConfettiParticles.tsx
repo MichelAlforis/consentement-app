@@ -2,8 +2,9 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '../../../../utils/iconFromName';
+import type { IconName } from '../../../../utils/iconFromName';
 
-const CONFETTI_ITEMS = [
+const CONFETTI_ITEMS: { icon: IconName; color: string }[] = [
   { icon: 'Heart',      color: '#ff6b6b' },
   { icon: 'Sparkles',   color: '#ffd700' },
   { icon: 'Star',       color: '#c084fc' },

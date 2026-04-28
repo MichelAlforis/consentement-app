@@ -5,9 +5,10 @@ import { motion, animate, useAnimation, useMotionValue, useTransform, useSpring,
 import { useNormalizedPointer } from './hooks/useNormalizedPointer';
 import type { CollectorCard } from '../../../data/cards-collector';
 import { DynamicIcon } from '../../../utils/iconFromName';
+import type { IconName } from '../../../utils/iconFromName';
 import { BACK_SYMBOL_PATH } from '../../../game-engine/cards/CollectorCardCanvas';
 
-type Cat = { name: string; iconName: string; gradient: string; border: string };
+type Cat = { name: string; iconName: IconName; gradient: string; border: string };
 
 function buildFaceBg(gradient: string): string {
   const match = gradient.match(/#[0-9a-f]{6}/i);

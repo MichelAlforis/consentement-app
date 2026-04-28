@@ -13,7 +13,9 @@ export type TurnStep =
   | 'accord-result'
   | 'complicite';
 
+import type { IconName } from '../../../utils/iconFromName';
+
 export interface Player {
   name: string;
-  pawn: string;
+  pawn: IconName;
 }

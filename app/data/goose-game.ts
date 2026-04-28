@@ -1,4 +1,5 @@
 import { diePractices, DICE_CATEGORIES, DiePractice } from './index';
+import type { IconName } from '../utils/iconFromName';
 import { logger } from '../lib/logger';
 
 export type SquareType = 'depart' | 'normal' | 'chance' | 'pause' | 'accord' | 'complicite' | 'arrivee';
@@ -49,7 +50,7 @@ export const BOARD_LAYOUT: number[][] = [
 
 export interface SquareVisual {
   bg: string;
-  iconName: string;
+  iconName: IconName | '';
   label: string;
 }
 
@@ -63,14 +64,14 @@ export const SQUARE_VISUAL: Record<SquareType, SquareVisual> = {
   arrivee:    { bg: 'linear-gradient(135deg, #34d399, #059669)', iconName: 'Flag',      label: 'Arrivée' },
 };
 
-export const PAWN_ICONS = ['Zap', 'Leaf', 'Wind', 'Moon', 'Star', 'Dice5'];
+export const PAWN_ICONS: IconName[] = ['Zap', 'Leaf', 'Wind', 'Moon', 'Star', 'Dice5'];
 export const PAWN_COLORS  = ['#ff6b00', '#00aaff'] as const; // J1 orange vif · J2 bleu vif
 
 // ─── Zones narratives ─────────────────────────────────────────────────────────
 
 export interface Zone {
   name: string;
-  iconName: string;
+  iconName: IconName;
   desc: string;
   color: string;
 }
@@ -219,15 +220,15 @@ export function getSquareBg(square: BoardSquare): string {
   return SQUARE_VISUAL[square.type].bg;
 }
 
-export function getSquareIconName(square: BoardSquare): string {
+export function getSquareIconName(square: BoardSquare): IconName {
   if (square.type === 'normal' && square.face) {
     return DICE_CATEGORIES[square.face].iconName;
   }
-  return SQUARE_VISUAL[square.type].iconName;
+  return (SQUARE_VISUAL[square.type].iconName || 'Star') as IconName;
 }
 
 export interface SavedGooseGame {
-  players: [{ name: string; pawn: string }, { name: string; pawn: string }];
+  players: [{ name: string; pawn: IconName }, { name: string; pawn: IconName }];
   positions: [number, number];
   currentPlayer: 0 | 1;
   accordsCount: number;

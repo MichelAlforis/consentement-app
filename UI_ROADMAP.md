@@ -1,6 +1,6 @@
 # UI Engineering — Plan de progression
 
-> Généré 2026-04-28 — À supprimer une fois les tâches intégrées dans les sprints.
+> Généré 2026-04-28 — Mis à jour 2026-04-28 — À supprimer une fois les tâches intégrées dans les sprints.
 
 ---
 
@@ -21,24 +21,24 @@
 
 ---
 
-## Court terme — 1 à 2 semaines
+## Court terme — 1 à 2 semaines ✅ TERMINÉ
 
-### 1. Typer `iconName` en `IconName`
-- [ ] Exporter `type IconName = keyof typeof ICON_MAP` depuis `app/utils/iconFromName.tsx`
-- [ ] Remplacer `iconName: string` dans `Card`, `CardConfig`, `GainedCard`
-- [ ] Corriger les erreurs de compilation (typos révélées)
+### 1. Typer `iconName` en `IconName` ✅
+- [x] Exporter `type IconName = keyof typeof ICON_MAP` depuis `app/utils/iconFromName.tsx`
+- [x] Remplacer `iconName: string` partout (Card, CardConfig, GainedCard, DiceFace, SquareConfig, Player, types UI…)
+- [x] Cascade complète résolue — 0 erreur TypeScript
 
-### 2. Intégrer les corrections optiques dans CARD_LAYOUT
-- [ ] Ajouter `iconCenterYDOM: 0.45` et `panelTopDOM: 0.66` dans `CARD_LAYOUT`
-- [ ] Remplacer les `+ 2` et `+ 1` inline dans `CSSCardFallback`
+### 2. Intégrer les corrections optiques dans CARD_LAYOUT ✅
+- [x] Ajouter `iconCenterYDOM: 0.45` et `panelTopDOM: 0.66` dans `CARD_LAYOUT`
+- [x] Remplacer les `+ 2` et `+ 1` inline dans `CSSCardFallback`
 
-### 3. Centraliser les timings d'animation
-- [ ] Créer `app/constants/motion.ts` avec `DURATION` et `EASING`
-- [ ] Remplacer toutes les valeurs hardcodées dans `CollectorCardCanvas`, `CardRenderer`, overlays
+### 3. Centraliser les timings d'animation ✅
+- [x] Créer `app/constants/motion.ts` avec `DURATION`, `STAGGER` et `EASING`
+- [x] Remplacer toutes les valeurs hardcodées dans `CollectorCardCanvas`, `CardRenderer`, `FlipRevealOverlay`
 
-### 4. Extraire ICON_NODES vers `iconPaths.ts`
-- [ ] Créer `app/utils/iconPaths.ts` — source unique pour paths Canvas + composants Lucide
-- [ ] Supprimer la définition de `ICON_NODES` depuis `CollectorCardCanvas.tsx`
+### 4. Extraire ICON_NODES vers `iconPaths.ts` ✅
+- [x] Créer `app/utils/iconPaths.ts` — 19 icônes (union CollectorCardCanvas + Board), source unique
+- [x] Supprimer `ICON_NODES` de `CollectorCardCanvas.tsx` et `Board.tsx`
 
 ---
 

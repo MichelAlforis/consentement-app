@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { DURATION, EASING, STAGGER } from '../../constants/motion';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Sparkles, X } from 'lucide-react';
 import { useTranslation } from '../../i18n';
@@ -95,7 +96,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
           key={`page-${page}`}
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: DURATION.normal, ease: EASING.standard }}
           className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5"
         >
           {pageCards.map((item, itemIndex) => (
@@ -103,7 +104,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               key={item.id}
               initial={{ opacity: 0, y: 12, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: itemIndex * 0.035, duration: 0.25 }}
+              transition={{ delay: itemIndex * STAGGER.item, duration: DURATION.staggerItem }}
               style={{ width: 118, height: 177, position: 'relative' }}
             >
               <button
@@ -123,7 +124,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             key={`card-${index}`}
             initial={{ rotateY: 0, scale: 0.85 }}
             animate={{ rotateY: flipped ? 180 : 0, scale: 1 }}
-            transition={{ duration: 0.65, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: DURATION.cardReveal, ease: EASING.standard }}
             style={{ width: 200, height: 300, transformStyle: 'preserve-3d', position: 'relative' }}
           >
             {/* Back face */}
@@ -193,7 +194,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               initial={{ scale: 0.78, y: 24 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.82, y: 18 }}
-              transition={{ duration: 0.22 }}
+              transition={{ duration: DURATION.fast }}
               style={{ width: 220, height: 330, position: 'relative' }}
               onClick={(event) => event.stopPropagation()}
             >

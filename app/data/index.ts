@@ -1,4 +1,5 @@
 import { ComfortCategories, ComfortLevel, ConsentPrinciple, HelpResource } from '../types';
+import type { IconName } from '../utils/iconFromName';
 
 export interface QuizQuestion {
   id: string;
@@ -13,14 +14,14 @@ export interface PornoVsRealite {
   porno: string;
   realite: string;
   explication: string;
-  iconName: string;
+  iconName: IconName;
 }
 
 export interface LoiPoint {
   id: string;
   titre: string;
   contenu: string;
-  iconName: string;
+  iconName: IconName;
   important?: boolean;
 }
 
@@ -28,7 +29,7 @@ export type AgeGate = 'all' | 'adult' | 'explicit' | 'premium';
 
 export const DICE_CATEGORIES: Record<number, {
   name: string;
-  iconName: string;
+  iconName: IconName;
   gradient: string;
   border: string;
 }> = {

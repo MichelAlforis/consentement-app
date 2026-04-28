@@ -12,6 +12,9 @@ import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
 import { useHaptics } from '../shared/useHaptics';
+import { ICON_NODES, drawIconNodes } from '../../utils/iconPaths';
+import type { SvgNode } from '../../utils/iconPaths';
+import { DURATION, EASING } from '../../constants/motion';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -24,100 +27,6 @@ function easeOutCubic(t: number): number {
   return 1 - (1 - t) ** 3;
 }
 
-// ─── ICON_NODES — Path2D Lucide (même pipeline que Board.tsx) ────────────────
-
-type SvgNode = ['path' | 'circle' | 'rect' | 'polygon' | 'line', Record<string, string>];
-
-const ICON_NODES: Record<string, SvgNode[]> = {
-  MessageCircle:  [['path', { d: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z' }]],
-  Heart:          [['path', { d: 'M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z' }]],
-  Star:           [['polygon', { points: '12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' }]],
-  Crown:          [['path', { d: 'M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z' }]],
-  Sparkles: [
-    ['path', { d: 'M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z' }],
-    ['path', { d: 'M20 3v4' }], ['path', { d: 'M22 5h-4' }],
-    ['path', { d: 'M4 17v2' }], ['path', { d: 'M5 18H3' }],
-  ],
-  Flame:    [['path', { d: 'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z' }]],
-  Zap:      [['path', { d: 'M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z' }]],
-  Eye: [
-    ['path', { d: 'M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0' }],
-    ['circle', { cx: '12', cy: '12', r: '3' }],
-  ],
-  Lock: [
-    ['rect', { x: '3', y: '11', width: '18', height: '11', rx: '2' }],
-    ['path', { d: 'M7 11V7a5 5 0 0 1 10 0v4' }],
-  ],
-  Gift: [
-    ['rect', { x: '3', y: '8', width: '18', height: '4', rx: '1' }],
-    ['path', { d: 'M12 8v13' }],
-    ['path', { d: 'M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7' }],
-    ['path', { d: 'M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5' }],
-  ],
-  Music: [
-    ['path', { d: 'M9 18V5l12-2v13' }],
-    ['circle', { cx: '6', cy: '18', r: '3' }],
-    ['circle', { cx: '18', cy: '16', r: '3' }],
-  ],
-  Wind: [
-    ['path', { d: 'M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2' }],
-    ['path', { d: 'M9.6 4.6A2 2 0 1 1 11 8H2' }],
-    ['path', { d: 'M12.6 19.4A2 2 0 1 0 14 16H2' }],
-  ],
-  Handshake: [
-    ['path', { d: 'm11 17 2 2a1 1 0 1 0 3-3' }],
-    ['path', { d: 'm14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4' }],
-    ['path', { d: 'm21 3 1 11h-2' }],
-    ['path', { d: 'M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3' }],
-    ['path', { d: 'M3 4h8' }],
-  ],
-};
-
-function drawIconNodes(
-  ctx: CanvasRenderingContext2D,
-  iconName: string,
-  cx: number, cy: number,
-  sizePx: number,
-  color: string,
-) {
-  const nodes = ICON_NODES[iconName];
-  if (!nodes) return;
-  const scale = sizePx / 24;
-  ctx.save();
-  ctx.translate(cx - sizePx / 2, cy - sizePx / 2);
-  ctx.scale(scale, scale);
-  ctx.strokeStyle = color;
-  ctx.fillStyle   = color;
-  ctx.lineWidth   = 4.2 / scale;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  for (const [tag, a] of nodes) {
-    ctx.beginPath();
-    if (tag === 'path') {
-      const p = new Path2D(a.d);
-      if (a.fill && a.fill !== 'none') ctx.fill(p); else ctx.stroke(p);
-    } else if (tag === 'polygon') {
-      const pts = a.points.trim().split(/[\s,]+/).map(Number);
-      ctx.moveTo(pts[0], pts[1]);
-      for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
-      ctx.closePath(); ctx.stroke();
-    } else if (tag === 'circle') {
-      ctx.arc(parseFloat(a.cx), parseFloat(a.cy), parseFloat(a.r), 0, Math.PI * 2);
-      if (a.fill === 'true') ctx.fill(); else ctx.stroke();
-    } else if (tag === 'rect') {
-      const rx = parseFloat(a.rx ?? '0');
-      const [x, y, w, h] = [a.x, a.y, a.width, a.height].map(parseFloat);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (ctx as any).roundRect?.(x, y, w, h, rx) ?? ctx.rect(x, y, w, h);
-      ctx.stroke();
-    } else if (tag === 'line') {
-      ctx.moveTo(parseFloat(a.x1), parseFloat(a.y1));
-      ctx.lineTo(parseFloat(a.x2), parseFloat(a.y2));
-      ctx.stroke();
-    }
-  }
-  ctx.restore();
-}
 
 // ─── Canvas helpers ───────────────────────────────────────────────────────────
 
@@ -219,9 +128,11 @@ export const BACK_SYMBOL_PATH =
 
 // Source de vérité partagée entre R3F (canvas px) et CSS (position absolue %)
 export const CARD_LAYOUT = {
-  iconCenterY: 0.43,  // centre vertical de l'icône — h * 0.43 en R3F
-  panelTop:    0.65,  // début panneau texte  — h * (1 - 0.30 - 0.05) en R3F
-  panelHeight: 0.30,  // hauteur panneau texte — h * 0.30 en R3F
+  iconCenterY:    0.43,  // centre vertical icône — R3F canvas px
+  iconCenterYDOM: 0.45,  // +2% correction optique DOM (rendu plus lourd visuellement)
+  panelTop:       0.65,  // début panneau texte — R3F
+  panelTopDOM:    0.66,  // +1% correction optique DOM
+  panelHeight:    0.30,
 } as const;
 
 function makeBackTexture(size = 512, refImage?: HTMLImageElement): THREE.CanvasTexture {
@@ -634,7 +545,7 @@ export function CardMesh({
 
   const glowMat2Ref    = useRef<THREE.MeshBasicMaterial>(null);
   const uniqueGlowRef  = useRef<THREE.MeshBasicMaterial>(null);
-  const revealAnim     = useRef({ active: true, elapsed: 0, duration: 0.4 });
+  const revealAnim     = useRef({ active: true, elapsed: 0, duration: DURATION.medium });
 
   const { vibrate } = useHaptics();
 
@@ -650,12 +561,12 @@ export function CardMesh({
 
   const anim = useRef({
     active: false, startRot: 0, targetRot: 0,
-    elapsed: 0, duration: 0.62, done: true,
+    elapsed: 0, duration: DURATION.cardFlipRare as number, done: true,
     bouncing: false, bounceElapsed: 0,
     onComplete: undefined as (() => void) | undefined,
   });
 
-  const flipDuration = card.rarity === 'unique' ? 0.70 : card.rarity === 'rare' ? 0.62 : 0.52;
+  const flipDuration = card.rarity === 'unique' ? DURATION.cardFlipUnique : card.rarity === 'rare' ? DURATION.cardFlipRare : DURATION.cardFlipCommon;
 
   const triggerFlip = useCallback((toFace: boolean, cb?: () => void) => {
     const flip = flipRef.current;
@@ -740,8 +651,8 @@ export function CardMesh({
 
     // Phase squash-stretch atterrissage — amplitude réduite, rigidité carte premium
     if (a.bouncing) {
-      a.bounceElapsed = Math.min(a.bounceElapsed + delta, 0.28);
-      const b = a.bounceElapsed / 0.28;
+      a.bounceElapsed = Math.min(a.bounceElapsed + delta, DURATION.normal);
+      const b = a.bounceElapsed / DURATION.normal;
       const sy = b < 0.40
         ? 1 - 0.04 * (b / 0.40)          // légère compression
         : b < 0.75
@@ -911,7 +822,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
         width: '100%', height: '100%', position: 'relative',
         transformStyle: 'preserve-3d',
         transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
-        transition: 'transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1)',
+        transition: `transform ${DURATION.cardFlipCSS}s cubic-bezier(${EASING.cardFlip.join(', ')})`,
       }}>
         {/* Dos */}
         <div style={{
@@ -970,10 +881,10 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
             )}
           </div>
 
-          {/* Icône — +2% correction optique : texte DOM plus lourd visuellement que canvas */}
+          {/* Icône — correction optique définie dans CARD_LAYOUT.iconCenterYDOM */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.iconCenterY * 100 + 2}%`,
+            top: `${CARD_LAYOUT.iconCenterYDOM * 100}%`,
             left: '50%',
             transform: 'translate(-50%, -50%)',
             filter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
@@ -981,10 +892,10 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
             <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
           </div>
 
-          {/* Panneau texte — +1% correction optique, CARD_LAYOUT sinon intact */}
+          {/* Panneau texte — correction optique définie dans CARD_LAYOUT.panelTopDOM */}
           <div style={{
             position: 'absolute',
-            top: `${CARD_LAYOUT.panelTop * 100 + 1}%`,
+            top: `${CARD_LAYOUT.panelTopDOM * 100}%`,
             left: Math.round(size * 0.075),
             right: Math.round(size * 0.075),
             height: `${CARD_LAYOUT.panelHeight * 100}%`,

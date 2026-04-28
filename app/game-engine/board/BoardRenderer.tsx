@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { BoardConfig, SquareConfig, SquareKind, BoardPlayerState } from './types';
 import { DynamicIcon } from '../../utils/iconFromName';
+import type { IconName } from '../../utils/iconFromName';
 
 function buildLayout(totalSquares: number, columns: number, snake: boolean): number[][] {
   const rows: number[][] = [];
@@ -131,7 +132,7 @@ function BoardCell({ squareIndex, config, players, isActive, isAnimating }: Boar
 // ─── Legend ───────────────────────────────────────────────────────────────────
 
 export interface LegendEntry {
-  iconName: string;
+  iconName: IconName | '';
   label: string;
   gradient: string;
 }

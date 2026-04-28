@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import type { Card, CardConfig } from './types';
 import { DynamicIcon } from '../../utils/iconFromName';
+import { DURATION, EASING } from '../../constants/motion';
 
 // ─── Pile de cartes fantômes derrière la carte active ────────────────────────
 
@@ -78,7 +79,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
       x: direction * 500,
       rotate: direction * 18,
       opacity: 0,
-      transition: { duration: 0.28, ease: 'easeIn' },
+      transition: { duration: DURATION.normal, ease: 'easeIn' },
     });
     onDraw();
   };
@@ -114,7 +115,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
           <div style={{ perspective: 600, width: '100%', height: '100%' }}>
             <motion.div
               animate={{ rotateY: isRevealed ? 180 : 0 }}
-              transition={{ duration: 0.52, ease: [0.22, 0.61, 0.36, 1] }}
+              transition={{ duration: DURATION.cardFlipCommon, ease: EASING.cardFlip }}
               style={{
                 width: '100%', height: '100%',
                 position: 'relative', transformStyle: 'preserve-3d',

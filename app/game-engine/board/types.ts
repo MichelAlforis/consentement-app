@@ -1,10 +1,12 @@
+import type { IconName } from '../../utils/iconFromName';
+
 export type SquareKind = 'normal' | 'start' | 'end' | 'special';
 
 export interface SquareConfig {
   id: string;
   kind: SquareKind;
   label: string;
-  iconName: string;
+  iconName: IconName | '';
   gradient: string;
   action?: 'activity' | 'bonus-move' | 'vote' | 'forced' | 'end';
   bonusMoves?: number;

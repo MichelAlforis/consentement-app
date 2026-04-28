@@ -4,8 +4,9 @@ import { motion } from 'framer-motion';
 import { Player } from '../types';
 import { useTranslation } from '../../../../i18n';
 import { DynamicIcon } from '../../../../utils/iconFromName';
+import type { IconName } from '../../../../utils/iconFromName';
 
-const PACTE_ICON_NAMES = ['Handshake', 'Lock', 'Pause'];
+const PACTE_ICON_NAMES: IconName[] = ['Handshake', 'Lock', 'Pause'];
 
 interface PacteScreenProps {
   player1: Player;

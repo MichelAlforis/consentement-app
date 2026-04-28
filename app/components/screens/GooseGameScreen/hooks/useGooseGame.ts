@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback, useEffect, useRef } from 'react';
+import type { IconName } from '../../../../utils/iconFromName';
 import {
   BOARD, getBoardActivitiesForFace, pickNoRepeat,
   PAUSE_ACTIVITIES, ACCORD_ACTIVITIES,
@@ -181,12 +182,12 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   }, [persistGame, triggerConfetti]);
 
   // ── Setup ──────────────────────────────────────────────────────────────────
-  const handleP1Confirm = useCallback((name: string, pawn: string) => {
+  const handleP1Confirm = useCallback((name: string, pawn: IconName) => {
     setP1({ name, pawn });
     setPhase('setup-p2');
   }, []);
 
-  const handleP2Confirm = useCallback((name: string, pawn: string) => {
+  const handleP2Confirm = useCallback((name: string, pawn: IconName) => {
     setP2({ name, pawn });
     setPhase('pacte');
   }, []);

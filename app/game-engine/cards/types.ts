@@ -1,7 +1,9 @@
+import type { IconName } from '../../utils/iconFromName';
+
 export interface CardConfig {
   id: string;
   label: string;
-  iconName: string;
+  iconName: IconName;
   gradient: string;
   backGradient: string;
   color: string;

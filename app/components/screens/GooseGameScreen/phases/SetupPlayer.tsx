@@ -3,18 +3,19 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PAWN_ICONS } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
+import type { IconName } from '../../../../utils/iconFromName';
 import { useTranslation } from '../../../../i18n';
 
 interface SetupPlayerProps {
   playerIndex: 0 | 1;
-  otherPawn: string | undefined;
-  onConfirm: (name: string, pawn: string) => void;
+  otherPawn: IconName | undefined;
+  onConfirm: (name: string, pawn: IconName) => void;
 }
 
 export function SetupPlayer({ playerIndex, otherPawn, onConfirm }: SetupPlayerProps) {
   const { t } = useTranslation();
   const [name, setName]   = useState('');
-  const [pawn, setPawn] = useState<string | null>(null);
+  const [pawn, setPawn] = useState<IconName | null>(null);
   const available = PAWN_ICONS.filter(p => p !== otherPawn);
 
   return (

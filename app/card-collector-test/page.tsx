@@ -8,6 +8,7 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { PlayingCard } from '../components/screens/CardGame/PlayingCard';
 import type { CollectorCard } from '../data/cards-collector';
 import { DynamicIcon } from '../utils/iconFromName';
+import type { IconName } from '../utils/iconFromName';
 import { CARD_LAYOUT } from '../game-engine/cards/CollectorCardCanvas';
 
 const CollectorCardCanvas = dynamic(
@@ -33,7 +34,7 @@ const PLAYING_CARD_DEMO: CollectorCard = {
   },
 };
 
-const PLAYING_CAT = {
+const PLAYING_CAT: { name: string; iconName: IconName; gradient: string; border: string } = {
   name: 'Parlez-vous',
   iconName: 'MessageCircle',
   gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',

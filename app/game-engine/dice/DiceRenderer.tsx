@@ -55,7 +55,7 @@ function CubeFace({ face, transform }: { face: DiceFace; transform: string }) {
         background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
         pointerEvents: 'none',
       }} />
-      <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}><DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" /></span>
+      <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.iconName && <DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" />}</span>
       <span style={{
         fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
         textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',
@@ -252,7 +252,7 @@ function FlatTile({
             background: 'radial-gradient(ellipse at 28% 22%, rgba(255,255,255,0.38) 0%, transparent 55%)',
             pointerEvents: 'none',
           }} />
-          <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}><DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" /></span>
+          <span style={{ lineHeight: 1, userSelect: 'none', position: 'relative' }}>{face.iconName && <DynamicIcon name={face.iconName} size={34} color="rgba(255,255,255,0.92)" />}</span>
           <span style={{
             fontSize: 9, fontWeight: 800, color: 'rgba(255,255,255,0.92)',
             textTransform: 'uppercase', letterSpacing: '0.1em', userSelect: 'none', position: 'relative',

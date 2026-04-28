@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Heart } from 'lucide-react';
 import { comfortCategories } from '../../data';
 import { DynamicIcon } from '../../utils/iconFromName';
+import type { IconName } from '../../utils/iconFromName';
 import { CommonGround } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -17,7 +18,7 @@ interface DuoRevealStepProps {
 type CategoryKey = 'tenderness' | 'intensity' | 'trust';
 const categoryKeys: CategoryKey[] = ['tenderness', 'intensity', 'trust'];
 
-const categoryIconName: Record<CategoryKey, string> = {
+const categoryIconName: Record<CategoryKey, IconName> = {
   tenderness: 'Heart',
   intensity: 'Flame',
   trust: 'ShieldCheck',
