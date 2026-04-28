@@ -1,8 +1,8 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 26 avril 2026 (bugfix Deck M + i18n complet + Sprints 18–25 — FlipRevealOverlay partagé + DiceGame tap-to-reveal)  
-> Statut global : ✅ Tous les sprints implémentables sans contenu juriste sont terminés  
+> Mis à jour : 29 avril 2026 (Sprint 16 ✅ · Sprint 26 tests régression visuelle ✅)  
+> Statut global : ✅ Sprints 6–26 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -309,15 +309,15 @@ APP — Tab Bar persistant (visible sur les 4 racines seulement)
 
 #### Tâches
 
-| # | Tâche |
-|---|---|
-| 16.1 | `app/types/index.ts` — ajouter `'apprendre'` · `'moi'` · `'module-de-base'` au type `Screen` |
-| 16.2 | `TabBar.tsx` — 4 onglets avec icônes + état actif, caché hors racines |
-| 16.3 | `ApprendreScreen.tsx` — liste des modules (cartes cliquables) + badge progression par module |
-| 16.4 | `MoiScreen.tsx` — personal-space + duo-space (adulte) / help (mineur) + settings |
-| 16.5 | `screenMeta.ts` — racines, onglets, header, routes legacy et affichage `TabBar` |
-| 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar |
-| 16.7 | i18n — clés `tab.home` · `tab.learn` · `tab.play` · `tab.me` (FR / EN / ES) |
+| # | Tâche | Statut |
+|---|---|---|
+| 16.1 | `app/types/index.ts` — ajouter `'apprendre'` · `'moi'` · `'module-de-base'` au type `Screen` | ✅ |
+| 16.2 | `TabBar.tsx` — 4 onglets avec icônes + état actif, caché hors racines | ✅ |
+| 16.3 | `ApprendreScreen.tsx` — liste des modules (cartes cliquables) + badge progression par module | ✅ |
+| 16.4 | `MoiScreen.tsx` — personal-space + duo-space (adulte) / help (mineur) + settings | ✅ |
+| 16.5 | `screenMeta.ts` — racines, onglets, header, routes legacy et affichage `TabBar` | ✅ |
+| 16.6 | `HomeScreen.tsx` — retirer MenuCards redondantes avec le TabBar | ✅ |
+| 16.7 | i18n — clés tabs (FR / EN / ES) dans `home.ts` | ✅ |
 
 ### Sprint 18 — Tests `useModuleComplete` ✅
 **Livrable :** couverture complète du flux critique module → cartes → reveal
@@ -462,6 +462,24 @@ const RARITY_COLOR: Record<string, string> = {
 
 ---
 
+### Sprint 26 — Tests de régression visuelle CSS ✅ (2026-04-28/29)
+**Livrable :** suite Playwright stable pour les cartes collector — blinde les rendus visuels contre les régressions futures
+
+| # | Tâche | Statut |
+|---|---|---|
+| 26.1 | Spec `e2e/visual-regression.spec.ts` — mode serial, CSS renderer uniquement (WebGL instable headless) | ✅ |
+| 26.2 | `addInitScript(__VR_CSS_MODE__)` posé avant React — Three.js ne monte jamais en test | ✅ |
+| 26.3 | `useState` lazy initializer lit le flag au premier render | ✅ |
+| 26.4 | `slot.screenshot()` + `toMatchSnapshot` — bypass la double-capture de `toHaveScreenshot` (instable sur GPU 3D) | ✅ |
+| 26.5 | Couverture : common/rare/unique × dos/face sur Mobile Chrome — 6/6 passed | ✅ |
+| 26.6 | Baselines commitées dans `e2e/visual-regression.spec.ts-snapshots/` | ✅ |
+| 26.7 | Fix TypeScript strict : double cast `window as unknown as Record<string, unknown>` | ✅ |
+
+WebKit skippé — à activer avec `npx playwright install webkit`.  
+**Captures manquantes (futur) :** onboarding 24 cartes, Hall mobile, zoom carte.
+
+---
+
 ### Sprint 17 — i18n polish ✅
 **Livrable :** zéro chaîne FR hardcodée dans les écrans principaux
 
@@ -503,7 +521,9 @@ Sprint 16 (Tab Bar) — parallèle à 6–15, bloque sur rien
 
 Sprints 6–10 peuvent avancer en parallèle.  
 Sprints 11–15 dépendent de 6–10.  
-Sprint 16 est indépendant structurellement — recommandé après Sprint 13 pour tester les 3 niveaux depuis le TabBar.
+Sprint 16 est indépendant structurellement — recommandé après Sprint 13 pour tester les 3 niveaux depuis le TabBar.  
+Sprints 17–25 : polish i18n, intégration R3F (DiceGame, GooseGame, Hall, CardGame), tests stores + sampling.  
+Sprint 26 : tests de régression visuelle — indépendant, peut tourner à tout moment.
 
 ---
 
