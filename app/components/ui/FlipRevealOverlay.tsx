@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DURATION, EASING, STAGGER } from '../../constants/motion';
+import { RADIUS } from '../../constants/tokens';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Sparkles, X } from 'lucide-react';
 import { useTranslation } from '../../i18n';
@@ -129,7 +130,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
           >
             {/* Back face */}
             <div style={{
-              position: 'absolute', inset: 0, borderRadius: 20,
+              position: 'absolute', inset: 0, borderRadius: RADIUS.card,
               backfaceVisibility: 'hidden',
               background: 'linear-gradient(135deg, #0f0a1e 0%, #1a1035 100%)',
               border: '1.5px solid rgba(255,255,255,0.08)',

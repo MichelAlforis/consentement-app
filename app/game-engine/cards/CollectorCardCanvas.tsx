@@ -14,6 +14,7 @@ import type { GainedCard } from '../../lib/computeGainedCards';
 import { useHaptics } from '../shared/useHaptics';
 import { drawIconNodes } from '../../utils/iconPaths';
 import { DURATION, EASING } from '../../constants/motion';
+import { RADIUS } from '../../constants/tokens';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -229,6 +230,27 @@ function makeBackTexture(size = 512, refImage?: HTMLImageElement): THREE.CanvasT
   return tex;
 }
 
+// Grain partagé — généré une fois, réutilisé pour toutes les textures de la session
+const grainCache = new Map<string, HTMLCanvasElement>();
+function getSharedGrain(w: number, h: number): HTMLCanvasElement {
+  const key = `${w}x${h}`;
+  if (grainCache.has(key)) return grainCache.get(key)!;
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const gc = cv.getContext('2d')!;
+  for (let y = 0; y < h; y++) {
+    const a = 0.02 + 0.04 * Math.sin(y * 0.8 + Math.random() * 0.6);
+    gc.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
+    gc.fillRect(0, y, w, 1);
+  }
+  for (let i = 0; i < 650; i++) {
+    gc.fillStyle = `rgba(255,255,255,${(0.02 + Math.random() * 0.05).toFixed(3)})`;
+    gc.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+  }
+  grainCache.set(key, cv);
+  return cv;
+}
+
 function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageElement): THREE.CanvasTexture {
   const h = Math.round(size * 1.5);
   const canvas = document.createElement('canvas');
@@ -262,16 +284,7 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ctx.globalAlpha = 1;
   ctx.restore();
 
-  // Grain (identique Pawn3D Board)
-  for (let y = 0; y < h; y++) {
-    const a = 0.02 + 0.04 * Math.sin(y * 0.8 + Math.random() * 0.6);
-    ctx.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
-    ctx.fillRect(0, y, size, 1);
-  }
-  for (let i = 0; i < 650; i++) {
-    ctx.fillStyle = `rgba(255,255,255,${(0.02 + Math.random() * 0.05).toFixed(3)})`;
-    ctx.fillRect(Math.random() * size, Math.random() * h, 1, 1);
-  }
+  ctx.drawImage(getSharedGrain(size, h), 0, 0);
 
   // Highlight spéculaire top-left (réduit — évite le blow-out PBR)
   const spec = ctx.createRadialGradient(size * 0.25, h * 0.13, 0, size * 0.25, h * 0.13, size * 0.65);
@@ -825,7 +838,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
       }}>
         {/* Dos */}
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 20,
+          position: 'absolute', inset: 0, borderRadius: RADIUS.card,
           background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
           border: '2px solid rgba(255,255,255,0.16)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
@@ -836,7 +849,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
 
         {/* Face — positions absolues calquées sur CARD_LAYOUT (= ratios R3F) */}
         <div style={{
-          position: 'absolute', inset: 0, borderRadius: 20,
+          position: 'absolute', inset: 0, borderRadius: RADIUS.card,
           background: gradientBg,
           border: '1.5px solid rgba(255,255,255,0.10)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
@@ -1014,7 +1027,7 @@ function LightOverlay({ rarity, isFlipped, size = 160 }: { rarity: string; isFli
   return (
     <div style={{
       position: 'absolute', inset: 0, overflow: 'hidden',
-      borderRadius: 20, pointerEvents: 'none', zIndex: 2,
+      borderRadius: RADIUS.card, pointerEvents: 'none', zIndex: 2,
     }}>
       {/* Gyro radial — updated directly via DOM ref at rAF rate, no React re-renders */}
       <div

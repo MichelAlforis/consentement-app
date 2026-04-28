@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  width: 240px;
+  height: 340px;
+  user-select: none;
+}
+
+.perspective {
+  perspective: 600px;
+  width: 100%;
+  height: 100%;
+}
+
+.flipper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Dos et face partagent le même layout — background/border restent inline (thème-dépendants) */
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.faceFront {
+  transform: rotateY(180deg);
+}
+
+.badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 10;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 0 6px;
+}

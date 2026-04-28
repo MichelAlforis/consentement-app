@@ -186,12 +186,15 @@ function CardSlot({
   const rarityColor = card.rarity === 'unique' ? '#f59e0b' : card.rarity === 'rare' ? '#a855f7' : '#60a5fa';
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
-      background: 'rgba(255,255,255,0.04)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 20, padding: '22px 20px',
-    }}>
+    <div
+      data-testid={`card-${card.rarity}`}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 20, padding: '22px 20px',
+      }}
+    >
       <span style={{
         fontSize: 10, fontWeight: 800, letterSpacing: 2,
         color: rarityColor, textTransform: 'uppercase',

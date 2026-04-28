@@ -4,6 +4,8 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation } f
 import type { Card, CardConfig } from './types';
 import { DynamicIcon } from '../../utils/iconFromName';
 import { DURATION, EASING } from '../../constants/motion';
+import { RADIUS } from '../../constants/tokens';
+import styles from './CardRenderer.module.css';
 
 // ─── Pile de cartes fantômes derrière la carte active ────────────────────────
 
@@ -19,7 +21,7 @@ function DeckStack({ remaining, gradient, border }: { remaining: number; gradien
             style={{
               position: 'absolute',
               inset: 0,
-              borderRadius: 20,
+              borderRadius: RADIUS.card,
               background: gradient,
               border: `1.5px solid ${border}`,
               transform: `translateY(${depth * 5}px) scale(${1 - depth * 0.03})`,
@@ -87,7 +89,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
   const canSwipe = !!onDraw && !isExiting;
 
   return (
-    <div style={{ position: 'relative', width: 240, height: 340, userSelect: 'none' }}>
+    <div className={styles.container}>
       {/* Pile fantôme */}
       <DeckStack
         remaining={remaining}
@@ -111,27 +113,24 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
           role="button"
           aria-label={isRevealed ? 'Carte révélée' : 'Appuyer pour révéler'}
         >
-          {/* Perspectve wrapper — le flip 3D est ici */}
-          <div style={{ perspective: 600, width: '100%', height: '100%' }}>
+          {/* Perspective wrapper — le flip 3D est ici */}
+          <div className={styles.perspective}>
             <motion.div
               animate={{ rotateY: isRevealed ? 180 : 0 }}
               transition={{ duration: DURATION.cardFlipCommon, ease: EASING.cardFlip }}
-              style={{
-                width: '100%', height: '100%',
-                position: 'relative', transformStyle: 'preserve-3d',
-                cursor: isRevealed ? 'default' : 'pointer',
-              }}
+              className={styles.flipper}
+              style={{ cursor: isRevealed ? 'default' : 'pointer' }}
             >
               {/* Dos de la carte */}
-              <div style={{
-                position: 'absolute', inset: 0, borderRadius: 20,
-                background: deckConfig.backGradient,
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center', gap: 8,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-              }}>
+              <div
+                className={styles.face}
+                style={{
+                  borderRadius: RADIUS.card,
+                  background: deckConfig.backGradient,
+                  gap: 8,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                }}
+              >
                 <DynamicIcon name={deckConfig.iconName} size={48} color="rgba(255,255,255,0.85)" />
                 <span style={{
                   fontSize: 11, fontWeight: 800, color: 'rgba(255,255,255,0.6)',
@@ -154,17 +153,15 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
               </div>
 
               {/* Face de la carte */}
-              <div style={{
-                position: 'absolute', inset: 0, borderRadius: 20,
-                background: deckConfig.gradient,
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                transform: 'rotateY(180deg)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
-                gap: 12, padding: 24,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-              }}>
+              <div
+                className={`${styles.face} ${styles.faceFront}`}
+                style={{
+                  borderRadius: RADIUS.card,
+                  background: deckConfig.gradient,
+                  gap: 12, padding: 24,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                }}
+              >
                 <DynamicIcon name={deckConfig.iconName} size={32} color="rgba(255,255,255,0.85)" />
                 <p style={{
                   fontSize: 15, fontWeight: 600, color: '#fff',
@@ -176,7 +173,7 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
                   <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
                     {[1, 2, 3].map(d => (
                       <div key={d} style={{
-                        width: 6, height: 6, borderRadius: 3,
+                        width: 6, height: 6, borderRadius: RADIUS.dot,
                         background: d <= (card.depth ?? 0)
                           ? deckConfig.color
                           : 'rgba(255,255,255,0.2)',
@@ -192,14 +189,10 @@ export function CardRenderer({ card, deckConfig, remaining = 0, onReveal, onDraw
 
       {/* Badge compteur cartes restantes */}
       {remaining > 0 && (
-        <div style={{
-          position: 'absolute', top: -10, right: -10, zIndex: 10,
-          background: deckConfig.color, borderRadius: 12, minWidth: 22, height: 22,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 11, fontWeight: 800, color: '#fff',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          padding: '0 6px',
-        }}>
+        <div
+          className={styles.badge}
+          style={{ background: deckConfig.color, borderRadius: RADIUS.badge }}
+        >
           {remaining}
         </div>
       )}

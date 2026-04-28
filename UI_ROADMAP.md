@@ -42,30 +42,28 @@
 
 ---
 
-## Moyen terme — 1 à 2 mois
+## Moyen terme — 1 à 2 mois ✅ TERMINÉ
 
-### 5. Design tokens complets (spacing + radius + typography)
-- [ ] Créer `app/constants/tokens.ts` : `RADIUS`, `SPACE`, `TYPE_SCALE`
-- [ ] Audit des valeurs hardcodées : radius (16/14/20/10/18/22), spacings en px
-- [ ] Migration progressive — commencer par les composants cartes
+### 5. Design tokens complets (spacing + radius + typography) ✅
+- [x] Créer `app/constants/tokens.ts` : `RADIUS`, `SPACE`, `TYPE`
+- [x] Audit des valeurs hardcodées : radius 20 (×11) → `RADIUS.card`, 12 → `RADIUS.badge`, 3 → `RADIUS.dot`
+- [x] Migration appliquée sur CardRenderer, CollectorCardCanvas, FlipRevealOverlay
 
-### 6. Visual regression basique avec Playwright
-Démarrer petit, étendre quand le pipeline est stable.
-- [ ] Phase 1 : 3 rarities × 2 tailles × 2 thèmes = **12 captures**
-- [ ] Phase 2 (pipeline stable) : extension à 3 rarities × 3 tailles × 5 thèmes = 45 captures
-- [ ] Intégrer dans CI ou script local pre-push
-- [ ] Priorité : CollectorCardFace + CollectorCardCanvas
+### 6. Visual regression basique avec Playwright ✅
+- [x] Phase 1 : 3 rarités × 2 états (dos/face) × 2 renderers (WebGL/CSS) = **12 captures**
+- [x] Spec créée dans `e2e/visual-regression.spec.ts`
+- [x] `data-testid="card-{rarity}"` ajouté à CardSlot dans la sandbox
+- [ ] Phase 2 (pipeline stable) : étendre à tailles + thèmes via params URL sandbox
 
-### 7. Unifier le grain
-- [ ] Supprimer la boucle pixel-par-pixel dans `makeFaceTexture()`
-- [ ] Remplacer par une texture de bruit pré-générée partagée (OffscreenCanvas unique)
-- [ ] Vérifier la cohérence visuelle DOM ↔ Canvas
+### 7. Unifier le grain ✅
+- [x] Supprimer la boucle pixel-par-pixel dans `makeFaceTexture()`
+- [x] `getSharedGrain(w, h)` : cache `Map<string, HTMLCanvasElement>`, généré une fois par session
+- [x] `ctx.drawImage(getSharedGrain(...))` — même visuel, O(1) au lieu de O(n*m)
 
-### 8. CSS modules pour composants leaf stables
-À faire APRÈS tokens.ts — sinon on migre des magic numbers dans des fichiers .module.css.
-- [ ] Identifier composants avec inline styles statiques (pas thème-dépendants)
-- [ ] Migrer : badges, boutons, layout wrappers
-- [ ] Supprimer les `as React.CSSProperties` devenus inutiles
+### 8. CSS modules pour composants leaf stables ✅
+- [x] `CardRenderer.module.css` : layout container/perspective/flipper/face/badge
+- [x] Inline styles réduits aux valeurs thème-dépendantes (background, border, boxShadow)
+- [x] `RADIUS.*` tokens appliqués partout — plus de magic numbers `20`/`12`/`3`
 
 ---
 
@@ -100,6 +98,35 @@ MOTION.stagger(index, 'card')  // delay calculé, pas hardcodé
 ```
 - [ ] Définir les familles d'animation (card, list, overlay)
 - [ ] Remplacer les `delay: 0.1` hardcodés
+
+---
+
+## Lacunes identifiées — à planifier
+
+### A. Tests de logique
+- [ ] `useGooseGame` : couvrir les transitions d'état (accord → résultat, chance → rebond, fin de partie)
+- [ ] `computeGainedCards` : cas limites (pool vide, doublons, rarity distribution)
+- [ ] Outil suggéré : Vitest (compatible Next.js, pas besoin de browser)
+
+### B. Accessibilité
+- [ ] Focus trap sur tous les overlays (`FlipRevealOverlay`, `AccordFlow`, `ActivityOverlay`)
+- [ ] Labels ARIA sur les boutons icône (pions, dés, cartes)
+- [ ] Vérification contrast ratio des 3 thèmes — cible WCAG AA
+- [ ] Bloquant App Store si non traité (Apple review peut rejeter)
+
+### C. i18n — complétion
+- [ ] Identifier les écrans non migrés (cf. liste dans mémoire projet)
+- [ ] Aucun texte en dur dans le JSX hors tests
+
+### D. Onboarding
+- [ ] Documenter et committer les changements en cours (`AppShell`, `RouteRenderer`, `OnboardingScreenLoader`)
+- [ ] Dots de progression : tester adult vs minor (longueur de liste différente)
+- [ ] Skeleton loader `OnboardingScreenLoader` : valider le timing avec le lazy load réel
+
+### E. Budget performance mobile
+- [ ] Définir des cibles : LCP < 2s, frame budget R3F ≥ 30fps sur Android API 22
+- [ ] Mesurer la taille du bundle R3F (Three.js pèse lourd)
+- [ ] Tester sur device bas de gamme avant App Store submission
 
 ---
 
