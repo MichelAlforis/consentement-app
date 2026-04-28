@@ -48,6 +48,7 @@ type RouteRendererProps = {
   isPremium: boolean;
   theme: Theme;
   navigateTo: (screen: Screen) => void;
+  replaceWith: (screen: Screen) => void;
   goBack: () => void;
   selectTheme: (mode: ThemeMode) => void;
   handleAgeSelect: (adult: boolean) => void;
@@ -205,7 +206,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
 
   premium: (ctx) => (
     <PremiumScreen
-      onActivate={() => { ctx.activatePremium(); ctx.navigateTo('theme-select'); }}
+      onActivate={() => { ctx.activatePremium(); ctx.replaceWith('theme-select'); }}
       onBack={() => ctx.goBack()}
     />
   ),

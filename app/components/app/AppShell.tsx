@@ -149,6 +149,7 @@ export function AppShell() {
             isPremium={isPremium}
             theme={theme}
             navigateTo={navigateTo}
+            replaceWith={replaceWith}
             goBack={goBack}
             selectTheme={selectTheme}
             handleAgeSelect={setAgeGroup}
