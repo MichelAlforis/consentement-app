@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine } from 'lucide-react';
+import { ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine } from 'lucide-react';
+import { AppLogo } from '../ui';
 import { Card } from '../ui';
 import { comfortCategories } from '../../data';
 import { DynamicIcon } from '../../utils/iconFromName';
@@ -60,9 +61,9 @@ export function DuoSummaryStep({
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200 }}
-          className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 mx-auto mb-4 flex items-center justify-center"
+          className="mx-auto mb-4 flex justify-center"
         >
-          <Heart size={32} className="text-purple-500" fill="#a855f7" />
+          <AppLogo className="w-16 h-16" variant="theme" animated={true} />
         </motion.div>
         <h2 className="text-2xl font-bold mb-2" style={{ color: colors.textPrimary }}>
           {t('duo.summary.title')}

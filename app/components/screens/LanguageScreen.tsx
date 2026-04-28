@@ -36,7 +36,7 @@ export function LanguageScreen({ onContinue }: LanguageScreenProps) {
           transition={{ type: 'spring', stiffness: 160, damping: 20, delay: 0.05 }}
           className="mb-10"
         >
-          <AppLogo height={80} variant="light" />
+          <AppLogo className="w-20 h-20" variant="light" />
         </motion.div>
 
         <motion.div

@@ -50,7 +50,7 @@ function LanguageStep({ onNext }: StepProps) {
   ];
   return (
     <div className="flex flex-col items-center justify-center gap-6 px-6 py-8">
-      <AppLogo height={72} variant="light" />
+      <AppLogo className="w-[4.5rem] h-[4.5rem]" variant="light" />
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{t('language.title')}</h1>
         <p className="text-sm" style={{ color: colors.textMuted }}>{t('language.subtitle')}</p>
@@ -97,7 +97,7 @@ function WelcomeStep({ onNext }: StepProps) {
   ];
   return (
     <div className="flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
-      <AppLogo height={140} variant="light" animated />
+      <AppLogo className="w-36 h-36" variant="light" animated />
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-1" style={{ color: colors.textPrimary }}>{t('welcome.appName')}</h1>
         <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">{t('welcome.tagline')}</p>
@@ -372,7 +372,7 @@ function PersonalIntroStep({ onNext }: StepProps) {
 
   return (
     <div className="flex flex-col items-center px-6 py-8 gap-6">
-      <AppLogo height={56} variant="theme" />
+      <AppLogo className="w-14 h-14" variant="theme" />
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{t('personalIntro.title')}</h1>
         <p className="text-sm leading-relaxed" style={{ color: colors.textMuted }}>{t('personalIntro.subtitle')}</p>

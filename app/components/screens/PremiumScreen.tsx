@@ -65,7 +65,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
               <div className="flex justify-center mb-4">
-                <AppLogo height={100} variant="dark" />
+                <AppLogo className="w-24 h-24" variant="dark" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-1">{t('premium.heroTitle')}</h2>
               <p className="text-white/80 text-sm mb-4">{t('premium.heroSubtitle')}</p>

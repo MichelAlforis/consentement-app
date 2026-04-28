@@ -33,7 +33,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           transition={{ type: 'spring', stiffness: 160, damping: 20, delay: 0.1 }}
           className="relative mb-8 flex items-center justify-center"
         >
-          <AppLogo height={180} variant="light" animated />
+          <AppLogo className="w-44 h-44" variant="light" animated />
         </motion.div>
 
         <motion.div

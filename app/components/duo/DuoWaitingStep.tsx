@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { AppLogo } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 
@@ -62,15 +62,13 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
           />
         ))}
 
-        {/* Coeur central qui pulse */}
+        {/* Logo central qui pulse */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: colors.bgSecondary }}>
-            <Heart size={32} style={{ color: colors.accent }} fill={colors.accentLight} />
-          </div>
+          <AppLogo className="w-20 h-20" variant="theme" animated={false} />
         </motion.div>
 
         {/* Petites particules flottantes */}

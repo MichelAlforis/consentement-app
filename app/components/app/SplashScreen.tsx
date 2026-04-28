@@ -22,7 +22,7 @@ export function SplashScreen() {
         zIndex: 9999,
       }}
     >
-      <AppLogo height={120} variant="dark" animated />
+      <AppLogo className="w-[7.5rem] h-[7.5rem]" variant="dark" animated />
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

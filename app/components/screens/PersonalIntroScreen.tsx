@@ -53,7 +53,7 @@ export function PersonalIntroScreen({ onContinue }: PersonalIntroScreenProps) {
           transition={{ type: 'spring', stiffness: 160, damping: 20, delay: 0.05 }}
           className="mb-8"
         >
-          <AppLogo height={64} variant="theme" />
+          <AppLogo className="w-16 h-16" variant="theme" />
         </motion.div>
 
         <motion.div

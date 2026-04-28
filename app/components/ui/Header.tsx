@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Heart } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { AppLogo } from './AppLogo';
 import { Theme } from '../../types/theme';
 
 interface HeaderProps {
@@ -40,16 +41,8 @@ export function Header({ title, subtitle, showBack = false, onBack, theme }: Hea
           </motion.button>
         )}
 
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          className="w-11 h-11 rounded-2xl flex items-center justify-center"
-          style={{
-            background: theme.colors.accentGradient,
-            boxShadow: `0 4px 12px ${theme.colors.accentShadow}`,
-          }}
-        >
-          <Heart size={22} className="text-white" fill="white" />
+        <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+          <AppLogo className="w-10 h-10" variant="theme" />
         </motion.div>
 
         <div className="flex-1">

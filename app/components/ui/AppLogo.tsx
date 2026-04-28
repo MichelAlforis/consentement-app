@@ -35,15 +35,13 @@ const GRADIENTS: Record<
 };
 
 export function AppLogo({
-  height = 120,
+  height,
   variant = 'light',
   className,
   animated = false,
 }: AppLogoProps) {
   const { colors } = useTheme();
   const uid = useId().replace(/:/g, '');
-  const size = height;
-  const width = height;
 
   const palette = GRADIENTS[variant];
   const stops =
@@ -67,8 +65,8 @@ export function AppLogo({
       role="img"
       aria-label="Consentement"
       viewBox="0 0 96 96"
-      width={width}
-      height={size}
+      width={height ?? '100%'}
+      height={height ?? '100%'}
       className={`block shrink-0${className ? ` ${className}` : ''}`}
       style={{ filter: `drop-shadow(0 16px 28px ${palette.shadow})` }}
       animate={pulse}

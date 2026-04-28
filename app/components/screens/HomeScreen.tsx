@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
+import { Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
+import { AppLogo } from '../ui';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -35,10 +36,7 @@ function GreetingCard({ userName }: { userName: string }) {
       className="rounded-3xl p-5 mb-4 flex items-start gap-3"
       style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
     >
-      <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
-        style={{ background: colors.accentGradient }}>
-        <Heart size={18} className="text-white" fill="white" />
-      </div>
+      <AppLogo className="w-10 h-10 shrink-0 mt-0.5" variant="theme" animated={true} />
       <div>
         <h2 className="text-xl font-bold mb-0.5" style={{ color: colors.textPrimary }}>
           {t('homeAdult.greeting', { name: userName })}

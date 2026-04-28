@@ -79,7 +79,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
         className="rounded-2xl p-4 mb-6 flex items-center gap-4"
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
-        <AppLogo height={56} variant="theme" />
+        <AppLogo className="w-14 h-14" variant="theme" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <User size={15} style={{ color: colors.accent }} />

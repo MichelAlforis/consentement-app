@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Heart } from 'lucide-react';
+import { AppLogo } from '../ui';
 import { comfortCategories } from '../../data';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { IconName } from '../../utils/iconFromName';
@@ -261,7 +262,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
                 transition={{ duration: 1, repeat: 2 }}
                 className="mb-3 flex justify-center"
               >
-                <Heart size={40} fill="#a855f7" className="text-purple-500" />
+                <AppLogo className="w-12 h-12" variant="theme" animated={true} />
               </motion.div>
               <p className="text-lg font-medium" style={{ color: colors.textSecondary }}>
                 {t('duo.reveal.share')}
