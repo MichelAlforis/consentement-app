@@ -57,8 +57,7 @@ export function GooseGameScreen({ isPremium, isAdult, onNavigate }: GooseGameScr
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex-1 flex flex-col items-center justify-center p-8 gap-5 text-center"
-        style={{ color: 'white' }}
+        className="flex-1 flex flex-col items-center justify-center p-8 gap-5 text-center text-white"
       >
         <Lock size={48} className="text-white/60" />
         <div>
@@ -157,9 +156,8 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
 
   return (
     <div
-      className="flex-1 flex flex-col overflow-hidden"
+      className="flex-1 flex flex-col overflow-hidden text-white"
       style={{
-        color: 'white',
         background: ZONE_BG[zoneIndex],
         transition: 'background 2s ease',
       }}
@@ -197,7 +195,7 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
         {/* Portrait only — divider + zone entre board et contrôles */}
         {!isLandscape && (
           <>
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 16px' }} />
+            <div className="h-px bg-white/[0.08] mx-4" />
             <ZoneIndicator currentZone={currentZone} zoneIndex={zoneIndex} />
           </>
         )}
@@ -230,11 +228,9 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
                 animate={{ opacity: 1, scale: 1 }}
                 whileTap={{ scale: 0.93 }}
                 onClick={handleRoll}
+                className="bg-white/95 text-[#1e293b] rounded-2xl font-extrabold"
                 style={{
-                  background: 'rgba(255,255,255,0.95)', color: '#1e293b',
-                  borderRadius: 16,
                   padding: isLandscape ? '10px 28px' : '12px 36px',
-                  fontWeight: 800,
                   fontSize: isLandscape ? 14 : 16,
                 }}
               >
@@ -250,8 +246,7 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
           </div>
 
           {accordsCount > 0 && (
-            <div className="flex items-center gap-2 rounded-xl px-3 py-1.5"
-              style={{ background: 'rgba(96,165,250,0.18)', border: '1px solid rgba(96,165,250,0.3)' }}>
+            <div className="flex items-center gap-2 rounded-xl px-3 py-1.5 bg-blue-400/18 border border-blue-400/30">
               <Handshake size={14} className="text-blue-300" />
               <span className="text-blue-300 text-sm font-semibold">
                 {accordsCount} {accordsCount > 1 ? t('gooseGame.accordBadgePlural') : t('gooseGame.accordBadge')}

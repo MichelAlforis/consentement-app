@@ -73,8 +73,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6"
-      style={{ background: 'rgba(0,0,0,0.94)', backdropFilter: 'blur(14px)' }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/94 backdrop-blur-[14px]"
     >
       {/* Header */}
       <motion.div
@@ -83,8 +82,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center gap-1"
       >
-        <p className="text-xs font-semibold tracking-widest uppercase"
-          style={{ color: 'rgba(255,255,255,0.4)' }}>
+        <p className="text-xs font-semibold tracking-widest uppercase text-white/40">
           {batchMode
             ? `${pageStart + 1}-${pageEnd} / ${total}`
             : t('flipReveal.progress', { current: String(index + 1), total: String(total) })}
@@ -106,13 +104,13 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               initial={{ opacity: 0, y: 12, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: itemIndex * STAGGER.item, duration: DURATION.staggerItem }}
-              style={{ width: 118, height: 177, position: 'relative' }}
+              className="w-[118px] h-[177px] relative"
             >
               <button
                 type="button"
                 aria-label={item.text}
                 onClick={() => setFocusedCard(item)}
-                style={{ position: 'absolute', inset: 0, border: 0, padding: 0, background: 'transparent' }}
+                className="absolute inset-0 border-0 p-0 bg-transparent"
               >
                 <CollectorCardFace card={item} rarityLabel={getRarityLabel(item, t)} size="compact" />
               </button>
@@ -126,16 +124,10 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             initial={{ rotateY: 0, scale: 0.85 }}
             animate={{ rotateY: flipped ? 180 : 0, scale: 1 }}
             transition={{ duration: DURATION.cardReveal, ease: EASING.standard }}
-            style={{ width: 200, height: 300, transformStyle: 'preserve-3d', position: 'relative' }}
+            className="w-[200px] h-[300px] relative [transform-style:preserve-3d]"
           >
             {/* Back face */}
-            <div style={{
-              position: 'absolute', inset: 0, borderRadius: RADIUS.card,
-              backfaceVisibility: 'hidden',
-              background: 'linear-gradient(135deg, #0f0a1e 0%, #1a1035 100%)',
-              border: '1.5px solid rgba(255,255,255,0.08)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+            <div className="absolute inset-0 rounded-[20px] [backface-visibility:hidden] bg-[linear-gradient(135deg,#0f0a1e_0%,#1a1035_100%)] border-[1.5px] border-white/[0.08] flex items-center justify-center">
               <Sparkles size={52} color="rgba(255,255,255,0.12)" />
             </div>
 
@@ -151,8 +143,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-xs font-semibold"
-            style={{ color: 'rgba(255,255,255,0.35)' }}
+            className="text-xs font-semibold text-white/35"
           >
             {t('flipReveal.tapToFlip')}
           </motion.p>
@@ -168,12 +159,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             transition={{ delay: 0.3 }}
             onClick={handleNext}
             whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm"
-            style={{
-              background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-              color: 'white',
-              boxShadow: '0 4px 20px rgba(124,58,237,0.45)',
-            }}
+            className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm bg-[linear-gradient(135deg,#7c3aed,#a855f7)] text-white shadow-[0_4px_20px_rgba(124,58,237,0.45)]"
           >
             {batchMode ? (isLastPage ? t('flipReveal.done') : 'Cartes suivantes') : t('flipReveal.done')}
             <ChevronRight size={16} />
@@ -187,8 +173,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-10 grid place-items-center px-6"
-            style={{ background: 'rgba(0,0,0,0.62)', backdropFilter: 'blur(8px)' }}
+            className="fixed inset-0 z-10 grid place-items-center px-6 bg-black/[0.62] backdrop-blur-[8px]"
             onClick={() => setFocusedCard(null)}
           >
             <motion.div
@@ -196,7 +181,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.82, y: 18 }}
               transition={{ duration: DURATION.fast }}
-              style={{ width: 220, height: 330, position: 'relative' }}
+              className="w-[220px] h-[330px] relative"
               onClick={(event) => event.stopPropagation()}
             >
               <CollectorCardFace
@@ -207,8 +192,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
               <button
                 type="button"
                 onClick={() => setFocusedCard(null)}
-                className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full"
-                style={{ background: 'rgba(255,255,255,0.94)', color: '#111827' }}
+                className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full bg-white/94 text-[#111827]"
               >
                 <X size={18} />
               </button>
