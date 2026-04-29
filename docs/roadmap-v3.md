@@ -1,8 +1,8 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 29 avril 2026 (Sprint 16 ✅ · Sprint 26 tests régression visuelle ✅)  
-> Statut global : ✅ Sprints 6–26 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants  
+> Mis à jour : 29 avril 2026 (session 3 — CSS modules Phase 3 ✅ · tab-stacks nav ✅ · Board responsive portrait/paysage ✅)  
+> Statut global : ✅ Sprints 6–26 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants + CSS modules Phase 4 (ui/ restants)  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
