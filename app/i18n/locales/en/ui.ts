@@ -130,6 +130,10 @@ export const ui = {
     loi:           { title: 'Law & Consent',        desc: 'Your rights, the legal age, what is a crime' },
     pratiques:     { title: 'Advanced Practices',   desc: 'Module written by our legal expert — coming soon' },
     accompagnement:{ title: 'I Have Questions',     desc: 'Questions to ask yourself. Without judgment.' },
+    base:          { title: 'Introduction to consent' },
+    rewardBase:    '24 common cards',
+    allDone:       'Journey complete!',
+    allDoneSub:    "You've explored all available content. Now play!",
   },
 
   moi: {

@@ -132,6 +132,10 @@ export const ui = {
     loi:           { title: 'La loi & le consentement',   desc: "Tes droits, l'âge légal, ce qui est un crime" },
     pratiques:     { title: 'Pratiques avancées',         desc: 'Module rédigé par notre juriste — à venir' },
     accompagnement:{ title: 'Je me questionne',           desc: 'Des questions à se poser. Sans jugement.' },
+    base:          { title: 'Introduction au consentement' },
+    rewardBase:    '24 cartes communes',
+    allDone:       'Parcours complété !',
+    allDoneSub:    'Tu as exploré tout le contenu disponible. Maintenant, joue !',
   },
 
   moi: {

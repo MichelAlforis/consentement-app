@@ -11,6 +11,8 @@ import {
   Film,
   Scale,
   HeartHandshake,
+  Users,
+  PartyPopper,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Screen } from '../../types';
@@ -45,6 +47,7 @@ const MODULE_ICONS: Record<string, ReactNode> = {
   'loi-consentement': <Scale size={20} className="text-white" />,
   'module-pratiques-adultes': <Sparkles size={20} className="text-white" />,
   'accompagnement-mineur': <HeartHandshake size={20} className="text-white" />,
+  'duo-flow': <Users size={20} className="text-white" />,
 };
 
 function ModuleCard({
@@ -165,18 +168,22 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
       ),
       available: module.available[audience],
     }));
-  const completedCount = modules.filter((m) =>
+  const availableModules = modules.filter((m) => m.available);
+  const completedCount = availableModules.filter((m) =>
     isModuleCompleted(m.id, completedModules, isAdult)
   ).length;
+  const totalAvailable = availableModules.length;
+  const allDone = totalAvailable > 0 && completedCount === totalAvailable;
+  const progressPct = totalAvailable > 0 ? completedCount / totalAvailable : 0;
 
   const subtitle =
     completedCount === 0
       ? t('apprendre.subtitleEmpty')
       : completedCount === 1
-        ? t('apprendre.subtitleOne', { total: String(modules.length) })
+        ? t('apprendre.subtitleOne', { total: String(totalAvailable) })
         : t('apprendre.subtitleMany', {
             count: String(completedCount),
-            total: String(modules.length),
+            total: String(totalAvailable),
           });
 
   return (
@@ -196,7 +203,32 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
         <p className="text-sm" style={{ color: colors.textSecondary }}>
           {subtitle}
         </p>
+        <div className="mt-2 h-1 rounded-full overflow-hidden" style={{ background: colors.border }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPct * 100}%` }}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
+            className="h-full rounded-full"
+            style={{ background: colors.accentGradient }}
+          />
+        </div>
       </motion.div>
+
+      {allDone && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-2xl p-4 mb-6 flex items-center gap-3"
+          style={{ background: `${colors.success}18`, border: `1px solid ${colors.success}44` }}
+        >
+          <PartyPopper size={22} style={{ color: colors.success }} className="shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold" style={{ color: colors.success }}>{t('apprendre.allDone')}</p>
+            <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>{t('apprendre.allDoneSub')}</p>
+          </div>
+        </motion.div>
+      )}
 
       <div className="space-y-3">
         {modules.map((module, i) => (

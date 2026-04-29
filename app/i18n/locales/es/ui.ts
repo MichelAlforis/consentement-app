@@ -130,6 +130,10 @@ export const ui = {
     loi:           { title: 'La ley y el consentimiento',       desc: 'Tus derechos, la edad legal, qué es un delito' },
     pratiques:     { title: 'Prácticas avanzadas',             desc: 'Módulo redactado por nuestro jurista — próximamente' },
     accompagnement:{ title: 'Me hago preguntas',               desc: 'Preguntas para hacerse. Sin juicio.' },
+    base:          { title: 'Introducción al consentimiento' },
+    rewardBase:    '24 cartas comunes',
+    allDone:       '¡Recorrido completado!',
+    allDoneSub:    'Has explorado todo el contenido disponible. ¡Ahora juega!',
   },
 
   moi: {
