@@ -2,7 +2,7 @@
 
 **Accès :** Mineurs et adultes  
 **Filtrage :** Aucun — toujours affiché  
-**Date :** 2026-04-22
+**Mis à jour :** 2026-04-22
 
 ---
 

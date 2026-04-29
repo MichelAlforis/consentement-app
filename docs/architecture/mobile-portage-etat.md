@@ -3,8 +3,8 @@
 
 ---
 
-> # 📱 APPLICATION EXCLUSIVEMENT APP STORE (iOS) + GOOGLE PLAY (Android)
-> **Aucun déploiement web. Toutes les décisions techniques ciblent iOS 13+ et Android API 22+.**
+> **📱 APPLICATION EXCLUSIVEMENT APP STORE (iOS) + GOOGLE PLAY (Android)**  
+> Aucun déploiement web. Toutes les décisions techniques ciblent iOS 13+ et Android API 22+.
 
 ---
 

@@ -3,7 +3,7 @@
 **Accès :** 18+ ET Mode Explicite activé (isAdult && explicitMode)  
 **Activation :** Toggle dans la Home + Paramètres, avec modale de confirmation  
 **Persistance :** localStorage (`consentement-settings.explicitMode`)  
-**Date :** 2026-04-22
+**Mis à jour :** 2026-04-22
 
 ---
 

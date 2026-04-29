@@ -2,7 +2,7 @@
 
 **Accès :** 18+ uniquement (isAdult === true)  
 **Filtrage :** Conditionné par le passage de l'AgeCheckScreen  
-**Date :** 2026-04-22
+**Mis à jour :** 2026-04-22
 
 ---
 
