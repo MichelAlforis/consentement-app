@@ -81,13 +81,44 @@ export const collectorCards: CollectorCard[] = [
   { id: 'ca-024', deck: 'A', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base', tags: ['connexion'],     visual: V.douceur, text: "Décris le moment idéal pour se retrouver après une journée difficile." },
 
   // ── rare · depth 2 · débloquées par modules medium ────────────────────
-  { id: 'ca-025', deck: 'A', theme: 'verite', depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',         tags: ['désir'],          visual: V.verite, text: "Parle d'un désir que tu n'as jamais encore exprimé à voix haute." },
-  { id: 'ca-026', deck: 'A', theme: 'et-si',  depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',         tags: ['communication'],  visual: V['et-si'], text: "Qu'est-ce que tu voudrais que ton partenaire comprenne mieux de toi ?" },
-  { id: 'ca-027', deck: 'A', theme: 'defi',   depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement', tags: ['exploration'],    visual: V.defi,   text: "Décris une limite que tu voudrais explorer ensemble, à votre rythme." },
 
-  // ── unique · depth 3 · débloquées par module hard ─────────────────────
-  { id: 'ca-028', deck: 'A', theme: 'verite', depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['intimité'], visual: V.verite, text: "Inventez ensemble un rituel intime qui n'appartient qu'à vous deux." },
-  { id: 'ca-029', deck: 'A', theme: 'douceur', depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['désir'],  visual: V.douceur, text: "Partagez chacun une envie que vous n'avez jamais osé nommer." },
+  // Verite, Et-si, Défi (existants)
+  { id: 'ca-025', deck: 'A', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',            tags: ['désir'],         visual: V.verite,    text: "Parle d'un désir que tu n'as jamais encore exprimé à voix haute." },
+  { id: 'ca-026', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',            tags: ['communication'], visual: V['et-si'],  text: "Qu'est-ce que tu voudrais que ton partenaire comprenne mieux de toi ?" },
+  { id: 'ca-027', deck: 'A', theme: 'defi',    depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement',    tags: ['exploration'],   visual: V.defi,      text: "Décris une limite que tu voudrais explorer ensemble, à votre rythme." },
+
+  // Osez — porno-vs-realite & loi-consentement
+  { id: 'ca-030', deck: 'A', theme: 'osez',    depth: 2, rarity: 'rare', unlockedBy: 'porno-vs-realite',    tags: ['conscience'],    visual: V.osez,      text: "Depuis que tu réfléchis au consentement, qu'est-ce qui a changé dans ta façon de dire ce que tu veux ?" },
+  { id: 'ca-031', deck: 'A', theme: 'osez',    depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement',    tags: ['limites'],       visual: V.osez,      text: "Y a-t-il quelque chose que tu pensais obligatoire dans une relation mais que tu réalises être un choix ?" },
+
+  // Parlez — quiz-consentement & duo-flow
+  { id: 'ca-032', deck: 'A', theme: 'parlez',  depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement',   tags: ['communication'], visual: V.parlez,    text: "Comment préfères-tu recevoir un refus — qu'est-ce qui te fait te sentir respecté·e malgré tout ?" },
+  { id: 'ca-033', deck: 'A', theme: 'parlez',  depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',            tags: ['consentement'],  visual: V.parlez,    text: "Comment vous assurez-vous mutuellement que ce que vous faites est vraiment souhaité par les deux ?" },
+
+  // Et-si — quiz-consentement
+  { id: 'ca-034', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement',   tags: ['relation'],      visual: V['et-si'],  text: "Et si tu devais réécrire les règles implicites de votre relation — qu'est-ce que tu changerais ?" },
+  { id: 'ca-035', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',            tags: ['communication'], visual: V['et-si'],  text: "Et si l'un·e de vous deux changeait d'avis en cours de route — comment vous l'exprimeriez ?" },
+
+  // Défi — porno-vs-realite & quiz-consentement
+  { id: 'ca-036', deck: 'A', theme: 'defi',    depth: 2, rarity: 'rare', unlockedBy: 'porno-vs-realite',    tags: ['conscience'],    visual: V.defi,      text: "Décris une chose que la pornographie t'a fait croire normale et que tu remettrais maintenant en question." },
+  { id: 'ca-037', deck: 'A', theme: 'defi',    depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement',   tags: ['limites'],       visual: V.defi,      text: "Nomme une chose que tu autorises parfois sans vraiment le vouloir — et explore pourquoi avec l'autre." },
+
+  // Vérité — loi-consentement & quiz-consentement
+  { id: 'ca-038', deck: 'A', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement',    tags: ['limites'],       visual: V.verite,    text: "Qu'est-ce qui te ferait dire stop immédiatement — et l'as-tu déjà dit à voix haute à ton/ta partenaire ?" },
+  { id: 'ca-039', deck: 'A', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement',   tags: ['vulnérabilité'], visual: V.verite,    text: "Qu'est-ce qui te met le plus mal à l'aise dans une relation intime — même si tu ne l'as jamais dit ?" },
+
+  // Douceur — porno-vs-realite, duo-flow, loi-consentement
+  { id: 'ca-040', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare', unlockedBy: 'porno-vs-realite',    tags: ['respect'],       visual: V.douceur,   text: "Qu'est-ce qui te fait te sentir respecté·e dans l'intimité — au-delà du simple accord verbal ?" },
+  { id: 'ca-041', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare', unlockedBy: 'duo-flow',            tags: ['connexion'],     visual: V.douceur,   text: "Qu'est-ce qui manque dans votre façon d'exprimer la tendresse — que l'un·e ou l'autre voudrait plus souvent ?" },
+  { id: 'ca-042', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement',    tags: ['affection'],     visual: V.douceur,   text: "Y a-t-il un geste de votre relation qui vous semblait banal mais qui est en fait un choix précieux ?" },
+
+  // ── unique · depth 3 · débloquées par module-pratiques-adultes ────────
+  { id: 'ca-043', deck: 'A', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['intimité'],  visual: V.verite,    text: "Inventez ensemble un rituel intime qui n'appartient qu'à vous deux." },
+  { id: 'ca-044', deck: 'A', theme: 'douceur', depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['désir'],     visual: V.douceur,   text: "Partagez chacun une envie que vous n'avez jamais osé nommer." },
+  { id: 'ca-045', deck: 'A', theme: 'osez',    depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['désir'],     visual: V.osez,      text: "Dites-vous en détail ce que vous n'avez jamais osé proposer. L'autre écoute sans interrompre." },
+  { id: 'ca-046', deck: 'A', theme: 'parlez',  depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['accord'],    visual: V.parlez,    text: "Créez ensemble un code : un mot pour 'ralentis', un pour 'plus', un pour 'stop'. Testez-le maintenant." },
+  { id: 'ca-047', deck: 'A', theme: 'et-si',   depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['exploration'], visual: V['et-si'], text: "Et si vous passiez cette nuit sans aucune règle implicite — qu'est-ce que vous voudriez vraiment ?" },
+  { id: 'ca-048', deck: 'A', theme: 'defi',    depth: 3, rarity: 'unique', unlockedBy: 'module-pratiques-adultes', tags: ['communication'], visual: V.defi,  text: "Défiez-vous : chacun·e décrit ce qu'il/elle veut explorer ce soir. L'autre ne peut que dire oui, non ou peut-être." },
 
   // ═══════════════════════════════════════════════════════════════════════
   // DECK M — Mineurs 13-14 ans · langue adaptée, consentement & relations saines
@@ -132,8 +163,34 @@ export const collectorCards: CollectorCard[] = [
   { id: 'cm-024', deck: 'M', theme: 'douceur', depth: 1, rarity: 'common', unlockedBy: 'module-de-base-mineur', tags: ['consentement'], visual: V.douceur, text: "Qu'est-ce qui rend un câlin ou une accolade OK ou pas OK selon toi ?" },
 
   // ── rare · depth 2 · débloquées par modules medium mineurs ────────────
-  { id: 'cm-025', deck: 'M', theme: 'verite', depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['aide'],         visual: V.verite, text: "Y a-t-il une situation qui te fait peur mais dont tu n'oses pas parler à un adulte ?" },
-  { id: 'cm-026', deck: 'M', theme: 'et-si',  depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['droits'],        visual: V['et-si'], text: "Si un·e ami·e subissait quelque chose d'illégal, tu saurais vers qui l'orienter ?" },
+
+  // Vérité, Et-si (existants)
+  { id: 'cm-025', deck: 'M', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['aide'],      visual: V.verite,    text: "Y a-t-il une situation qui te fait peur mais dont tu n'oses pas parler à un adulte ?" },
+  { id: 'cm-026', deck: 'M', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['droits'],     visual: V['et-si'],  text: "Si un·e ami·e subissait quelque chose d'illégal, tu saurais vers qui l'orienter ?" },
+
+  // Osez — porno-vs-realite-mineur & loi-consentement-mineur
+  { id: 'cm-027', deck: 'M', theme: 'osez',    depth: 2, rarity: 'rare', unlockedBy: 'porno-vs-realite-mineur',  tags: ['pression'],  visual: V.osez,      text: "Y a-t-il des choses que tu crois que tu 'devrais' vouloir mais que tu ne ressens pas vraiment ?" },
+  { id: 'cm-028', deck: 'M', theme: 'osez',    depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['droits'],     visual: V.osez,      text: "Si quelqu'un faisait quelque chose qui te mettrait mal à l'aise, tu saurais expliquer tes droits ?" },
+
+  // Parlez — quiz-consentement-mineur & accompagnement-mineur
+  { id: 'cm-029', deck: 'M', theme: 'parlez',  depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement-mineur', tags: ['communication'], visual: V.parlez, text: "Pratique à voix haute : comment tu dirais 'je ne suis pas à l'aise' sans que ça soit gênant ?" },
+  { id: 'cm-030', deck: 'M', theme: 'parlez',  depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['aide'],      visual: V.parlez,    text: "Y a-t-il une situation dans ta vie où tu aimerais de l'aide mais tu ne sais pas comment la demander ?" },
+
+  // Défi — quiz-consentement-mineur & accompagnement-mineur
+  { id: 'cm-031', deck: 'M', theme: 'defi',    depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement-mineur', tags: ['confiance'],  visual: V.defi,     text: "Entraîne-toi : dis 'non, je ne veux pas' à voix haute. Est-ce plus facile ou plus dur que tu pensais ?" },
+  { id: 'cm-032', deck: 'M', theme: 'defi',    depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['ressources'], visual: V.defi,     text: "Nomme trois personnes de confiance à qui tu pourrais parler de n'importe quoi — même si c'est difficile." },
+
+  // Vérité — porno-vs-realite-mineur & quiz-consentement-mineur
+  { id: 'cm-033', deck: 'M', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'porno-vs-realite-mineur',  tags: ['norme'],     visual: V.verite,    text: "Y a-t-il des images ou messages que tu vois qui te font te sentir 'pas normal·e' par rapport à toi-même ?" },
+  { id: 'cm-034', deck: 'M', theme: 'verite',  depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement-mineur', tags: ['question'],  visual: V.verite,    text: "Y a-t-il une question que tu aimerais pouvoir poser à un adulte de confiance mais que tu n'oses pas ?" },
+
+  // Et-si — quiz-consentement-mineur & loi-consentement-mineur
+  { id: 'cm-035', deck: 'M', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'quiz-consentement-mineur', tags: ['pression'],  visual: V['et-si'],  text: "Et si tout le monde autour de toi faisait quelque chose que tu ne veux pas faire — comment tu agirais ?" },
+  { id: 'cm-036', deck: 'M', theme: 'et-si',   depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['education'], visual: V['et-si'],  text: "Et si tu devais expliquer le consentement à quelqu'un de ton âge en une seule phrase — laquelle ?" },
+
+  // Douceur — accompagnement-mineur & loi-consentement-mineur
+  { id: 'cm-037', deck: 'M', theme: 'douceur', depth: 2, rarity: 'rare', unlockedBy: 'accompagnement-mineur',    tags: ['sécurité'],  visual: V.douceur,   text: "Qu'est-ce qui te fait sentir en sécurité avec quelqu'un — qu'est-ce qui fait la différence pour toi ?" },
+  { id: 'cm-038', deck: 'M', theme: 'douceur', depth: 2, rarity: 'rare', unlockedBy: 'loi-consentement-mineur', tags: ['respect'],   visual: V.douceur,   text: "C'est quoi pour toi une amitié ou une relation où tu te sens vraiment respecté·e ? Décris-la." },
 
   // ═══════════════════════════════════════════════════════════════════════
   // DECK B — Adultes · explicite (stub — contenu juriste à venir)

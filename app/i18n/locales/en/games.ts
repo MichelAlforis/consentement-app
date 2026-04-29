@@ -24,8 +24,8 @@ export const games = {
     },
     cards: {
       title: 'Card Draw',
-      descAdult: '84 cards — 6 decks, solo or duo',
-      descMinor: '60 cards — 6 decks, solo or duo',
+      descAdult: '48 cards — 6 themes, solo or duo',
+      descMinor: '38 cards — 6 themes, solo or duo',
     },
     scenarios: {
       title: 'Guided scenarios',

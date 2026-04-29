@@ -24,8 +24,8 @@ export const games = {
     },
     cards: {
       title: 'Cartas',
-      descAdult: '84 cartas — 6 mazos, solo o en pareja',
-      descMinor: '60 cartas — 6 mazos, solo o en pareja',
+      descAdult: '48 cartas — 6 temas, solo o en pareja',
+      descMinor: '38 cartas — 6 temas, solo o en pareja',
     },
     scenarios: {
       title: 'Escenarios guiados',

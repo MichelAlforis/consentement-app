@@ -24,8 +24,8 @@ export const games = {
     },
     cards: {
       title: 'Cartes à tirer',
-      descAdult: '84 cartes — 6 paquets, solo ou à deux',
-      descMinor: '60 cartes — 6 paquets, solo ou à deux',
+      descAdult: '48 cartes — 6 thèmes, solo ou à deux',
+      descMinor: '38 cartes — 6 thèmes, solo ou à deux',
     },
     scenarios: {
       title: 'Scénarios guidés',
