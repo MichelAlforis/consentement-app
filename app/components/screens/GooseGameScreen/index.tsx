@@ -10,6 +10,7 @@ import { ConfettiParticles } from './components/ConfettiParticles';
 import { ZoneIndicator } from './components/ZoneIndicator';
 
 import { Lock, Handshake, Sparkles } from 'lucide-react';
+import { Button } from '../../ui';
 import { DynamicIcon } from '../../../utils/iconFromName';
 import { useTranslation } from '../../../i18n';
 import { IntroScreen } from './phases/IntroScreen';
@@ -48,15 +49,9 @@ export function GooseGameScreen({ isPremium, isAdult, onNavigate }: GooseGameScr
             {t('gooseGame.premiumSub')}
           </p>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => onNavigate('premium')}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm"
-          style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)', color: 'white' }}
-        >
-          <Sparkles size={16} />
+        <Button onClick={() => onNavigate('premium')} icon={<Sparkles size={16} />}>
           {t('gooseGame.unlockPremium')}
-        </motion.button>
+        </Button>
       </motion.div>
     );
   }

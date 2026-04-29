@@ -343,7 +343,7 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col px-5 pt-5 pb-5"
+        className="flex flex-col p-5"
       >
         {/* Header */}
         <div className="mb-7">

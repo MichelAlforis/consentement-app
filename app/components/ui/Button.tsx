@@ -42,7 +42,7 @@ export function Button({
       case 'outline':
         return { background: colors.bgCard, border: `2px solid ${colors.border}`, color: colors.textPrimary };
       case 'ghost':
-        return { background: 'transparent', color: colors.textSecondary };
+        return { background: 'transparent', color: colors.textMuted };
     }
   };
 
