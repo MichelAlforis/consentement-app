@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Check, ArrowLeft, CreditCard, Lock, Sparkles, Dices, Palette } from 'lucide-react';
+import { Crown, Check, ArrowLeft, CreditCard, Lock, Sparkles, Dices, Palette, Heart } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { AppLogo } from '../ui';
@@ -20,11 +20,11 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
   const [step, setStep] = useState<Step>('offer');
 
   const features = [
-    { icon: <Dices size={16} />, label: t('premium.features.dice') },
+    { icon: <Dices size={16} />,   label: t('premium.features.dice') },
     { icon: <Sparkles size={16} />, label: t('premium.features.cards') },
-    { icon: <Sparkles size={16} />, label: t('premium.features.scenarios') },
+    { icon: <Heart size={16} />,   label: t('premium.features.scenarios') },
     { icon: <Palette size={16} />, label: t('premium.features.themes') },
-    { icon: <Crown size={16} />, label: t('premium.features.access') },
+    { icon: <Crown size={16} />,   label: t('premium.features.access') },
   ];
 
   function handlePayment() {
@@ -93,8 +93,9 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
                   transition={{ delay: 0.25 + i * 0.07 }}
                   className="flex items-start gap-3"
                 >
-                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Check size={13} className="text-green-600" strokeWidth={2.5} />
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ background: `${colors.success}22` }}>
+                    <Check size={13} strokeWidth={2.5} style={{ color: colors.success }} />
                   </div>
                   <span className="text-sm" style={{ color: colors.textSecondary }}>{f.label}</span>
                 </motion.div>
@@ -130,14 +131,15 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             className="flex flex-col items-center justify-center flex-1 p-8 gap-6"
           >
             <div className="relative w-20 h-20">
-              <motion.div className="absolute inset-0 rounded-full border-4 border-purple-200" />
+              <motion.div className="absolute inset-0 rounded-full border-4" style={{ borderColor: `${colors.accent}33` }} />
               <motion.div
-                className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-600"
+                className="absolute inset-0 rounded-full border-4 border-transparent"
+                style={{ borderTopColor: colors.accent }}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <CreditCard size={24} className="text-purple-500" />
+                <CreditCard size={24} style={{ color: colors.accent }} />
               </div>
             </div>
             <div className="text-center">
@@ -148,7 +150,8 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               {[0, 1, 2].map(i => (
                 <motion.div
                   key={i}
-                  className="w-2 h-2 rounded-full bg-purple-400"
+                  className="w-2 h-2 rounded-full"
+                  style={{ background: colors.accent }}
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }}
                 />
@@ -197,10 +200,11 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + i * 0.07 }}
-                  className="flex items-center gap-2 bg-green-50 rounded-xl px-4 py-2.5"
+                  className="flex items-center gap-2 rounded-xl px-4 py-2.5"
+                  style={{ background: `${colors.success}18` }}
                 >
-                  <Check size={14} className="text-green-500 shrink-0" strokeWidth={2.5} />
-                  <span className="text-sm text-green-800">{f.label}</span>
+                  <Check size={14} strokeWidth={2.5} className="shrink-0" style={{ color: colors.success }} />
+                  <span className="text-sm" style={{ color: colors.textPrimary }}>{f.label}</span>
                 </motion.div>
               ))}
             </motion.div>

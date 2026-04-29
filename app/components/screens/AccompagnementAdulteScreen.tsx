@@ -115,8 +115,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
 
         {step === 'resources' && situation === 'victim' && (
           <motion.div key="victim" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="p-4 rounded-2xl mb-5"
-              style={{ background: 'rgba(236,72,153,0.08)', border: '1px solid rgba(236,72,153,0.2)' }}>
+            <div className="p-4 rounded-2xl mb-5 bg-pink-500/8 border border-pink-500/20">
               <p className="text-sm leading-relaxed" style={{ color: colors.textPrimary }}>
                 {t('accompagnementAdulte.victim.message')}
               </p>
@@ -157,8 +156,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
 
         {step === 'resources' && situation === 'witness' && (
           <motion.div key="witness" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="p-4 rounded-2xl mb-5"
-              style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+            <div className="p-4 rounded-2xl mb-5 bg-blue-500/8 border border-blue-500/20">
               <p className="text-sm leading-relaxed" style={{ color: colors.textPrimary }}>
                 {t('accompagnementAdulte.witness.message')}
               </p>

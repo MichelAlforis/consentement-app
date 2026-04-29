@@ -73,4 +73,6 @@ export const onboarding = {
     ctaLater: 'Configurer plus tard',
   },
   skip: 'Passer',
+  next: 'Suivant',
+  finish: "J'ai compris · Voir mes cartes",
 } as const;

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from '../../i18n';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/moduleDeBase';
@@ -17,6 +18,7 @@ interface ModuleDeBaseScreenProps {
 
 export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const completeModule = useModuleComplete();
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
 
@@ -52,7 +54,7 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
           className="text-sm font-medium px-4 py-2 rounded-full"
           style={{ color: colors.textMuted, background: colors.bgSecondary }}
         >
-          Passer pour l&apos;instant
+          {t('onboarding.skip')}
         </button>
       </div>
 
@@ -124,15 +126,9 @@ export function ModuleDeBaseScreen({ isAdult, onNavigate }: ModuleDeBaseScreenPr
           }}
         >
           {isLast ? (
-            <>
-              J&apos;ai compris · Voir mes cartes
-              <ChevronRight size={18} />
-            </>
+            <>{t('onboarding.finish')}<ChevronRight size={18} /></>
           ) : (
-            <>
-              Suivant
-              <ChevronRight size={18} />
-            </>
+            <>{t('onboarding.next')}<ChevronRight size={18} /></>
           )}
         </motion.button>
 

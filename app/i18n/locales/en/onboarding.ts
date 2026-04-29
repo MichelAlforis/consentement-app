@@ -73,4 +73,6 @@ export const onboarding = {
     ctaLater: 'Set up later',
   },
   skip: 'Skip',
+  next: 'Next',
+  finish: 'Got it · See my cards',
 } as const;

@@ -134,8 +134,8 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
             />
             <ProfileCard
               icon={<BookUser size={20} className="text-white" />}
-              title="Annuaire sexologues"
-              desc="Trouver un·e professionnel·le — présentiel ou téléconsultation"
+              title={t('headers.annuaireSexologues')}
+              desc={t('moi.annuaireDesc')}
               iconBg={colors.accentGradient}
               onClick={() => onNavigate('annuaire-sexologues')}
               index={++cardIndex}

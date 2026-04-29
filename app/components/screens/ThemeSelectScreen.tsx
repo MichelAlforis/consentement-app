@@ -151,8 +151,8 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
               {isDarkLuxury && locked && <PreviewShimmer color="#c9a84c" />}
 
               {locked && (
-                <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-2"
-                  style={{ background: isDarkLuxury ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.18)', zIndex: 10 }}
+                <div className="absolute inset-0 rounded-3xl flex flex-col items-center justify-center gap-2 z-10"
+                  style={{ background: isDarkLuxury ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.18)' }}
                 >
                   <div
                     className="flex items-center gap-2 px-4 py-2 rounded-2xl"
@@ -173,7 +173,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
                 </div>
               )}
 
-              <div className="flex items-center gap-4 mb-3" style={{ position: 'relative', zIndex: 5 }}>
+              <div className="flex items-center gap-4 mb-3 relative z-[5]">
                 <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px"
                   style={{ background: theme.colors.accentGradient }}>
                   {themePreviewColors[mode].map((color) => (
@@ -185,7 +185,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
                   <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>
                 </div>
               </div>
-              <div className="flex gap-2" style={{ position: 'relative', zIndex: 5 }}>
+              <div className="flex gap-2 relative z-[5]">
                 {themePreviewColors[mode].map((color) => (
                   <div key={color} className="w-7 h-7 rounded-lg shadow-sm" style={{ backgroundColor: color }} />
                 ))}

@@ -142,5 +142,6 @@ export const ui = {
     settingsDesc:     'Thème, langue, données personnelles',
     premiumDesc:      'Tous les jeux · contenus profonds · sans limite',
     accompagnementAdulteDesc: 'Tu traverses quelque chose ? Des ressources confidentielles.',
+    annuaireDesc: 'Trouver un·e professionnel·le — présentiel ou téléconsultation',
   },
 } as const;

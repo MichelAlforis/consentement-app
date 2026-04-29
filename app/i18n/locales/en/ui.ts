@@ -139,5 +139,7 @@ export const ui = {
     helpDesc:         'Free, anonymous numbers, available 24/7',
     settingsDesc:     'Theme, language, personal data',
     premiumDesc:      'All games · deep content · no limits',
+    accompagnementAdulteDesc: 'Going through something? Confidential resources.',
+    annuaireDesc: 'Find a professional — in person or teleconsultation',
   },
 } as const;
