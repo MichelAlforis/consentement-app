@@ -40,24 +40,21 @@ export function ActivityOverlay({
             <p className="text-white font-bold text-sm">{activeName}</p>
           </div>
         </div>
-        <span style={{
-          fontSize: 10, fontWeight: 700, borderRadius: 20, padding: '3px 8px',
-          background: 'rgba(255,255,255,0.12)',
-          color: currentZone.color,
-          border: `1px solid ${currentZone.color}44`,
-        }}>
+        <span
+          className="text-[10px] font-bold rounded-[20px] px-2 py-[3px] bg-white/[0.12] flex items-center gap-1"
+          style={{ color: currentZone.color, border: `1px solid ${currentZone.color}44` }}
+        >
           <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {currentZone.name}
         </span>
       </div>
 
-      <p className="text-white text-lg font-semibold mb-7" style={{ lineHeight: 1.55 }}>
+      <p className="text-white text-lg font-semibold mb-7 leading-[1.55]">
         {activity}
       </p>
 
       <button
         onClick={onContinue}
-        className="w-full py-4 rounded-2xl font-bold text-base"
-        style={{ background: 'rgba(255,255,255,0.18)', color: 'white', border: '1.5px solid rgba(255,255,255,0.35)' }}
+        className="w-full py-4 rounded-2xl font-bold text-base bg-white/[0.18] text-white border-[1.5px] border-white/35"
       >
         {t('gooseGame.activity.continueBtn')}
       </button>

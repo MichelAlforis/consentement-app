@@ -53,13 +53,12 @@ export function AccordFlow({
             <h3 className="text-white text-xl font-black">{t('gooseGame.accord.title')}</h3>
             <p className="text-white/65 text-sm mt-1">{t('gooseGame.accord.sub')}</p>
           </div>
-          <div className="rounded-2xl p-4 mb-6" style={{ background: 'rgba(255,255,255,0.1)' }}>
-            <p className="text-white text-base font-semibold" style={{ lineHeight: 1.55 }}>{activity}</p>
+          <div className="rounded-2xl p-4 mb-6 bg-white/10">
+            <p className="text-white text-base font-semibold leading-[1.55]">{activity}</p>
           </div>
           <button
             onClick={onIntroNext}
-            className="w-full py-4 rounded-2xl font-bold text-base"
-            style={{ background: 'rgba(255,255,255,0.95)', color: '#1d4ed8' }}
+            className="w-full py-4 rounded-2xl font-bold text-base bg-white/95 text-[#1d4ed8]"
           >
             {t('gooseGame.accord.voteSecret')}
           </button>
@@ -91,8 +90,7 @@ export function AccordFlow({
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={onP2Ready}
-              className="w-full py-4 rounded-2xl font-bold text-base"
-              style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.22)' }}
+              className="w-full py-4 rounded-2xl font-bold text-base bg-white/[0.12] text-white border-[1.5px] border-white/[0.22]"
             >
               {t('gooseGame.accord.ready', { name: player2.name })}
             </motion.button>
@@ -163,8 +161,7 @@ export function AccordFlow({
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => onResult(bothYes)}
-              className="w-full py-4 rounded-2xl font-bold text-base"
-              style={{ background: 'rgba(255,255,255,0.95)', color: '#1e293b' }}
+              className="w-full py-4 rounded-2xl font-bold text-base bg-white/95 text-[#1e293b]"
             >
               {t('gooseGame.accord.continueBtn')}
             </motion.button>
@@ -181,14 +178,12 @@ function VoteButtons({ onVote }: { onVote: (v: boolean) => void }) {
   return (
     <div className="flex gap-3">
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(false)}
-        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2"
-        style={{ background: 'rgba(239,68,68,0.18)', color: '#fca5a5', border: '1.5px solid rgba(239,68,68,0.35)' }}>
+        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 bg-red-500/[0.18] text-red-300 border-[1.5px] border-red-500/35">
         <X size={18} />
         {t('gooseGame.accord.no')}
       </motion.button>
       <motion.button whileTap={{ scale: 0.93 }} onClick={() => onVote(true)}
-        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2"
-        style={{ background: 'rgba(34,197,94,0.18)', color: '#86efac', border: '1.5px solid rgba(34,197,94,0.35)' }}>
+        className="flex-1 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 bg-green-500/[0.18] text-green-300 border-[1.5px] border-green-500/35">
         <Check size={18} />
         {t('gooseGame.accord.yes')}
       </motion.button>

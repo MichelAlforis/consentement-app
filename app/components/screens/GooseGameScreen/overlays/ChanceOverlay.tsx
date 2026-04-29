@@ -29,8 +29,7 @@ export function ChanceOverlay({ activeName, onAdvance }: ChanceOverlayProps) {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onAdvance}
-          className="w-full py-4 rounded-2xl font-bold text-base"
-          style={{ background: 'rgba(255,255,255,0.95)', color: '#78350f' }}
+          className="w-full py-4 rounded-2xl font-bold text-base bg-white/95 text-[#78350f]"
         >
           {t('gooseGame.chance.advance')}
         </motion.button>

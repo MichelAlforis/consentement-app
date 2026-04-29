@@ -34,8 +34,7 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col items-center gap-6 p-6 pt-8 flex-1"
-      style={{ color: 'white' }}
+      className="flex flex-col items-center gap-6 p-6 pt-8 flex-1 text-white"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.7 }}
@@ -71,14 +70,13 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 + i * 0.5, type: 'spring', stiffness: 200 }}
-            className="flex items-start gap-3 rounded-2xl p-4"
-            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+            className="flex items-start gap-3 rounded-2xl p-4 bg-white/[0.07] border border-white/10"
           >
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.8 + i * 0.5, type: 'spring', stiffness: 350 }}
-              style={{ flexShrink: 0, display: 'flex' }}
+              className="shrink-0 flex"
             >
               <DynamicIcon name={PACTE_ICON_NAMES[i]} size={18} color="white" />
             </motion.span>
@@ -92,17 +90,10 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
         animate={{ opacity: ready ? 1 : 0 }}
         whileTap={{ scale: 0.97 }}
         onClick={onStart}
+        className="rounded-[18px] py-4 font-extrabold text-base w-full max-w-[300px] transition-all duration-[400ms] ease-in text-[#1e293b]"
         style={{
           background: ready ? 'rgba(255,255,255,0.95)' : 'transparent',
-          color: '#1e293b',
-          borderRadius: 18,
-          padding: '16px 0',
-          fontWeight: 800,
-          fontSize: 16,
-          width: '100%',
-          maxWidth: 300,
           cursor: ready ? 'pointer' : 'default',
-          transition: 'all 0.4s ease',
         }}
       >
         {t('gooseGame.pacte.acceptBtn')}

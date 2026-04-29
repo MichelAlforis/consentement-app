@@ -12,7 +12,7 @@ export function Toast() {
   const { colors } = useTheme();
 
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 z-[200] flex flex-col items-center gap-2 w-[calc(100%-2rem)] max-w-[340px] pointer-events-none" style={{ bottom: 'max(calc(env(safe-area-inset-bottom, 0px) + 80px), 96px)' }}>
+    <div className="fixed left-1/2 -translate-x-1/2 z-[200] flex flex-col items-center gap-2 w-[calc(100%-2rem)] max-w-[340px] pointer-events-none bottom-[max(calc(env(safe-area-inset-bottom,0px)+80px),96px)]">
       <AnimatePresence>
         {toasts.map(toast => {
           const barColor =
