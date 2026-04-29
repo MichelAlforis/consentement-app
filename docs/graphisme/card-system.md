@@ -210,4 +210,4 @@ Silhouette CSS pure — affichée à la place de `CollectorCardCanvas` quand la 
 | `app/game-engine/cards/LockedCard.tsx` | Carte verrouillée CSS |
 | `app/card-collector-test/page.tsx` | Sandbox de test (WebGL / CSS / autoFlip) |
 | `docs/graphisme/palette.md` | Palette couleurs complète |
-| `docs/graphisme/roadmap-visuel.md` | Plan d'amélioration 3 niveaux |
+| `docs/roadmaps/roadmap-visuel.md` | Plan d'amélioration 3 niveaux |

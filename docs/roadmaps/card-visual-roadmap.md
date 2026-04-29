@@ -23,7 +23,7 @@ Objectif: garder les cartes lisibles, identifiables et cohérentes entre onboard
 ## Priorite haute
 
 - ✅ Unifier les rendus CSS autour de `CSSCardFallback` — fallback actif si Canvas crash
-- ✅ Garder une hiérarchie stable : theme → rareté → icône → texte (documenté dans `docs/graphisme/carte.md`)
+- ✅ Garder une hiérarchie stable : theme → rareté → icône → texte (documenté dans `docs/graphisme/card-canvas.md`)
 - ✅ Éviter le texte directement sur gradient — panneau contraste opaque sur chaque face
 - ✅ Inspection des cartes via tap : `FlipRevealOverlay` (Hall) + tap-to-reveal (DiceGame)
 

@@ -131,7 +131,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 | Jeu 1 — Dé du consentement (gratuit) | ✅ | Solo + duo secret, niveau 3 premium, dé R3F Level 2 |
 | Jeu 2 — Cartes à tirer (premium) | ✅ | 84 cartes, 6 paquets, flip 3D, mode séance / libre |
 | Jeu 3 — Jeu de l'Oie (premium) | ✅ | 24 cases, 3 zones, accord à deux, sauvegarde locale |
-| Card Collector — Hall of Cards + gain via modules | 🔄 | Sprints 6–10 — voir `docs/jeux/card-gain-modules.md` |
+| Card Collector — Hall of Cards + gain via modules | 🔄 | Sprints 6–10 — voir `docs/roadmaps/card-gain-modules.md` |
 | Jeu 4 — Scénarios guidés | 🔲 | Prévu V3 |
 
 ---
@@ -148,7 +148,7 @@ Constat terrain : des mineurs de **13-14 ans** se retrouvent au tribunal — aut
 
 ## Bloc J — Home V3 — Progression en 3 niveaux 🔲 (Sprints 11–15)
 
-> Spec complète : `docs/home-v3.md`  
+> Spec complète : `docs/roadmaps/home-v3.md`  
 > Changement structurel — la Home adulte devient adaptative selon la progression de l'utilisateur.
 
 La Home actuelle est statique. En V3, elle reflète où l'utilisateur en est dans son parcours éducatif.
@@ -214,7 +214,7 @@ La Home actuelle est statique. En V3, elle reflète où l'utilisateur en est dan
 
 ## Stratégie stores & app adulte
 
-→ Voir [`docs/strategy/stores-et-app-adulte.md`](strategy/stores-et-app-adulte.md) pour l'analyse complète.
+→ Voir [`docs/vision/stores-et-app-adulte.md`](vision/stores-et-app-adulte.md) pour l'analyse complète.
 
 **Résumé :**
 - App principale : 12+ ou 17+ — mineurs + adultes, contenu éducatif + jeux soft
@@ -261,7 +261,7 @@ La Home actuelle est statique. En V3, elle reflète où l'utilisateur en est dan
 
 ## Contenus à rédiger par le co-fondateur juriste ✍️
 
-**Position juriste** : langage explicite, termes exacts définis — pas d'euphémismes. Voir [`docs/strategy/stores-et-app-adulte.md`](strategy/stores-et-app-adulte.md).
+**Position juriste** : langage explicite, termes exacts définis — pas d'euphémismes. Voir [`docs/vision/stores-et-app-adulte.md`](vision/stores-et-app-adulte.md).
 
 | Contenu | Pour quel bloc | Statut |
 |---|---|---|

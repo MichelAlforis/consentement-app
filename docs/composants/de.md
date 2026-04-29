@@ -395,7 +395,7 @@ La structure actuelle est mono-dé (un seul `BoardDice3D`). Pour le méta-jeu (D
 - Partager les `THROW_ORIGINS` et `DICE_LANDING_ZONES` entre les deux dés (éviter collision)
 - Coordonner les `onRollComplete` via Promise.all ou callback counter
 
-Voir `docs/jeux/meta-jeu-roadmap.md` Phase 4 pour le contexte.
+Voir `docs/roadmaps/meta-jeu-roadmap.md` Phase 4 pour le contexte.
 
 #### 3c. Personnalisation visuelle du dé
 Pour les thèmes premium (`dark-luxury`, `nude`) : variantes de matériau par thème.

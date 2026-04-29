@@ -265,7 +265,7 @@ npx cap open android # Android Studio
 | `localStorage` quota dépassé | Très faible | Faible | Les saves sont légères (~2 KB max) |
 | Rejet App Store — IAP non natif | Moyenne | Élevé | Le système premium actuel (flag `isPremium`) devra utiliser StoreKit 2 (iOS) / Google Play Billing pour être conforme aux guidelines |
 
-> **Point critique App Store :** Apple exige que les achats intégrés passent par StoreKit 2 (commission 30%). Le flag `isPremium` actuel devra être connecté à `@capawesome/capacitor-purchases` ou `RevenueCat` (déjà mentionné dans `docs/roadmap.md`).
+> **Point critique App Store :** Apple exige que les achats intégrés passent par StoreKit 2 (commission 30%). Le flag `isPremium` actuel devra être connecté à `@capawesome/capacitor-purchases` ou `RevenueCat` (déjà mentionné dans `docs/vision/roadmap.md`).
 
 ---
 

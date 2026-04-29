@@ -299,7 +299,7 @@ En V3 (backend) : sync cloud pour ne pas perdre le deck entre appareils.
 ### Phase 2 — Acquisition via modules éducatifs 🔲 (Level 2 — PRIORITÉ)
 
 > ⚠️ **Pivot 2026-04-25** — Le gain principal se déclenche sur la **complétion de modules éducatifs**, pas sur les sessions de jeu.  
-> Spec complète : `docs/jeux/card-gain-modules.md`
+> Spec complète : `docs/roadmaps/card-gain-modules.md`
 
 **Logique de gain (modèle actif) :**
 

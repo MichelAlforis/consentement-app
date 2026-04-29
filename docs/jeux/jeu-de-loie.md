@@ -317,7 +317,7 @@ Le jeu suppose que les deux joueurs sont en contexte intime et adulte. Les activ
 
 ### Niveau 2 — Plateau ISO + contenu étendu
 
-**Rendu** (→ `docs/utils/plateau.md` Niveaux 1 & 2)
+**Rendu** (→ `docs/composants/plateau.md` Niveaux 1 & 2)
 - Vue isométrique CSS (`rotateX(28deg) rotateZ(45deg) scale(0.72)`)
 - Cases avec volume pseudo-3D (profondeur selon type : normal 8px → spéciale 14px → arrivée 16px)
 - Trail SVG de progression par joueur (polyline dégradée superposée à la grille)
@@ -333,7 +333,7 @@ Le jeu suppose que les deux joueurs sont en contexte intime et adulte. Les activ
 
 ### Niveau 3 — R3F 3D + online (2026)
 
-**Rendu** (→ `docs/utils/plateau.md` Niveau 3)
+**Rendu** (→ `docs/composants/plateau.md` Niveau 3)
 - Canvas WebGL R3F — cases `MeshStandardMaterial` avec éclairage réel (AmbientLight + DirectionalLight)
 - `ContactShadows` drei sous les pions
 - Ambiance lumineuse par zone (température couleur qui change avec la zone narrative)

@@ -3,7 +3,7 @@
 > Créé : 26 avril 2026  
 > Mis à jour : 29 avril 2026 (session 4 — Navigation per-tab stacks ✅ · layout flex-1 uniforme ✅)  
 > Statut global : ✅ Sprints 6–27 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants + CSS modules Phase 4 (ui/ restants)  
-> Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
+> Docs de référence détaillés : `docs/roadmaps/card-gain-modules.md` · `docs/roadmaps/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
 
