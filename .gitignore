@@ -33,6 +33,7 @@ yarn-error.log*
 next-env.d.ts
 
 # fastlane
+vendor/bundle
 fastlane/.env.secret
 fastlane/report.xml
 fastlane/Preview.html
