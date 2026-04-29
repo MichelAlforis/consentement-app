@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
-import { Lock, X, ChevronDown } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useUnlockStore } from '../../stores/unlockStore';
 import { useRevealStore } from '../../stores/revealStore';
@@ -12,7 +12,7 @@ import type { GainedCard } from '../../lib/computeGainedCards';
 import type { Screen } from '../../types';
 import { useTranslation } from '../../i18n';
 import { FlipRevealOverlay } from '../ui/FlipRevealOverlay';
-import { CollectorCardFace } from '../ui/CollectorCardFace';
+import { CardFullscreenOverlay } from '../ui/CardFullscreenOverlay';
 import { DynamicIcon } from '../../utils/iconFromName';
 import { useNormalizedPointer } from './CardGame/hooks/useNormalizedPointer';
 
@@ -62,7 +62,7 @@ function CardBack({ card, index, onTap }: {
       transition={{ delay: index * 0.03 }}
       whileTap={{ scale: 0.93 }}
       onClick={() => onTap(card)}
-      style={{ aspectRatio: '2 / 3', perspective: '500px' }}
+      style={{ width: '100%', aspectRatio: '2 / 3', perspective: '500px' }}
       className="relative rounded-2xl"
     >
       <motion.div
@@ -159,6 +159,7 @@ function LockedCard({ card, index, categoryGradient, categoryBorder, onTap }: {
   );
 
   const sharedStyle = {
+    width: '100%',
     aspectRatio: '2 / 3' as const,
     borderRadius: 16,
     border: `1.5px solid ${categoryBorder}28`,
@@ -188,110 +189,6 @@ function LockedCard({ card, index, categoryGradient, categoryBorder, onTap }: {
     );
   }
   return <motion.div {...sharedMotion} style={sharedStyle}>{inner}</motion.div>;
-}
-
-// ── Fiche détail carte (remplace ZoomOverlay R3F — sera upgrader en fullscreen R3F chantier #3) ──
-
-function CardDetailSheet({ card, onClose }: { card: GainedCard; onClose: () => void }) {
-  const { t } = useTranslation();
-
-  const rarityLabel =
-    card.rarity === 'unique' ? t('hallOfCards.rarityUnique')
-    : card.rarity === 'rare'   ? t('hallOfCards.rarityRare')
-    : null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col justify-end"
-      style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(10px)' }}
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', stiffness: 340, damping: 34 }}
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: '#0e0b1a',
-          borderRadius: '22px 22px 0 0',
-          paddingBottom: 40,
-          overflow: 'hidden',
-        }}
-      >
-        {/* Drag handle */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '14px 0 8px' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.18)' }} />
-        </div>
-
-        {/* Contenu */}
-        <div style={{ padding: '8px 24px 0' }}>
-          {/* Carte face + méta côte à côte */}
-          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-            <div style={{ width: 108, height: 162, flexShrink: 0, borderRadius: 14, overflow: 'hidden' }}>
-              <CollectorCardFace card={card} rarityLabel={rarityLabel} size="compact"
-                style={{ width: '100%', height: '100%' }} />
-            </div>
-
-            <div style={{ flex: 1, paddingTop: 2 }}>
-              {/* Badge thème */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                padding: '4px 10px', borderRadius: 20,
-                background: card.gradient, marginBottom: 10,
-              }}>
-                <DynamicIcon name={card.iconName} size={11} color="white" />
-                <span style={{ fontSize: 10, fontWeight: 700, color: 'white', letterSpacing: '0.05em' }}>
-                  {card.themeName ?? card.theme}
-                </span>
-              </div>
-
-              {/* Texte de la carte */}
-              <p style={{
-                color: 'rgba(255,255,255,0.88)',
-                fontSize: 13,
-                lineHeight: 1.65,
-                margin: 0,
-              }}>
-                {card.text}
-              </p>
-
-              {/* Rareté */}
-              {rarityLabel && (
-                <p style={{
-                  marginTop: 10, fontSize: 10, fontWeight: 700,
-                  color: card.border, letterSpacing: '0.08em', textTransform: 'uppercase',
-                }}>
-                  ✦ {rarityLabel}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Bouton fermer */}
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={onClose}
-            style={{
-              marginTop: 22, width: '100%',
-              padding: '13px 0', borderRadius: 14,
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              color: 'rgba(255,255,255,0.65)',
-              fontSize: 14, fontWeight: 600,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}
-          >
-            <ChevronDown size={16} />
-            Fermer
-          </motion.button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
 }
 
 // ── Section par thème ────────────────────────────────────────────────────────
@@ -362,25 +259,35 @@ function ThemeSection({
         </div>
       </div>
 
-      {/* Grille cartes */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {cards.map((card, i) =>
-          ownedIds.has(card.id)
-            ? <CardBack
-                key={card.id}
-                card={toGainedCard(card)}
-                index={i}
-                onTap={onCardTap}
-              />
-            : <LockedCard
-                key={card.id}
-                card={card}
-                index={i}
-                categoryGradient={cat.gradient}
-                categoryBorder={cat.border}
-                onTap={() => onNavigate(getUnlockScreen(card))}
-              />
-        )}
+      {/* Carousel horizontal — scroll snap, déborde sur les bords de l'écran */}
+      <div
+        className="scrollbar-hide"
+        style={{
+          display: 'flex',
+          gap: 10,
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          marginLeft: -20,
+          paddingLeft: 20,
+          paddingRight: 20,
+          paddingBottom: 4,
+        }}
+      >
+        {cards.map((card, i) => (
+          <div key={card.id} style={{ flexShrink: 0, scrollSnapAlign: 'start', width: 120 }}>
+            {ownedIds.has(card.id)
+              ? <CardBack card={toGainedCard(card)} index={i} onTap={onCardTap} />
+              : <LockedCard
+                  card={card}
+                  index={i}
+                  categoryGradient={cat.gradient}
+                  categoryBorder={cat.border}
+                  onTap={() => onNavigate(getUnlockScreen(card))}
+                />
+            }
+          </div>
+        ))}
       </div>
     </motion.div>
   );
@@ -499,9 +406,9 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
         )}
       </motion.div>
 
-      {/* Fiche détail — CSS pur, sera remplacée par fullscreen R3F (chantier #3) */}
+      {/* Fullscreen R3F — gyro + tilt + flip reveal */}
       <AnimatePresence>
-        {detail && <CardDetailSheet card={detail} onClose={() => setDetail(null)} />}
+        {detail && <CardFullscreenOverlay card={detail} onClose={() => setDetail(null)} />}
       </AnimatePresence>
 
       {/* Flip reveal — nouvelles cartes débloquées */}
