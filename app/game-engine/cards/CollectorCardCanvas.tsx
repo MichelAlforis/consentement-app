@@ -1083,7 +1083,7 @@ export function CollectorCardCanvas({
     return () => clearTimeout(t);
   }, [renderMode]);
 
-  useEffect(() => { setFrameloop('always'); }, [isFlipped, autoFlip]);
+  useEffect(() => { if (renderMode !== 'r3f') return; setFrameloop('always'); }, [isFlipped, autoFlip, renderMode]);
 
   const handleFlipComplete = useCallback(() => {
     if (card.rarity !== 'unique') setFrameloop('demand');

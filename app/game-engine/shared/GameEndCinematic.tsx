@@ -101,9 +101,10 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
   // the parent has no dimensions yet at that instant. 60ms lets layout settle.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    if (renderMode !== 'r3f') return;
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
-  }, []);
+  }, [renderMode]);
 
   if (renderMode === 'css') return null;
 
