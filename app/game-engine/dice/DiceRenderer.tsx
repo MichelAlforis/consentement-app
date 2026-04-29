@@ -199,21 +199,26 @@ function FlatTile({
   onRollComplete?: () => void;
 }) {
   const [flipped, setFlipped] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const doneTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onCompleteRef = useRef(onRollComplete);
   useEffect(() => { onCompleteRef.current = onRollComplete; });
 
-  // Quand isRolling passe à true : retourner sur le dos, puis revenir sur la face
+  // Quand isRolling passe à true : dos visible pendant 1.2s, puis flip face (0.55s),
+  // callback au moment où la face est lisible (~1.76s total — aligné sur Cube6 1.7s).
   useEffect(() => {
     if (!isRolling) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setFlipped(false); // dos visible au lancer
-    // Après la durée d'animation, montrer la face et signaler la fin
-    timerRef.current = setTimeout(() => {
+    if (showTimerRef.current) clearTimeout(showTimerRef.current);
+    if (doneTimerRef.current) clearTimeout(doneTimerRef.current);
+    setFlipped(false);
+    showTimerRef.current = setTimeout(() => {
       setFlipped(true);
-      onCompleteRef.current?.();
-    }, 1500);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+      doneTimerRef.current = setTimeout(() => onCompleteRef.current?.(), 560);
+    }, 1200);
+    return () => {
+      if (showTimerRef.current) clearTimeout(showTimerRef.current);
+      if (doneTimerRef.current) clearTimeout(doneTimerRef.current);
+    };
   }, [isRolling]);
 
   return (

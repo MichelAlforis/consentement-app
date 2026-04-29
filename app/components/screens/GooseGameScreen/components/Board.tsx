@@ -38,12 +38,12 @@ function cellCenter(idx: number, cellW: number) {
 
 // ─── PawnSvg ──────────────────────────────────────────────────────────────────
 
-function PawnSvg({ pawn, color, pawnId }: { pawn: IconName; color: string; pawnId: string }) {
+function PawnSvg({ pawn, color, pawnId, size = PAWN_SIZE }: { pawn: IconName; color: string; pawnId: string; size?: number }) {
   const cylId  = `pc-${pawnId}`;
   const headId = `ph-${pawnId}`;
   const baseId = `pb-${pawnId}`;
   return (
-    <svg width={PAWN_SIZE} height={PAWN_SIZE} viewBox="0 0 60 80" className="block">
+    <svg width={size} height={size} viewBox="0 0 60 80" className="block">
       <defs>
         <linearGradient id={cylId} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor="#000000" stopOpacity="0.55" />
@@ -80,17 +80,18 @@ function PawnSvg({ pawn, color, pawnId }: { pawn: IconName; color: string; pawnI
 
 // ─── PawnOverlay ──────────────────────────────────────────────────────────────
 
-function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0 }: {
+function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0, pawnSize = PAWN_SIZE }: {
   squareIndex: number;
   pawn: IconName;
   color: string;
   pawnId: string;
   cellW: number;
   xOffset?: number;
+  pawnSize?: number;
 }) {
   const controls = useAnimation();
   const prevIdxRef = useRef(squareIndex);
-  const half = PAWN_SIZE / 2;
+  const half = pawnSize / 2;
 
   const pos = (idx: number, ox: number) => {
     const c = cellCenter(idx, cellW);
@@ -115,7 +116,7 @@ function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0 }: {
     controls.start({
       x: [from.x - half + xOffset, midX, to.x - half + xOffset],
       y: [from.y - half,           arcY,  to.y - half],
-      transition: { duration: 0.19, ease: 'easeInOut' },
+      transition: { duration: 0.45, ease: [0.42, 0, 0.32, 1] },
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [squareIndex]);
@@ -127,9 +128,9 @@ function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0 }: {
       initial={{ x: init.x, y: init.y }}
       animate={controls}
       className={s.pawnOverlay}
-      style={{ z: 50 }}
+      style={{ zIndex: 10, width: pawnSize, height: pawnSize }}
     >
-      <PawnSvg pawn={pawn} color={color} pawnId={pawnId} />
+      <PawnSvg pawn={pawn} color={color} pawnId={pawnId} size={pawnSize} />
     </motion.div>
   );
 }
@@ -153,12 +154,12 @@ function BoardCell({ squareIndex, isActive, isAnimating }: BoardCellProps) {
         isAnimating && isActive
           ? { scale: [1, 1.2, 1], boxShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 20px rgba(255,255,255,0.85)', '0 0 0px rgba(255,255,255,0)'] }
           : isActive
-          ? { scale: [1, 1.07, 1] }
-          : { scale: 1 }
+          ? { scale: [1, 1.07, 1], boxShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 10px rgba(255,255,255,0.5)', '0 0 0px rgba(255,255,255,0)'] }
+          : { scale: 1, boxShadow: '0 0 0px rgba(255,255,255,0)' }
       }
       transition={
         isActive
-          ? { duration: isAnimating ? 0.28 : 0.8, repeat: isAnimating ? 0 : Infinity, repeatType: 'loop' }
+          ? { duration: isAnimating ? 0.28 : 0.9, repeat: isAnimating ? 0 : Infinity, repeatType: 'loop' }
           : {}
       }
       className={s.cell}
@@ -214,6 +215,9 @@ function BoardGridCSS({
     return () => ro.disconnect();
   }, []);
 
+  // Pawn scales with cell width so it never overflows on narrow screens
+  const pawnSize = Math.min(PAWN_SIZE, Math.max(40, cellW - 6));
+
   const sameCell = displayPos0 === displayPos1;
 
   return (
@@ -244,7 +248,8 @@ function BoardGridCSS({
               color={p0Color}
               pawnId="p0"
               cellW={cellW}
-              xOffset={sameCell ? -10 : 0}
+              pawnSize={pawnSize}
+              xOffset={sameCell ? -8 : 0}
             />
             <PawnOverlay
               squareIndex={displayPos1}
@@ -252,7 +257,8 @@ function BoardGridCSS({
               color={p1Color}
               pawnId="p1"
               cellW={cellW}
-              xOffset={sameCell ? 10 : 0}
+              pawnSize={pawnSize}
+              xOffset={sameCell ? 8 : 0}
             />
           </div>
         </div>

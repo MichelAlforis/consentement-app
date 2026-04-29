@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PAWN_COLORS } from '../../../data/goose-game';
 import { useGooseGame } from './hooks/useGooseGame';
@@ -22,9 +23,26 @@ import { ActivityOverlay } from './overlays/ActivityOverlay';
 import { ChanceOverlay } from './overlays/ChanceOverlay';
 import { AccordFlow } from './overlays/AccordFlow';
 
-// ─── Guard premium ────────────────────────────────────────────────────────────
-
 import type { Screen } from '../../../types';
+
+// ─── Orientation hook ─────────────────────────────────────────────────────────
+
+function useIsLandscape(): boolean {
+  const [ls, setLs] = useState(false);
+  useEffect(() => {
+    const check = () => setLs(window.innerWidth > window.innerHeight);
+    check();
+    window.addEventListener('resize', check);
+    window.addEventListener('orientationchange', check);
+    return () => {
+      window.removeEventListener('resize', check);
+      window.removeEventListener('orientationchange', check);
+    };
+  }, []);
+  return ls;
+}
+
+// ─── Guard premium ────────────────────────────────────────────────────────────
 
 interface GooseGameScreenProps {
   isPremium: boolean;
@@ -62,6 +80,7 @@ export function GooseGameScreen({ isPremium, isAdult, onNavigate }: GooseGameScr
 
 function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate: (screen: Screen) => void }) {
   const { t } = useTranslation();
+  const isLandscape = useIsLandscape();
   const game = useGooseGame({ isAdult });
 
   const {
@@ -138,88 +157,108 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
 
   return (
     <div
-      className="flex-1 flex flex-col"
+      className="flex-1 flex flex-col overflow-hidden"
       style={{
         color: 'white',
         background: ZONE_BG[zoneIndex],
         transition: 'background 2s ease',
       }}
     >
-      {/* Confetti */}
       {showConfetti && <ConfettiParticles id={confettiKey} />}
 
-      {/* Plateau */}
-      <div className="pt-3 pb-2">
-        <BoardGrid
-          displayPos0={displayPos0}
-          displayPos1={displayPos1}
-          p0Pawn={player1.pawn}
-          p1Pawn={player2.pawn}
-          p0Color={PAWN_COLORS[0]}
-          p1Color={PAWN_COLORS[1]}
-          activeSquare={activeSquare}
-          isAnimating={animatingPos !== null}
-          animatingPos={animatingPos}
-          diceResult={diceResult}
-          isDiceRolling={isRolling}
-          onDiceRollComplete={handleRollComplete}
-          showDice={step === 'roll' || step === 'rolling'}
-        />
-        <Legend />
-      </div>
+      {/* Portrait: flex-col  |  Landscape: flex-row (board left, controls right) */}
+      <div className={`flex-1 flex ${isLandscape ? 'flex-row' : 'flex-col'} min-h-0`}>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 16px' }} />
-
-      {/* Zone indicator */}
-      <ZoneIndicator currentZone={currentZone} zoneIndex={zoneIndex} />
-
-      {/* Zone de tour */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 px-5 pb-4">
-        <motion.div
-          key={`turn-${curPlayer}`}
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+        {/* ── Plateau ── */}
+        <div
+          className={isLandscape
+            ? 'flex flex-col justify-center overflow-hidden shrink-0'
+            : 'pt-3 pb-2 shrink-0'}
+          style={isLandscape ? { width: '55%' } : {}}
         >
-          <DynamicIcon name={activePawn} size={30} color="white" />
-          <p className="text-white/55 text-sm mt-1">
-            {t('gooseGame.yourTurn', { name: activeName })}
-          </p>
-        </motion.div>
-
-        <div className="flex flex-col items-center gap-3">
-          {step === 'roll' && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileTap={{ scale: 0.93 }}
-              onClick={handleRoll}
-              style={{
-                background: 'rgba(255,255,255,0.95)', color: '#1e293b',
-                borderRadius: 16, padding: '12px 36px', fontWeight: 800, fontSize: 16,
-              }}
-            >
-              {t('gooseGame.roll')}
-            </motion.button>
-          )}
-
-          {(step === 'rolling' || animatingPos !== null) && (
-            <p className="text-white/40 text-sm animate-pulse">
-              {animatingPos !== null ? t('gooseGame.moving') : t('gooseGame.rolling')}
-            </p>
-          )}
+          <BoardGrid
+            displayPos0={displayPos0}
+            displayPos1={displayPos1}
+            p0Pawn={player1.pawn}
+            p1Pawn={player2.pawn}
+            p0Color={PAWN_COLORS[0]}
+            p1Color={PAWN_COLORS[1]}
+            activeSquare={activeSquare}
+            isAnimating={animatingPos !== null}
+            animatingPos={animatingPos}
+            diceResult={diceResult}
+            isDiceRolling={isRolling}
+            onDiceRollComplete={handleRollComplete}
+            showDice={step === 'roll' || step === 'rolling'}
+          />
+          <Legend />
         </div>
 
-        {accordsCount > 0 && (
-          <div className="flex items-center gap-2 rounded-xl px-3 py-1.5"
-            style={{ background: 'rgba(96,165,250,0.18)', border: '1px solid rgba(96,165,250,0.3)' }}>
-            <Handshake size={14} className="text-blue-300" />
-            <span className="text-blue-300 text-sm font-semibold">
-              {accordsCount} {accordsCount > 1 ? t('gooseGame.accordBadgePlural') : t('gooseGame.accordBadge')}
-            </span>
-          </div>
+        {/* Portrait only — divider + zone entre board et contrôles */}
+        {!isLandscape && (
+          <>
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '0 16px' }} />
+            <ZoneIndicator currentZone={currentZone} zoneIndex={zoneIndex} />
+          </>
         )}
+
+        {/* ── Contrôles ── */}
+        <div className={isLandscape
+          ? 'flex-1 flex flex-col items-center justify-center gap-3 px-4 py-2 overflow-y-auto'
+          : 'flex-1 flex flex-col items-center justify-center gap-4 px-5 pb-4'}
+        >
+          {isLandscape && (
+            <ZoneIndicator currentZone={currentZone} zoneIndex={zoneIndex} />
+          )}
+
+          <motion.div
+            key={`turn-${curPlayer}`}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
+          >
+            <DynamicIcon name={activePawn} size={isLandscape ? 22 : 30} color="white" />
+            <p className="text-white/55 text-sm mt-1">
+              {t('gooseGame.yourTurn', { name: activeName })}
+            </p>
+          </motion.div>
+
+          <div className="flex flex-col items-center gap-3">
+            {step === 'roll' && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileTap={{ scale: 0.93 }}
+                onClick={handleRoll}
+                style={{
+                  background: 'rgba(255,255,255,0.95)', color: '#1e293b',
+                  borderRadius: 16,
+                  padding: isLandscape ? '10px 28px' : '12px 36px',
+                  fontWeight: 800,
+                  fontSize: isLandscape ? 14 : 16,
+                }}
+              >
+                {t('gooseGame.roll')}
+              </motion.button>
+            )}
+
+            {(step === 'rolling' || animatingPos !== null) && (
+              <p className="text-white/40 text-sm animate-pulse">
+                {animatingPos !== null ? t('gooseGame.moving') : t('gooseGame.rolling')}
+              </p>
+            )}
+          </div>
+
+          {accordsCount > 0 && (
+            <div className="flex items-center gap-2 rounded-xl px-3 py-1.5"
+              style={{ background: 'rgba(96,165,250,0.18)', border: '1px solid rgba(96,165,250,0.3)' }}>
+              <Handshake size={14} className="text-blue-300" />
+              <span className="text-blue-300 text-sm font-semibold">
+                {accordsCount} {accordsCount > 1 ? t('gooseGame.accordBadgePlural') : t('gooseGame.accordBadge')}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Overlays ── */}

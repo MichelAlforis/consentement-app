@@ -207,7 +207,7 @@ function ThemeSection({
 
       <div
         className="scrollbar-hide flex gap-[10px] overflow-x-auto snap-x snap-mandatory -ml-5 pl-5 pr-5 pb-1"
-        style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {cards.map((card, i) => (
           <div key={card.id} className="shrink-0 snap-start w-[120px]">

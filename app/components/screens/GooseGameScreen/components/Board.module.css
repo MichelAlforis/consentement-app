@@ -24,6 +24,7 @@
   max-width: 380px;
   padding: 8px 16px 12px;
   perspective: 800px;
+  overflow: hidden;
 }
 
 /* Paysage (landscape) : losange 45° */

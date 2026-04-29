@@ -836,15 +836,35 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
         transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
         transition: `transform ${DURATION.cardFlipCSS}s cubic-bezier(${EASING.cardFlip.join(', ')})`,
       }}>
-        {/* Dos */}
+        {/* Dos — grille diamant + halo violet, miroir de la texture R3F makeBackTexture */}
         <div style={{
           position: 'absolute', inset: 0, borderRadius: RADIUS.card,
-          background: 'linear-gradient(135deg, #1e1b2e 0%, #2d2640 100%)',
+          background: 'linear-gradient(145deg, #010007 0%, #0c0920 45%, #1e1040 100%)',
           border: '2px solid rgba(255,255,255,0.16)',
           backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          overflow: 'hidden',
         }}>
-          <span style={{ fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.09)' }}>C</span>
+          {/* Grille diamant */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: [
+              'repeating-linear-gradient(45deg, rgba(255,255,255,0.045) 0px, rgba(255,255,255,0.045) 1px, transparent 1px, transparent 14px)',
+              'repeating-linear-gradient(-45deg, rgba(255,255,255,0.045) 0px, rgba(255,255,255,0.045) 1px, transparent 1px, transparent 14px)',
+            ].join(', '),
+          }} />
+          {/* Halo central */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 58% 65% at 50% 50%, rgba(124,58,237,0.30) 0%, rgba(76,29,149,0.10) 52%, transparent 74%)',
+          }} />
+          {/* Highlight spéculaire haut-gauche */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 40% 30% at 24% 14%, rgba(255,255,255,0.10) 0%, transparent 100%)',
+          }} />
+          {/* Mark subtil */}
+          <span style={{ fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>C</span>
         </div>
 
         {/* Face — positions absolues calquées sur CARD_LAYOUT (= ratios R3F) */}

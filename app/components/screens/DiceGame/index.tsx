@@ -163,7 +163,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                 {Object.entries(DICE_CATEGORIES).map(([face, c]) => (
                   <div key={face} className="rounded-2xl p-2.5 text-center" style={{ background: c.gradient }}>
                     <div className="flex justify-center"><DynamicIcon name={c.iconName} size={20} color="rgba(255,255,255,0.9)" /></div>
-                    <div className="text-xs font-bold text-white mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+                    <div className="text-xs font-bold text-white mt-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.3)]">
                       {t(`diceCategories.${face}`)}
                     </div>
                   </div>
@@ -211,7 +211,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     style={{ background: currentCat.gradient, boxShadow: `0 4px 20px ${currentCat.border}80` }}
                   >
                     <DynamicIcon name={currentCat.iconName} size={24} color="white" />
-                    <span className="text-white font-black text-xl tracking-tight" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</span>
+                    <span className="text-white font-black text-xl tracking-tight [text-shadow:0_1px_4px_rgba(0,0,0,0.2)]">{currentCatName}</span>
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
                 )}
@@ -284,7 +284,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <div className="flex justify-center mb-1"><DynamicIcon name={currentCat.iconName} size={32} color="rgba(255,255,255,0.9)" /></div>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
+              <p className="font-black text-white text-lg mt-1 [text-shadow:0_1px_4px_rgba(0,0,0,0.2)]">{currentCatName}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>
@@ -343,7 +343,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: currentCat.gradient }}>
               <div className="flex justify-center mb-1"><DynamicIcon name={currentCat.iconName} size={32} color="rgba(255,255,255,0.9)" /></div>
-              <p className="font-black text-white text-lg mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>{currentCatName}</p>
+              <p className="font-black text-white text-lg mt-1 [text-shadow:0_1px_4px_rgba(0,0,0,0.2)]">{currentCatName}</p>
             </div>
             <div className="rounded-2xl p-4 mb-4 text-center" style={{ background: colors.bgSecondary }}>
               <p className="text-sm font-medium leading-snug" style={{ color: colors.textSecondary }}>{currentItem.text}</p>

@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useMemo, useEffect, Component, type ReactNode } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrthographicCamera, ContactShadows, RoundedBox, Environment } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
@@ -436,6 +436,14 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
   );
 }
 
+// ─── PostFXBoundary — isole EffectComposer contre crash float-texture (Mali) ──
+
+class PostFXBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 // ─── BoardGridR3F ─────────────────────────────────────────────────────────────
 
 function BoardGridR3F({
@@ -458,7 +466,7 @@ function BoardGridR3F({
           <Canvas
             className="absolute inset-0"
             shadows
-            gl={{ antialias: true, powerPreference: 'low-power', toneMappingExposure: 1.1 }}
+            gl={{ antialias: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false, toneMappingExposure: 1.1 }}
             dpr={[1, 2]}
           >
             <color attach="background" args={[colors.bgPrimary]} />
@@ -471,7 +479,7 @@ function BoardGridR3F({
               position={[5, 8, 5]}
               intensity={1.2}
               castShadow
-              shadow-mapSize={[2048, 2048]}
+              shadow-mapSize={[1024, 1024]}
               shadow-radius={4}
               shadow-bias={-0.001}
             />
@@ -512,10 +520,12 @@ function BoardGridR3F({
               />
             </group>
 
-            <EffectComposer>
-              <Bloom intensity={0.45} luminanceThreshold={0.32} luminanceSmoothing={0.85} mipmapBlur />
-              <Vignette eskil={false} offset={0.45} darkness={0.4} />
-            </EffectComposer>
+            <PostFXBoundary>
+              <EffectComposer>
+                <Bloom intensity={0.45} luminanceThreshold={0.32} luminanceSmoothing={0.85} mipmapBlur />
+                <Vignette eskil={false} offset={0.45} darkness={0.4} />
+              </EffectComposer>
+            </PostFXBoundary>
           </Canvas>
         </div>
       </div>

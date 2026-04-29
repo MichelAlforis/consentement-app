@@ -364,7 +364,7 @@ export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, siz
       <Canvas
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
         style={{ background: 'transparent' }}
       >
         <DiceScene

@@ -56,8 +56,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
       transition={{ delay: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
       className="w-full mb-6"
     >
-      <p className="text-xs font-bold uppercase tracking-widest mb-5 text-center"
-        style={{ color: 'rgba(255,255,255,0.4)', letterSpacing: '0.14em' }}>
+      <p className="text-xs font-bold uppercase tracking-[0.14em] mb-5 text-center text-white/40">
         {cards.length > 1 ? t('flipReveal.cardsUnlockedLabel', { count: cards.length }) : t('flipReveal.cardUnlockedLabel')}
       </p>
 
@@ -79,8 +78,8 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
               vibrate('light');
               setFlipped(f => ({ ...f, [card.id]: !f[card.id] }));
             }}
-            className={isScrollable ? 'snap-center flex-shrink-0' : ''}
-            style={{ width: cardSize, height: Math.round(cardSize * 1.5), cursor: 'pointer' }}
+            className={`cursor-pointer${isScrollable ? ' snap-center flex-shrink-0' : ''}`}
+            style={{ width: cardSize, height: Math.round(cardSize * 1.5) }}
           >
             <CollectorCardCanvas
               card={card}
@@ -95,8 +94,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: hintVisible ? 1 : 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mt-4 text-xs"
-        style={{ color: 'rgba(255,255,255,0.50)' }}
+        className="text-center mt-4 text-xs text-white/50"
       >
         {isScrollable ? t('flipReveal.hintScroll') : t('flipReveal.hintTap')}
       </motion.p>
@@ -272,8 +270,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                 ? { borderColor: colors.premium, background: colors.premiumLight }
                 : { borderColor: colors.border, background: colors.bgSecondary }}
             >
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
-                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 35%, #ec4899 70%, #f59e0b 100%)' }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm bg-[linear-gradient(135deg,#6366f1_0%,#8b5cf6_35%,#ec4899_70%,#f59e0b_100%)]">
                 <Shuffle size={22} className="text-white" />
               </div>
               <div className="flex-1">
@@ -296,20 +293,19 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                   <motion.button key={theme}
                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => s.setSelectedTheme(theme)}
-                    className="relative overflow-hidden rounded-2xl flex flex-col items-center justify-end pb-3 shadow-sm"
+                    className="relative overflow-hidden rounded-2xl flex flex-col items-center justify-end pb-3 shadow-sm aspect-[2/3]"
                     style={{
-                      aspectRatio: '2 / 3',
                       background: c.gradient,
                       boxShadow: isSelected
                         ? `0 0 0 3px ${colors.premium}, 0 8px 24px ${c.border}70`
                         : `0 2px 10px ${c.border}40`,
                     }}
                   >
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px)', backgroundSize: '12px 12px' }} />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.22)_1.5px,transparent_1.5px)] bg-[length:12px_12px]" />
                     <span className="absolute top-2 left-2.5 text-white/30"><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
-                    <span className="absolute bottom-10 right-2.5 text-white/30" style={{ transform: 'rotate(180deg)' }}><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
+                    <span className="absolute bottom-10 right-2.5 text-white/30 rotate-180"><DynamicIcon name={c.iconName} size={12} color="rgba(255,255,255,0.3)" /></span>
                     <span className="relative z-10 mb-0.5"><DynamicIcon name={c.iconName} size={28} color="white" /></span>
-                    <p className="text-white font-black text-xs text-center leading-tight relative z-10 px-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.35)' }}>{c.name}</p>
+                    <p className="text-white font-black text-xs text-center leading-tight relative z-10 px-1 [text-shadow:0_1px_4px_rgba(0,0,0,0.35)]">{c.name}</p>
                     <p className="text-white/55 text-xs relative z-10">{count}</p>
                   </motion.button>
                 );
@@ -338,7 +334,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
             <div className="flex items-center gap-2 mb-5">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm" style={{ background: s.cat.gradient }}>
                 <DynamicIcon name={s.cat.iconName} size={14} color="white" />
-                <span className="text-white font-bold text-xs tracking-wide" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.25)' }}>{s.cat.name}</span>
+                <span className="text-white font-bold text-xs tracking-wide [text-shadow:0_1px_3px_rgba(0,0,0,0.25)]">{s.cat.name}</span>
               </div>
               <span className="text-xs font-semibold" style={{ color: colors.textMuted }}>
                 {s.sessionMode === 'seance' ? `${s.cardCount} / ${s.seanceSize}` : `#${s.cardCount}`}
@@ -468,21 +464,21 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
             </motion.div>
 
             <h3 className="text-2xl font-black mb-2 text-white">{t('cardGame.endTitle')}</h3>
-            <p className="text-sm mb-7 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
+            <p className="text-sm mb-7 leading-relaxed text-white/65">
               {s.seanceSize} {t('cardGame.cardUnit')} · {s.sessionThemes.length} {s.sessionThemes.length > 1 ? t('cardGame.decksExplored') : t('cardGame.deckExplored')}
               {s.favorites.length > 0 && <> · <Heart size={12} className="inline align-middle" /> {s.favorites.length} {s.favorites.length > 1 ? t('cardGame.favUnitPlural') : t('cardGame.favUnit')}</>}
             </p>
 
             {s.sessionThemes.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="w-full mb-6">
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>{t('cardGame.exploredDecksLabel')}</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3 text-white/45">{t('cardGame.exploredDecksLabel')}</p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {s.sessionThemes.map((theme) => {
                     const c = THEME_CATEGORIES[theme];
                     return (
                       <div key={theme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: c.gradient }}>
                         <DynamicIcon name={c.iconName} size={12} color="white" />
-                        <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>{c.name}</span>
+                        <span className="[text-shadow:0_1px_3px_rgba(0,0,0,0.2)]">{c.name}</span>
                       </div>
                     );
                   })}
@@ -495,7 +491,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
               className="w-full p-4 rounded-2xl mb-7"
               style={{ background: colors.rareBg, border: `1px solid ${colors.rare}4d` }}>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>{endInsight}</p>
+              <p className="text-sm leading-relaxed text-white/82">{endInsight}</p>
             </motion.div>
 
             <div className="w-full space-y-2.5">
@@ -512,8 +508,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => { s.setSessionMode('libre'); s.startPlaying(); }}
-                className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2"
-                style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.75)' }}
+                className="w-full py-3.5 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 border border-white/20 bg-white/[0.08] text-white/75"
               >
                 <Shuffle size={14} />{t('cardGame.continueLibre')}
               </motion.button>

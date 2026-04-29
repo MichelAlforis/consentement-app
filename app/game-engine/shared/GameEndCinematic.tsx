@@ -1,5 +1,6 @@
 'use client';
 import { useMemo, useState, useEffect, Component, ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { Sparkles, Float, MeshDistortMaterial, AdaptiveDpr } from '@react-three/drei';
 import { useRenderMode } from '../../hooks/useRenderMode';
@@ -18,6 +19,8 @@ const ORB_POS: [number, number, number][] = [
   [-0.8, -1.9, -1.5],
   [ 1.6,  1.7, -1.0],
 ];
+
+// ─── R3F components ───────────────────────────────────────────────────────────
 
 function CentralBlob({ color, speed, amp }: { color: string; speed: number; amp: number }) {
   return (
@@ -88,6 +91,143 @@ class CanvasBoundary extends Component<{ children: ReactNode }, { crashed: boole
   render() { return this.state.crashed ? null : this.props.children; }
 }
 
+// ─── CSS cinematic — GPU tier 0-1, zéro WebGL ────────────────────────────────
+
+// LCG déterministe : positions stables entre re-renders, indépendant de Math.random()
+function makeLCG(seed: number) {
+  let s = seed | 0;
+  return () => { s = Math.imul(s, 1664525) + 1013904223 | 0; return (s >>> 0) / 0xffffffff; };
+}
+
+interface SparkSpec { id: number; x: number; y: number; size: number; delay: number; dur: number }
+
+function buildSparks(count: number, seed: number): SparkSpec[] {
+  const r = makeLCG(seed);
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x:    Math.round(r() * 90 + 5),
+    y:    Math.round(r() * 86 + 7),
+    size: 1 + Math.round(r() * 2.5),
+    delay: Math.round(r() * 30) / 10,
+    dur:  15 + Math.round(r() * 20) / 10,
+  }));
+}
+
+// Positions des orbes CSS : mappées depuis ORB_POS 3D → plan 2D %
+const CSS_ORB_BASE = [
+  { x: 28, y: 36 },
+  { x: 72, y: 63 },
+  { x: 37, y: 67 },
+  { x: 66, y: 27 },
+] as const;
+
+// Pré-calculé au chargement du module (pas par render)
+const CSS_SPARKS = {
+  low:    buildSparks(16, 42),
+  medium: buildSparks(24, 137),
+  high:   buildSparks(36, 999),
+};
+const CSS_SECONDARY_SPARKS = {
+  low:    [] as SparkSpec[],
+  medium: buildSparks(8, 17),
+  high:   buildSparks(14, 77),
+};
+
+function GameEndCinematicCSS({
+  primaryColor, secondaryColor, intensity = 'medium', darkOverlay = false,
+}: GameEndCinematicProps) {
+  const cfg     = INTENSITY[intensity];
+  const sparks  = CSS_SPARKS[intensity];
+  const sparks2 = CSS_SECONDARY_SPARKS[intensity];
+  const orbs    = CSS_ORB_BASE.slice(0, cfg.orbCount);
+  const blobDur = parseFloat((3 / cfg.speed).toFixed(2));
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+      {darkOverlay && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(180deg, rgba(10,5,20,0.74) 0%, rgba(4,2,10,0.86) 100%)',
+        }} />
+      )}
+
+      {/* Blob central — analogue de MeshDistortMaterial opacity 0.15 */}
+      <motion.div
+        animate={{ scale: [0.88, 1.18, 0.88], opacity: [0.07, 0.17, 0.07] }}
+        transition={{ duration: blobDur, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          left: '14%', top: '16%', right: '14%', bottom: '16%',
+          borderRadius: '50%',
+          background: `radial-gradient(ellipse at 50% 50%, ${primaryColor} 0%, transparent 70%)`,
+          filter: 'blur(36px)',
+        }}
+      />
+
+      {/* Orbes flottants — analogues aux Float/mesh/pointLight */}
+      {orbs.map((orb, i) => {
+        const color   = i % 2 === 0 ? primaryColor : secondaryColor;
+        const orbSize = 10 + (i % 3) * 6;
+        return (
+          <motion.div
+            key={i}
+            animate={{
+              y: ['-14px', '14px', '-14px'],
+              x: ['-8px',  '8px',  '-8px'],
+            }}
+            transition={{ duration: 1.8 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.45 }}
+            style={{
+              position: 'absolute',
+              left: `${orb.x}%`, top: `${orb.y}%`,
+              width: orbSize, height: orbSize,
+              borderRadius: '50%',
+              background: color,
+              boxShadow: `0 0 ${orbSize}px ${color}, 0 0 ${orbSize * 2.5}px ${color}55`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
+        );
+      })}
+
+      {/* Étincelles primaires — analogues à Sparkles */}
+      {sparks.map(p => (
+        <motion.div
+          key={p.id}
+          animate={{ opacity: [0, 0.9, 0], scale: [0.3, 1.1, 0.3] }}
+          transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            left: `${p.x}%`, top: `${p.y}%`,
+            width: p.size, height: p.size,
+            borderRadius: '50%',
+            background: primaryColor,
+            boxShadow: `0 0 ${p.size * 2}px ${primaryColor}`,
+          }}
+        />
+      ))}
+
+      {/* Étincelles secondaires */}
+      {sparks2.map(p => (
+        <motion.div
+          key={p.id}
+          animate={{ opacity: [0, 0.7, 0], scale: [0.3, 1, 0.3] }}
+          transition={{ duration: p.dur, repeat: Infinity, delay: p.delay + 0.35, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            left: `${p.x}%`, top: `${p.y}%`,
+            width: p.size, height: p.size,
+            borderRadius: '50%',
+            background: secondaryColor,
+            boxShadow: `0 0 ${p.size * 2}px ${secondaryColor}`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Export public ────────────────────────────────────────────────────────────
+
 export interface GameEndCinematicProps {
   primaryColor: string;
   secondaryColor: string;
@@ -97,6 +237,7 @@ export interface GameEndCinematicProps {
 
 export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'medium', darkOverlay = false }: GameEndCinematicProps) {
   const renderMode = useRenderMode();
+  // Tous les hooks appelés inconditionnellement (rules of hooks)
   // Defer Canvas mount: AnimatePresence swaps views synchronously on iOS —
   // the parent has no dimensions yet at that instant. 60ms lets layout settle.
   const [mounted, setMounted] = useState(false);
@@ -106,7 +247,16 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
     return () => clearTimeout(t);
   }, [renderMode]);
 
-  if (renderMode === 'css') return null;
+  if (renderMode === 'css') {
+    return (
+      <GameEndCinematicCSS
+        primaryColor={primaryColor}
+        secondaryColor={secondaryColor}
+        intensity={intensity}
+        darkOverlay={darkOverlay}
+      />
+    );
+  }
 
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
@@ -120,7 +270,7 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
         <CanvasBoundary>
           <Canvas
             dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
+            gl={{ antialias: true, alpha: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
             frameloop="always"
             style={{ background: 'transparent' }}
             camera={{ position: [0, 0, 5], fov: 60 }}
