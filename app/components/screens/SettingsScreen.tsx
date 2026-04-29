@@ -230,7 +230,7 @@ export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScree
 
   const handleReplayIntro = () => {
     markOnboardingSkipped();
-    onNavigate('onboarding-slides');
+    onNavigate('module-de-base');
   };
 
   let baseDelay = 0;

@@ -92,7 +92,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
       onSelectTheme={(mode) => {
         ctx.selectTheme(mode);
         if (!ctx.hasOnboarded) {
-          ctx.navigateTo(ctx.isAdult === true ? 'auth' : 'onboarding-slides');
+          ctx.navigateTo(ctx.isAdult === true ? 'auth' : 'module-de-base');
         } else {
           ctx.goBack();
         }
@@ -109,10 +109,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
     }} />,
 
   'personal-intro': (ctx) =>
-    <PersonalIntroScreen onContinue={() => ctx.navigateTo('onboarding-slides')} />,
-
-  'onboarding-slides': (ctx) =>
-    <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+    <PersonalIntroScreen onContinue={() => ctx.navigateTo('module-de-base')} />,
 
   home: (ctx) =>
     <HomeScreen isAdult={ctx.isAdult} userName={ctx.userName} onNavigate={ctx.navigateTo} />,
@@ -139,10 +136,10 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
     />
   ),
 
-  // Legacy routes — AppShell redirects to screenMeta.legacy.replacement before first render.
-  learn: () => null,
-  'scenarios-minor': () => null,
-  feelings: () => null,
+  // Legacy routes — AppShell redirects via screenMeta.legacy.replacement; show loader during the 1-frame gap.
+  learn: () => <ScreenLoader />,
+  'scenarios-minor': () => <ScreenLoader />,
+  feelings: () => <ScreenLoader />,
 
   help: () => <HelpScreen />,
 

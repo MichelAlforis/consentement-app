@@ -50,7 +50,6 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
   'age-check': {},
   auth: {},
   'personal-intro': {},
-  'onboarding-slides': {},
 
   // ── Legacy routes ──────────────────────────────────────────────────────────
   learn: {

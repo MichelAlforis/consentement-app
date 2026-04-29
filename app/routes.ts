@@ -85,7 +85,6 @@ export const ROUTES = {
   'module-de-base': baseRoute(ModuleDeBaseScreen),
   language: baseRoute(LanguageScreen),
   onboarding: baseRoute(OnboardingWizard),
-  'onboarding-slides': baseRoute(ModuleDeBaseScreen),
   'personal-intro': baseRoute(PersonalIntroScreen),
   premium: baseRoute(PremiumScreen),
   'theme-select': baseRoute(ThemeSelectScreen),

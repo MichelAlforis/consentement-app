@@ -35,7 +35,6 @@ export type Screen =
   // Onboarding wizard
   | 'onboarding'
   | 'language'
-  | 'onboarding-slides'
   | 'personal-intro'
   // Premium
   | 'premium'
