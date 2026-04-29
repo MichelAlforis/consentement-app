@@ -1,8 +1,8 @@
 # Roadmap V3 — Card Collector & Home Adaptative
 
 > Créé : 26 avril 2026  
-> Mis à jour : 29 avril 2026 (session 3 — CSS modules Phase 3 ✅ · tab-stacks nav ✅ · Board responsive portrait/paysage ✅)  
-> Statut global : ✅ Sprints 6–26 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants + CSS modules Phase 4 (ui/ restants)  
+> Mis à jour : 29 avril 2026 (session 4 — Navigation per-tab stacks ✅ · layout flex-1 uniforme ✅)  
+> Statut global : ✅ Sprints 6–27 terminés · prochain : intégration CollectorCardCanvas écrans hôtes restants + CSS modules Phase 4 (ui/ restants)  
 > Docs de référence détaillés : `docs/jeux/card-gain-modules.md` · `docs/home-v3.md` · `docs/jeux/card-collector.md`
 
 ---
@@ -459,6 +459,47 @@ const RARITY_COLOR: Record<string, string> = {
 - `app/components/screens/DiceGame/index.tsx` (showReveal, overlay, label tappable)
 
 **122 tests · tous verts.**
+
+---
+
+### Sprint 27 — Navigation per-tab stacks + uniformisation layout ✅ (2026-04-29)
+**Livrable :** navigation sans impasses + chaîne `flex-1` uniforme sur tous les écrans
+
+**Problème résolu :** l'onglet "Jeux" et d'autres sous-écrans n'avaient pas de retour visible. Le TabBar disparaissait en profondeur et l'utilisateur restait bloqué.
+
+#### Architecture navigation
+
+| Avant | Après |
+|---|---|
+| `currentScreen + history[]` plat | `fullscreenStack / tabStacks[4] / modalStack` — 3 couches |
+| TabBar caché hors racines | TabBar **persistant** dans tous les sous-écrans de tab |
+| Back button = sortie onboarding seulement | Back button actif dès que `tabStack.length > 1` |
+| `isRoot` / `shouldShowHeader` dans `screenMeta` + `routes.ts` | Selectors Zustand : `selectShowTabBar`, `selectShowHeader`, `selectCanGoBack` |
+
+**Pattern Instagram / Spotify :** taper l'onglet actif réinitialise sa pile. Chaque onglet a un historique indépendant.
+
+#### Layout uniformisation
+
+Tous les écrans utilisent la chaîne `flex-1` AppShell → RouteRenderer → Screen. Supprimé :
+- `min-h-[Xvh]` dans DiceGame, GooseGame (6 composants), DuoSpace (5 composants), Quiz, Premium
+- `min-h-dvh` dans WelcomeScreen, AuthScreen, AgeCheckScreen, ThemeSelectScreen, LanguageScreen, PersonalIntroScreen
+- `minHeight: '100%'` inline dans GooseGame (index + SetupPlayer + IntroScreen + EndScreen)
+- `pb-24 / pb-10 / pb-8` de compensation TabBar (8 screens)
+
+| # | Tâche | Statut |
+|---|---|---|
+| 27.1 | `navigationStore.ts` — 3 couches : `fullscreenStack`, `tabStacks`, `modalStack` | ✅ |
+| 27.2 | `selectShowTabBar` — visible sauf `fullscreenStack.length > 0` | ✅ |
+| 27.3 | `selectCanGoBack` — actif dès `tabStack.length > 1` | ✅ |
+| 27.4 | `screenMeta.ts` — simplifié : retrait `isRoot`, `header: 'hidden'` | ✅ |
+| 27.5 | `AppShell.tsx` — `DevBar` sur `NODE_ENV === 'development'` uniquement (retrait `DEMO_MODE`) | ✅ |
+| 27.6 | Suppression `min-h-[Xvh]` / `min-h-dvh` → `flex-1` sur tous les screens | ✅ |
+| 27.7 | Suppression `minHeight: '100%'` inline (GooseGame 6 composants) | ✅ |
+| 27.8 | Suppression `pb-24 / pb-10` de compensation TabBar (8 screens) | ✅ |
+| 27.9 | Tests `navigationStore.test.ts` réécrits — 11 tests nouvelle API | ✅ |
+| 27.10 | `screenMeta.test.ts` mis à jour — retrait `isRootScreen` | ✅ |
+
+**168 tests · tous verts.**
 
 ---
 

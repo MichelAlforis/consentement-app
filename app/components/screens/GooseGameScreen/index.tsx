@@ -90,7 +90,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'setup-p1') {
     return (
-      <div style={{ minHeight: '100%', background: 'linear-gradient(160deg, #7c3aed, #4f46e5)' }}>
+      <div className="flex-1" style={{ background: 'linear-gradient(160deg, #7c3aed, #4f46e5)' }}>
         <SetupPlayer playerIndex={0} otherPawn={undefined} onConfirm={handleP1Confirm} />
       </div>
     );
@@ -98,7 +98,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'setup-p2') {
     return (
-      <div style={{ minHeight: '100%', background: 'linear-gradient(160deg, #0369a1, #0891b2)' }}>
+      <div className="flex-1" style={{ background: 'linear-gradient(160deg, #0369a1, #0891b2)' }}>
         <SetupPlayer playerIndex={1} otherPawn={p1?.pawn} onConfirm={handleP2Confirm} />
       </div>
     );
@@ -106,7 +106,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'pacte') {
     return (
-      <div style={{ minHeight: '100%', background: 'linear-gradient(160deg, #0f172a, #1e1040)' }}>
+      <div className="flex-1" style={{ background: 'linear-gradient(160deg, #0f172a, #1e1040)' }}>
         <PacteScreen player1={player1} player2={player2} onStart={startNewGame} />
       </div>
     );
@@ -130,10 +130,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   return (
     <div
-      className="flex flex-col"
+      className="flex-1 flex flex-col"
       style={{
         color: 'white',
-        minHeight: '100%',
         background: ZONE_BG[zoneIndex],
         transition: 'background 2s ease',
       }}

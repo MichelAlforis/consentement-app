@@ -36,8 +36,8 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative"
-      style={{ color: 'white', minHeight: '100%', background: 'linear-gradient(180deg, #1a0838 0%, #060512 100%)' }}
+      className="flex-1 relative"
+      style={{ color: 'white', background: 'linear-gradient(180deg, #1a0838 0%, #060512 100%)' }}
     >
       <GameEndCinematic primaryColor="#c084fc" secondaryColor="#60a5fa" intensity={cinematicIntensity} />
       <div className="relative z-10 p-6 flex flex-col items-center gap-5 text-center">

@@ -1,0 +1,21 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  border-radius: 24px 24px 0 0;
+  padding-top: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), 44px);
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+}

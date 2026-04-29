@@ -25,8 +25,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col items-center p-6 gap-6 min-h-full"
-      style={{ color: 'white', background: 'linear-gradient(160deg, #0f172a 0%, #1e1040 60%, #2d1b69 100%)', minHeight: '100%' }}
+      className="flex-1 flex flex-col items-center p-6 gap-6 text-white bg-[linear-gradient(160deg,#0f172a_0%,#1e1040_60%,#2d1b69_100%)]"
     >
       <div className="text-center mt-4">
         <Dices size={60} className="mb-3 mx-auto" />
@@ -39,17 +38,13 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         </p>
       </div>
 
-      <div
-        className="w-full max-w-[300px] rounded-2xl p-4 flex flex-col gap-2.5"
-        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
-      >
+      <div className="w-full max-w-[300px] rounded-2xl p-4 flex flex-col gap-2.5 bg-white/[0.07] border border-white/10">
         {cells.map(item => (
           <div key={item.label} className="flex items-center gap-3">
-            <span style={{
-              width: 32, height: 32,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: item.bg + '28', borderRadius: 8,
-            }}>
+            <span
+              className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0"
+              style={{ background: item.bg + '28' }}
+            >
               <item.Icon size={16} color={item.bg} />
             </span>
             <span className="text-white font-semibold text-sm">{item.label}</span>
@@ -62,8 +57,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={onResume}
-          className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2"
-          style={{ background: 'rgba(255,255,255,0.12)', color: 'white', border: '1.5px solid rgba(255,255,255,0.25)' }}
+          className="w-full max-w-[300px] py-3 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 bg-white/[0.12] text-white border-[1.5px] border-white/25"
         >
           <RotateCcw size={15} />
           {t('gooseGame.intro.resume')}
@@ -73,8 +67,7 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={() => { clearSavedGame(); onNew(); }}
-        className="w-full max-w-[300px] py-4 rounded-2xl font-bold text-base"
-        style={{ background: 'rgba(255,255,255,0.95)', color: '#1e293b' }}
+        className="w-full max-w-[300px] py-4 rounded-2xl font-bold text-base bg-white/95 text-[#1e293b]"
       >
         {savedGame ? t('gooseGame.intro.new') : t('gooseGame.intro.start')}
       </motion.button>

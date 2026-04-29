@@ -21,7 +21,7 @@
 - [x] **Haptics iOS** — [app/game-engine/shared/useHaptics.ts](../app/game-engine/shared/useHaptics.ts) utilise `@capacitor/haptics` sur iOS, fallback `navigator.vibrate` sur Android/web
 - [x] **Haptics GooseGame** — [GooseGameScreen/utils.ts](../app/components/screens/GooseGameScreen/utils.ts) idem
 - [x] **Clipboard iOS** — [DuoSpaceScreen.tsx](../app/components/screens/DuoSpaceScreen.tsx) utilise `@capacitor/clipboard` dans Capacitor, fallback `navigator.clipboard` sur web
-- [x] **Back button Android** — [useAppState.ts](../app/hooks/useAppState.ts) intercepte `App.addListener('backButton')` via `@capacitor/app`
+- [x] **Back button Android** — [AppShell.tsx](../app/components/app/AppShell.tsx) (`useAndroidBackButton`) intercepte `App.addListener('backButton')` via `@capacitor/app`
 - [x] **Flash au démarrage** — [page.tsx](../app/page.tsx) attend `isHydrated` avant le premier rendu (écran noir plutôt que ThemeSelectScreen)
 - [x] **Barre de démo** — [page.tsx](../app/page.tsx) visible uniquement en `NODE_ENV === 'development'`, absente des builds de production
 - [x] **Hover tactile** — `whileHover` sans déplacement `y` dans [Card.tsx](../app/components/ui/Card.tsx) et [MenuCard.tsx](../app/components/ui/MenuCard.tsx)
