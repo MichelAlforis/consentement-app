@@ -84,7 +84,6 @@ export const games = {
     intro: {
       title: "Le Jeu de l'Oie",
       sub1: '2 joueurs · 1 téléphone · 24 cases',
-      sub2: 'Avancez ensemble, explorez ensemble.',
       goal: "Lancez le dé à tour de rôle et vivez des activités ensemble jusqu'à l'arrivée.",
       cellPause: 'Pause',
       cellPauseDesc: 'Un moment obligatoire pour se parler',
@@ -245,5 +244,7 @@ export const games = {
     rarityRare: 'RARE',
     rarityUnique: 'UNIQUE',
     appAdulte: 'App adulte',
+    emptyDesc: 'Complète un module pour débloquer tes premières cartes.',
+    emptyCTA: 'Commencer →',
   },
 } as const;

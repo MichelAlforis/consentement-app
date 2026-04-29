@@ -1,5 +1,5 @@
 'use client';
-import { getSquareIconName, BoardSquare } from '../../../../data/goose-game';
+import { getSquareIconName, BoardSquare, ZONES } from '../../../../data/goose-game';
 import { Zone } from '../../../../data/goose-game';
 import { DynamicIcon } from '../../../../utils/iconFromName';
 import { Overlay } from '../components/Overlay';
@@ -22,6 +22,8 @@ export function ActivityOverlay({
   const { t } = useTranslation();
   const isPause      = step === 'pause';
   const isComplicite = step === 'complicite';
+  const zoneNames = [t('gooseGame.end.zone1'), t('gooseGame.end.zone2'), t('gooseGame.end.zone3')];
+  const zoneIdx = ZONES.indexOf(currentZone); // 0 | 1 | 2
 
   const iconName = isPause ? 'Pause' : isComplicite ? 'Heart' : getSquareIconName(currentSquare);
   const label = isPause
@@ -44,7 +46,7 @@ export function ActivityOverlay({
           className="text-[10px] font-bold rounded-[20px] px-2 py-[3px] bg-white/[0.12] flex items-center gap-1"
           style={{ color: currentZone.color, border: `1px solid ${currentZone.color}44` }}
         >
-          <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {currentZone.name}
+          <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {zoneNames[zoneIdx] ?? zoneNames[0]}
         </span>
       </div>
 

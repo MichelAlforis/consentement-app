@@ -16,7 +16,8 @@ interface EndScreenProps {
 
 export function EndScreen({ player1, player2, accordsCount, onReplay, onQuit }: EndScreenProps) {
   const { t } = useTranslation();
-  const cinematicIntensity = accordsCount >= 4 ? 'high' : accordsCount >= 2 ? 'medium' : 'low' as const;
+  const cinematicIntensity: 'low' | 'medium' | 'high' =
+    accordsCount >= 4 ? 'high' : accordsCount >= 2 ? 'medium' : 'low';
 
   const endMessages = [
     { threshold: 0,        text: t('gooseGame.end.msg0'), icon: <Leaf size={20} /> },
@@ -25,7 +26,8 @@ export function EndScreen({ player1, player2, accordsCount, onReplay, onQuit }: 
     { threshold: Infinity, text: t('gooseGame.end.msg3'), icon: <Heart size={20} /> },
   ];
 
-  const msg = endMessages.findLast(m => accordsCount > m.threshold) ?? endMessages[0];
+  // findLast non disponible avant Safari 16 (iOS 15-) — remplacé par reverse().find()
+  const msg = [...endMessages].reverse().find(m => accordsCount > m.threshold) ?? endMessages[0];
 
   const accordLabel = accordsCount === 0
     ? t('gooseGame.end.accord0')

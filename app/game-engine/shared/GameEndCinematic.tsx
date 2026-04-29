@@ -96,7 +96,8 @@ class CanvasBoundary extends Component<{ children: ReactNode }, { crashed: boole
 // LCG déterministe : positions stables entre re-renders, indépendant de Math.random()
 function makeLCG(seed: number) {
   let s = seed | 0;
-  return () => { s = Math.imul(s, 1664525) + 1013904223 | 0; return (s >>> 0) / 0xffffffff; };
+  // Arithmétique entière 32-bit pure — pas de Math.imul, compatible Chromium 37 / Huawei WebView
+  return () => { s = (s * 1664525 + 1013904223) | 0; return (s >>> 0) / 0xffffffff; };
 }
 
 interface SparkSpec { id: number; x: number; y: number; size: number; delay: number; dur: number }
@@ -161,6 +162,7 @@ function GameEndCinematicCSS({
           borderRadius: '50%',
           background: `radial-gradient(ellipse at 50% 50%, ${primaryColor} 0%, transparent 70%)`,
           filter: 'blur(36px)',
+          WebkitFilter: 'blur(36px)',
         }}
       />
 

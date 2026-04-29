@@ -84,7 +84,6 @@ export const games = {
     intro: {
       title: "Juego de la Oca",
       sub1: '2 jugadores · 1 teléfono · 24 casillas',
-      sub2: 'Avanzad juntos, explorad juntos.',
       goal: 'Tirad el dado por turnos y vivid actividades juntos hasta llegar a la llegada.',
       cellPause: 'Pausa',
       cellPauseDesc: 'Un momento obligatorio para hablar',
@@ -245,5 +244,7 @@ export const games = {
     rarityRare: 'RARA',
     rarityUnique: 'ÚNICA',
     appAdulte: 'App adulta',
+    emptyDesc: 'Completa un módulo para desbloquear tus primeras cartas.',
+    emptyCTA: 'Empezar →',
   },
 } as const;

@@ -133,6 +133,7 @@ function Cube6({
           background: 'rgba(0,0,0,0.45)',
           borderRadius: '50%',
           filter: 'blur(5px)',
+          WebkitFilter: 'blur(5px)',
           transformOrigin: 'center bottom',
         }}
       />
@@ -163,7 +164,7 @@ function Cube6({
         {/* Shake/scale post-atterrissage */}
         <motion.div animate={wrapControls}>
           {/* drop-shadow sur le conteneur extérieur — jamais sur preserve-3d */}
-          <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))' }}>
+          <div style={{ perspective: 500, width: 100, height: 100, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))', WebkitFilter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))' }}>
             <motion.div
               animate={cubeControls}
               style={{ width: 100, height: 100, position: 'relative', transformStyle: 'preserve-3d' }}
@@ -230,6 +231,7 @@ function FlatTile({
           width: '100%', height: '100%',
           position: 'relative', transformStyle: 'preserve-3d',
           filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))',
+          WebkitFilter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.22))',
         }}
       >
         {/* Dos */}

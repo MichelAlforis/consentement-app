@@ -920,6 +920,7 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
             left: '50%',
             transform: 'translate(-50%, -50%)',
             filter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
+            WebkitFilter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
           }}>
             <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
           </div>

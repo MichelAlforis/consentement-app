@@ -39,13 +39,20 @@ export function SetupPlayer({ playerIndex, otherPawn, onConfirm }: SetupPlayerPr
 
         <div>
           <label className="block text-white/80 text-sm font-semibold mb-2">{t('gooseGame.setup.nameLabel')}</label>
-          <input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder={playerIndex === 0 ? t('gooseGame.setup.placeholder1') : t('gooseGame.setup.placeholder2')}
-            maxLength={20}
-            className="w-full px-4 py-3 rounded-2xl text-gray-900 font-medium text-base outline-none bg-white/95"
-          />
+          <div className="relative">
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder={playerIndex === 0 ? t('gooseGame.setup.placeholder1') : t('gooseGame.setup.placeholder2')}
+              maxLength={20}
+              className="w-full px-4 py-3 rounded-2xl text-gray-900 font-medium text-base outline-none bg-white/95"
+            />
+            {name.length > 0 && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium pointer-events-none">
+                {name.length}/20
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
