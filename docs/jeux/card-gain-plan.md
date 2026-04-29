@@ -2,14 +2,14 @@
 
 > 25 avril 2026 — màj pivot 2026-04-25  
 > Référence session (déprécié) : `card-gain-session.md`  
-> Référence modules (actif) : `card-gain-modules.md`
+> Référence modules (actif) : `docs/roadmaps/card-gain-modules.md`
 
 > ⚠️ **PIVOT — L'architecture de gain a changé le 2026-04-25.**  
 > Les Sprints 1–5 ci-dessous sont terminés mais dépréciés pour le gain de cartes.  
 > **Seule l'éducation crée des cartes. Les jeux les utilisent.**  
 > Tous les triggers de jeu (CardGameScreen fin de séance, GooseGame complicite + arrivée) sont supprimés.  
 > Action technique : Sprint 10 — nettoyer `useGooseGame.ts` + supprimer tests 5.7a–5.7c.  
-> **Suite du travail → voir `card-gain-modules.md` (Sprints 6+).**
+> **Suite du travail → voir `docs/roadmaps/card-gain-modules.md` (Sprints 6+).**
 
 ---
 
