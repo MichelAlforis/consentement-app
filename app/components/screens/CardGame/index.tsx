@@ -160,7 +160,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
         {s.step === 'pick' && (
           <motion.div key="pick"
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-            className="flex flex-col px-5 pt-5 pb-10"
+            className="flex flex-col px-5 pt-5 pb-5"
           >
             {/* ── EMPTY DECK GUARD ────────────────────────── */}
             {s.available.length === 0 && (
@@ -333,7 +333,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
         {s.step === 'playing' && s.currentCard && s.cat && (
           <motion.div key="playing"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="flex flex-col px-5 pt-5 pb-8"
+            className="flex flex-col px-5 pt-5 pb-5"
           >
             <div className="flex items-center gap-2 mb-5">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm" style={{ background: s.cat.gradient }}>

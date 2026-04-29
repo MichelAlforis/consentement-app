@@ -25,7 +25,7 @@ export function PornoVsRealiteScreen({ onComplete }: PornoVsRealiteScreenProps) 
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-5 pb-10"
+      className="p-5"
     >
       <motion.div
         initial={{ opacity: 0, y: -10 }}

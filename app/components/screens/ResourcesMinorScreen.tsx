@@ -59,7 +59,7 @@ export function ResourcesMinorScreen({ onNavigate }: ResourcesMinorScreenProps) 
   const { t } = useTranslation();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-8">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}

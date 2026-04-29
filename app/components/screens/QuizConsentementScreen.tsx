@@ -75,7 +75,7 @@ export function QuizConsentementScreen({ onComplete }: QuizConsentementScreenPro
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="p-5 pb-10 flex flex-col items-center justify-center min-h-[70vh]"
+        className="flex-1 flex flex-col items-center justify-center p-5"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -121,7 +121,7 @@ export function QuizConsentementScreen({ onComplete }: QuizConsentementScreenPro
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-5 pb-10"
+      className="p-5"
     >
       <div className="flex items-start gap-3 mb-5">
         <div className="w-11 h-11 rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">

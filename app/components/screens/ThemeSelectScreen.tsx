@@ -43,7 +43,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-dvh flex flex-col p-6 bg-gradient-to-br from-gray-50 to-gray-100"
+      className="flex-1 flex flex-col p-6 bg-gradient-to-br from-gray-50 to-gray-100"
     >
       <motion.div
         initial={{ scale: 0, rotate: -180 }}

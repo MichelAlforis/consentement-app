@@ -21,7 +21,7 @@ export function PersonalSpaceScreen({ profile, onUpdateLevel, onUpdateSafeword, 
   const { t } = useTranslation();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

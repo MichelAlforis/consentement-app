@@ -71,7 +71,7 @@ export function GamesHubScreen({
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <h2 className="text-xl font-bold mb-0.5" style={{ color: colors.textPrimary }}>
           {t('games.title')}

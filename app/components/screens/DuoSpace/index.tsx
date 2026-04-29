@@ -46,7 +46,7 @@ export function DuoSpaceScreen({
     : null;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-full flex flex-col">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col">
       <DuoNavBar
         currentStep={session.duoStep}
         onBack={onBack}

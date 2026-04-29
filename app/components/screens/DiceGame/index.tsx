@@ -108,7 +108,7 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
 
   return (
     <>
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10 min-h-[75vh] flex flex-col">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col p-5">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-11 h-11 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
           <Dices size={22} className="text-amber-600" />

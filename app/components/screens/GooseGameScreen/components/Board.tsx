@@ -32,33 +32,63 @@ const STEP_3   = CELL_S + GAP_3;
 const BASE_H   = 0.18;  // mahogany base height
 const BASE_PAD = 0.28;  // base extends beyond cells
 
-// Elevation plus haute (55°) : vue moins inclinée, plateau plus lisible en portrait
 const CAM_DIST = 20;
-const CAM_ELEV = (55 * Math.PI) / 180;
-// Azimut 0° : caméra centrée sur l'axe Z. Le losange vient du group rotation Y=45° sur le plateau.
-const CAM_POS: [number, number, number] = [
-  0,
-  CAM_DIST * Math.sin(CAM_ELEV),
-  CAM_DIST * Math.cos(CAM_ELEV),
-];
 
-// ─── Responsive canvas size ───────────────────────────────────────────────────
-// Board diamond X extent ≈ (4+ROWS)*STEP_3/√2 ≈ 8.0 world units
-// Required: canvas_width / (2 * zoom) >= half_board_X (4.0) + margin
-// → zoom ≤ canvas_width / 9.2   (9.2 = 2 * 4.0 * 1.15 safety margin)
-function useResponsiveBoardConfig() {
-  const [config, setConfig] = useState({ zoom: 48, canvasH: 400 });
+// ─── Responsive + orientation-aware board config ──────────────────────────────
+//
+// Portrait  : groupRotY=0 (rangées face caméra), caméra haute (65°)
+//             → board X = 4*STEP_3 + 2*BASE_PAD ≈ 5.0 units → zoom = w / 5.5
+// Landscape : groupRotY=π/4 (losange 45°), caméra médiane (45°)
+//             → board X = (4+ROWS)*STEP_3/√2 ≈ 7.9 units → zoom = w / 9.1
+//
+type BoardConfig = {
+  zoom: number;
+  canvasH: number;
+  isPortrait: boolean;
+  groupRotY: number;
+  camPos: [number, number, number];
+};
+
+function useResponsiveBoardConfig(): BoardConfig {
+  const calc = (): BoardConfig => {
+    if (typeof window === 'undefined') {
+      return { zoom: 48, canvasH: 400, isPortrait: true, groupRotY: 0, camPos: [0, 16, 9] };
+    }
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isPortrait = h > w;
+
+    if (isPortrait) {
+      // Rangées horizontales — pas de rotation Y → largeur = 4 cols
+      const boardW = 4 * STEP_3 + 2 * BASE_PAD;       // ≈ 5.04 world units
+      const zoom   = Math.min(80, Math.max(30, Math.floor(w / (boardW * 1.1))));
+      const elev   = (65 * Math.PI) / 180;
+      const camPos: [number, number, number] = [0, CAM_DIST * Math.sin(elev), CAM_DIST * Math.cos(elev)];
+      // Hauteur canvas : profondeur projetée = ROWS*STEP_3 * sin(65°) * zoom + marge
+      const projH  = Math.round(ROWS * STEP_3 * Math.sin(elev) * zoom * 1.25);
+      const canvasH = Math.min(projH, Math.round(h * 0.48));
+      return { zoom, canvasH, isPortrait, groupRotY: 0, camPos };
+    } else {
+      // Losange 45° — largeur = (4+ROWS)*STEP_3 / √2
+      const boardW = (4 + ROWS) * STEP_3 / Math.SQRT2;  // ≈ 7.9 world units
+      const zoom   = Math.min(68, Math.max(30, Math.floor(w / (boardW * 1.15))));
+      const elev   = (45 * Math.PI) / 180;
+      const camPos: [number, number, number] = [0, CAM_DIST * Math.sin(elev), CAM_DIST * Math.cos(elev)];
+      const canvasH = Math.round(Math.min(h * 0.72, 520));
+      return { zoom, canvasH, isPortrait, groupRotY: Math.PI / 4, camPos };
+    }
+  };
+
+  const [config, setConfig] = useState<BoardConfig>(calc);
   useEffect(() => {
-    const calc = () => {
-      const w = window.innerWidth;
-      const zoom = Math.min(68, Math.max(30, Math.floor(w / 9.2)));
-      // canvas height: board projected height at 55° elev ≈ 70% of board width on screen
-      const canvasH = Math.round(Math.min(w * 0.95, 440));
-      setConfig({ zoom, canvasH });
+    const update = () => setConfig(calc());
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
     };
-    calc();
-    window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return config;
 }
@@ -702,7 +732,7 @@ function BoardGridR3F({
   diceResult, isDiceRolling, onDiceRollComplete, showDice,
 }: BoardGridProps) {
   const { colors } = useTheme();
-  const { zoom, canvasH } = useResponsiveBoardConfig();
+  const { zoom, canvasH, groupRotY, camPos } = useResponsiveBoardConfig();
 
   useEffect(() => {
     return () => { disposeIconTextureCache(); };
@@ -719,7 +749,7 @@ function BoardGridR3F({
             dpr={[1, 2]}
           >
             <color attach="background" args={[colors.bgPrimary]} />
-            <OrthographicCamera makeDefault position={CAM_POS} zoom={zoom} near={0.1} far={100} />
+            <OrthographicCamera makeDefault position={camPos} zoom={zoom} near={0.1} far={100} />
             <CameraLookAt />
 
             <Environment preset="sunset" />
@@ -734,8 +764,8 @@ function BoardGridR3F({
             />
             <directionalLight position={[-4, 4, -4]} intensity={0.2} />
 
-            {/* rotateY 45° = même effet que CSS rotateZ(45°) — donne la vue losange */}
-            <group rotation={[0, Math.PI / 4, 0]}>
+            {/* Portrait : groupRotY=0 (rangées face caméra) — Paysage : groupRotY=π/4 (losange) */}
+            <group rotation={[0, groupRotY, 0]}>
               <BoardBase3D accentColor={colors.accent} />
 
               {BOARD.map(sq => (

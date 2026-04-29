@@ -145,7 +145,7 @@ function ProfileDetail({ prof, onClose }: { prof: Sexologue; onClose: () => void
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-10">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Titre + labels */}
         <div>
           <p className="text-sm mb-2" style={{ color: colors.textSecondary }}>{prof.titre}</p>
@@ -295,7 +295,7 @@ export function AnnuaireSexologuesScreen({ onBack: _onBack }: AnnuaireSexologues
   ];
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex-1 flex flex-col">
       <div className="p-4 space-y-3 shrink-0">
         {/* Search */}
         <div className="flex items-center gap-2 px-3 py-2.5 rounded-2xl"
@@ -357,7 +357,7 @@ export function AnnuaireSexologuesScreen({ onBack: _onBack }: AnnuaireSexologues
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-4 pb-24 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 pb-5 space-y-3">
         <AnimatePresence>
           {filtered.length === 0 ? (
             <motion.div

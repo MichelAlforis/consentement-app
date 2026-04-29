@@ -27,7 +27,7 @@ export function LanguageScreen({ onContinue }: LanguageScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-dvh flex flex-col items-center justify-between p-6 pb-10"
+      className="flex-1 flex flex-col items-center justify-between p-6"
     >
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-xs">
         <motion.div

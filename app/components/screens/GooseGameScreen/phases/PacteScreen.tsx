@@ -34,7 +34,7 @@ export function PacteScreen({ player1, player2, onStart }: PacteScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col items-center gap-6 p-6 pt-8 min-h-[80vh]"
+      className="flex flex-col items-center gap-6 p-6 pt-8 flex-1"
       style={{ color: 'white' }}
     >
       <motion.div

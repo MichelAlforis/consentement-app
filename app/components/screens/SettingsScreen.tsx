@@ -238,7 +238,7 @@ export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScree
 
   return (
     <>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-1 pb-10">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-1">
 
         {/* ── Mon profil ─────────────────────────── */}
         <SectionTitle label={t('settings.sections.profile')} delay={d()} />

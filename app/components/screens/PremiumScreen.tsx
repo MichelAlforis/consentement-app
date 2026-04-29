@@ -36,7 +36,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-full"
+      className="flex-1 flex flex-col"
     >
       <AnimatePresence mode="wait">
         {step === 'offer' && (
@@ -127,7 +127,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center min-h-[60vh] p-8 gap-6"
+            className="flex flex-col items-center justify-center flex-1 p-8 gap-6"
           >
             <div className="relative w-20 h-20">
               <motion.div className="absolute inset-0 rounded-full border-4 border-purple-200" />
@@ -162,7 +162,7 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
             key="success"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center min-h-[60vh] p-8 gap-6 text-center"
+            className="flex flex-col items-center justify-center flex-1 p-8 gap-6 text-center"
           >
             <motion.div
               initial={{ scale: 0 }}

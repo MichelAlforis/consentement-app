@@ -70,7 +70,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   let cardIndex = 0;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-24">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {/* Brand card */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}

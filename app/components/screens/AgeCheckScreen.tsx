@@ -19,7 +19,7 @@ export function AgeCheckScreen({ onSelectMinor, onSelectAdult }: AgeCheckScreenP
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-dvh flex flex-col p-6"
+      className="flex-1 flex flex-col p-6"
     >
       <motion.div
         initial={{ opacity: 0, y: -20 }}

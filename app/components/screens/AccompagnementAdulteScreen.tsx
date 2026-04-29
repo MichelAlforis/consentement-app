@@ -29,7 +29,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-10">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <div className="flex items-start gap-3 mb-6">
         <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 mt-0.5"
           style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
