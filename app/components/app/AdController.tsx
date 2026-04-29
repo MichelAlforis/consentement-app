@@ -2,10 +2,10 @@
 
 import { AdBanner } from '../ui';
 import { shouldShowAd } from '../../routes';
-import { useNavigationStore, usePremiumStore } from '../../stores';
+import { useNavigationStore, usePremiumStore, selectCurrentScreen } from '../../stores';
 
 export function AdController() {
-  const currentScreen = useNavigationStore((s) => s.currentScreen);
+  const currentScreen = useNavigationStore(selectCurrentScreen);
   const navigateTo = useNavigationStore((s) => s.navigateTo);
   const isPremium = usePremiumStore((s) => s.isPremium);
 

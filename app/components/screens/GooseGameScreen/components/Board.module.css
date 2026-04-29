@@ -1,0 +1,71 @@
+/* PawnOverlay — pion animé par Framer Motion (x/y en style, static en module) */
+.pawnOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 75px;   /* PAWN_SIZE */
+  height: 75px;
+  z-index: 10;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* BoardCell */
+.cell {
+  border-radius: 10px;
+  height: 68px;  /* CELL_H */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BoardGridCSS — conteneur isométrique */
+.boardInner {
+  max-width: 380px;
+  padding: 8px 16px 48px;
+  perspective: 800px;
+}
+
+.isoGrid {
+  transform: rotateX(52deg) rotateZ(45deg) scale(0.62); /* ISO_TRANSFORM */
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-origin: center center;
+  position: relative;
+}
+
+.woodBorder {
+  position: absolute;
+  inset: -22px;
+  background:
+    repeating-linear-gradient(89deg, transparent 0px, transparent 3px, rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px),
+    repeating-linear-gradient(86deg, transparent 0px, transparent 9px, rgba(255,255,255,0.14) 9px, rgba(255,255,255,0.14) 11px),
+    repeating-linear-gradient(91deg, transparent 0px, transparent 18px, rgba(0,0,0,0.18) 18px, rgba(0,0,0,0.18) 20px),
+    linear-gradient(145deg, #c45628 0%, #8a3418 50%, #582210 100%);
+  border-radius: 18px;
+  border: 2px solid rgba(240,170,60,0.85);
+  box-shadow:
+    0 0 18px rgba(240,160,40,0.55),
+    0 0 40px rgba(200,100,20,0.25),
+    inset 0 0 30px rgba(0,0,0,0.45);
+}
+
+.gridRef {
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.gridRow {
+  margin-bottom: 5px; /* CELL_GAP */
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.gridCells {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px; /* CELL_GAP */
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}

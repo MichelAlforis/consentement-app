@@ -12,10 +12,12 @@ import { DynamicIcon } from '../../../../utils/iconFromName';
 import type { IconName } from '../../../../utils/iconFromName';
 import { useTheme } from '../../../../context/ThemeContext';
 import { ICON_NODES } from '../../../../utils/iconPaths';
+import s from './Board.module.css';
 
 // ─── CSS constants ────────────────────────────────────────────────────────────
 
-const ISO_TRANSFORM = 'rotateX(58deg) rotateZ(45deg) scale(0.78)';
+// scale réduit pour que le losange tienne dans la largeur portrait (≤390px)
+const ISO_TRANSFORM = 'rotateX(52deg) rotateZ(45deg) scale(0.62)';
 const CELL_H   = 68;
 const CELL_GAP = 5;
 const PAWN_SIZE = 75;
@@ -29,17 +31,37 @@ const GAP_3    = 0.12;  // gap between cells
 const STEP_3   = CELL_S + GAP_3;
 const BASE_H   = 0.18;  // mahogany base height
 const BASE_PAD = 0.28;  // base extends beyond cells
-const CANVAS_H = 660;   // canvas px height
 
-
+// Elevation plus haute (55°) : vue moins inclinée, plateau plus lisible en portrait
 const CAM_DIST = 20;
-const CAM_ELEV = (40 * Math.PI) / 180;
+const CAM_ELEV = (55 * Math.PI) / 180;
 // Azimut 0° : caméra centrée sur l'axe Z. Le losange vient du group rotation Y=45° sur le plateau.
 const CAM_POS: [number, number, number] = [
   0,
   CAM_DIST * Math.sin(CAM_ELEV),
   CAM_DIST * Math.cos(CAM_ELEV),
 ];
+
+// ─── Responsive canvas size ───────────────────────────────────────────────────
+// Board diamond X extent ≈ (4+ROWS)*STEP_3/√2 ≈ 8.0 world units
+// Required: canvas_width / (2 * zoom) >= half_board_X (4.0) + margin
+// → zoom ≤ canvas_width / 9.2   (9.2 = 2 * 4.0 * 1.15 safety margin)
+function useResponsiveBoardConfig() {
+  const [config, setConfig] = useState({ zoom: 48, canvasH: 400 });
+  useEffect(() => {
+    const calc = () => {
+      const w = window.innerWidth;
+      const zoom = Math.min(68, Math.max(30, Math.floor(w / 9.2)));
+      // canvas height: board projected height at 55° elev ≈ 70% of board width on screen
+      const canvasH = Math.round(Math.min(w * 0.95, 440));
+      setConfig({ zoom, canvasH });
+    };
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
+  }, []);
+  return config;
+}
 
 const SQUARE_COLOR: Record<SquareType, string> = {
   depart:     '#4ade80',
@@ -110,7 +132,7 @@ function PawnSvg({ pawn, color, pawnId }: { pawn: IconName; color: string; pawnI
   const headId = `ph-${pawnId}`;
   const baseId = `pb-${pawnId}`;
   return (
-    <svg width={PAWN_SIZE} height={PAWN_SIZE} viewBox="0 0 60 80" style={{ display: 'block' }}>
+    <svg width={PAWN_SIZE} height={PAWN_SIZE} viewBox="0 0 60 80" className="block">
       <defs>
         {/* Shading cylindrique : sombre gauche → highlight → sombre droite */}
         <linearGradient id={cylId} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -149,7 +171,7 @@ function PawnSvg({ pawn, color, pawnId }: { pawn: IconName; color: string; pawnI
 
       {/* Pawn icon */}
       <foreignObject x="17" y="9" width="26" height="26">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+        <div className="flex items-center justify-center w-full h-full">
           <DynamicIcon name={pawn} size={14} color="rgba(255,255,255,0.92)" />
         </div>
       </foreignObject>
@@ -207,17 +229,8 @@ function PawnOverlay({ squareIndex, pawn, color, pawnId, cellW, xOffset = 0 }: {
     <motion.div
       initial={{ x: init.x, y: init.y }}
       animate={controls}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: PAWN_SIZE,
-        height: PAWN_SIZE,
-        zIndex: 10,
-        pointerEvents: 'none',
-        willChange: 'transform',
-        z: 50,
-      }}
+      className={s.pawnOverlay}
+      style={{ z: 50 }}
     >
       <PawnSvg pawn={pawn} color={color} pawnId={pawnId} />
     </motion.div>
@@ -251,16 +264,12 @@ function BoardCell({ squareIndex, isActive, isAnimating }: BoardCellProps) {
           ? { duration: isAnimating ? 0.28 : 0.8, repeat: isAnimating ? 0 : Infinity, repeatType: 'loop' }
           : {}
       }
+      className={s.cell}
       style={{
         background: bg || 'rgba(255,255,255,0.06)',
-        borderRadius: 10,
-        height: CELL_H,
         border: isActive
           ? '2px solid rgba(255,255,255,0.95)'
           : '1.5px solid rgba(255,255,255,0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
       {iconName && <DynamicIcon name={iconName} size={18} color="rgba(255,255,255,0.85)" />}
@@ -331,27 +340,15 @@ function BoardGridCSS({
   const sameCell = displayPos0 === displayPos1;
 
   return (
-    <div style={{ overflowX: 'hidden', width: '100%' }}>
-      <div className="mx-auto" style={{ maxWidth: 380, padding: '8px 16px 48px', perspective: '800px' }}>
-        <div style={{ transform: ISO_TRANSFORM, transformStyle: 'preserve-3d', transformOrigin: 'center center', position: 'relative', isolation: 'auto' }}>
-          <div style={{
-            position: 'absolute',
-            inset: -22,
-            background: `
-              repeating-linear-gradient(89deg, transparent 0px, transparent 3px, rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px),
-              repeating-linear-gradient(86deg, transparent 0px, transparent 9px, rgba(255,255,255,0.14) 9px, rgba(255,255,255,0.14) 11px),
-              repeating-linear-gradient(91deg, transparent 0px, transparent 18px, rgba(0,0,0,0.18) 18px, rgba(0,0,0,0.18) 20px),
-              linear-gradient(145deg, #c45628 0%, #8a3418 50%, #582210 100%)
-            `.replace(/\s+/g, ' '),
-            borderRadius: 18,
-            border: '2px solid rgba(240,170,60,0.85)',
-            boxShadow: '0 0 18px rgba(240,160,40,0.55), 0 0 40px rgba(200,100,20,0.25), inset 0 0 30px rgba(0,0,0,0.45)',
-          }} />
+    <div className="overflow-x-hidden w-full">
+      <div className={`mx-auto ${s.boardInner}`}>
+        <div className={s.isoGrid}>
+          <div className={s.woodBorder} />
 
-          <div ref={gridRef} style={{ position: 'relative', transformStyle: 'preserve-3d' }}>
+          <div ref={gridRef} className={s.gridRef}>
             {[...BOARD_LAYOUT].reverse().map((row, rowIndex) => (
-              <div key={rowIndex} style={{ marginBottom: CELL_GAP, transformStyle: 'preserve-3d' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: CELL_GAP, transformStyle: 'preserve-3d' }}>
+              <div key={rowIndex} className={s.gridRow}>
+                <div className={s.gridCells}>
                   {row.map(squareIndex => (
                     <BoardCell
                       key={squareIndex}
@@ -445,6 +442,10 @@ const iconTextureCache = new Map<string, THREE.CanvasTexture | null>();
 function getIconTexture(name: string): THREE.CanvasTexture | null {
   if (!iconTextureCache.has(name)) iconTextureCache.set(name, buildIconTexture(name));
   return iconTextureCache.get(name) ?? null;
+}
+function disposeIconTextureCache() {
+  iconTextureCache.forEach(tex => tex?.dispose());
+  iconTextureCache.clear();
 }
 
 // ─── R3F: Cell3D ─────────────────────────────────────────────────────────────
@@ -701,19 +702,24 @@ function BoardGridR3F({
   diceResult, isDiceRolling, onDiceRollComplete, showDice,
 }: BoardGridProps) {
   const { colors } = useTheme();
+  const { zoom, canvasH } = useResponsiveBoardConfig();
+
+  useEffect(() => {
+    return () => { disposeIconTextureCache(); };
+  }, []);
 
   return (
-    <div style={{ overflowX: 'hidden', width: '100%' }}>
-      <div style={{ width: '100%', padding: '8px 0 48px' }}>
-        <div style={{ position: 'relative', height: CANVAS_H, overflow: 'hidden' }}>
+    <div className="overflow-x-hidden w-full">
+      <div className="w-full py-1">
+        <div className="relative overflow-hidden" style={{ height: canvasH }}>
           <Canvas
-            style={{ position: 'absolute', inset: 0 }}
+            className="absolute inset-0"
             shadows
             gl={{ antialias: true, powerPreference: 'low-power', toneMappingExposure: 1.1 }}
             dpr={[1, 2]}
           >
             <color attach="background" args={[colors.bgPrimary]} />
-            <OrthographicCamera makeDefault position={CAM_POS} zoom={68} near={0.1} far={100} />
+            <OrthographicCamera makeDefault position={CAM_POS} zoom={zoom} near={0.1} far={100} />
             <CameraLookAt />
 
             <Environment preset="sunset" />
@@ -792,13 +798,8 @@ export function Legend() {
     <div className="flex items-center justify-center gap-4 flex-wrap mt-2 px-4">
       {(['pause', 'chance', 'accord', 'complicite'] as const).map(type => (
         <div key={type} className="flex items-center gap-1.5">
-          <span style={{
-            display: 'inline-block',
-            width: 10, height: 10,
-            borderRadius: 3,
-            background: SQUARE_VISUAL[type].bg,
-          }} />
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
+          <span className="inline-block w-2.5 h-2.5 rounded-[3px]" style={{ background: SQUARE_VISUAL[type].bg }} />
+          <span className="text-[10px] text-white/45 font-semibold flex items-center gap-[3px]">
             {SQUARE_VISUAL[type].iconName && <DynamicIcon name={SQUARE_VISUAL[type].iconName} size={9} color="rgba(255,255,255,0.45)" />} {SQUARE_VISUAL[type].label}
           </span>
         </div>

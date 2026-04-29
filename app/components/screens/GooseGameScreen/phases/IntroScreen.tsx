@@ -25,15 +25,17 @@ export function IntroScreen({ savedGame, onNew, onResume }: IntroScreenProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col items-center p-6 gap-6 min-h-[70vh]"
-      style={{ color: 'white' }}
+      className="flex flex-col items-center p-6 gap-6 min-h-full"
+      style={{ color: 'white', background: 'linear-gradient(160deg, #0f172a 0%, #1e1040 60%, #2d1b69 100%)', minHeight: '100%' }}
     >
       <div className="text-center mt-4">
         <Dices size={60} className="mb-3 mx-auto" />
         <h1 className="text-2xl font-black mb-2">{t('gooseGame.intro.title')}</h1>
         <p className="text-white/65 text-sm leading-relaxed max-w-[280px] mx-auto">
-          {t('gooseGame.intro.sub1')}<br />
-          {t('gooseGame.intro.sub2')}
+          {t('gooseGame.intro.sub1')}
+        </p>
+        <p className="text-white/90 text-sm font-semibold mt-2 max-w-[280px] mx-auto">
+          {t('gooseGame.intro.goal')}
         </p>
       </div>
 

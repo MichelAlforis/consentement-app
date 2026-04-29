@@ -1,11 +1,11 @@
 import type { Screen } from '../types';
+import type { TabId } from '../stores/navigationStore';
 
 export type TabIconId = 'home' | 'learn' | 'play' | 'me';
 
 export interface ScreenMeta {
-  isRoot?: boolean;
-  header?: 'shown' | 'hidden';
   tab?: {
+    id: TabId;
     icon: TabIconId;
     labelKey: string;
     order: number;
@@ -17,85 +17,58 @@ export interface ScreenMeta {
 }
 
 export const screenMeta: Record<Screen, ScreenMeta> = {
-  welcome: { isRoot: true, header: 'hidden' },
-  'age-check': { isRoot: true, header: 'hidden' },
-  auth: { header: 'hidden' },
-  home: {
-    isRoot: true,
-    header: 'hidden',
-    tab: { icon: 'home', labelKey: 'tabs.home', order: 10 },
-  },
+  // ── Tab roots ──────────────────────────────────────────────────────────────
+  home:      { tab: { id: 'home',     icon: 'home',  labelKey: 'tabs.home',  order: 10 } },
+  apprendre: { tab: { id: 'apprendre', icon: 'learn', labelKey: 'tabs.learn', order: 20 } },
+  jeux:      { tab: { id: 'jeux',     icon: 'play',  labelKey: 'tabs.play',  order: 30 } },
+  moi:       { tab: { id: 'moi',      icon: 'me',    labelKey: 'tabs.me',    order: 40 } },
+
+  // ── Sub-screens (no special meta needed) ──────────────────────────────────
   settings: {},
   'personal-space': {},
   'duo-space': {},
-  learn: {
-    legacy: {
-      replacement: 'apprendre',
-      reason: 'Ancien écran éducatif conservé pour les navigations persistées.',
-    },
-  },
   help: {},
-  'scenarios-minor': {
-    legacy: {
-      replacement: 'apprendre',
-      reason: 'Ancienne entrée mineur désormais couverte par le hub Apprendre.',
-    },
-  },
-  feelings: {
-    legacy: {
-      replacement: 'apprendre',
-      reason: 'Ancienne entrée ressentis désormais couverte par le hub Apprendre.',
-    },
-  },
   'resources-minor': {},
   'porno-vs-realite': {},
   'loi-consentement': {},
   'quiz-consentement': {},
   'accompagnement-mineur': {},
-  jeux: {
-    isRoot: true,
-    tab: { icon: 'play', labelKey: 'tabs.play', order: 30 },
-  },
+  'accompagnement-adulte': {},
+  'annuaire-sexologues': {},
   'jeu-des': {},
   'jeu-oie': {},
   'jeu-cartes': {},
   'hall-of-cards': {},
-  apprendre: {
-    isRoot: true,
-    header: 'hidden',
-    tab: { icon: 'learn', labelKey: 'tabs.learn', order: 20 },
-  },
-  moi: {
-    isRoot: true,
-    header: 'hidden',
-    tab: { icon: 'me', labelKey: 'tabs.me', order: 40 },
-  },
   'module-de-base': {},
-  'accompagnement-adulte': {},
-  'annuaire-sexologues': {},
-  // Onboarding wizard
-  onboarding: { header: 'hidden' },
-  language: { header: 'hidden' },
-  'onboarding-slides': { header: 'hidden' },
-  'personal-intro': { header: 'hidden' },
-  // Premium
   premium: {},
   'theme-select': {},
+
+  // ── Fullscreen / onboarding (managed by fullscreenStack) ──────────────────
+  onboarding: {},
+  language: {},
+  welcome: {},
+  'age-check': {},
+  auth: {},
+  'personal-intro': {},
+  'onboarding-slides': {},
+
+  // ── Legacy routes ──────────────────────────────────────────────────────────
+  learn: {
+    legacy: { replacement: 'apprendre', reason: 'Ancien écran éducatif conservé pour les navigations persistées.' },
+  },
+  'scenarios-minor': {
+    legacy: { replacement: 'apprendre', reason: 'Ancienne entrée mineur désormais couverte par le hub Apprendre.' },
+  },
+  feelings: {
+    legacy: { replacement: 'apprendre', reason: 'Ancienne entrée ressentis désormais couverte par le hub Apprendre.' },
+  },
 };
 
 export const tabScreens = Object.entries(screenMeta)
   .filter((entry): entry is [Screen, ScreenMeta & { tab: NonNullable<ScreenMeta['tab']> }] => Boolean(entry[1].tab))
   .sort((a, b) => a[1].tab.order - b[1].tab.order)
-  .map(([screen, meta]) => ({ screen, ...meta.tab }));
-
-export function isRootScreen(screen: Screen): boolean {
-  return Boolean(screenMeta[screen].isRoot);
-}
+  .map(([screen, meta]) => ({ screen: screen as Screen, ...meta.tab }));
 
 export function isTabRootScreen(screen: Screen): boolean {
-  return Boolean(screenMeta[screen].tab);
-}
-
-export function shouldScreenShowHeader(screen: Screen): boolean {
-  return screenMeta[screen].header !== 'hidden';
+  return Boolean(screenMeta[screen]?.tab);
 }

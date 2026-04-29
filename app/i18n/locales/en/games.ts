@@ -83,6 +83,7 @@ export const games = {
       title: "Goose Game",
       sub1: '2 players · 1 phone · 24 squares',
       sub2: 'Move together, explore together.',
+      goal: 'Take turns rolling the die and experience activities together until you reach the end.',
       cellPause: 'Pause',
       cellPauseDesc: 'A mandatory moment to talk',
       cellChance: 'Chance',

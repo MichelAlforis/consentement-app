@@ -83,6 +83,7 @@ export const games = {
       title: "Juego de la Oca",
       sub1: '2 jugadores · 1 teléfono · 24 casillas',
       sub2: 'Avanzad juntos, explorad juntos.',
+      goal: 'Tirad el dado por turnos y vivid actividades juntos hasta llegar a la llegada.',
       cellPause: 'Pausa',
       cellPauseDesc: 'Un momento obligatorio para hablar',
       cellChance: 'Suerte',

@@ -1,14 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { isRootScreen, isTabRootScreen, screenMeta, tabScreens } from './screenMeta';
+import { isTabRootScreen, screenMeta, tabScreens } from './screenMeta';
 
 describe('screenMeta', () => {
-  it('keeps tab roots, root screens, and tab order in one config', () => {
+  it('defines exactly 4 tabs in the correct order', () => {
     expect(tabScreens.map((tab) => tab.screen)).toEqual(['home', 'apprendre', 'jeux', 'moi']);
+  });
 
+  it('tab screens are all recognised as tab roots', () => {
     for (const tab of tabScreens) {
-      expect(isRootScreen(tab.screen)).toBe(true);
       expect(isTabRootScreen(tab.screen)).toBe(true);
     }
+  });
+
+  it('non-tab screens are not tab roots', () => {
+    expect(isTabRootScreen('jeu-des')).toBe(false);
+    expect(isTabRootScreen('premium')).toBe(false);
+    expect(isTabRootScreen('settings')).toBe(false);
   });
 
   it('keeps legacy learning routes explicit', () => {

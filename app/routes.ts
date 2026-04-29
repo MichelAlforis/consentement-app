@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import type { Screen } from './types';
-import { isTabRootScreen, shouldScreenShowHeader } from './config/screenMeta';
+import { isTabRootScreen } from './config/screenMeta';
 
 export interface RouteConfig<Component = unknown> {
   component: Component;
@@ -94,14 +94,6 @@ export const ROUTES = {
 
 export function getRoute(screen: Screen): RouteConfig {
   return ROUTES[screen];
-}
-
-export function shouldShowHeader(screen: Screen): boolean {
-  return shouldScreenShowHeader(screen);
-}
-
-export function shouldShowTabBar(screen: Screen): boolean {
-  return isTabRootScreen(screen);
 }
 
 export function shouldShowAd(screen: Screen): boolean {

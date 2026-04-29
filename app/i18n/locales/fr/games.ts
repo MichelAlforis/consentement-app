@@ -83,6 +83,7 @@ export const games = {
       title: "Le Jeu de l'Oie",
       sub1: '2 joueurs · 1 téléphone · 24 cases',
       sub2: 'Avancez ensemble, explorez ensemble.',
+      goal: "Lancez le dé à tour de rôle et vivez des activités ensemble jusqu'à l'arrivée.",
       cellPause: 'Pause',
       cellPauseDesc: 'Un moment obligatoire pour se parler',
       cellChance: 'Chance',

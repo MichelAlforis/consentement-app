@@ -2,28 +2,26 @@
 
 import { Home, BookOpen, Gamepad2, User } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
-import { isTabRootScreen, tabScreens, type TabIconId } from '../../config/screenMeta';
+import { tabScreens, type TabIconId } from '../../config/screenMeta';
+import type { TabId } from '../../stores/navigationStore';
 
 interface TabBarProps {
-  currentScreen: Screen;
-  onNavigate: (screen: Screen) => void;
+  activeTab: TabId;
+  onSwitchTab: (tab: TabId) => void;
 }
 
 const TAB_ICONS: Record<TabIconId, (active: boolean, color: string) => React.ReactNode> = {
-  home: (active, color) => <Home size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-  learn: (active, color) => <BookOpen size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-  play: (active, color) => <Gamepad2 size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
-  me: (active, color) => <User size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  home:  (active, color) => <Home      size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  learn: (active, color) => <BookOpen  size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  play:  (active, color) => <Gamepad2  size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
+  me:    (active, color) => <User      size={22} style={{ color }} strokeWidth={active ? 2.5 : 1.8} />,
 };
 
-export function TabBar({ currentScreen, onNavigate }: TabBarProps) {
+export function TabBar({ activeTab, onSwitchTab }: TabBarProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  if (!isTabRootScreen(currentScreen)) return null;
 
   return (
     <div
@@ -31,13 +29,13 @@ export function TabBar({ currentScreen, onNavigate }: TabBarProps) {
       style={{ background: colors.bgCard, borderTop: `1px solid ${colors.border}` }}
     >
       {tabScreens.map((tab) => {
-        const active = currentScreen === tab.screen;
+        const active = activeTab === tab.id;
         const color = active ? colors.accent : colors.textMuted;
         return (
           <motion.button
-            key={tab.screen}
+            key={tab.id}
             whileTap={{ scale: 0.85 }}
-            onClick={() => onNavigate(tab.screen)}
+            onClick={() => onSwitchTab(tab.id)}
             className="flex-1 flex flex-col items-center justify-center gap-1 py-3"
           >
             {TAB_ICONS[tab.icon](active, color)}

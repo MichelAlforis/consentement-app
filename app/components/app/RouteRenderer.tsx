@@ -222,7 +222,7 @@ export function RouteRenderer({ currentScreen, theme, ...ctx }: RouteRendererPro
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div key={currentScreen} {...pageTransition}>
+      <motion.div key={currentScreen} {...pageTransition} className="flex-1 flex flex-col min-h-0">
         <Suspense fallback={<ScreenLoader />}>
           <ErrorBoundary label={currentScreen}>
             {SCREEN_RENDERS[currentScreen](ctx)}

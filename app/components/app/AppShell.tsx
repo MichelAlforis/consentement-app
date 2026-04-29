@@ -9,14 +9,18 @@ import { useTheme } from '../../context/ThemeContext';
 import { logger } from '../../lib/logger';
 import { getPlatform, isCapacitor } from '../../lib/platform';
 import { isAdultApp } from '../../lib/appVariant';
-import { getRoute, shouldShowTabBar } from '../../routes';
-import { isRootScreen, screenMeta } from '../../config/screenMeta';
+import { getRoute } from '../../routes';
+import { screenMeta } from '../../config/screenMeta';
 import {
   useAuthStore,
   useNavigationStore,
   useSettingsStore,
   useProfileStore,
   usePremiumStore,
+  selectCurrentScreen,
+  selectCanGoBack,
+  selectShowTabBar,
+  selectIsTabContext,
 } from '../../stores';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { HeaderController } from './HeaderController';
@@ -28,7 +32,7 @@ import { SplashScreen } from './SplashScreen';
 
 function useAndroidBackButton() {
   const { goBack } = useNavigationStore();
-  const currentScreen = useNavigationStore((s) => s.currentScreen);
+  const canGoBack = useNavigationStore(selectCanGoBack);
   const goBackRef = useRef(goBack);
 
   useEffect(() => { goBackRef.current = goBack; }, [goBack]);
@@ -38,12 +42,12 @@ function useAndroidBackButton() {
     let cleanup: (() => void) | undefined;
     import('@capacitor/app')
       .then(({ App }) => App.addListener('backButton', () => {
-        if (!isRootScreen(currentScreen)) goBackRef.current();
+        if (canGoBack) goBackRef.current();
       }))
       .then((handle) => { cleanup = () => handle.remove(); })
       .catch((err) => logger.warn('Capacitor back button unavailable', err));
     return () => cleanup?.();
-  }, [currentScreen]);
+  }, [canGoBack]);
 }
 
 function useAppDiagnostics(currentScreen: string) {
@@ -70,9 +74,11 @@ function useAppDiagnostics(currentScreen: string) {
 
 export function AppShell() {
   const theme = useTheme();
-  const currentScreen = useNavigationStore((s) => s.currentScreen);
-  const history = useNavigationStore((s) => s.history);
-  const { navigateTo, replaceWith, goBack } = useNavigationStore();
+  const currentScreen = useNavigationStore(selectCurrentScreen);
+  const activeTab = useNavigationStore((s) => s.activeTab);
+  const showTabBar = useNavigationStore(selectShowTabBar);
+  const isTabContext = useNavigationStore(selectIsTabContext);
+  const { navigateTo, replaceWith, goBack, switchTab } = useNavigationStore();
   const { isAdult, isHydrated, userName, setAgeGroup, authenticate } = useAuthStore();
   const onboardingStatus = useModuleProgressStore((s) => s.onboardingStatus);
   const hasOnboarded = onboardingStatus !== 'not_started';
@@ -90,13 +96,10 @@ export function AppShell() {
     return () => clearTimeout(t);
   }, []);
 
-  // Returning-user redirect: onboarding is the default starting screen (navigationStore not persisted).
-  // history.length === 0 means we're at the initial launch, not navigated here from within the app.
-  // hasOnboarded guard prevents a loop: guard redirects 'home'→'onboarding', this effect must not
-  // then redirect back to 'home' for a user who hasn't completed onboarding.
+  // Returning-user redirect: store is not persisted, so app always starts on 'onboarding'.
+  // If the user has already onboarded, skip the wizard and go directly to the tab layout.
   useEffect(() => {
-    if (currentScreen !== 'onboarding' && currentScreen !== 'language') return;
-    if (history.length > 0) return;
+    if (isTabContext) return; // already in tab context
     if (!hasOnboarded) return;
 
     if (isAdultApp) {
@@ -106,16 +109,15 @@ export function AppShell() {
     if (themeMode && (userName || isAdult === false)) {
       replaceWith('home');
     }
-  }, [currentScreen, history.length, isAdult, themeMode, userName, hasOnboarded, replaceWith]);
+  }, [isTabContext, isAdult, themeMode, userName, hasOnboarded, replaceWith]);
 
-  // If a returning user somehow lands on home without onboarding, redirect to wizard.
+  // If a returning user somehow lands in tab context without completing onboarding, send back.
   useEffect(() => {
-    if (currentScreen === 'home' && !hasOnboarded) {
-      replaceWith('onboarding');
-    }
-  }, [currentScreen, hasOnboarded, replaceWith]);
+    if (!isTabContext) return;
+    if (!hasOnboarded) replaceWith('onboarding');
+  }, [isTabContext, hasOnboarded, replaceWith]);
 
-  // Legacy routes + adult-only guard
+  // Legacy route redirect + adult-only guard
   useEffect(() => {
     const legacyReplacement = screenMeta[currentScreen]?.legacy?.replacement;
     if (legacyReplacement) {
@@ -135,48 +137,53 @@ export function AppShell() {
         {showSplash && <SplashScreen key="splash" />}
       </AnimatePresence>
 
-      {!showSplash && <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
-      <HeaderController isAdult={isAdult} theme={theme} />
+      {!showSplash && (
+        <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
+          <HeaderController isAdult={isAdult} theme={theme} />
 
-      <div className="flex-1 overflow-y-auto">
-        <Suspense fallback={<ScreenLoader />}>
-          <RouteRenderer
-            currentScreen={currentScreen}
-            isAdult={isAdult}
-            hasOnboarded={hasOnboarded}
-            userName={userName}
-            personalProfile={personalProfile}
-            isPremium={isPremium}
-            theme={theme}
-            navigateTo={navigateTo}
-            replaceWith={replaceWith}
-            goBack={goBack}
-            selectTheme={selectTheme}
-            handleAgeSelect={setAgeGroup}
-            handleAuth={authenticate}
-            updateComfortLevel={updateComfortLevel}
-            updateSafeword={updateSafeword}
-            activatePremium={activatePremium}
-          />
-        </Suspense>
-      </div>
+          <div className="flex-1 overflow-y-auto flex flex-col">
+            <Suspense fallback={<ScreenLoader />}>
+              <RouteRenderer
+                currentScreen={currentScreen}
+                isAdult={isAdult}
+                hasOnboarded={hasOnboarded}
+                userName={userName}
+                personalProfile={personalProfile}
+                isPremium={isPremium}
+                theme={theme}
+                navigateTo={navigateTo}
+                replaceWith={replaceWith}
+                goBack={goBack}
+                selectTheme={selectTheme}
+                handleAgeSelect={setAgeGroup}
+                handleAuth={authenticate}
+                updateComfortLevel={updateComfortLevel}
+                updateSafeword={updateSafeword}
+                activatePremium={activatePremium}
+              />
+            </Suspense>
+          </div>
 
-      {shouldShowTabBar(currentScreen) && <TabBar currentScreen={currentScreen} onNavigate={navigateTo} />}
-      <AdController />
-      {theme.effects.grain && <GrainOverlay />}
-      <Toast />
+          {showTabBar && (
+            <TabBar activeTab={activeTab} onSwitchTab={switchTab} />
+          )}
 
-      {(process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true') && (
-        <DevBar
-          isPremium={isPremium}
-          navigateTo={navigateTo}
-          handleAgeSelect={setAgeGroup}
-          handleAuth={authenticate}
-          deactivatePremium={deactivatePremium}
-          theme={theme}
-        />
+          <AdController />
+          {theme.effects.grain && <GrainOverlay />}
+          <Toast />
+
+          {process.env.NODE_ENV === 'development' && (
+            <DevBar
+              isPremium={isPremium}
+              navigateTo={navigateTo}
+              handleAgeSelect={setAgeGroup}
+              handleAuth={authenticate}
+              deactivatePremium={deactivatePremium}
+              theme={theme}
+            />
+          )}
+        </div>
       )}
-    </div>}
     </>
   );
 }

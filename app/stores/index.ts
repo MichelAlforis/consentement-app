@@ -1,4 +1,14 @@
-export { useNavigationStore, selectShowHeader, selectCanGoBack } from './navigationStore';
+export {
+  useNavigationStore,
+  selectCurrentScreen,
+  selectCanGoBack,
+  selectIsTabContext,
+  selectIsAtTabRoot,
+  selectShowTabBar,
+  selectShowHeader,
+  NAVIGATION_INITIAL_STATE,
+  type TabId,
+} from './navigationStore';
 export { useAuthStore } from './authStore';
 export { useSettingsStore } from './settingsStore';
 export { useProfileStore } from './profileStore';
@@ -8,7 +18,7 @@ export { useUnlockStore } from './unlockStore';
 export type { OwnedCard, Rarity } from './unlockStore';
 export { useModuleProgressStore } from './moduleProgressStore';
 
-import { useNavigationStore } from './navigationStore';
+import { useNavigationStore, NAVIGATION_INITIAL_STATE } from './navigationStore';
 import { useAuthStore } from './authStore';
 import { useSettingsStore } from './settingsStore';
 import { useProfileStore } from './profileStore';
@@ -19,7 +29,7 @@ import { useModuleProgressStore } from './moduleProgressStore';
 import { initialPersonalProfile } from '../data';
 
 export function resetAllData() {
-  useNavigationStore.setState({ currentScreen: 'welcome', history: [] });
+  useNavigationStore.setState(NAVIGATION_INITIAL_STATE);
   useAuthStore.setState({ isAuthenticated: false, isAdult: null, userName: '', pronouns: null });
   useSettingsStore.setState({ themeMode: null, theme: null, explicitMode: false });
   useProfileStore.setState({ personalProfile: initialPersonalProfile });

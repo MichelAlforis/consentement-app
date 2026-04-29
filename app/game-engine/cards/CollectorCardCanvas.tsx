@@ -595,8 +595,15 @@ export function CardMesh({
     };
   }, [card.rarity, flipDuration, vibrate]);
 
-  const prevFlipped = useRef(isFlipped);
+  // null = premier mount pas encore traité (résolution Suspense peut retarder le mount
+  // après que isFlipped a déjà changé côté parent — le pattern prev !== next raterait le flip)
+  const prevFlipped = useRef<boolean | null>(null);
   useEffect(() => {
+    if (prevFlipped.current === null) {
+      prevFlipped.current = isFlipped;
+      if (isFlipped) triggerFlip(true, onFlipComplete);
+      return;
+    }
     if (prevFlipped.current !== isFlipped) {
       prevFlipped.current = isFlipped;
       triggerFlip(isFlipped, onFlipComplete);

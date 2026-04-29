@@ -212,6 +212,9 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
     setPos1(savedGame.positions[1]);
     setCurPlayer(savedGame.currentPlayer);
     setAccordsCount(savedGame.accordsCount);
+    usedActivityIds.current.clear();
+    usedPauseIds.current.clear();
+    usedAccordIds.current.clear();
     setStep('roll');
     setPhase('playing');
   }, [savedGame]);

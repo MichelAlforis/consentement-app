@@ -276,8 +276,9 @@ function CameraUpdater({ showCard }: { showCard: boolean }) {
   const { camera } = useThree();
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
-    cam.position.z = showCard ? 3.2 : 2.5;
-    cam.fov = showCard ? 52 : 45;
+    // Avec carte (scale 0.72) : recul + FOV légèrement plus large pour contenir die+card
+    cam.position.z = showCard ? 3.4 : 2.5;
+    cam.fov = showCard ? 54 : 45;
     cam.updateProjectionMatrix();
   }, [showCard, camera]);
   return null;
@@ -302,7 +303,8 @@ function DiceScene({
   }, [gl]);
 
   const hasCard = !!(showCard && previewCard);
-  const dieX = hasCard ? -0.55 : 0;
+  // Dé décalé à gauche quand la carte est présente — les deux objets se partagent le canvas
+  const dieX = hasCard ? -0.52 : 0;
 
   return (
     <>
@@ -328,7 +330,8 @@ function DiceScene({
           />
         </group>
         {hasCard && (
-          <group position={[0.72, 0, 0]} scale={0.55}>
+          // scale 0.72 → carte ~55×83px vs dé ~77×77px — proportions équilibrées
+          <group position={[0.70, 0, 0]} scale={0.72}>
             <Suspense fallback={null}>
               <CardMesh card={previewCard} isFlipped={true} />
             </Suspense>
