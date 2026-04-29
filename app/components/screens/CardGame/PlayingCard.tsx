@@ -149,30 +149,21 @@ export function PlayingCard({
 
   return (
     <div
-      className={s.root}
-      style={{
-        opacity: hideAll ? 0 : undefined,
-        pointerEvents: hideAll ? 'none' : undefined,
-      }}
+      className={`${s.root}${hideAll ? ' opacity-0 pointer-events-none' : ''}`}
     >
       <DeckStack remaining={deckRemaining} gradient={cat.gradient} isAnimating={isAnimating} />
 
       {/* Drag wrapper */}
       <motion.div
         ref={cardRef}
-        className={s.dragWrapper}
+        className={`${s.dragWrapper} ${canDrag ? 'cursor-grab' : 'cursor-default'}`}
         drag={canDrag ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
         animate={controls}
         whileDrag={{ cursor: 'grabbing' }}
-        style={{
-          x: dragX,
-          rotate: dragRotate,
-          opacity: dragOpacity,
-          cursor: canDrag ? 'grab' : 'default',
-        }}
+        style={{ x: dragX, rotate: dragRotate, opacity: dragOpacity }}
       >
         {/* Perspective isolated from drag — keeps swipe exit flat 2D */}
         <div className={s.perspective}>
