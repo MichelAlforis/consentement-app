@@ -7,6 +7,7 @@ import { ShimmerLayer } from '../../components/ui/ThemeEffects';
 import { DiceCanvas } from './DiceCanvas';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { DiceConfig, DiceFace } from './types';
+import { useRenderMode } from '../../hooks/useRenderMode';
 
 // ─── 6-face 3D cube ───────────────────────────────────────────────────────────
 
@@ -281,7 +282,10 @@ export interface DiceRendererProps {
   showCard?: boolean;
 }
 
-export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer = 'css', size, mode = 'category', previewCard, showCard }: DiceRendererProps) {
+export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer: rendererProp, size, mode = 'category', previewCard, showCard }: DiceRendererProps) {
+  const storeMode = useRenderMode();
+  // prop explicite en override (pages de test) ; sinon → store adaptatif
+  const renderer = rendererProp ?? (storeMode === 'r3f' ? 'webgl' : 'css');
   if (renderer === 'webgl') {
     return (
       <DiceCanvas

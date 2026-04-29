@@ -16,6 +16,7 @@ import { drawIconNodes } from '../../utils/iconPaths';
 import { DURATION, EASING } from '../../constants/motion';
 import { RADIUS } from '../../constants/tokens';
 import { initGrain, getGrainCanvas } from '../../utils/grainTexture';
+import { useRenderMode } from '../../hooks/useRenderMode';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -1071,8 +1072,14 @@ export interface CollectorCardCanvasProps {
 export function CollectorCardCanvas({
   card, isFlipped, size = 160, autoFlip, onFlipComplete,
 }: CollectorCardCanvasProps) {
+  const renderMode = useRenderMode();
   const [mounted, setMounted]     = useState(false);
   const [frameloop, setFrameloop] = useState<'always' | 'demand'>('always');
+
+  // Mode CSS : aucun Canvas WebGL monté — rendu direct sans cohabitation
+  if (renderMode === 'css') {
+    return <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />;
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);

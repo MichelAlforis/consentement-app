@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight, Calendar, Sprout, TreeDeciduous, Lock,
@@ -21,6 +21,7 @@ import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/
 import { themes, type ThemeMode } from '../../types/theme';
 import type { Language, Screen } from '../../types';
 import { comfortCategories } from '../../data';
+import { useRenderModeStore } from '../../stores/renderModeStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -441,6 +442,11 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
   const completeModule = useModuleComplete();
   const [stepIndex, setStepIndex] = useState(0);
+  const detectAndSet = useRenderModeStore((s) => s.detectAndSet);
+
+  // Détection GPU au mount — silencieuse, ~50ms, résultat persisté
+  // Sur les visites suivantes, renderMode est déjà en store → detectAndSet() retourne immédiatement
+  useEffect(() => { detectAndSet(); }, [detectAndSet]);
 
   const slides = isAdult === false ? MODULE_DE_BASE_SLIDES_MINEUR : MODULE_DE_BASE_SLIDES;
 

@@ -13,6 +13,7 @@ import type { IconName } from '../../../../utils/iconFromName';
 import { useTheme } from '../../../../context/ThemeContext';
 import { ICON_NODES } from '../../../../utils/iconPaths';
 import s from './Board.module.css';
+import { useRenderMode } from '../../../../hooks/useRenderMode';
 
 // ─── CSS constants ────────────────────────────────────────────────────────────
 
@@ -321,26 +322,6 @@ interface BoardGridProps {
   isDiceRolling?: boolean;
   onDiceRollComplete?: () => void;
   showDice?: boolean;
-}
-
-// ─── useWebGLSupport ──────────────────────────────────────────────────────────
-
-function useWebGLSupport(): boolean | null {
-  const [supported, setSupported] = useState<boolean | null>(null);
-  useEffect(() => {
-    try {
-      const canvas = document.createElement('canvas');
-      const ctx =
-        canvas.getContext('webgl2') ||
-        canvas.getContext('webgl') ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (canvas.getContext as any)('experimental-webgl');
-      setSupported(!!ctx);
-    } catch {
-      setSupported(false);
-    }
-  }, []);
-  return supported;
 }
 
 // ─── BoardGridCSS ─────────────────────────────────────────────────────────────
@@ -812,10 +793,8 @@ function BoardGridR3F({
 // ─── BoardGrid (export — API stable) ─────────────────────────────────────────
 
 export function BoardGrid(props: BoardGridProps) {
-  const webgl = useWebGLSupport();
-  // null = SSR / detection en cours → CSS jusqu'à confirmation WebGL
-  if (webgl === null) return <BoardGridCSS {...props} />;
-  return webgl ? <BoardGridR3F {...props} /> : <BoardGridCSS {...props} />;
+  const renderMode = useRenderMode();
+  return renderMode === 'r3f' ? <BoardGridR3F {...props} /> : <BoardGridCSS {...props} />;
 }
 
 // ─── Legend ───────────────────────────────────────────────────────────────────

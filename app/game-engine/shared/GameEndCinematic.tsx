@@ -2,6 +2,7 @@
 import { useMemo, useState, useEffect, Component, ReactNode } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Sparkles, Float, MeshDistortMaterial, AdaptiveDpr } from '@react-three/drei';
+import { useRenderMode } from '../../hooks/useRenderMode';
 
 type Intensity = 'low' | 'medium' | 'high';
 
@@ -95,6 +96,7 @@ export interface GameEndCinematicProps {
 }
 
 export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'medium', darkOverlay = false }: GameEndCinematicProps) {
+  const renderMode = useRenderMode();
   // Defer Canvas mount: AnimatePresence swaps views synchronously on iOS —
   // the parent has no dimensions yet at that instant. 60ms lets layout settle.
   const [mounted, setMounted] = useState(false);
@@ -102,6 +104,8 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
   }, []);
+
+  if (renderMode === 'css') return null;
 
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>

@@ -261,17 +261,17 @@ if (renderMode === 'css') return null;
 
 | Composant | Fallback CSS | Câblage mode adaptatif |
 |---|---|---|
-| `DiceRenderer` | ✅ existe (`Cube6`) | 🔲 à câbler |
-| `CollectorCardCanvas` | ✅ existe (`CSSCardFallback`) | 🔲 court-circuit à ajouter |
-| `Board` | ✅ existe (`BoardGridCSS`) | 🔲 remplacer `useWebGLSupport` |
-| `BoardDice3D` | ✅ (non rendu si Board CSS) | 🔲 cohabitation active à corriger |
-| `AccordFlow` (GooseGame) | ✅ (`CSSCardFallback`) | 🔲 cohabitation active à corriger |
-| `DiceGame intro` (preview dé) | ✅ image statique CSS | 🔲 supprimer Canvas WebGL inutile |
-| `HallOfCards` fullscreen | ✅ tilt Framer Motion | 🔲 retirer `CollectorCardCanvas` R3F |
-| `GameEndCinematic` | ✅ (`return null`) | 🔲 à câbler |
-| `RenderModeProvider` | — | 🔲 à créer |
-| `renderModeStore` | — | 🔲 à créer |
-| `useRenderMode` | — | 🔲 à créer |
+| `DiceRenderer` | ✅ existe (`Cube6`) | ✅ prop override + store |
+| `CollectorCardCanvas` | ✅ existe (`CSSCardFallback`) | ✅ court-circuit avant Canvas |
+| `Board` | ✅ existe (`BoardGridCSS`) | ✅ `useWebGLSupport` supprimé |
+| `BoardDice3D` | ✅ (non rendu si Board CSS) | ✅ implicite via Board |
+| `AccordFlow` (GooseGame) | ✅ (`CSSCardFallback`) | ✅ via CollectorCardCanvas |
+| `DiceGame intro` (preview dé) | ✅ CSS par défaut | ✅ via DiceRenderer store |
+| `HallOfCards` fullscreen | ✅ tilt Framer Motion | ✅ via CollectorCardCanvas |
+| `GameEndCinematic` | ✅ (`return null`) | ✅ skip si mode css |
+| `renderModeStore` | — | ✅ créé (`app/stores/renderModeStore.ts`) |
+| `useRenderMode` | — | ✅ créé (`app/hooks/useRenderMode.ts`) |
+| Déclenchement détection | — | ✅ `OnboardingWizard` mount |
 
 ---
 
