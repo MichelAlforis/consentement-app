@@ -103,24 +103,13 @@ export function CardFullscreenOverlay({ card, onClose }: CardFullscreenOverlayPr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 50,
-        background: 'rgba(4,2,12,0.97)',
-        overflow: 'hidden',
-      }}
+      className="fixed inset-0 z-50 bg-[rgba(4,2,12,0.97)] overflow-hidden"
     >
       {/* Close button */}
       <motion.button
         whileTap={{ scale: 0.9 }}
         onClick={onClose}
-        style={{
-          position: 'absolute', top: 52, right: 20,
-          width: 36, height: 36, borderRadius: 18,
-          background: 'rgba(255,255,255,0.08)',
-          border: '1px solid rgba(255,255,255,0.14)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 10, cursor: 'pointer',
-        }}
+        className="absolute top-[52px] right-5 w-9 h-9 rounded-[18px] bg-white/[0.08] border border-white/[0.14] flex items-center justify-center z-10 cursor-pointer"
       >
         <X size={16} color="rgba(255,255,255,0.7)" />
       </motion.button>
@@ -131,32 +120,16 @@ export function CardFullscreenOverlay({ card, onClose }: CardFullscreenOverlayPr
         dragConstraints={{ top: 0, bottom: 220 }}
         dragElastic={0.12}
         onDragEnd={handleDragEnd}
-        style={{
-          y: dragY,
-          opacity: dragOpacity,
-          position: 'absolute', inset: 0,
-        }}
+        className="absolute inset-0"
+        style={{ y: dragY, opacity: dragOpacity }}
       >
         {/* Pointer tracking area + layout */}
         <div
           ref={contentRef}
-          style={{
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 28,
-            paddingTop: 60,
-            paddingBottom: 32,
-            cursor: 'grab',
-          }}
+          className="h-full flex flex-col items-center justify-center gap-7 pt-[60px] pb-8 cursor-grab"
         >
           {/* Drag handle hint */}
-          <div style={{
-            width: 36, height: 4, borderRadius: 2,
-            background: 'rgba(255,255,255,0.2)',
-          }} />
+          <div className="w-9 h-1 rounded-[2px] bg-white/20" />
 
           {/* 3D perspective + CSS tilt wrapper */}
           <div style={{ perspective: '1400px' }}>
@@ -170,35 +143,23 @@ export function CardFullscreenOverlay({ card, onClose }: CardFullscreenOverlayPr
           </div>
 
           {/* Texte + badge thème */}
-          <div style={{ maxWidth: 310, padding: '0 20px', textAlign: 'center' }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              padding: '4px 12px', borderRadius: 20,
-              background: card.gradient, marginBottom: 14,
-            }}>
+          <div className="max-w-[310px] px-5 text-center">
+            <div
+              className="inline-flex items-center gap-[6px] px-3 py-1 rounded-[20px] mb-[14px]"
+              style={{ background: card.gradient }}
+            >
               <DynamicIcon name={card.iconName} size={11} color="white" />
-              <span style={{
-                fontSize: 10, fontWeight: 700, color: 'white',
-                letterSpacing: '0.06em',
-              }}>
+              <span className="text-[10px] font-bold text-white tracking-[0.06em]">
                 {card.themeName ?? card.theme}
               </span>
             </div>
 
-            <p style={{
-              fontSize: 15, lineHeight: 1.65,
-              color: 'rgba(255,255,255,0.85)',
-              margin: 0,
-            }}>
+            <p className="text-[15px] leading-[1.65] text-white/85 m-0">
               {card.text}
             </p>
 
             {card.rarity !== 'common' && (
-              <p style={{
-                marginTop: 10, fontSize: 11, fontWeight: 700,
-                color: card.border, letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-              }}>
+              <p className="mt-[10px] text-[11px] font-bold tracking-[0.08em] uppercase" style={{ color: card.border }}>
                 ✦ {card.rarity === 'unique' ? 'Unique' : 'Rare'}
               </p>
             )}
@@ -211,13 +172,7 @@ export function CardFullscreenOverlay({ card, onClose }: CardFullscreenOverlayPr
               animate={{ opacity: 1, y: 0 }}
               whileTap={{ scale: 0.97 }}
               onClick={requestPermission}
-              style={{
-                padding: '10px 22px', borderRadius: 12,
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.13)',
-                color: 'rgba(255,255,255,0.55)',
-                fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              }}
+              className="px-[22px] py-[10px] rounded-xl bg-white/[0.07] border border-white/[0.13] text-white/55 text-xs font-semibold cursor-pointer"
             >
               Activer le gyroscope
             </motion.button>
