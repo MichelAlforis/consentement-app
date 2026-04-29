@@ -36,7 +36,7 @@ export function TabBar({ activeTab, onSwitchTab }: TabBarProps) {
             key={tab.id}
             whileTap={{ scale: 0.85 }}
             onClick={() => onSwitchTab(tab.id)}
-            className="flex-1 flex flex-col items-center justify-center gap-1 py-3"
+            className="relative flex-1 flex flex-col items-center justify-center gap-1 py-3"
           >
             {TAB_ICONS[tab.icon](active, color)}
             <span

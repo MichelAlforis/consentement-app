@@ -1076,15 +1076,12 @@ export function CollectorCardCanvas({
   const [mounted, setMounted]     = useState(false);
   const [frameloop, setFrameloop] = useState<'always' | 'demand'>('always');
 
-  // Mode CSS : aucun Canvas WebGL monté — rendu direct sans cohabitation
-  if (renderMode === 'css') {
-    return <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />;
-  }
-
+  // Tous les hooks doivent être appelés inconditionnellement (rules of hooks)
   useEffect(() => {
+    if (renderMode !== 'r3f') return;
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
-  }, []);
+  }, [renderMode]);
 
   useEffect(() => { setFrameloop('always'); }, [isFlipped, autoFlip]);
 
@@ -1095,6 +1092,18 @@ export function CollectorCardCanvas({
 
   const w = size;
   const h = Math.round(size * 1.5);
+
+  // Système CSS : carte complète + shimmer/gyro — zéro WebGL
+  if (renderMode === 'css') {
+    return (
+      <div style={{ width: w, height: h, position: 'relative', overflow: 'hidden' }}>
+        <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />
+        <LightOverlay rarity={card.rarity} isFlipped={isFlipped} size={size} />
+      </div>
+    );
+  }
+
+  // Système R3F : Canvas + shimmer/gyro en overlay CSS
   const fallback = <CSSCardFallback card={card} isFlipped={isFlipped} size={size} />;
 
   return (
