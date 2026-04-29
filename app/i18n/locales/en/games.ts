@@ -51,6 +51,7 @@ export const games = {
     startVote: 'Start vote',
     newRoll: 'New roll',
     changeMode: 'Change mode',
+    quit: 'Back to games',
     person1: 'Person 1 — answer alone',
     person2: 'Person 2 — answer alone',
     areYouIn: 'Are you in?',

@@ -33,12 +33,15 @@ const DICE_CONFIG: DiceConfig = {
   })),
 };
 
+import type { Screen } from '../../../types';
+
 interface DiceGameScreenProps {
   isPremium: boolean;
   isAdult: boolean;
+  onNavigate: (screen: Screen) => void;
 }
 
-export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
+export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const rarityColor: Record<string, string> = { common: colors.textMuted, rare: colors.rare, unique: colors.unique };
@@ -251,6 +254,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
                     <div className="space-y-3 mt-auto">
                       <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
                       <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
+                      <motion.button
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                        whileTap={{ scale: 0.97 }} onClick={() => onNavigate('jeux')}
+                        className="w-full py-3 rounded-2xl font-semibold text-sm"
+                        style={{ color: colors.textMuted }}
+                      >
+                        {t('diceGame.quit')}
+                      </motion.button>
                     </div>
                   ) : (
                     <div className="mt-auto">
@@ -405,6 +416,14 @@ export function DiceGameScreen({ isPremium, isAdult }: DiceGameScreenProps) {
             <div className="space-y-3 w-full max-w-xs mt-6">
               <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
               <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
+              <motion.button
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                whileTap={{ scale: 0.97 }} onClick={() => onNavigate('jeux')}
+                className="w-full py-3 rounded-2xl font-semibold text-sm"
+                style={{ color: colors.textMuted }}
+              >
+                {t('diceGame.quit')}
+              </motion.button>
             </div>
             </div>
           </motion.div>

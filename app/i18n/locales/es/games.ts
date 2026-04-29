@@ -51,6 +51,7 @@ export const games = {
     startVote: 'Empezar el voto',
     newRoll: 'Nueva tirada',
     changeMode: 'Cambiar de modo',
+    quit: 'Volver a los juegos',
     person1: 'Persona 1 — responde solo/a',
     person2: 'Persona 2 — responde solo/a',
     areYouIn: '¿Te apuntas?',
