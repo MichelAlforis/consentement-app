@@ -60,7 +60,6 @@ export function GamesHubScreen({
 
   const handleItemClick = (item: GameMenuItem) => {
     if (item.availability === 'coming-soon') {
-      if (!isPremium) onGoPremium();
       return;
     }
     if (item.availability === 'premium' && !isPremium) {

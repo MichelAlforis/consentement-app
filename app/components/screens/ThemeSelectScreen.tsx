@@ -111,7 +111,7 @@ export function ThemeSelectScreen({ onSelectTheme, isPremium = false, onGoPremiu
           >
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-xs text-gray-400 flex items-center gap-1">
-              <Lock size={11} /> {t('premium.title').split(' ').pop()}
+              <Lock size={11} /> {t('games.premium')}
             </span>
             <div className="flex-1 h-px bg-gray-200" />
           </motion.div>

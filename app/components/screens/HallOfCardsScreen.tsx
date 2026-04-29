@@ -303,6 +303,27 @@ export function HallOfCardsScreen({ isAdult, onNavigate }: HallOfCardsScreenProp
           </div>
         </div>
 
+        {totalOwned === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl p-4 mb-6 flex items-center justify-between gap-3"
+            style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+          >
+            <p className="text-sm flex-1" style={{ color: colors.textSecondary }}>
+              {t('hallOfCards.emptyDesc')}
+            </p>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => onNavigate('module-de-base')}
+              className="text-xs font-bold px-3 py-2 rounded-xl shrink-0 text-white"
+              style={{ background: colors.accentGradient }}
+            >
+              {t('hallOfCards.emptyCTA')}
+            </motion.button>
+          </motion.div>
+        )}
+
         {primarySections.map((s, i) => (
           <ThemeSection
             key={s.theme}
