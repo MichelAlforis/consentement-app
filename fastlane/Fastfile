@@ -1,0 +1,98 @@
+default_platform(:ios)
+
+APP_IDS = {
+  base:  "fr.consentement.app",
+  adult: "fr.consentement.explicit",
+}.freeze
+
+platform :ios do
+
+  # ── Certificats ──────────────────────────────────────────────────────────────
+
+  desc "Génère / renouvelle les certificats et profils (Match)"
+  lane :certs do
+    match(type: "appstore", readonly: false)
+  end
+
+  desc "Sync les certs en lecture seule (CI)"
+  lane :certs_ci do
+    match(type: "appstore", readonly: true)
+  end
+
+  # ── TestFlight ───────────────────────────────────────────────────────────────
+
+  desc "Build + upload TestFlight — variante base (fr.consentement.app)"
+  lane :beta do
+    _build_and_upload(variant: :base)
+  end
+
+  desc "Build + upload TestFlight — variante adulte (fr.consentement.explicit)"
+  lane :beta_adult do
+    _build_and_upload(variant: :adult)
+  end
+
+  # ── App Store ────────────────────────────────────────────────────────────────
+
+  desc "Release App Store — variante base"
+  lane :release do
+    _build_and_upload(variant: :base, submit: true)
+  end
+
+  # ── Privé ────────────────────────────────────────────────────────────────────
+
+  private_lane :_build_and_upload do |options|
+    variant   = options[:variant] || :base
+    submit    = options[:submit]  || false
+    bundle_id = APP_IDS[variant]
+    env_flag  = variant == :adult ? "APP_VARIANT=adult " : ""
+
+    UI.message("▶ Variant : #{variant} — #{bundle_id}")
+
+    # 1. Build Next.js + sync Capacitor
+    sh("cd .. && npm run build")
+    sh("cd .. && #{env_flag}npx cap sync ios")
+
+    # 2. Certificats + profils via Match
+    match(
+      type: "appstore",
+      app_identifier: bundle_id,
+      readonly: is_ci,
+    )
+
+    # 3. Build number = dernier TestFlight + 1
+    build_num = latest_testflight_build_number(app_identifier: bundle_id) + 1
+    increment_build_number(
+      build_number: build_num,
+      xcodeproj: "ios/App/App.xcodeproj",
+    )
+
+    # 4. Build IPA
+    gym(
+      scheme: "App",
+      project: "ios/App/App.xcodeproj",
+      export_method: "app-store",
+      output_directory: "build",
+      output_name: "Consentement-#{variant}.ipa",
+      clean: true,
+      xcargs: "CODE_SIGN_STYLE=Manual",
+    )
+
+    # 5. Upload TestFlight ou App Store
+    if submit
+      deliver(
+        app_identifier: bundle_id,
+        skip_screenshots: true,
+        skip_metadata: false,
+        force: true,
+      )
+    else
+      pilot(
+        app_identifier: bundle_id,
+        skip_waiting_for_build_processing: true,
+        distribute_external: false,
+        changelog: "Build #{build_num} — #{Time.now.strftime('%Y-%m-%d')}",
+      )
+    end
+  end
+
+end

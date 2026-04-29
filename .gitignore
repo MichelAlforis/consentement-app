@@ -31,6 +31,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# fastlane
+fastlane/.env.secret
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+*.ipa
+*.dSYM.zip
 *.png
 !e2e/**/*.png
 .playwright-mcp/
