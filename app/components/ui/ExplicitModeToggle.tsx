@@ -72,7 +72,7 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
             className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: explicitMode ? `${EXPLICIT_RED}20` : `${EXPLICIT_RED}12` }}
           >
-            <Flame size={20} style={{ color: EXPLICIT_RED }} />
+            <Flame size={20} color={EXPLICIT_RED} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
@@ -92,8 +92,7 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end justify-center p-4 pb-8"
-            style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)' }}
+            className="fixed inset-0 z-50 flex items-end justify-center p-4 pb-8 bg-black/65 backdrop-blur-[8px]"
             onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}
           >
             <motion.div
@@ -106,10 +105,9 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
             >
               <div className="flex items-start gap-3 mb-4">
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                  style={{ background: `${EXPLICIT_RED}18` }}
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#ef444418]"
                 >
-                  <Flame size={24} style={{ color: EXPLICIT_RED }} />
+                  <Flame size={24} color={EXPLICIT_RED} />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-base" style={{ color: colors.textPrimary }}>
@@ -133,8 +131,7 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={confirm}
-                  className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white"
-                  style={{ background: EXPLICIT_RED }}
+                  className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white bg-[#ef4444]"
                 >
                   {t('settings.explicit.modal.confirm')}
                 </motion.button>

@@ -13,22 +13,17 @@ export function ZoneIndicator({ currentZone, zoneIndex }: ZoneIndicatorProps) {
       {[0, 1, 2].map(i => (
         <div
           key={i}
+          className="h-[3px] rounded transition-all duration-[600ms]"
           style={{
-            height: 3,
             width: i === zoneIndex ? 24 : 8,
-            borderRadius: 4,
             background: i === zoneIndex ? currentZone.color : 'rgba(255,255,255,0.2)',
-            transition: 'all 0.6s ease',
           }}
         />
       ))}
-      <span style={{
-        fontSize: 10,
-        color: currentZone.color,
-        fontWeight: 700,
-        marginLeft: 4,
-        transition: 'color 0.6s ease',
-      }}>
+      <span
+        className="text-[10px] font-bold ml-1 transition-colors duration-[600ms] flex items-center gap-1"
+        style={{ color: currentZone.color }}
+      >
         <DynamicIcon name={currentZone.iconName} size={9} color={currentZone.color} /> {currentZone.name}
       </span>
     </div>

@@ -32,7 +32,7 @@ export function ConfettiParticles({ id }: ConfettiParticlesProps) {
   [id]);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 300, overflow: 'hidden' }}>
+    <div className="fixed inset-0 pointer-events-none z-[300] overflow-hidden">
       {particles.map(p => (
         <motion.div
           key={p.id}
@@ -45,7 +45,7 @@ export function ConfettiParticles({ id }: ConfettiParticlesProps) {
             scale: p.scale,
           }}
           transition={{ duration: 1.6, ease: [0.22, 0.61, 0.36, 1], delay: p.delay }}
-          style={{ position: 'absolute' }}
+          className="absolute"
         >
           <DynamicIcon name={p.icon} size={24} color={p.color} />
         </motion.div>

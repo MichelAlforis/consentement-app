@@ -108,7 +108,7 @@ export function Card({
       {effects.shimmer && (variant === 'elevated' || variant === 'default') && (
         <ShimmerLayer color={effects.shimmerColor} />
       )}
-      <div className="relative" style={{ zIndex: 2 }}>
+      <div className="relative z-[2]">
         {children}
       </div>
     </motion.div>
