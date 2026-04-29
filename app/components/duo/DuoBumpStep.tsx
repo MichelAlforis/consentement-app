@@ -41,7 +41,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[70vh] px-6"
+      className="flex flex-col items-center justify-center flex-1 px-6"
     >
       <AnimatePresence mode="wait">
         {bumpState === 'waiting' && (

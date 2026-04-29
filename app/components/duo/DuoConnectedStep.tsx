@@ -26,7 +26,7 @@ export function DuoConnectedStep({ onComplete }: DuoConnectedStepProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[60vh] px-6"
+      className="flex flex-col items-center justify-center flex-1 px-6"
     >
       {/* Animation des deux cercles qui fusionnent */}
       <div className="relative w-48 h-48 mb-8">

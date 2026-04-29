@@ -491,7 +491,7 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   };
 
   return (
-    <div className="h-dvh min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
       {/* Top bar — progress + skip */}
       <div className="shrink-0 flex items-center gap-3 px-5 pt-5 pb-3 safe-area-top">
         <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>

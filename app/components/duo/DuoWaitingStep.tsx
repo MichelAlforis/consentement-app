@@ -36,7 +36,7 @@ export function DuoWaitingStep({ partnerName, onPartnerReady }: DuoWaitingStepPr
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[70vh] px-6"
+      className="flex flex-col items-center justify-center flex-1 px-6"
     >
       {/* Animation poétique - vagues/respiration */}
       <div className="relative w-64 h-64 mb-8">

@@ -98,7 +98,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center min-h-[70vh] px-6"
+        className="flex flex-col items-center justify-center flex-1 px-6"
       >
         <motion.div
           animate={{ scale: [1, 1.2, 1] }}
@@ -128,7 +128,7 @@ export function DuoRevealStep({ commonGround, onComplete }: DuoRevealStepProps) 
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="px-5 py-6 min-h-[70vh]"
+      className="px-5 py-6 flex-1"
     >
       <div className="flex justify-center gap-3 mb-8">
         {categoryKeys.map((key, idx) => (
