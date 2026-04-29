@@ -14,13 +14,6 @@ export const TAB_ROOTS: Record<TabId, Screen> = {
   moi: 'moi',
 };
 
-// Screens rendered as a full-page overlay (no TabBar, no Header).
-// The onboarding wizard manages its own navigation internally.
-const FULLSCREEN_SCREENS = new Set<Screen>([
-  'onboarding', 'language', 'welcome', 'age-check',
-  'auth', 'personal-intro', 'onboarding-slides',
-]);
-
 // Screens pushed on top of the tab layout as a modal (TabBar hidden).
 const MODAL_SCREENS = new Set<Screen>(['premium']);
 
@@ -52,7 +45,7 @@ interface NavigationStore {
   goBack: () => void;
 }
 
-export const useNavigationStore = create<NavigationStore>((set, get) => ({
+export const useNavigationStore = create<NavigationStore>((set, _get) => ({
   fullscreenStack: ['onboarding'],
   activeTab: 'home',
   tabStacks: { ...INITIAL_TAB_STACKS },

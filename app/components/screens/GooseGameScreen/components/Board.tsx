@@ -16,8 +16,6 @@ import s from './Board.module.css';
 
 // ─── CSS constants ────────────────────────────────────────────────────────────
 
-// scale réduit pour que le losange tienne dans la largeur portrait (≤390px)
-const ISO_TRANSFORM = 'rotateX(52deg) rotateZ(45deg) scale(0.62)';
 const CELL_H   = 68;
 const CELL_GAP = 5;
 const PAWN_SIZE = 75;
@@ -88,7 +86,6 @@ function useResponsiveBoardConfig(): BoardConfig {
       window.removeEventListener('resize', update);
       window.removeEventListener('orientationchange', update);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return config;
 }

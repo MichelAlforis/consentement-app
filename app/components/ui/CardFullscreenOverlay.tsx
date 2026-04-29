@@ -40,7 +40,7 @@ function useDeviceOrientation() {
     } else {
       setListening(true); // Android / desktop — no permission needed
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const requestPermission = useCallback(async () => {
     const DevOri = DeviceOrientationEvent as DevOriWithPerm;
@@ -76,7 +76,7 @@ export function CardFullscreenOverlay({ card, onClose }: CardFullscreenOverlayPr
   useEffect(() => {
     const t = setTimeout(() => setIsFlipped(true), 300);
     return () => clearTimeout(t);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Tilt: gyro (mobile) + pointer (desktop) — both normalized −1..1 → degrees
   const rawRotX = useTransform(

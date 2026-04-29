@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import type { Screen } from './types';
-import { isTabRootScreen } from './config/screenMeta';
 
 export interface RouteConfig<Component = unknown> {
   component: Component;
