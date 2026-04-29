@@ -135,7 +135,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
       onUpdateComfort={ctx.updateComfortLevel}
       onUpdateSafeword={ctx.updateSafeword}
       onBack={() => ctx.goBack()}
-      onComplete={() => ctx.navigateTo('hall-of-cards')}
+      onComplete={() => ctx.navigateTo('home')}
     />
   ),
 
@@ -181,7 +181,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
     <DiceGameScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} />,
 
   'jeu-oie': (ctx) =>
-    <GooseGameScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} />,
+    <GooseGameScreen isPremium={ctx.isPremium} isAdult={ctx.isAdult ?? false} onNavigate={ctx.navigateTo} />,
 
   'jeu-cartes': (ctx) => (
     <CardGameScreen

@@ -11,9 +11,10 @@ interface EndScreenProps {
   player2: Player;
   accordsCount: number;
   onReplay: () => void;
+  onQuit: () => void;
 }
 
-export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScreenProps) {
+export function EndScreen({ player1, player2, accordsCount, onReplay, onQuit }: EndScreenProps) {
   const { t } = useTranslation();
   const cinematicIntensity = accordsCount >= 4 ? 'high' : accordsCount >= 2 ? 'medium' : 'low' as const;
 
@@ -103,6 +104,14 @@ export function EndScreen({ player1, player2, accordsCount, onReplay }: EndScree
           className="w-full max-w-[280px] py-4 rounded-2xl font-bold text-base bg-white/95 text-[#1e293b]"
         >
           {t('gooseGame.end.replay')}
+        </motion.button>
+        <motion.button
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={onQuit}
+          className="w-full max-w-[280px] py-3 rounded-2xl font-semibold text-sm text-white/50"
+        >
+          {t('gooseGame.end.quit')}
         </motion.button>
       </div>
     </motion.div>

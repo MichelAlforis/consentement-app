@@ -73,6 +73,7 @@ export const games = {
   gooseGame: {
     premium: "Juego de la Oca — Premium",
     premiumSub: "Este juego está reservado para miembros Premium.",
+    unlockPremium: 'Desbloquear con Premium',
     yourTurn: "Es tu turno, {name}",
     roll: 'Tirar',
     moving: 'En camino…',
@@ -129,6 +130,7 @@ export const games = {
       zone3: 'Conexión',
       quote: "Decir no libremente es lo que hace que el sí sea real.",
       replay: 'Volver a jugar',
+      quit: 'Volver a los juegos',
     },
     accord: {
       title: 'Casilla Acuerdo',

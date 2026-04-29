@@ -73,6 +73,7 @@ export const games = {
   gooseGame: {
     premium: "Jeu de l'Oie — Premium",
     premiumSub: "Ce jeu est réservé aux membres Premium.",
+    unlockPremium: 'Débloquer avec Premium',
     yourTurn: "C'est ton tour, {name}",
     roll: 'Lancer',
     moving: 'En route…',
@@ -129,6 +130,7 @@ export const games = {
       zone3: 'Connexion',
       quote: "Dire non librement, c'est ce qui rend le oui réel.",
       replay: 'Rejouer',
+      quit: 'Retour aux jeux',
     },
     accord: {
       title: 'Case Accord',

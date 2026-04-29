@@ -9,7 +9,7 @@ import { BoardGrid, Legend } from './components/Board';
 import { ConfettiParticles } from './components/ConfettiParticles';
 import { ZoneIndicator } from './components/ZoneIndicator';
 
-import { Lock, Handshake } from 'lucide-react';
+import { Lock, Handshake, Sparkles } from 'lucide-react';
 import { DynamicIcon } from '../../../utils/iconFromName';
 import { useTranslation } from '../../../i18n';
 import { IntroScreen } from './phases/IntroScreen';
@@ -23,12 +23,15 @@ import { AccordFlow } from './overlays/AccordFlow';
 
 // ─── Guard premium ────────────────────────────────────────────────────────────
 
+import type { Screen } from '../../../types';
+
 interface GooseGameScreenProps {
   isPremium: boolean;
   isAdult: boolean;
+  onNavigate: (screen: Screen) => void;
 }
 
-export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
+export function GooseGameScreen({ isPremium, isAdult, onNavigate }: GooseGameScreenProps) {
   const { t } = useTranslation();
   if (!isPremium) {
     return (
@@ -45,15 +48,24 @@ export function GooseGameScreen({ isPremium, isAdult }: GooseGameScreenProps) {
             {t('gooseGame.premiumSub')}
           </p>
         </div>
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={() => onNavigate('premium')}
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm"
+          style={{ background: 'linear-gradient(135deg, #a855f7, #6366f1)', color: 'white' }}
+        >
+          <Sparkles size={16} />
+          {t('gooseGame.unlockPremium')}
+        </motion.button>
       </motion.div>
     );
   }
-  return <GooseGameInner isAdult={isAdult} />;
+  return <GooseGameInner isAdult={isAdult} onNavigate={onNavigate} />;
 }
 
 // ─── Jeu ──────────────────────────────────────────────────────────────────────
 
-function GooseGameInner({ isAdult }: { isAdult: boolean }) {
+function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate: (screen: Screen) => void }) {
   const { t } = useTranslation();
   const game = useGooseGame({ isAdult });
 
@@ -119,6 +131,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
         player2={player2}
         accordsCount={accordsCount}
         onReplay={resetToIntro}
+        onQuit={() => onNavigate('jeux')}
       />
     );
   }

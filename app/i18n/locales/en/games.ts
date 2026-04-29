@@ -73,6 +73,7 @@ export const games = {
   gooseGame: {
     premium: "Goose Game — Premium",
     premiumSub: "This game is reserved for Premium members.",
+    unlockPremium: 'Unlock with Premium',
     yourTurn: "It's your turn, {name}",
     roll: 'Roll',
     moving: 'On the way…',
@@ -129,6 +130,7 @@ export const games = {
       zone3: 'Connection',
       quote: "Freely saying no is what makes yes real.",
       replay: 'Play again',
+      quit: 'Back to games',
     },
     accord: {
       title: 'Accord Square',
