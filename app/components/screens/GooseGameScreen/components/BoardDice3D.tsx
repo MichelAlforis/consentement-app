@@ -72,8 +72,9 @@ export function BoardDice3D({ isRolling, targetFace, onRollComplete, visible }: 
   );
   const matArray = useMemo(() => {
     const mat = (ti: number) => new THREE.MeshPhysicalMaterial({
-      map: textures[ti], roughness: 0.45, metalness: 0,
-      clearcoat: 0.4, clearcoatRoughness: 0.25,
+      map: textures[ti], roughness: 0.18, metalness: 0,
+      envMapIntensity: 0.9,
+      clearcoat: 0.8, clearcoatRoughness: 0.10,
     });
     // +X="2", -X="5", +Y="3", -Y="4", +Z="1", -Z="6"
     return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];

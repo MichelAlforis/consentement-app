@@ -9,7 +9,10 @@
 | Fichier | Contenu |
 |---|---|
 | [palette.md](palette.md) | Palette complète — couleurs fixes, gradients dos/face, effets PostProcessing |
+| [logo.md](logo.md) | Symbole, variantes, règles d'usage + composant `AppLogo` |
 | [card-system.md](card-system.md) | Architecture visuelle des cartes — SVG, WebGL, textures, animation flip |
+| [card-canvas.md](card-canvas.md) | Doc technique `CollectorCardCanvas` — R3F, textures, animations, Safari |
+| [card-style-convergence.md](card-style-convergence.md) | Unification PlayingCard ↔ CollectorCard (sprints C1/C2/C3) |
 | [assets-pipeline.md](assets-pipeline.md) | Pipeline assets — symbole vectoriel, icônes Lucide, exports stores |
 | [midjourney-prompts.md](midjourney-prompts.md) | Prompts Midjourney par usage (icône, stores, marketing, références DA) |
 

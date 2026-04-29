@@ -2,7 +2,7 @@ export const DURATION = {
   fast:            0.22,
   normal:          0.28,
   medium:          0.40,
-  cardFlipCommon:  0.52,
+  cardFlipCommon:  0.60,
   cardFlipRare:    0.62,
   cardFlipUnique:  0.70,
   cardFlipCSS:     0.60,  // CSS fallback — DOM légèrement plus lent que R3F

@@ -41,20 +41,32 @@ function useResponsiveBoardConfig(): BoardConfig {
     const h = window.innerHeight;
     const isPortrait = h > w;
 
+    // Exact board extents including base padding (world units)
+    const totalW = 4    * STEP_3 - GAP_3 + 2 * BASE_PAD; // ≈ 4.92
+    const totalD = ROWS * STEP_3 - GAP_3 + 2 * BASE_PAD; // ≈ 7.16
+
     if (isPortrait) {
-      const boardW = 4 * STEP_3 + 2 * BASE_PAD;
-      const zoom   = Math.min(80, Math.max(30, Math.floor(w / (boardW * 1.1))));
       const elev   = (65 * Math.PI) / 180;
       const camPos: [number, number, number] = [0, CAM_DIST * Math.sin(elev), CAM_DIST * Math.cos(elev)];
-      const projH  = Math.round(ROWS * STEP_3 * Math.sin(elev) * zoom * 1.25);
-      const canvasH = Math.min(projH, Math.round(h * 0.48));
+      const projD  = totalD * Math.sin(elev);              // ≈ 6.49 world units projected to screen
+      // zoom bounded by both screen width and available canvas height (56 % of screen)
+      const maxH   = Math.round(h * 0.56);
+      const zoom_w = Math.floor(w    / (totalW * 1.1));
+      const zoom_h = Math.floor(maxH / (projD  * 1.1));
+      const zoom   = Math.min(80, Math.max(30, Math.min(zoom_w, zoom_h)));
+      const canvasH = Math.min(Math.round(projD * zoom * 1.1), maxH);
       return { zoom, canvasH, isPortrait, groupRotY: 0, camPos };
     } else {
-      const boardW = (4 + ROWS) * STEP_3 / Math.SQRT2;
-      const zoom   = Math.min(68, Math.max(30, Math.floor(w / (boardW * 1.15))));
+      // After 45° Y rotation the board's screen X and Z extents are both (totalW + totalD) / √2
+      const diag   = (totalW + totalD) / Math.SQRT2;       // ≈ 8.54 world units
       const elev   = (45 * Math.PI) / 180;
       const camPos: [number, number, number] = [0, CAM_DIST * Math.sin(elev), CAM_DIST * Math.cos(elev)];
-      const canvasH = Math.round(Math.min(h * 0.72, 520));
+      const projD  = diag * Math.sin(elev);                // ≈ 6.04 world units projected to screen
+      const maxH   = Math.round(Math.min(h * 0.72, 520));
+      const zoom_w = Math.floor(w    / (diag  * 1.1));
+      const zoom_h = Math.floor(maxH / (projD * 1.1));
+      const zoom   = Math.min(68, Math.max(30, Math.min(zoom_w, zoom_h)));
+      const canvasH = Math.min(Math.round(projD * zoom * 1.1), maxH);
       return { zoom, canvasH, isPortrait, groupRotY: Math.PI / 4, camPos };
     }
   };
@@ -203,28 +215,25 @@ function Cell3D({ squareIndex, isActive, isAnimating }: BoardCellR3FProps) {
   const [x, y, z] = getCellPos3D(squareIndex);
   const color = getSquareColor3D(square);
   const iconName = getSquareIconName(square);
-  const matRef = useRef<THREE.MeshBasicMaterial>(null);
-  const baseColor = useMemo(() => new THREE.Color(color), [color]);
+  const matRef = useRef<THREE.MeshStandardMaterial>(null);
   const tRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!matRef.current) return;
     if (isActive && !isAnimating) {
       tRef.current += delta;
-      const f = 1 + 0.22 * Math.sin(tRef.current * 3);
-      matRef.current.color.setRGB(Math.min(baseColor.r * f, 1), Math.min(baseColor.g * f, 1), Math.min(baseColor.b * f, 1));
+      matRef.current.emissiveIntensity = 0.30 + 0.15 * Math.sin(tRef.current * 3.0);
     } else if (isActive && isAnimating) {
       tRef.current += delta;
-      const f = 1 + 0.55 * Math.abs(Math.sin(tRef.current * 10));
-      matRef.current.color.setRGB(Math.min(baseColor.r * f, 1), Math.min(baseColor.g * f, 1), Math.min(baseColor.b * f, 1));
+      matRef.current.emissiveIntensity = 0.65 + 0.35 * Math.abs(Math.sin(tRef.current * 10));
     } else {
-      matRef.current.color.copy(baseColor);
+      matRef.current.emissiveIntensity = 0;
     }
   });
 
   return (
     <RoundedBox args={[CELL_S, CELL_H3, CELL_S]} radius={0.07} smoothness={5} position={[x, y, z]}>
-      <meshBasicMaterial ref={matRef} color={color} />
+      <meshStandardMaterial ref={matRef} color={color} emissive={color} emissiveIntensity={0} roughness={0.52} metalness={0.04} />
       {iconName && (() => {
         const tex = getIconTexture(iconName);
         return tex ? (
@@ -504,7 +513,7 @@ function BoardGridR3F({
             </group>
 
             <EffectComposer>
-              <Bloom intensity={0.25} luminanceThreshold={0.5} luminanceSmoothing={0.9} />
+              <Bloom intensity={0.45} luminanceThreshold={0.32} luminanceSmoothing={0.85} mipmapBlur />
               <Vignette eskil={false} offset={0.45} darkness={0.4} />
             </EffectComposer>
           </Canvas>

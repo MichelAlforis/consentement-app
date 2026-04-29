@@ -1,9 +1,0 @@
-# TODO: remplacer par tes vraies valeurs
-# apple_id  → ton email Apple ID
-# team_id   → developer.apple.com > Membership > Team ID
-# itc_team_id → App Store Connect > Users & Access > ton numéro d'équipe
-
-app_identifier("fr.consentement.app")
-apple_id(ENV["APPLE_ID"] || "marquesmitch@gmail.com")
-team_id(ENV["APPLE_TEAM_ID"] || "XXXXXXXXXX")
-itc_team_id(ENV["ITC_TEAM_ID"] || "XXXXXXXXXX")
