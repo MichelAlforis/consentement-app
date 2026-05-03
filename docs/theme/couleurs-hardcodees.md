@@ -412,6 +412,76 @@ Pour les états produit (`premium`, `locked`, `rare`, `unique`, `danger`, `succe
 
 ---
 
+## Passe 9 — Migration inline styles → Tailwind (2026-05-03)
+
+### Objectif
+
+Éliminer tous les `style={{}}` contenant des valeurs **statiques** de la codebase. Après cette passe, un `style={{}}` restant signifie obligatoirement qu'il contient une valeur dynamique (`colors.*`, MotionValue, donnée de carte).
+
+### Hiérarchie de migration
+
+```
+CSS module (.module.css)          ← si -webkit-*, env(), pseudo-éléments
+  ↓
+Tailwind arbitrary values         ← valeurs statiques connues
+  ↓
+inline style={{}}                 ← UNIQUEMENT valeurs dynamiques
+```
+
+### Fichiers migrés
+
+| Fichier | Styles migrés | Styles conservés (dynamiques) |
+|---------|--------------|-------------------------------|
+| `SplashScreen.tsx` | 4 statiques → Tailwind | — |
+| `HallOfCardsScreen.tsx` | ~22 statiques → Tailwind | `gradient`, `boxShadow`, `border` (données carte) |
+| `DiceGame/index.tsx` | 4 `textShadow` → `[text-shadow:...]` Tailwind | `background` (couleurs thème) |
+| `CardGame/index.tsx` | 14 statiques → Tailwind | MotionValues, `colors.*`, `cardSize` conditionnel |
+| `ThemeSelectScreen.tsx` | 3 `zIndex` statiques → `z-10`, `z-[5]` | `background` (couleurs thème) |
+| `AccompagnementAdulteScreen.tsx` | 2 `rgba` → `bg-pink-500/8`, `bg-blue-500/8` | — |
+| `GooseGameScreen/index.tsx` | 5 statiques → Tailwind | `background` (ZONE_BG dynamique) |
+| `FlipRevealOverlay.tsx` | 12 statiques → Tailwind | — |
+| `CardFullscreenOverlay.tsx` | 11 statiques → Tailwind | `y`, `opacity` (MotionValues), `gradient`, `border` (données carte) |
+| `PlayingCard.tsx` | 2 (`cursor`, `hideAll`) → Tailwind | `x`, `rotate`, `opacity` (MotionValues), `gradient`, `boxShadow` (données carte) |
+
+### Fichiers non-migrés (100% dynamiques — aucune migration possible)
+
+Ces fichiers utilisent exclusivement des valeurs issues de `colors.*` ou de dégradés calculés à l'exécution :
+
+- `Header.tsx`, `TabBar.tsx`, `GameMenuCard.tsx`, `MenuCard.tsx`, `ComfortSlider.tsx`
+- `DuoSpace/` (9 composants) — 100% `colors.*` / gradients dynamiques
+
+### Patterns Tailwind introduits
+
+```tsx
+// Radial gradients (texture points)
+className="bg-[radial-gradient(circle,rgba(255,255,255,0.22)_1.5px,transparent_1.5px)] bg-[length:12px_12px]"
+
+// Carousel snap
+className="scrollbar-hide flex gap-[10px] overflow-x-auto snap-x snap-mandatory -ml-5 pl-5 pr-5 pb-1"
+style={{ WebkitOverflowScrolling: 'touch' }}  // conservé : pas d'équivalent Tailwind
+
+// 3D transforms (flip)
+className="[transform-style:preserve-3d]"
+className="[backface-visibility:hidden]"
+
+// Text shadow
+className="[text-shadow:0_1px_3px_rgba(0,0,0,0.3)]"
+
+// Opacité < 10% (non couverte par Tailwind sans arbitrary)
+className="bg-pink-500/8 border border-pink-500/20"
+
+// Perspective : aucun équivalent Tailwind — reste inline
+style={{ perspective: '1400px' }}
+```
+
+### Invariant post-migration (règle permanente)
+
+> Tout `style={{}}` restant dans la codebase doit contenir **uniquement** des valeurs dynamiques : tokens `colors.*`, MotionValues framer-motion, données de carte (`gradient`, `border`), ou valeurs conditionnelles d'état.
+>
+> Les valeurs statiques ou constantes → classe Tailwind ou CSS module.
+
+---
+
 ## Règle de décision
 
 ```
