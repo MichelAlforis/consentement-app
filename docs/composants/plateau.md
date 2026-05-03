@@ -137,19 +137,39 @@ accord:#60a5fa  complicite:#c084fc  arrivee:#34d399
 1:#f59e0b  2:#8b5cf6  3:#ec4899  4:#3b82f6  5:#10b981  6:#be123c
 ```
 
+### Color management (Phase 1 — 2026-05-03)
+
+```tsx
+// Canvas gl — valeurs explicites, cohérentes inter-scènes
+gl={{
+  antialias: true,
+  powerPreference: 'low-power',
+  failIfMajorPerformanceCaveat: false,
+  toneMapping: THREE.ACESFilmicToneMapping,  // préserve les highlights bois en oblique
+  toneMappingExposure: 1.15,                  // +0.05 pour compenser la compression ACES
+  outputColorSpace: THREE.SRGBColorSpace,
+}}
+dpr={[1, 2]}
+
+// Textures
+// useMahoganyTexture() :
+tex.colorSpace = THREE.SRGBColorSpace;  // sans ça : double gamma, couleurs délavées
+tex.anisotropy = 8;                     // netteté en vue oblique (forte inclinaison caméra)
+// buildIconTexture() + bodyTexture pion :
+tex.colorSpace = THREE.SRGBColorSpace;
+```
+
 ### Pipeline lumière (ordre critique en PBR)
 
 ```tsx
-// 1. Directionnel principal (forme + ombres)
-<directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
-// 2. IBL ambiance
-<Environment preset="sunset" intensity={0.5} />
+// 1. IBL ambiance (sunset = tons chauds, cohérent avec acajou)
+<Environment preset="sunset" />
+// 2. Directionnel principal (forme + ombres portées)
+<directionalLight position={[5, 8, 5]} intensity={1.2} castShadow shadow-mapSize={[1024, 1024]} shadow-bias={-0.001} />
 // 3. Ambient fill
 <ambientLight intensity={0.35} />
-// 4. Fill secondaire
+// 4. Fill secondaire (anti-shadow trop dur)
 <directionalLight position={[-4, 4, -4]} intensity={0.2} />
-// Exposition globale
-gl={{ toneMappingExposure: 1.1 }}
 ```
 
 ### Ombres

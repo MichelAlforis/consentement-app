@@ -269,9 +269,11 @@ if (renderMode === 'css') return null;
 | `DiceGame intro` (preview dé) | ✅ CSS par défaut | ✅ via DiceRenderer store |
 | `HallOfCards` fullscreen | ✅ tilt Framer Motion | ✅ via CollectorCardCanvas |
 | `GameEndCinematic` | ✅ (`return null`) | ✅ skip si mode css |
-| `renderModeStore` | — | ✅ créé (`app/stores/renderModeStore.ts`) |
+| `renderModeStore` | — | ✅ créé (`app/stores/renderModeStore.ts`) — expose `gpuTier` en plus de `renderMode` |
 | `useRenderMode` | — | ✅ créé (`app/hooks/useRenderMode.ts`) |
-| Déclenchement détection | — | ✅ `OnboardingWizard` mount |
+| `useGpuTier` | — | ✅ créé (`app/hooks/useGpuTier.ts`) — tier-gating foil PBR |
+| `RenderModeInit` | — | ✅ créé (`app/components/providers/RenderModeInit.tsx`) |
+| Déclenchement détection | — | ✅ `RenderModeInit` dans `app/layout.tsx` — **toutes les routes** (plus seulement OnboardingWizard) |
 
 ---
 

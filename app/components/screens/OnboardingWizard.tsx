@@ -21,7 +21,6 @@ import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/
 import { themes, type ThemeMode } from '../../types/theme';
 import type { Language, Screen } from '../../types';
 import { comfortCategories } from '../../data';
-import { useRenderModeStore } from '../../stores/renderModeStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -442,11 +441,7 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
   const completeModule = useModuleComplete();
   const [stepIndex, setStepIndex] = useState(0);
-  const detectAndSet = useRenderModeStore((s) => s.detectAndSet);
-
-  // Détection GPU au mount — silencieuse, ~50ms, résultat persisté
-  // Sur les visites suivantes, renderMode est déjà en store → detectAndSet() retourne immédiatement
-  useEffect(() => { detectAndSet(); }, [detectAndSet]);
+  // detectAndSet migré vers RenderModeInit dans layout.tsx — appelé sur toutes les routes
 
   const slides = isAdult === false ? MODULE_DE_BASE_SLIDES_MINEUR : MODULE_DE_BASE_SLIDES;
 
