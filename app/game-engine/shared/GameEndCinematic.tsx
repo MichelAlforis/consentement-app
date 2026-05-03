@@ -2,7 +2,8 @@
 import { useMemo, useState, useEffect, Component, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
-import { Sparkles, Float, MeshDistortMaterial, AdaptiveDpr } from '@react-three/drei';
+import { Sparkles, Float, MeshDistortMaterial, AdaptiveDpr, Environment } from '@react-three/drei';
+import * as THREE from 'three';
 import { useRenderMode } from '../../hooks/useRenderMode';
 
 type Intensity = 'low' | 'medium' | 'high';
@@ -36,6 +37,7 @@ function CentralBlob({ color, speed, amp }: { color: string; speed: number; amp:
           emissive={color}
           emissiveIntensity={0.5}
           depthWrite={false}
+          toneMapped={false}
         />
       </mesh>
     </Float>
@@ -48,7 +50,7 @@ function Orb({ pos, color, idx }: { pos: [number, number, number]; color: string
     <Float speed={0.7 + idx * 0.35} floatIntensity={0.7 + idx * 0.2} rotationIntensity={0.15}>
       <mesh position={pos}>
         <sphereGeometry args={[r, 12, 12]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.5} transparent opacity={0.75} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.5} transparent opacity={0.75} toneMapped={false} />
         <pointLight color={color} intensity={0.4} distance={2.5} />
       </mesh>
     </Float>
@@ -71,6 +73,7 @@ function CinematicScene({ primaryColor, secondaryColor, intensity }: CinematicSc
   return (
     <>
       <ambientLight intensity={0.05} />
+      <Environment preset="night" environmentIntensity={0.15} />
       <CentralBlob color={primaryColor} speed={cfg.speed} amp={cfg.amp} />
       {ORB_POS.slice(0, cfg.orbCount).map((pos, i) => (
         <Orb key={i} pos={pos} color={orbColors[i]} idx={i} />
@@ -272,7 +275,15 @@ export function GameEndCinematic({ primaryColor, secondaryColor, intensity = 'me
         <CanvasBoundary>
           <Canvas
             dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: 'low-power',
+              failIfMajorPerformanceCaveat: false,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.2,
+              outputColorSpace: THREE.SRGBColorSpace,
+            }}
             frameloop="always"
             style={{ background: 'transparent' }}
             camera={{ position: [0, 0, 5], fov: 60 }}

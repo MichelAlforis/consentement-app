@@ -132,9 +132,9 @@ function getCellPos3D(squareIndex: number): [number, number, number] {
   ];
 }
 
-function CameraLookAt() {
+function CameraLookAt({ camPos }: { camPos: [number, number, number] }) {
   const { camera } = useThree();
-  useFrame(() => { camera.lookAt(0, 0, 0); });
+  useEffect(() => { camera.lookAt(0, 0, 0); }, [camera, camPos]);
   return null;
 }
 
@@ -188,6 +188,7 @@ function buildIconTexture(iconName: string): THREE.CanvasTexture | null {
   }
   ctx.restore();
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
 }
@@ -272,6 +273,8 @@ function useMahoganyTexture() {
     lines(10, 'rgba(255,255,255,0.13)', 2, -0.07);
     lines(19, 'rgba(0,0,0,0.18)',       2,  0.04);
     const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(2, 2);
     return tex;
@@ -321,6 +324,10 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
   const tRef          = useRef(0);
 
   const bodyTexture = useMemo(() => {
+    // LCG seedé — déterministe entre mounts, pas de flash texture au remount
+    let s = 42;
+    const rand = () => { s = (s * 1664525 + 1013904223) | 0; return (s >>> 0) / 0xffffffff; };
+
     const size = 128;
     const c = document.createElement('canvas');
     c.width = c.height = size;
@@ -328,15 +335,16 @@ function Pawn3D({ squareIndex, color, xOffset = 0, zOffset = 0, isActive = false
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, size, size);
     for (let y = 0; y < size; y++) {
-      const a = 0.03 + 0.05 * Math.sin(y * 0.9 + Math.random() * 0.8);
+      const a = 0.03 + 0.05 * Math.sin(y * 0.9 + rand() * 0.8);
       ctx.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
       ctx.fillRect(0, y, size, 1);
     }
     for (let i = 0; i < 220; i++) {
-      ctx.fillStyle = `rgba(255,255,255,${(0.03 + Math.random() * 0.06).toFixed(3)})`;
-      ctx.fillRect(Math.random() * size, Math.random() * size, 1, 1);
+      ctx.fillStyle = `rgba(255,255,255,${(0.03 + rand() * 0.06).toFixed(3)})`;
+      ctx.fillRect(rand() * size, rand() * size, 1, 1);
     }
     const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(1.5, 3);
     return tex;
@@ -466,12 +474,19 @@ function BoardGridR3F({
           <Canvas
             className="absolute inset-0"
             shadows
-            gl={{ antialias: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false, toneMappingExposure: 1.1 }}
+            gl={{
+              antialias: true,
+              powerPreference: 'low-power',
+              failIfMajorPerformanceCaveat: false,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.15,
+              outputColorSpace: THREE.SRGBColorSpace,
+            }}
             dpr={[1, 2]}
           >
             <color attach="background" args={[colors.bgPrimary]} />
             <OrthographicCamera makeDefault position={camPos} zoom={zoom} near={0.1} far={100} />
-            <CameraLookAt />
+            <CameraLookAt camPos={camPos} />
 
             <Environment preset="sunset" />
             <ambientLight intensity={0.35} />
@@ -480,7 +495,6 @@ function BoardGridR3F({
               intensity={1.2}
               castShadow
               shadow-mapSize={[1024, 1024]}
-              shadow-radius={4}
               shadow-bias={-0.001}
             />
             <directionalLight position={[-4, 4, -4]} intensity={0.2} />
@@ -520,6 +534,7 @@ function BoardGridR3F({
               />
             </group>
 
+            {/* N8AO incompatible OrthographicCamera (depth math diverge) — SSAO Phase 3 si switch Perspective */}
             <PostFXBoundary>
               <EffectComposer>
                 <Bloom intensity={0.45} luminanceThreshold={0.32} luminanceSmoothing={0.85} mipmapBlur />

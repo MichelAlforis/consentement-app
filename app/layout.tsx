@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { RenderModeInit } from './components/providers/RenderModeInit';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -25,7 +26,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        <RenderModeInit />
+        {children}
+      </body>
     </html>
   );
 }

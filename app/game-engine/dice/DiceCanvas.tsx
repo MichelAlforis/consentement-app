@@ -78,6 +78,8 @@ function makeFaceTexture(face: DiceFace, size = 512): THREE.CanvasTexture {
   ctx.shadowBlur = 0;
 
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
   tex.needsUpdate = true;
   return tex;
 }
@@ -126,6 +128,8 @@ export function makeNumericFaceTexture(n: number, size = 512): THREE.CanvasTextu
   }
 
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
   tex.needsUpdate = true;
   return tex;
 }
@@ -297,10 +301,7 @@ function DiceScene({
   previewCard?: GainedCard | null;
   showCard?: boolean;
 }) {
-  const { gl } = useThree();
-  useEffect(() => {
-    gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  }, [gl]);
+  // dpr géré par la prop Canvas — gl.setPixelRatio retiré (bypass R3F)
 
   const hasCard = !!(showCard && previewCard);
   // Dé décalé à gauche quand la carte est présente — les deux objets se partagent le canvas
@@ -327,6 +328,8 @@ function DiceScene({
             blur={2.5}
             far={2}
             scale={3}
+            frames={1}
+            resolution={256}
           />
         </group>
         {hasCard && (
@@ -364,7 +367,16 @@ export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, siz
       <Canvas
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
-        gl={{ antialias: true, alpha: true, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
+        dpr={[1, 2]}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: 'low-power',
+          failIfMajorPerformanceCaveat: false,
+          toneMapping: THREE.NeutralToneMapping,
+          toneMappingExposure: 1.05,
+          outputColorSpace: THREE.SRGBColorSpace,
+        }}
         style={{ background: 'transparent' }}
       >
         <DiceScene

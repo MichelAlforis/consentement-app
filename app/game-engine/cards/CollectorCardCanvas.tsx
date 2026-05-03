@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { ContactShadows } from '@react-three/drei';
+import { ContactShadows, Environment } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { DynamicIcon } from '../../utils/iconFromName';
@@ -17,6 +17,7 @@ import { DURATION, EASING } from '../../constants/motion';
 import { RADIUS } from '../../constants/tokens';
 import { initGrain, getGrainCanvas } from '../../utils/grainTexture';
 import { useRenderMode } from '../../hooks/useRenderMode';
+import { useGpuTier } from '../../hooks/useGpuTier';
 
 // ─── Eases ────────────────────────────────────────────────────────────────────
 
@@ -228,6 +229,7 @@ function makeBackTexture(size = 512, refImage?: HTMLImageElement): THREE.CanvasT
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
   tex.needsUpdate = true;
   return tex;
 }
@@ -471,6 +473,7 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
   tex.needsUpdate = true;
   return tex;
 }
@@ -545,8 +548,10 @@ export function CardMesh({
     [card, refTex],
   );
 
-  const isUnique = card.rarity === 'unique';
-  const isRare   = card.rarity === 'rare';
+  const gpuTier = useGpuTier();
+  const isUnique      = card.rarity === 'unique';
+  const isRare        = card.rarity === 'rare';
+  const enableFoilPBR = isUnique && gpuTier === 3;
 
   const glowMat2Ref    = useRef<THREE.MeshBasicMaterial>(null);
   const uniqueGlowRef  = useRef<THREE.MeshBasicMaterial>(null);
@@ -560,9 +565,22 @@ export function CardMesh({
     [backTex],
   );
 
-  const faceMat = useMemo((): THREE.Material =>
-    new THREE.MeshBasicMaterial({ map: faceTex }),
-  [faceTex]);
+  const faceMat = useMemo((): THREE.Material => {
+    if (enableFoilPBR) {
+      return new THREE.MeshPhysicalMaterial({
+        map: faceTex,
+        roughness: 0.28,
+        metalness: 0.55,
+        iridescence: 1.0,
+        iridescenceIOR: 1.3,
+        iridescenceThicknessRange: [100, 800],
+        envMapIntensity: 1.4,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.18,
+      });
+    }
+    return new THREE.MeshBasicMaterial({ map: faceTex });
+  }, [faceTex, enableFoilPBR]);
 
   const anim = useRef({
     active: false, startRot: 0, targetRot: 0,
@@ -733,29 +751,41 @@ export function CardMesh({
   );
 }
 
-// ─── RarityLights — export public ────────────────────────────────────────────
+// ─── RarityGlowRing — export public ──────────────────────────────────────────
+// Remplace RarityLights : MeshBasicMaterial ignore les pointLights — on anime
+// directement l'opacité du glow ring rectangle arrondi qui existe déjà.
 
 export function RarityLights({ rarity }: { rarity: GainedCard['rarity'] }) {
-  const rareRef = useRef<THREE.PointLight>(null);
+  return <RarityGlowRing rarity={rarity} />;
+}
 
-  useFrame(() => {
-    if (rareRef.current) {
-      rareRef.current.intensity = 0.26 + Math.sin(Date.now() * 0.0014) * 0.08;
+function RarityGlowRing({ rarity }: { rarity: GainedCard['rarity'] }) {
+  const glowRef = useRef<THREE.MeshBasicMaterial>(null);
+  const glowGeom = useMemo(() => makeRoundedCardGeometry(1.06, 1.58, 0.16), []);
+
+  useFrame(({ clock }) => {
+    if (!glowRef.current) return;
+    if (rarity === 'rare') {
+      glowRef.current.opacity = 0.30 + Math.sin(clock.getElapsedTime() * 1.4) * 0.08;
+    } else if (rarity === 'unique') {
+      glowRef.current.opacity = 0.55 + Math.sin(clock.getElapsedTime() * 0.9) * 0.10;
     }
   });
 
-  if (rarity === 'rare') {
-    return <pointLight ref={rareRef} position={[0, 0.5, -1.5]} intensity={0.32} color="#7c3aed" />;
-  }
-  if (rarity === 'unique') {
-    return (
-      <>
-        <pointLight position={[-1.5,  1.0, -1.0]} intensity={0.40} color="#f59e0b" />
-        <pointLight position={[ 1.5, -1.0, -1.0]} intensity={0.28} color="#ec4899" />
-      </>
-    );
-  }
-  return null;
+  if (rarity === 'common') return null;
+
+  return (
+    <mesh position={[0, 0, -0.005]} geometry={glowGeom}>
+      <meshBasicMaterial
+        ref={glowRef}
+        color={rarity === 'unique' ? '#f6d36a' : '#7c3aed'}
+        transparent
+        opacity={0.4}
+        toneMapped={false}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
 }
 
 // ─── Scène ────────────────────────────────────────────────────────────────────
@@ -768,11 +798,21 @@ function CardScene({
   autoFlip?: boolean;
   onFlipComplete?: () => void;
 }) {
+  const gpuTier = useGpuTier();
+  const enableFoilPBR = card.rarity === 'unique' && gpuTier === 3;
+
   return (
     <>
-      <ambientLight intensity={0.04} />
-      <pointLight position={[ 3.5,  4, -1.0]} intensity={0.16} />
-      <pointLight position={[-3.0,  1, -0.5]} intensity={0.06} />
+      {/* Lights + Environment uniquement pour la carte unique tier 3 (PBR foil) */}
+      {enableFoilPBR && (
+        <>
+          <ambientLight intensity={0.15} />
+          <pointLight position={[ 1.5,  1.0, 1.5]} intensity={0.60} color="#f59e0b" />
+          <pointLight position={[-1.5, -1.0, 1.2]} intensity={0.40} color="#ec4899" />
+          <Environment preset="warehouse" environmentIntensity={0.4} />
+        </>
+      )}
+
       <RarityLights rarity={card.rarity} />
 
       <Suspense fallback={null}>
@@ -782,14 +822,22 @@ function CardScene({
           autoFlip={autoFlip}
           onFlipComplete={onFlipComplete}
         />
-        <ContactShadows position={[0, -0.80, 0]} opacity={0.55} blur={3.2} far={2.5} scale={4} />
+        <ContactShadows
+          position={[0, -0.80, 0]}
+          opacity={0.45}
+          blur={2.0}
+          far={2.0}
+          scale={3}
+          frames={1}
+          resolution={128}
+        />
       </Suspense>
 
       {/* Bloom — isolé dans PostFXBoundary → si ça crash (Safari/WebGL1), cartes restent visibles */}
       <PostFXBoundary>
         <EffectComposer>
-          <Bloom intensity={0.60} luminanceThreshold={0.55} luminanceSmoothing={0.40} />
-          <Vignette eskil={false} offset={0.40} darkness={0.50} />
+          <Bloom intensity={0.55} luminanceThreshold={0.45} luminanceSmoothing={0.5} mipmapBlur />
+          <Vignette eskil={false} offset={0.42} darkness={0.45} />
         </EffectComposer>
       </PostFXBoundary>
     </>
@@ -967,7 +1015,10 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
 // ─── LightOverlay — shimmer sweep + gyroscope radial highlight ───────────────
 
 function LightOverlay({ rarity, isFlipped, size = 160 }: { rarity: string; isFlipped: boolean; size?: number }) {
-  const gyroRef = useRef<HTMLDivElement>(null);
+  const gpuTier  = useGpuTier();
+  const gyroRef  = useRef<HTMLDivElement>(null);
+  // Tier 2 unique : foil holographique CSS (conic-gradient animé via Framer Motion)
+  const fakeFoil = rarity === 'unique' && gpuTier === 2;
 
   // Respect prefers-reduced-motion (a11y + mal des transports)
   const prefersReduced = typeof window !== 'undefined'
@@ -1076,6 +1127,30 @@ function LightOverlay({ rarity, isFlipped, size = 160 }: { rarity: string; isFli
           } : { duration: 0 }}
         />
       )}
+
+      {/* Foil holographique CSS — tier 2 unique uniquement (MeshBasicMaterial, zéro GPU) */}
+      {fakeFoil && isFlipped && !prefersReduced && (
+        <motion.div
+          style={{
+            position: 'absolute',
+            // 2× la taille du conteneur pour couvrir les coins pendant la rotation
+            top: '-50%', left: '-50%', width: '200%', height: '200%',
+            background: [
+              'conic-gradient(from 0deg at 50% 50%,',
+              'rgba(246,211,106,0) 0deg,',
+              'rgba(246,211,106,0.20) 60deg,',
+              'rgba(236,72,153,0.24) 120deg,',
+              'rgba(124,58,237,0.20) 180deg,',
+              'rgba(245,158,11,0.24) 240deg,',
+              'rgba(246,211,106,0) 360deg)',
+            ].join(' '),
+            mixBlendMode: 'screen',
+            opacity: 0.72,
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+        />
+      )}
     </div>
   );
 }
@@ -1107,7 +1182,8 @@ export function CollectorCardCanvas({
   useEffect(() => { if (renderMode !== 'r3f') return; setFrameloop('always'); }, [isFlipped, autoFlip, renderMode]);
 
   const handleFlipComplete = useCallback(() => {
-    if (card.rarity !== 'unique') setFrameloop('demand');
+    // demand uniquement pour common — rare/unique gardent leur idle anim (glow ring, particules, HSL shift)
+    if (card.rarity === 'common') setFrameloop('demand');
     onFlipComplete?.();
   }, [card.rarity, onFlipComplete]);
 
@@ -1133,8 +1209,15 @@ export function CollectorCardCanvas({
         <CanvasBoundary fallback={fallback}>
           <Canvas
             style={{ width: w, height: h, display: 'block' }}
-            dpr={[1, 1.5]}
-            gl={{ antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: false }}
+            dpr={[1, 2]}
+            gl={{
+              antialias: true,
+              powerPreference: 'low-power',
+              failIfMajorPerformanceCaveat: false,
+              toneMapping: THREE.NeutralToneMapping,
+              toneMappingExposure: 1.0,
+              outputColorSpace: THREE.SRGBColorSpace,
+            }}
             frameloop={frameloop}
             camera={{ position: [0, 0, 2.2], fov: 45 }}
           >
