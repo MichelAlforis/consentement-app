@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { TabBar } from '../ui/TabBar';
 import { Toast } from '../ui';
 import { GrainOverlay } from '../ui/ThemeEffects';
@@ -25,7 +25,8 @@ import {
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useHeatLevel } from '../../lib/useHeatLevel';
 import { usePalierUp } from '../../lib/usePalierUp';
-import { PalierUpOverlay } from '../ui';
+import { HeatThermometer, PalierUpOverlay } from '../ui';
+import { DURATION } from '../../constants/motion';
 import { HeaderController } from './HeaderController';
 import { RouteRenderer } from './RouteRenderer';
 import { AdController } from './AdController';
@@ -93,7 +94,7 @@ export function AppShell() {
   useAppDiagnostics(currentScreen);
 
   // Sync explicit mode avec le niveau de chaleur — force OFF si palier < 2
-  const { level: heatLevel } = useHeatLevel();
+  const { level: heatLevel, points: heatPoints } = useHeatLevel();
   const syncExplicitWithHeat = useSettingsStore((s) => s.syncExplicitWithHeat);
   useEffect(() => { syncExplicitWithHeat(heatLevel); }, [heatLevel, syncExplicitWithHeat]);
 
@@ -157,27 +158,46 @@ export function AppShell() {
         <div className="min-h-dvh flex flex-col" style={{ background: theme.colors.bgGradient }}>
           <HeaderController isAdult={isAdult} theme={theme} />
 
-          <div className="flex-1 overflow-y-auto flex flex-col">
-            <Suspense fallback={<ScreenLoader />}>
-              <RouteRenderer
-                currentScreen={currentScreen}
-                isAdult={isAdult}
-                hasOnboarded={hasOnboarded}
-                userName={userName}
-                personalProfile={personalProfile}
-                isPremium={isPremium}
-                theme={theme}
-                navigateTo={navigateTo}
-                replaceWith={replaceWith}
-                goBack={goBack}
-                selectTheme={selectTheme}
-                handleAgeSelect={setAgeGroup}
-                handleAuth={authenticate}
-                updateComfortLevel={updateComfortLevel}
-                updateSafeword={updateSafeword}
-                activatePremium={activatePremium}
-              />
-            </Suspense>
+          <div className="flex-1 flex overflow-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto flex flex-col min-w-0">
+              <Suspense fallback={<ScreenLoader />}>
+                <RouteRenderer
+                  currentScreen={currentScreen}
+                  isAdult={isAdult}
+                  hasOnboarded={hasOnboarded}
+                  userName={userName}
+                  personalProfile={personalProfile}
+                  isPremium={isPremium}
+                  theme={theme}
+                  navigateTo={navigateTo}
+                  replaceWith={replaceWith}
+                  goBack={goBack}
+                  selectTheme={selectTheme}
+                  handleAgeSelect={setAgeGroup}
+                  handleAuth={authenticate}
+                  updateComfortLevel={updateComfortLevel}
+                  updateSafeword={updateSafeword}
+                  activatePremium={activatePremium}
+                />
+              </Suspense>
+            </div>
+
+            {/* Sidebar thermomètre — visible sur tous les onglets sauf Settings */}
+            <AnimatePresence>
+              {showTabBar && currentScreen !== 'settings' && (
+                <motion.div
+                  key="heat-sidebar"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 40, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: DURATION.normal }}
+                  className="flex-shrink-0 py-3"
+                  style={{ borderLeft: `1px solid ${theme.colors.border}` }}
+                >
+                  <HeatThermometer points={heatPoints} sidebar />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {showTabBar && (

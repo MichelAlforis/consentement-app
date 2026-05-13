@@ -18,6 +18,8 @@ interface HeatThermometerProps {
   points: number;
   /** Mode compact : SVG seul, sans labels (pour overlay et header) */
   compact?: boolean;
+  /** Mode sidebar : SVG fluide (width/height 100%) qui remplit son conteneur */
+  sidebar?: boolean;
 }
 
 const LEVEL_NAMES: Record<HeatLevel, string> = {
@@ -44,22 +46,23 @@ const FIRE_GRADIENTS: Record<2 | 3 | 4 | 5, [string, string]> = {
   5: ['#92400e', '#fef9c3'],
 };
 
-// Dimensions normales / compactes
-const N = { tw: 12, th: 80, br: 11 } as const;
-const C = { tw:  9, th: 60, br:  9 } as const;
+// Dimensions normales / compactes / sidebar (viewBox, CSS scale ensuite)
+const N = { tw: 12, th:  80, br: 11 } as const;
+const C = { tw:  9, th:  60, br:  9 } as const;
+const S = { tw: 14, th: 240, br: 14 } as const;
 
 type D = { tw: number; th: number; br: number };
 type Dims = D & { sw: number; sh: number; tx: number; bulbCY: number };
 
-function getDims(compact: boolean): Dims {
-  const d: D = compact ? C : N;
+function getDims(compact: boolean, sidebar: boolean): Dims {
+  const d: D = sidebar ? S : compact ? C : N;
   const sw = d.br * 2;
   return { ...d, sw, sh: d.th + d.br * 2, tx: (sw - d.tw) / 2, bulbCY: d.th + d.br };
 }
 
 const TICK_LVLS = [2, 3, 4] as const;
 
-export function HeatThermometer({ points, compact = false }: HeatThermometerProps) {
+export function HeatThermometer({ points, compact = false, sidebar = false }: HeatThermometerProps) {
   const rawId = useId();
   const uid   = rawId.replace(/[^a-zA-Z0-9]/g, '');
   const { colors } = useTheme();
@@ -78,7 +81,7 @@ export function HeatThermometer({ points, compact = false }: HeatThermometerProp
   const [gFrom, gTo]: [string, string] =
     level === 1 ? [colors.accent, colors.accentLight] : FIRE_GRADIENTS[level];
 
-  const { tw, th, br, sw, sh, tx, bulbCY } = getDims(compact);
+  const { tw, th, br, sw, sh, tx, bulbCY } = getDims(compact, sidebar);
 
   // Le remplissage couvre toujours le bulbe entier + la portion de tube selon la progression
   const fillH = br * 2 + progress * th;
@@ -92,7 +95,7 @@ export function HeatThermometer({ points, compact = false }: HeatThermometerProp
 
   return (
     <div
-      className="flex items-end gap-2"
+      className={sidebar ? 'h-full w-full flex items-center justify-center' : 'flex items-end gap-2'}
       role="meter"
       aria-label={`Baromètre du Hot : ${levelName}`}
       aria-valuenow={points}
@@ -101,12 +104,13 @@ export function HeatThermometer({ points, compact = false }: HeatThermometerProp
     >
       {/* ── SVG thermomètre ── */}
       <svg
-        width={sw}
-        height={sh}
+        width={sidebar ? '100%' : sw}
+        height={sidebar ? '100%' : sh}
         viewBox={`0 0 ${sw} ${sh}`}
+        preserveAspectRatio={sidebar ? 'xMidYMax meet' : undefined}
         overflow="visible"
         style={{
-          filter: level >= 2 ? `drop-shadow(0 0 ${compact ? 3 : 5}px ${color}99)` : 'none',
+          filter: level >= 2 ? `drop-shadow(0 0 ${compact ? 3 : sidebar ? 7 : 5}px ${color}99)` : 'none',
           transition: `filter ${DURATION.medium}s`,
         }}
       >
@@ -189,7 +193,7 @@ export function HeatThermometer({ points, compact = false }: HeatThermometerProp
           fill="none" stroke={colors.border} strokeWidth={1.5}
         />
 
-        {/* Graduations paliers 2–4 (mode normal uniquement) */}
+        {/* Graduations paliers 2–4 (normal + sidebar, pas compact) */}
         {!compact && TICK_LVLS.map((lvl) => {
           const tyPos    = (1 - HEAT_THRESHOLDS[lvl] / HEAT_THRESHOLDS[5]) * th;
           const unlocked = level >= lvl;
@@ -207,8 +211,8 @@ export function HeatThermometer({ points, compact = false }: HeatThermometerProp
         })}
       </svg>
 
-      {/* Labels (masqués en compact) */}
-      {!compact && (
+      {/* Labels (normal uniquement — masqués en compact et sidebar) */}
+      {!compact && !sidebar && (
         <div className="flex flex-col justify-end pb-0.5" style={{ gap: 2 }}>
           <span
             className="font-semibold"
