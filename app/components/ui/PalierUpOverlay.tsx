@@ -6,9 +6,7 @@ import { useTranslation } from '../../i18n';
 import { HeatThermometer } from './HeatThermometer';
 import { DURATION, EASING } from '../../constants/motion';
 import type { HeatLevel } from '../../lib/heatLevel';
-import { computeHeatPoints } from '../../lib/heatLevel';
-import { useModuleProgressStore } from '../../stores/moduleProgressStore';
-import { useUnlockStore } from '../../stores/unlockStore';
+import { useHeat } from '../../context/HeatContext';
 
 const LEVEL_NAMES_KEY: Record<HeatLevel, string> = {
   1: 'heat.tiede',
@@ -42,9 +40,7 @@ interface PalierUpOverlayProps {
 export function PalierUpOverlay({ level, onDismiss }: PalierUpOverlayProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const completedModules = useModuleProgressStore((s) => s.completedModules);
-  const { ownedCards, sessionCount } = useUnlockStore();
-  const points = computeHeatPoints({ completedModules, ownedCards, sessionCount });
+  const { points } = useHeat();
 
   const levelName = t(LEVEL_NAMES_KEY[level]);
   const unlockDesc = UNLOCK_DESC_KEY[level] ? t(UNLOCK_DESC_KEY[level]!) : null;

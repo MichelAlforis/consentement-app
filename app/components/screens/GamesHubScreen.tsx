@@ -8,7 +8,7 @@ import { useTranslation } from '../../i18n';
 import { useUnlockStore } from '../../stores';
 import { collectorCards } from '../../data/cards-collector';
 import { GameMenuCard } from '../ui';
-import { useHeatLevel } from '../../lib/useHeatLevel';
+import { useHeat } from '../../context/HeatContext';
 import { isHeatUnlocked } from '../../lib/heatGate';
 import { HEAT_THRESHOLDS } from '../../lib/heatLevel';
 import {
@@ -42,7 +42,7 @@ export function GamesHubScreen({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { ownedCards } = useUnlockStore();
-  const { points, level: heatLevel } = useHeatLevel();
+  const { points, level: heatLevel } = useHeat();
   const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
   const ownedCount = ownedCards.length;
   const freeItems = getVisibleGameMenuItems(isAdult, 'free');

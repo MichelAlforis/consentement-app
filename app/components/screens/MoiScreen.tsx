@@ -7,7 +7,7 @@ import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore, usePremiumStore } from '../../stores';
 import { useTranslation } from '../../i18n';
-import { useHeatLevel } from '../../lib/useHeatLevel';
+import { useHeat } from '../../context/HeatContext';
 
 interface MoiScreenProps {
   isAdult: boolean | null;
@@ -67,7 +67,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const { t } = useTranslation();
   const userName = useAuthStore((s) => s.userName);
   const { isPremium } = usePremiumStore();
-  const { points, level: heatLevel } = useHeatLevel();
+  const { points, level: heatLevel } = useHeat();
 
   let cardIndex = 0;
 

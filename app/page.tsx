@@ -4,6 +4,7 @@ import { MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { ToastProvider } from './context/ToastContext';
+import { HeatProvider } from './context/HeatContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { AppShell } from './components/app/AppShell';
 import { useAuthStore } from './stores';
@@ -21,7 +22,9 @@ export default function ConsentementApp() {
         <LanguageProvider>
           <ThemeProvider>
             <ToastProvider>
-              <AppShell />
+              <HeatProvider>
+                <AppShell />
+              </HeatProvider>
             </ToastProvider>
           </ThemeProvider>
         </LanguageProvider>

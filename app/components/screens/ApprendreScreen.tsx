@@ -21,7 +21,7 @@ import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useTranslation } from '../../i18n';
 import { isModuleCompleted } from '../../lib/moduleIds';
 import { MODULES, moduleAudience } from '../../modules';
-import { useHeatLevel } from '../../lib/useHeatLevel';
+import { useHeat } from '../../context/HeatContext';
 import { MODULE_POINTS, HEAT_THRESHOLDS } from '../../lib/heatLevel';
 import type { EffectiveModuleId } from '../../modules';
 
@@ -176,7 +176,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { completedModules } = useModuleProgressStore();
-  const { level: heatLevel } = useHeatLevel();
+  const { level: heatLevel } = useHeat();
   const audience = moduleAudience(isAdult);
   const modules: ModuleMeta[] = MODULES.filter(
     (module) =>
@@ -279,6 +279,42 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
           />
         ))}
       </div>
+
+      {isAdult !== false && (
+        <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: modules.length * 0.07 + 0.15 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate('quiz-hub')}
+          className="w-full mt-3 rounded-2xl p-4 flex items-center gap-3 text-left"
+          style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+        >
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
+          >
+            <Brain size={20} className="text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+              <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+                {t('quizMl.ui.hubTitle')}
+              </span>
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ background: '#3b82f622', color: '#3b82f6' }}>
+                9 quiz
+              </span>
+            </div>
+            <p className="text-xs leading-snug" style={{ color: colors.textSecondary }}>
+              {t('quizMl.ui.hubSubtitle')}
+            </p>
+            <p className="text-[10px] mt-1 font-medium" style={{ color: '#3b82f6' }}>
+              Débutant · Intermédiaire · Expert
+            </p>
+          </div>
+          <ChevronRight size={18} style={{ color: colors.textMuted }} />
+        </motion.button>
+      )}
     </motion.div>
   );
 }

@@ -10,7 +10,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useUnlockStore, useModuleProgressStore } from '../../stores';
 import { getProgressLevel } from '../../lib/progressLevel';
-import { computeHeatPoints, getHeatLevel } from '../../lib/heatLevel';
+import { useHeat } from '../../context/HeatContext';
 import { isHeatUnlocked } from '../../lib/heatGate';
 import { isModuleCompleted } from '../../lib/moduleIds';
 import { collectorCards } from '../../data/cards-collector';
@@ -110,12 +110,9 @@ function CollectionButton({ ownedCount, onNavigate }: { ownedCount: number; onNa
 }
 
 function HeatGatedExplicitMode({ delay }: { delay: number }) {
-  const { completedModules } = useModuleProgressStore();
-  const { ownedCards, sessionCount } = useUnlockStore();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const points = computeHeatPoints({ completedModules, ownedCards, sessionCount });
-  const level = getHeatLevel(points);
+  const { points, level } = useHeat();
   const unlocked = isHeatUnlocked('explicit', level);
 
   if (unlocked) return <ExplicitModeToggle delay={delay} />;
@@ -148,9 +145,7 @@ function HeatGatedExplicitMode({ delay }: { delay: number }) {
 }
 
 function HeatBar() {
-  const { completedModules } = useModuleProgressStore();
-  const { ownedCards, sessionCount } = useUnlockStore();
-  const points = computeHeatPoints({ completedModules, ownedCards, sessionCount });
+  const { points } = useHeat();
   return (
     <motion.div
       initial={{ opacity: 0, x: 12 }}

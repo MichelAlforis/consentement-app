@@ -23,7 +23,7 @@ import {
   selectIsTabContext,
 } from '../../stores';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
-import { useHeatLevel } from '../../lib/useHeatLevel';
+import { useHeat } from '../../context/HeatContext';
 import { usePalierUp } from '../../lib/usePalierUp';
 import { HeatThermometer, PalierUpOverlay } from '../ui';
 import { DURATION } from '../../constants/motion';
@@ -94,7 +94,7 @@ export function AppShell() {
   useAppDiagnostics(currentScreen);
 
   // Sync explicit mode avec le niveau de chaleur — force OFF si palier < 2
-  const { level: heatLevel, points: heatPoints } = useHeatLevel();
+  const { level: heatLevel, points: heatPoints } = useHeat();
   const syncExplicitWithHeat = useSettingsStore((s) => s.syncExplicitWithHeat);
   useEffect(() => { syncExplicitWithHeat(heatLevel); }, [heatLevel, syncExplicitWithHeat]);
 
