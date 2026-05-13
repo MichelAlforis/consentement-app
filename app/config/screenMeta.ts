@@ -32,6 +32,7 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
   'porno-vs-realite': {},
   'loi-consentement': {},
   'quiz-consentement': {},
+  'quiz-hub': {},
   'accompagnement-mineur': {},
   'accompagnement-adulte': {},
   'annuaire-sexologues': {},

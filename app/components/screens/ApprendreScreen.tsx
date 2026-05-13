@@ -181,14 +181,13 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const modules: ModuleMeta[] = MODULES.filter(
     (module) =>
       module.id !== 'module-de-base' &&
-      (module.available[audience] ||
-        (audience === 'adult' && module.id === 'module-pratiques-adultes'))
+      module.screen !== null &&
+      module.available[audience]
   )
     .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99))
     .map((module) => {
       const effectiveId = module.effectiveId[audience];
       const pts = MODULE_POINTS[effectiveId as EffectiveModuleId] ?? 0;
-      const isHeatGated = !module.available[audience] && module.id === 'module-pratiques-adultes';
       return {
         id: module.id,
         screen: module.screen,
@@ -202,7 +201,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
         ),
         available: module.available[audience],
         heatPoints: pts,
-        requiredHeatLevel: isHeatGated ? 3 as const : undefined,
+        requiredHeatLevel: undefined,
       };
     });
   const availableModules = modules.filter((m) => m.available);

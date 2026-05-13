@@ -6,16 +6,19 @@ import { Flame, X } from 'lucide-react';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../context/ThemeContext';
+import { useHeat } from '../../context/HeatContext';
+import { isHeatUnlocked } from '../../lib/heatGate';
 
 const EXPLICIT_RED = '#ef4444';
 
-function TogglePill({ active, onClick }: { active: boolean; onClick: () => void }) {
+function TogglePill({ active, disabled, onClick }: { active: boolean; disabled?: boolean; onClick: () => void }) {
   return (
     <motion.button
-      whileTap={{ scale: 0.93 }}
+      whileTap={disabled ? {} : { scale: 0.93 }}
       onClick={onClick}
-      className="relative w-12 h-6 rounded-full shrink-0 transition-colors"
-      style={{ background: active ? EXPLICIT_RED : '#6b728040' }}
+      disabled={disabled}
+      className="relative w-12 h-6 rounded-full shrink-0 transition-colors disabled:cursor-not-allowed"
+      style={{ background: active ? EXPLICIT_RED : '#6b728040', opacity: disabled ? 0.55 : 1 }}
       role="switch"
       aria-checked={active}
     >
@@ -39,8 +42,11 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { level } = useHeat();
+  const locked = !isHeatUnlocked('explicit', level);
 
   const handleToggle = () => {
+    if (locked && !explicitMode) return;
     if (!explicitMode) {
       setShowModal(true);
     } else {
@@ -56,7 +62,7 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
   return (
     <>
       {pillOnly ? (
-        <TogglePill active={explicitMode} onClick={handleToggle} />
+        <TogglePill active={explicitMode} disabled={locked && !explicitMode} onClick={handleToggle} />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -82,7 +88,7 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
               {explicitMode ? t('settings.explicit.activeDesc') : t('settings.explicit.desc')}
             </p>
           </div>
-          <TogglePill active={explicitMode} onClick={handleToggle} />
+          <TogglePill active={explicitMode} disabled={locked && !explicitMode} onClick={handleToggle} />
         </motion.div>
       )}
 

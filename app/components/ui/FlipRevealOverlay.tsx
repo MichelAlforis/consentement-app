@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { DURATION, EASING, STAGGER } from '../../constants/motion';
-import { RADIUS } from '../../constants/tokens';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Sparkles, X } from 'lucide-react';
 import { useTranslation } from '../../i18n';

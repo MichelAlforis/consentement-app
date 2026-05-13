@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Calendar, Sprout, TreeDeciduous, Lock,
-  ShieldCheck, BookOpen, MessageCircle, BadgeCheck, ArrowRight,
-  Flag, KeyRound, Shield, Landmark, Check,
+  Sprout, TreeDeciduous, Lock,
+  ShieldCheck, KeyRound, Shield, User,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -32,7 +31,7 @@ interface WizardProps {
   onNavigate: (screen: Screen) => void;
 }
 
-// ─── Steps content ────────────────────────────────────────────────────────────
+// ─── Steps ────────────────────────────────────────────────────────────────────
 
 function LanguageStep({ onNext }: StepProps) {
   const { t } = useTranslation();
@@ -82,81 +81,48 @@ function LanguageStep({ onNext }: StepProps) {
   );
 }
 
-function WelcomeStep({ onNext }: StepProps) {
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-  const pillars = [
-    { icon: <ShieldCheck size={14} />, label: t('welcome.pillars.consent') },
-    { icon: <BookOpen size={14} />, label: t('welcome.pillars.education') },
-    { icon: <MessageCircle size={14} />, label: t('welcome.pillars.dialogue') },
-  ];
-  return (
-    <div className="flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
-      <AppLogo className="w-36 h-36" variant="light" animated />
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight mb-1" style={{ color: colors.textPrimary }}>{t('welcome.appName')}</h1>
-        <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">{t('welcome.tagline')}</p>
-      </div>
-      <p className="text-base leading-relaxed max-w-xs" style={{ color: colors.textMuted }}>{t('welcome.description')}</p>
-      <div className="flex flex-wrap justify-center gap-2">
-        {pillars.map((p) => (
-          <span key={p.label} className="px-3 py-1.5 rounded-full text-sm flex items-center gap-1.5"
-            style={{ background: colors.bgCard, color: colors.textSecondary, border: `1px solid ${colors.divider}` }}>
-            {p.icon}{p.label}
-          </span>
-        ))}
-      </div>
-      <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: colors.textMuted }}>
-        <BadgeCheck size={13} className="text-violet-500 shrink-0" />
-        {t('welcome.legalBadge')}
-      </div>
-      <Button onClick={onNext} fullWidth size="lg">
-        {t('welcome.cta')} <ArrowRight size={18} />
-      </Button>
-    </div>
-  );
-}
-
-function AgeCheckStep({ onNext, onSetAge, onSelectTheme }: StepProps & { onSetAge: (a: boolean) => void; onSelectTheme: (m: ThemeMode) => void }) {
+function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
+  onSetAge: (a: boolean) => void;
+  onSelectTheme: (m: ThemeMode) => void;
+}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
-    <div className="flex flex-col px-6 py-8 gap-6">
+    <div className="flex flex-col px-6 py-8 gap-5">
       <div className="text-center">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-100 to-orange-200 mb-4 shadow-lg shadow-amber-200/50">
-          <Calendar size={40} className="text-amber-600" />
-        </motion.div>
-        <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{t('ageCheck.title')}</h2>
-        <p style={{ color: colors.textMuted }}>{t('ageCheck.subtitle')}</p>
+        <AppLogo className="w-20 h-20" variant="light" animated />
+        <h1 className="text-2xl font-bold mt-4 mb-1" style={{ color: colors.textPrimary }}>{t('welcome.appName')}</h1>
+        <p className="text-sm font-medium text-violet-500 tracking-widest uppercase">{t('welcome.tagline')}</p>
+        <p className="text-sm mt-2 max-w-xs mx-auto leading-relaxed" style={{ color: colors.textMuted }}>{t('welcome.description')}</p>
       </div>
-      <div className="space-y-4">
+      <p className="text-center font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.title')}</p>
+      <div className="space-y-3">
         <Card onClick={() => { onSetAge(false); onSelectTheme('youth'); onNext(); }} variant="elevated" delay={1}>
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center">
-              <Sprout size={28} className="text-emerald-600" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center shrink-0">
+              <Sprout size={24} className="text-emerald-600" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg" style={{ color: colors.textPrimary }}>{t('ageCheck.minor.title')}</h3>
-              <p className="text-sm mt-1" style={{ color: colors.textMuted }}>{t('ageCheck.minor.desc')}</p>
+            <div>
+              <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.minor.title')}</h3>
+              <p className="text-sm mt-0.5" style={{ color: colors.textMuted }}>{t('ageCheck.minor.desc')}</p>
             </div>
           </div>
         </Card>
         <Card onClick={() => { onSetAge(true); onNext(); }} variant="elevated" delay={2}>
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-200 to-emerald-300 flex items-center justify-center">
-              <TreeDeciduous size={28} className="text-emerald-700" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-200 flex items-center justify-center shrink-0">
+              <TreeDeciduous size={24} className="text-purple-600" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg" style={{ color: colors.textPrimary }}>{t('ageCheck.adult.title')}</h3>
-              <p className="text-sm mt-1" style={{ color: colors.textMuted }}>{t('ageCheck.adult.desc')}</p>
+            <div>
+              <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.adult.title')}</h3>
+              <p className="text-sm mt-0.5" style={{ color: colors.textMuted }}>{t('ageCheck.adult.desc')}</p>
             </div>
           </div>
         </Card>
       </div>
-      <div className="flex items-center justify-center gap-2 p-4 rounded-2xl"
+      <div className="flex items-center justify-center gap-2 p-3 rounded-xl"
         style={{ background: colors.bgSecondary, border: `1px solid ${colors.divider}` }}>
-        <Lock size={13} style={{ color: colors.textMuted }} />
+        <Lock size={12} style={{ color: colors.textMuted }} />
         <p className="text-xs" style={{ color: colors.textMuted }}>{t('ageCheck.privacy')}</p>
       </div>
     </div>
@@ -241,14 +207,12 @@ function AuthStep({ onNext, onAuth }: StepProps & { onAuth: (name: string) => vo
   const { colors } = useTheme();
   const { setPronouns } = useAuthStore();
   const [name, setName] = useState('');
-  const [showInput, setShowInput] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [pronoun, setPronoun] = useState<'il' | 'elle' | 'iel' | 'neutre' | null>(null);
   const PRONOUNS = ['il', 'elle', 'iel', 'neutre'] as const;
 
   const handleContinue = () => {
-    if (!showInput) { setShowInput(true); return; }
     if (name.trim()) { setPronouns(pronoun); onAuth(name.trim()); onNext(); }
     else { setHasError(true); setTimeout(() => setHasError(false), 2500); }
   };
@@ -256,90 +220,60 @@ function AuthStep({ onNext, onAuth }: StepProps & { onAuth: (name: string) => vo
   return (
     <div className="flex flex-col px-6 py-8 gap-6">
       <div className="text-center">
-        <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }}
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500 to-blue-600 mb-4 shadow-xl shadow-blue-300/50">
-          <Flag size={48} className="text-white" />
+          className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500 to-purple-600 mb-4 shadow-xl shadow-violet-300/50">
+          <User size={40} className="text-white" />
         </motion.div>
         <h2 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{t('auth.title')}</h2>
         <p style={{ color: colors.textMuted }}>{t('auth.subtitle')}</p>
       </div>
 
-      {showInput && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <Card variant="default" padding="lg">
-            <label className="block text-sm font-medium mb-2" style={{ color: colors.textSecondary }}>{t('auth.nameLabel')}</label>
-            <motion.div animate={hasError ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.35 }}>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                placeholder={t('auth.namePlaceholder')} autoFocus
-                onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)}
-                className="w-full px-4 py-3 rounded-xl border-2 text-base focus:outline-none"
-                style={{
-                  background: colors.bgSecondary,
-                  borderColor: hasError ? colors.error : isFocused ? colors.accent : colors.border,
-                  color: colors.textPrimary,
-                }}
-                onKeyDown={(e) => e.key === 'Enter' && handleContinue()}
-              />
-            </motion.div>
-            <p className="text-xs mt-2" style={{ color: hasError ? colors.error : colors.textMuted }}>
-              {hasError ? t('auth.nameRequired') : t('auth.namePrivacy')}
-            </p>
-          </Card>
-          <Card variant="default" padding="lg">
-            <p className="text-sm font-medium mb-3" style={{ color: colors.textSecondary }}>{t('auth.pronounsLabel')}</p>
-            <div className="flex flex-wrap gap-2">
-              {PRONOUNS.map((p) => (
-                <motion.button key={p} whileTap={{ scale: 0.95 }}
-                  onClick={() => setPronoun(pronoun === p ? null : p)}
-                  className="px-3 py-1.5 rounded-full text-sm font-medium"
-                  style={{
-                    background: pronoun === p ? colors.accent : colors.bgSecondary,
-                    color: pronoun === p ? '#fff' : colors.textMuted,
-                    border: `1px solid ${pronoun === p ? colors.accent : colors.divider}`,
-                  }}>
-                  {t(`auth.pronounOptions.${p}`)}
-                </motion.button>
-              ))}
-            </div>
-          </Card>
+      <Card variant="default" padding="lg">
+        <label className="block text-sm font-medium mb-2" style={{ color: colors.textSecondary }}>{t('auth.nameLabel')}</label>
+        <motion.div animate={hasError ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.35 }}>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+            placeholder={t('auth.namePlaceholder')} autoFocus
+            onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)}
+            className="w-full px-4 py-3 rounded-xl border-2 text-base focus:outline-none"
+            style={{
+              background: colors.bgSecondary,
+              borderColor: hasError ? colors.error : isFocused ? colors.accent : colors.border,
+              color: colors.textPrimary,
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && handleContinue()}
+          />
         </motion.div>
-      )}
+        <div className="flex items-center gap-1.5 mt-2">
+          <Shield size={11} style={{ color: colors.textMuted }} />
+          <p className="text-xs" style={{ color: hasError ? colors.error : colors.textMuted }}>
+            {hasError ? t('auth.nameRequired') : t('auth.namePrivacy')}
+          </p>
+        </div>
+      </Card>
+
+      <Card variant="default" padding="lg">
+        <p className="text-sm font-medium mb-3" style={{ color: colors.textSecondary }}>{t('auth.pronounsLabel')}</p>
+        <div className="flex flex-wrap gap-2">
+          {PRONOUNS.map((p) => (
+            <motion.button key={p} whileTap={{ scale: 0.95 }}
+              onClick={() => setPronoun(pronoun === p ? null : p)}
+              className="px-3 py-1.5 rounded-full text-sm font-medium"
+              style={{
+                background: pronoun === p ? colors.accent : colors.bgSecondary,
+                color: pronoun === p ? '#fff' : colors.textMuted,
+                border: `1px solid ${pronoun === p ? colors.accent : colors.divider}`,
+              }}>
+              {t(`auth.pronounOptions.${p}`)}
+            </motion.button>
+          ))}
+        </div>
+      </Card>
 
       <Button onClick={handleContinue} fullWidth size="lg">
         <KeyRound size={18} />
-        {showInput ? t('auth.btnContinue') : t('auth.btnConnect')}
+        {t('auth.btnContinue')}
       </Button>
-
-      {!showInput && (
-        <Card variant="default" padding="lg">
-          <h4 className="font-semibold mb-3 flex items-center gap-2 text-sm" style={{ color: colors.textSecondary }}>
-            <Lock size={16} style={{ color: colors.textMuted }} />{t('auth.why.title')}
-          </h4>
-          <ul className="space-y-2">
-            {[t('auth.why.reason1'), t('auth.why.reason2'), t('auth.why.reason3')].map((text, i) => (
-              <li key={i} className="flex items-center gap-3 text-sm" style={{ color: colors.textSecondary }}>
-                <span className="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                  <Check size={12} />
-                </span>
-                {text}
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-
-      <div className="flex justify-center gap-2 flex-wrap">
-        {[
-          { icon: <Shield size={12} />, label: t('auth.badges.encrypted') },
-          { icon: <Flag size={12} />, label: t('auth.badges.rgpd') },
-          { icon: <Landmark size={12} />, label: t('auth.badges.official') },
-        ].map(({ icon, label }) => (
-          <span key={label} className="px-3 py-1.5 bg-blue-50 rounded-full text-xs text-blue-600 font-medium flex items-center gap-1.5">
-            {icon}{label}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
@@ -351,12 +285,10 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   const { t } = useTranslation();
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
   const [stepIndex, setStepIndex] = useState(0);
-  // detectAndSet migré vers RenderModeInit dans layout.tsx — appelé sur toutes les routes
 
   const steps: Array<{ id: string }> = [
     { id: 'language' },
-    { id: 'welcome' },
-    { id: 'age-check' },
+    { id: 'welcome-age' },
     { id: 'theme-select' },
     ...(isAdult !== false ? [{ id: 'auth' }] : []),
   ];
@@ -368,9 +300,10 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
     if (stepIndex < total - 1) {
       setStepIndex((i) => i + 1);
     } else {
+      markOnboardingSkipped();
       onNavigate('home');
     }
-  }, [stepIndex, total, onNavigate]);
+  }, [stepIndex, total, markOnboardingSkipped, onNavigate]);
 
   const handleSkip = () => {
     markOnboardingSkipped();
@@ -381,8 +314,9 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
 
   const renderStep = () => {
     if (currentStepId === 'language') return <LanguageStep onNext={handleNext} />;
-    if (currentStepId === 'welcome') return <WelcomeStep onNext={handleNext} />;
-    if (currentStepId === 'age-check') return <AgeCheckStep onNext={handleNext} onSetAge={onSetAge} onSelectTheme={onSelectTheme} />;
+    if (currentStepId === 'welcome-age') return (
+      <WelcomeAgeStep onNext={handleNext} onSetAge={onSetAge} onSelectTheme={onSelectTheme} />
+    );
     if (currentStepId === 'theme-select') return (
       <ThemeSelectStep onNext={handleNext} onSelectTheme={onSelectTheme} isAdult={isAdult}
         isPremium={isPremium} onGoPremium={() => onNavigate('premium')} />
@@ -393,7 +327,6 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
-      {/* Top bar — progress + skip */}
       <div className="shrink-0 flex items-center gap-3 px-5 pt-5 pb-3 safe-area-top">
         <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>
           <motion.div className="h-full rounded-full" style={{ background: colors.accent }}
@@ -405,7 +338,6 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
         </button>
       </div>
 
-      {/* Step content */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <AnimatePresence mode="wait">
           <motion.div key={currentStepId}

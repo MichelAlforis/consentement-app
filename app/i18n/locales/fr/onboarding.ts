@@ -22,32 +22,19 @@ export const onboarding = {
     },
     adult: {
       title: "J'ai 18 ans ou plus",
-      desc: 'Accès complet avec authentification',
+      desc: 'Accès complet, personnalisation maximale',
     },
     privacy: "Cette information reste sur ton appareil et n'est jamais partagée",
   },
 
   auth: {
-    title: 'Connexion sécurisée',
-    subtitle: 'Pour protéger ton identité et vérifier ta majorité',
+    title: 'Comment t\'appelle-t-on ?',
+    subtitle: 'Un prénom suffit — il reste sur ton appareil',
     nameLabel: "Comment veux-tu qu'on t'appelle ?",
     namePlaceholder: 'Ton prénom...',
     namePrivacy: 'Ce prénom reste sur ton appareil uniquement',
     nameRequired: 'Entre ton prénom pour continuer',
-    btnConnect: 'Se connecter avec FranceConnect',
     btnContinue: 'Continuer',
-    demoNote: 'Simulation — En production, redirection vers FranceConnect',
-    why: {
-      title: 'Pourquoi FranceConnect ?',
-      reason1: 'Vérification de ta majorité',
-      reason2: 'Aucun mot de passe à créer',
-      reason3: 'Ton identité reste protégée',
-    },
-    badges: {
-      encrypted: 'Chiffré',
-      rgpd: 'RGPD',
-      official: 'Officiel',
-    },
     pronounsLabel: 'Pronoms (optionnel)',
     pronounOptions: {
       il: 'il/lui',

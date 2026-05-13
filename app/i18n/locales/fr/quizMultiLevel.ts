@@ -32,7 +32,7 @@ export const quizMultiLevel = {
         1: {
           q: 'À quelle fréquence faut-il vérifier le consentement ?',
           o: { 0: 'À chaque fois, à chaque étape', 1: 'Une seule fois au tout début', 2: 'Jamais dans une relation longue', 3: 'Seulement lors du premier rapport' },
-          x: 'Le consentement se donne et se renouvelle à chaque étape, à chaque situation. Il n'est jamais acquis une fois pour toutes.',
+          x: 'Le consentement se donne et se renouvelle à chaque étape, à chaque situation. Il n\'est jamais acquis une fois pour toutes.',
         },
         2: {
           q: 'Quelqu\'un est en état d\'ivresse avancée. Son "d\'accord" est-il valable ?',

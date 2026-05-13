@@ -22,32 +22,19 @@ export const onboarding = {
     },
     adult: {
       title: "Tengo 18 años o más",
-      desc: 'Acceso completo con autenticación',
+      desc: 'Acceso completo, personalización máxima',
     },
     privacy: "Esta información permanece en tu dispositivo y nunca se comparte",
   },
 
   auth: {
-    title: 'Inicio de sesión seguro',
-    subtitle: 'Para proteger tu identidad y verificar tu edad',
+    title: '¿Cómo te llamamos?',
+    subtitle: 'Un nombre es suficiente — permanece en tu dispositivo',
     nameLabel: '¿Cómo quieres que te llamemos?',
     namePlaceholder: 'Tu nombre...',
     namePrivacy: 'Este nombre permanece solo en tu dispositivo',
     nameRequired: 'Ingresa tu nombre para continuar',
-    btnConnect: 'Iniciar sesión con FranceConnect',
     btnContinue: 'Continuar',
-    demoNote: 'Simulación — En producción, redirige a FranceConnect',
-    why: {
-      title: '¿Por qué FranceConnect?',
-      reason1: 'Verificación de tu edad',
-      reason2: 'Sin contraseña que crear',
-      reason3: 'Tu identidad permanece protegida',
-    },
-    badges: {
-      encrypted: 'Cifrado',
-      rgpd: 'RGPD',
-      official: 'Oficial',
-    },
     pronounsLabel: 'Pronombres (opcional)',
     pronounOptions: {
       il: 'él',

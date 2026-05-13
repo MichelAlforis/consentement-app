@@ -9,7 +9,6 @@ import { useUnlockStore } from '../../stores';
 import { collectorCards } from '../../data/cards-collector';
 import { GameMenuCard } from '../ui';
 import { useHeat } from '../../context/HeatContext';
-import { isHeatUnlocked } from '../../lib/heatGate';
 import { HEAT_THRESHOLDS } from '../../lib/heatLevel';
 import {
   getGameDescriptionKey,

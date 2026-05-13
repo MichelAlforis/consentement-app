@@ -82,7 +82,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setP2Answer(null);
     setShowCardPreview(false);
     setPreviewCard(null);
-    setShowReveal(false);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -93,7 +92,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setP2Answer(null);
     setShowCardPreview(false);
     setPreviewCard(null);
-    setShowReveal(false);
     setRollCount((c) => c + 1);
     roll();
   };
@@ -104,7 +102,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setP2Answer(null);
     setShowCardPreview(false);
     setPreviewCard(null);
-    setShowReveal(false);
   };
 
   const handleQuit = () => {
