@@ -11,7 +11,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
-import { useHeatLevel } from '../../lib/useHeatLevel';
+import { useHeat } from '../../context/HeatContext';
 import { Button } from '../ui';
 import { QUIZ_ML_CORRECT, QUIZ_ML_QUESTIONS_COUNT, quizModuleId } from '../../data/quizMultiLevel';
 import type { QuizTier } from '../../data/quizMultiLevel';
@@ -244,7 +244,7 @@ function QuizPlayer({
     if (current + 1 >= total) {
       const moduleId = quizModuleId(tier, variantIndex);
       complete(moduleId);
-      onFinish(score); // score déjà mis à jour par handleConfirm
+      onFinish(score);
     } else {
       setCurrent(c => c + 1);
       setSelected(null);
@@ -444,7 +444,7 @@ interface QuizHubScreenProps {
 export function QuizHubScreen({ onNavigate }: QuizHubScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { level: heatLevel } = useHeatLevel();
+  const { level: heatLevel } = useHeat();
   const { completedModules } = useModuleProgressStore();
 
   const [stage, setStage] = useState<Stage>('hub');
