@@ -3,6 +3,8 @@
 import { useMemo } from 'react';
 import { useModuleProgressStore } from '../stores/moduleProgressStore';
 import { useUnlockStore } from '../stores/unlockStore';
+import { useProfileStore } from '../stores/profileStore';
+import { useAuthStore } from '../stores/authStore';
 import {
   computeHeatPoints,
   getHeatLevel,
@@ -24,10 +26,27 @@ export function useHeatLevel(): HeatState {
   const completedModules = useModuleProgressStore((s) => s.completedModules);
   const ownedCards = useUnlockStore((s) => s.ownedCards);
   const sessionCount = useUnlockStore((s) => s.sessionCount);
+  const personalProfile = useProfileStore((s) => s.personalProfile);
+  const pronouns = useAuthStore((s) => s.pronouns);
+
+  const profileComfortCategories = useMemo(() => {
+    const { tenderness, intensity, trust } = personalProfile;
+    return [tenderness, intensity, trust].filter((cat) => Object.keys(cat).length > 0).length;
+  }, [personalProfile]);
+
+  const safewordDefined = personalProfile.safeword.trim() !== '';
+  const pronounsDefined = pronouns !== null && pronouns.trim() !== '';
 
   const points = useMemo(
-    () => computeHeatPoints({ completedModules, ownedCards, sessionCount }),
-    [completedModules, ownedCards, sessionCount]
+    () => computeHeatPoints({
+      completedModules,
+      ownedCards,
+      sessionCount,
+      profileComfortCategories,
+      safewordDefined,
+      pronounsDefined,
+    }),
+    [completedModules, ownedCards, sessionCount, profileComfortCategories, safewordDefined, pronounsDefined]
   );
 
   return useMemo(() => ({

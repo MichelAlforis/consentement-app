@@ -7,6 +7,12 @@ export interface HeatInput {
   completedModules: string[];
   ownedCards: OwnedCard[];
   sessionCount: number;
+  /** Nombre de catégories confort renseignées (0-3 : tendresse, intensité, confiance) */
+  profileComfortCategories?: number;
+  /** Mot de sécurité défini par l'utilisateur */
+  safewordDefined?: boolean;
+  /** Pronoms renseignés dans le profil */
+  pronounsDefined?: boolean;
   /** Réservé V2 — lexique non implémenté */
   lexiqueWords?: number;
 }
@@ -55,8 +61,11 @@ export function computeHeatPoints(input: HeatInput): number {
   }, 0);
 
   const sessionPoints = input.sessionCount;
+  const profilePoints = (input.profileComfortCategories ?? 0); // 1pt par catégorie renseignée
+  const safewordPoints = input.safewordDefined ? 3 : 0;
+  const pronounsPoints = input.pronounsDefined ? 2 : 0;
 
-  return modulePoints + cardPoints + sessionPoints;
+  return modulePoints + cardPoints + sessionPoints + profilePoints + safewordPoints + pronounsPoints;
 }
 
 export function getHeatLevel(points: number): HeatLevel {

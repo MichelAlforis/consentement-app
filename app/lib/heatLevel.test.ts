@@ -74,6 +74,22 @@ describe('computeHeatPoints', () => {
     expect(computeHeatPoints(input)).toBe(5);
   });
 
+  it('compte 1pt par catégorie confort renseignée (max 3)', () => {
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, profileComfortCategories: 0 })).toBe(0);
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, profileComfortCategories: 1 })).toBe(1);
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, profileComfortCategories: 3 })).toBe(3);
+  });
+
+  it('ajoute 3pts si mot de sécurité défini', () => {
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, safewordDefined: true })).toBe(3);
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, safewordDefined: false })).toBe(0);
+  });
+
+  it('ajoute 2pts si pronoms renseignés', () => {
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, pronounsDefined: true })).toBe(2);
+    expect(computeHeatPoints({ completedModules: [], ownedCards: [], sessionCount: 0, pronounsDefined: false })).toBe(0);
+  });
+
   it('combine tous les triggers', () => {
     const input: HeatInput = {
       completedModules: ['module-de-base', 'quiz-consentement'],
@@ -82,6 +98,19 @@ describe('computeHeatPoints', () => {
     };
     // modules: 3+2=5, cards: 1+1+2=4, sessions: 3 → total 12
     expect(computeHeatPoints(input)).toBe(12);
+  });
+
+  it('combine profil complet (max bonus profil = 8pts)', () => {
+    const input: HeatInput = {
+      completedModules: [],
+      ownedCards: [],
+      sessionCount: 0,
+      profileComfortCategories: 3,
+      safewordDefined: true,
+      pronounsDefined: true,
+    };
+    // 3 + 3 + 2 = 8
+    expect(computeHeatPoints(input)).toBe(8);
   });
 
   it('prend en compte les variantes mineures', () => {
