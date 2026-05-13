@@ -1,11 +1,6 @@
 'use client';
 
-import { MotionConfig } from 'framer-motion';
-import { ThemeProvider } from './context/ThemeContext';
-import { LanguageProvider } from './context/LanguageContext';
-import { ToastProvider } from './context/ToastContext';
-import { HeatProvider } from './context/HeatContext';
-import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { AppProviders } from './components/app/AppProviders';
 import { AppShell } from './components/app/AppShell';
 import { useAuthStore } from './stores';
 
@@ -17,18 +12,8 @@ export default function ConsentementApp() {
   }
 
   return (
-    <ErrorBoundary label="root">
-      <MotionConfig reducedMotion="user">
-        <LanguageProvider>
-          <ThemeProvider>
-            <ToastProvider>
-              <HeatProvider>
-                <AppShell />
-              </HeatProvider>
-            </ToastProvider>
-          </ThemeProvider>
-        </LanguageProvider>
-      </MotionConfig>
-    </ErrorBoundary>
+    <AppProviders>
+      <AppShell />
+    </AppProviders>
   );
 }
