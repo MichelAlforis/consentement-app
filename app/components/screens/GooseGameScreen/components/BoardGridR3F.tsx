@@ -452,6 +452,14 @@ class PostFXBoundary extends Component<{ children: ReactNode }, { failed: boolea
   render() { return this.state.failed ? null : this.props.children; }
 }
 
+// ─── CanvasBoundary — swallow WebGL init failures silently ───────────────────
+
+class CanvasBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+  state = { crashed: false };
+  static getDerivedStateFromError() { return { crashed: true }; }
+  render() { return this.state.crashed ? null : this.props.children; }
+}
+
 // ─── BoardGridR3F ─────────────────────────────────────────────────────────────
 
 function BoardGridR3F({
@@ -463,6 +471,14 @@ function BoardGridR3F({
   const { colors } = useTheme();
   const { zoom, canvasH, groupRotY, camPos } = useResponsiveBoardConfig();
 
+  // Defer Canvas mount 60ms — absorbs React Strict Mode double-mount in dev
+  // (first mount's cleanup fires clearTimeout before the 60ms; real mount lets it complete)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     return () => { disposeIconTextureCache(); };
   }, []);
@@ -471,18 +487,20 @@ function BoardGridR3F({
     <div className="overflow-x-hidden w-full">
       <div className="w-full py-1">
         <div className="relative overflow-hidden" style={{ height: canvasH }}>
-          <Canvas
+          {mounted && <CanvasBoundary><Canvas
             className="absolute inset-0"
             shadows
             gl={{
               antialias: true,
               powerPreference: 'low-power',
               failIfMajorPerformanceCaveat: false,
-              toneMapping: THREE.ACESFilmicToneMapping,
-              toneMappingExposure: 1.15,
-              outputColorSpace: THREE.SRGBColorSpace,
             }}
             dpr={[1, 2]}
+            onCreated={({ gl }) => {
+              gl.toneMapping = THREE.ACESFilmicToneMapping;
+              gl.toneMappingExposure = 1.15;
+              gl.outputColorSpace = THREE.SRGBColorSpace;
+            }}
           >
             <color attach="background" args={[colors.bgPrimary]} />
             <OrthographicCamera makeDefault position={camPos} zoom={zoom} near={0.1} far={100} />
@@ -535,13 +553,14 @@ function BoardGridR3F({
             </group>
 
             {/* N8AO incompatible OrthographicCamera (depth math diverge) — SSAO Phase 3 si switch Perspective */}
+            {/* N8AO incompatible OrthographicCamera (depth math diverge) — SSAO Phase 3 si switch Perspective */}
             <PostFXBoundary>
               <EffectComposer>
                 <Bloom intensity={0.45} luminanceThreshold={0.32} luminanceSmoothing={0.85} mipmapBlur />
                 <Vignette eskil={false} offset={0.45} darkness={0.4} />
               </EffectComposer>
             </PostFXBoundary>
-          </Canvas>
+          </Canvas></CanvasBoundary>}
         </div>
       </div>
     </div>

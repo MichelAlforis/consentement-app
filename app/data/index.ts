@@ -112,7 +112,9 @@ export const consentPrinciples: ConsentPrinciple[] = [
 export const helpResources: HelpResource[] = [
   { name: 'Fil Santé Jeunes', phone: '0 800 235 236', desc: 'Anonyme et gratuit', color: '#4db6ac' },
   { name: 'Violences Femmes Info', phone: '3919', desc: '24h/24', color: '#f78fb3' },
-  { name: 'Planning Familial', phone: '0 800 08 11 11', desc: 'Sexualité, contraception', color: '#81c784' }
+  { name: 'Planning Familial', phone: '0 800 08 11 11', desc: 'Sexualité, contraception', color: '#81c784' },
+  { name: 'Prévention Suicide', phone: '3114', desc: 'Disponible 24h/24, 7j/7', color: '#7c3aed' },
+  { name: 'Enfance en Danger', phone: '119', desc: 'Gratuit, 7j/7, 24h/24', color: '#f59e0b' },
 ];
 
 export const initialPersonalProfile = {

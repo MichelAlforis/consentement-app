@@ -32,10 +32,10 @@ export const education = {
   },
 
   pornoVsRealiteScreen: {
-    title: 'Porno vs. Realidad',
+    title: 'Sexo vs. Realidad',
     subtitle: 'Lo que las películas no te muestran',
-    intro: "El porno es una <strong>película de ficción</strong> rodada con actores. No muestra cómo funcionan las relaciones reales — ni el consentimiento, ni la comunicación, ni los límites.",
-    inPorno: 'En el porno',
+    intro: "Las películas adultas son <strong>ficciones</strong> rodadas con actores. No muestran cómo funcionan las relaciones reales — ni el consentimiento, ni la comunicación, ni los límites.",
+    inPorno: 'En las películas adultas',
     inReality: 'En la realidad',
     closing: "La sexualidad real se construye con comunicación, respeto y consentimiento. No imitando una película.",
     markRead: 'Lo he leído — Ver mi carta',

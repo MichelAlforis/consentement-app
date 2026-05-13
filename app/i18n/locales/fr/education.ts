@@ -32,10 +32,10 @@ export const education = {
   },
 
   pornoVsRealiteScreen: {
-    title: 'Porno vs. Réalité',
+    title: 'Sexe vs. Réalité',
     subtitle: 'Ce que les films ne te montrent pas',
-    intro: "Le porno est un <strong>film de fiction</strong> tourné avec des acteurs. Il ne montre pas comment les vraies relations se passent — ni le consentement, ni la communication, ni les limites.",
-    inPorno: 'Dans le porno',
+    intro: "Les films pornographiques sont des <strong>fictions</strong> tournées avec des acteurs. Ils ne montrent pas comment les vraies relations se passent — ni le consentement, ni la communication, ni les limites.",
+    inPorno: 'Dans les films adultes',
     inReality: 'Dans la réalité',
     closing: "La vraie sexualité, ça se construit avec communication, respect et consentement. Pas en imitant un film.",
     markRead: "J'ai lu — Voir ma carte",
@@ -63,7 +63,7 @@ export const education = {
     finish: 'Voir mon score',
     restart: 'Recommencer',
     score: '{score} bonne{plural} réponse{plural} sur {total}',
-    adviceReread: 'Relis les modules Porno vs. Réalité et La Loi pour mieux comprendre.',
+    adviceReread: 'Relis les modules Sexe vs. Réalité et La Loi pour mieux comprendre.',
     seeCard: 'Voir ma carte',
     scoreLabels: {
       excellent: 'Excellent !',

@@ -24,6 +24,9 @@ export const MODULE_POINTS: Partial<Record<EffectiveModuleId, number>> = {
   'duo-flow': 5,
   'module-pratiques-adultes': 10,
   'accompagnement-mineur': 5,
+  'quiz-d1': 2, 'quiz-d2': 2, 'quiz-d3': 2,
+  'quiz-i1': 4, 'quiz-i2': 4, 'quiz-i3': 4,
+  'quiz-e1': 8, 'quiz-e2': 8, 'quiz-e3': 8,
 };
 
 // Points par rareté de carte

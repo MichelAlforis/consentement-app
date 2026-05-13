@@ -21,6 +21,7 @@ export const HelpScreen = lazy(() => import('./components/screens/HelpScreen').t
 export const PornoVsRealiteScreen = lazy(() => import('./components/screens/PornoVsRealiteScreen').then(m => ({ default: m.PornoVsRealiteScreen })));
 export const LoiConsentementScreen = lazy(() => import('./components/screens/LoiConsentementScreen').then(m => ({ default: m.LoiConsentementScreen })));
 export const QuizConsentementScreen = lazy(() => import('./components/screens/QuizConsentementScreen').then(m => ({ default: m.QuizConsentementScreen })));
+export const QuizHubScreen = lazy(() => import('./components/screens/QuizHubScreen').then(m => ({ default: m.QuizHubScreen })));
 export const AccompagnementMineurScreen = lazy(() => import('./components/screens/AccompagnementMineurScreen').then(m => ({ default: m.AccompagnementMineurScreen })));
 export const AccompagnementAdulteScreen = lazy(() => import('./components/screens/AccompagnementAdulteScreen').then(m => ({ default: m.AccompagnementAdulteScreen })));
 export const AnnuaireSexologuesScreen = lazy(() => import('./components/screens/AnnuaireSexologuesScreen').then(m => ({ default: m.AnnuaireSexologuesScreen })));
@@ -72,6 +73,7 @@ export const ROUTES = {
   'porno-vs-realite': baseRoute(PornoVsRealiteScreen, { titleKey: 'headers.pornoVsRealite', showAd: true }),
   'loi-consentement': baseRoute(LoiConsentementScreen, { titleKey: 'headers.loi', showAd: true }),
   'quiz-consentement': baseRoute(QuizConsentementScreen, { titleKey: 'headers.quiz', showAd: true }),
+  'quiz-hub': baseRoute(QuizHubScreen, { titleKey: 'quizMl.ui.hubTitle', requiresAdult: true, showAd: true }),
   'accompagnement-mineur': baseRoute(AccompagnementMineurScreen, { titleKey: 'headers.accompagnement', showAd: true }),
   'accompagnement-adulte': baseRoute(AccompagnementAdulteScreen, { titleKey: 'headers.accompagnementAdulte', requiresAdult: true, showAd: true }),
   'annuaire-sexologues': baseRoute(AnnuaireSexologuesScreen, { titleKey: 'headers.annuaireSexologues', requiresAdult: true }),

@@ -8,7 +8,11 @@ export type ModuleId =
   | 'loi-consentement'
   | 'duo-flow'
   | 'module-pratiques-adultes'
-  | 'accompagnement-mineur';
+  | 'accompagnement-mineur'
+  // Quiz multi-niveaux
+  | 'quiz-d1' | 'quiz-d2' | 'quiz-d3'
+  | 'quiz-i1' | 'quiz-i2' | 'quiz-i3'
+  | 'quiz-e1' | 'quiz-e2' | 'quiz-e3';
 
 export type EffectiveModuleId =
   | ModuleId
@@ -123,6 +127,16 @@ export const MODULES = [
     sequence: { adult: null, minor: 4 },
     available: { adult: false, minor: true },
   },
+  // ── Quiz multi-niveaux ────────────────────────────────────────────────────
+  { id: 'quiz-d1', effectiveId: { adult: 'quiz-d1', minor: 'quiz-d1' }, screen: null, titleKey: 'quizMl.d.v1.title', reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-d2', effectiveId: { adult: 'quiz-d2', minor: 'quiz-d2' }, screen: null, titleKey: 'quizMl.d.v2.title', reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-d3', effectiveId: { adult: 'quiz-d3', minor: 'quiz-d3' }, screen: null, titleKey: 'quizMl.d.v3.title', reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-i1', effectiveId: { adult: 'quiz-i1', minor: 'quiz-i1' }, screen: null, titleKey: 'quizMl.i.v1.title', reward: { rarity: 'rare', count: 1 }, rewardKey: 'apprendre.rewardRare', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-i2', effectiveId: { adult: 'quiz-i2', minor: 'quiz-i2' }, screen: null, titleKey: 'quizMl.i.v2.title', reward: { rarity: 'rare', count: 1 }, rewardKey: 'apprendre.rewardRare', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-i3', effectiveId: { adult: 'quiz-i3', minor: 'quiz-i3' }, screen: null, titleKey: 'quizMl.i.v3.title', reward: { rarity: 'rare', count: 1 }, rewardKey: 'apprendre.rewardRare', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-e1', effectiveId: { adult: 'quiz-e1', minor: 'quiz-e1' }, screen: null, titleKey: 'quizMl.e.v1.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-e2', effectiveId: { adult: 'quiz-e2', minor: 'quiz-e2' }, screen: null, titleKey: 'quizMl.e.v2.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  { id: 'quiz-e3', effectiveId: { adult: 'quiz-e3', minor: 'quiz-e3' }, screen: null, titleKey: 'quizMl.e.v3.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
 ] as const satisfies readonly ModuleConfig[];
 
 export const MODULE_BY_ID = Object.fromEntries(MODULES.map((mod) => [mod.id, mod])) as Record<ModuleId, ModuleConfig>;

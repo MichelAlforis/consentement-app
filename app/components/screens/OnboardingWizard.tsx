@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChevronRight, Calendar, Sprout, TreeDeciduous, Lock,
+  Calendar, Sprout, TreeDeciduous, Lock,
   ShieldCheck, BookOpen, MessageCircle, BadgeCheck, ArrowRight,
   Flag, KeyRound, Shield, Landmark, Check,
 } from 'lucide-react';
@@ -11,16 +11,11 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../i18n';
 import { useAuthStore } from '../../stores/authStore';
-import { useProfileStore } from '../../stores';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
-import { useModuleComplete } from '../../lib/useModuleComplete';
 import { AppLogo } from '../ui/AppLogo';
 import { Button, Card } from '../ui';
-import { ONBOARDING_ICON_MAP } from '../../utils/onboardingIcons';
-import { MODULE_DE_BASE_SLIDES, MODULE_DE_BASE_SLIDES_MINEUR } from '../../data/moduleDeBase';
 import { themes, type ThemeMode } from '../../types/theme';
 import type { Language, Screen } from '../../types';
-import { comfortCategories } from '../../data';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -349,109 +344,21 @@ function AuthStep({ onNext, onAuth }: StepProps & { onAuth: (name: string) => vo
   );
 }
 
-const COMFORT_CATS = [
-  { key: 'tenderness' as const, labelKey: 'personalIntro.tenderness', color: '#f8a5c2' },
-  { key: 'intensity'  as const, labelKey: 'personalIntro.intensity',  color: '#ff7675' },
-  { key: 'trust'      as const, labelKey: 'personalIntro.trust',      color: '#a29bfe' },
-];
-
-function PersonalIntroStep({ onNext }: StepProps) {
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-  const { updateComfortLevel } = useProfileStore();
-  const [values, setValues] = useState({ tenderness: 2, intensity: 2, trust: 2 });
-
-  const handleSave = () => {
-    for (const cat of COMFORT_CATS) {
-      for (const item of comfortCategories[cat.key].items) {
-        updateComfortLevel(cat.key, item.id, values[cat.key]);
-      }
-    }
-    onNext();
-  };
-
-  return (
-    <div className="flex flex-col items-center px-6 py-8 gap-6">
-      <AppLogo className="w-14 h-14" variant="theme" />
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-1" style={{ color: colors.textPrimary }}>{t('personalIntro.title')}</h1>
-        <p className="text-sm leading-relaxed" style={{ color: colors.textMuted }}>{t('personalIntro.subtitle')}</p>
-      </div>
-      <div className="w-full space-y-4">
-        {COMFORT_CATS.map((cat) => (
-          <div key={cat.key} className="p-4 rounded-2xl" style={{ background: colors.bgCard, border: `1px solid ${colors.divider}` }}>
-            <div className="flex justify-between items-center mb-3">
-              <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>{t(cat.labelKey)}</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                style={{ background: `${cat.color}22`, color: cat.color }}>{values[cat.key]} / 4</span>
-            </div>
-            <input type="range" min={0} max={4} step={1} value={values[cat.key]}
-              onChange={(e) => setValues((v) => ({ ...v, [cat.key]: Number(e.target.value) }))}
-              className="w-full h-2 rounded-full appearance-none cursor-pointer"
-              style={{
-                accentColor: cat.color,
-                background: `linear-gradient(to right, ${cat.color} 0%, ${cat.color} ${values[cat.key] * 25}%, ${colors.divider} ${values[cat.key] * 25}%, ${colors.divider} 100%)`,
-              }}
-            />
-            <div className="flex justify-between mt-1">
-              <span className="text-xs" style={{ color: colors.textMuted }}>Non</span>
-              <span className="text-xs" style={{ color: colors.textMuted }}>J&apos;adore</span>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="w-full space-y-2">
-        <Button onClick={handleSave} fullWidth size="lg">{t('personalIntro.ctaNow')}</Button>
-        <button onClick={onNext} className="w-full py-3 text-sm font-medium" style={{ color: colors.textMuted }}>
-          {t('personalIntro.ctaLater')}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function SlideStep({ slide, isLast, onNext }: { slide: { iconName: string; title: string; body: string }; isLast: boolean; onNext: () => void }) {
-  const { colors } = useTheme();
-  const Icon = ONBOARDING_ICON_MAP[slide.iconName];
-  return (
-    <div className="flex flex-col items-center justify-center text-center px-6 py-8 gap-5 min-h-full">
-      {Icon && (
-        <motion.div initial={{ scale: 0.7 }} animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20 }}>
-          <Icon size={64} color={colors.accent} />
-        </motion.div>
-      )}
-      <h1 className="text-2xl font-black leading-tight" style={{ color: colors.textPrimary }}>{slide.title}</h1>
-      <p className="text-base leading-relaxed whitespace-pre-line max-w-sm" style={{ color: colors.textSecondary }}>{slide.body}</p>
-      <motion.button whileTap={{ scale: 0.96 }} onClick={onNext}
-        className="w-full max-w-sm py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2 mt-2"
-        style={{ background: `linear-gradient(135deg, ${colors.accent}, ${colors.accent})`, color: 'white', boxShadow: `0 6px 24px ${colors.accent}44` }}>
-        {isLast ? 'J\'ai compris · Voir l\'accueil' : 'Suivant'}
-        <ChevronRight size={18} />
-      </motion.button>
-    </div>
-  );
-}
-
 // ─── Wizard shell ──────────────────────────────────────────────────────────────
 
 export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, onAuth, onNavigate }: WizardProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
-  const completeModule = useModuleComplete();
   const [stepIndex, setStepIndex] = useState(0);
   // detectAndSet migré vers RenderModeInit dans layout.tsx — appelé sur toutes les routes
 
-  const slides = isAdult === false ? MODULE_DE_BASE_SLIDES_MINEUR : MODULE_DE_BASE_SLIDES;
-
-  const steps: Array<{ id: string; skipForAdultOnly?: boolean }> = [
+  const steps: Array<{ id: string }> = [
     { id: 'language' },
     { id: 'welcome' },
     { id: 'age-check' },
     { id: 'theme-select' },
-    ...(isAdult !== false ? [{ id: 'auth', skipForAdultOnly: true }, { id: 'personal-intro', skipForAdultOnly: true }] : []),
-    ...slides.map((s) => ({ id: `slide-${s.id}` })),
+    ...(isAdult !== false ? [{ id: 'auth' }] : []),
   ];
 
   const total = steps.length;
@@ -461,10 +368,9 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
     if (stepIndex < total - 1) {
       setStepIndex((i) => i + 1);
     } else {
-      completeModule('module-de-base');
       onNavigate('home');
     }
-  }, [stepIndex, total, completeModule, onNavigate]);
+  }, [stepIndex, total, onNavigate]);
 
   const handleSkip = () => {
     markOnboardingSkipped();
@@ -472,8 +378,6 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   };
 
   const currentStepId = steps[stepIndex]?.id ?? 'language';
-  const isSlideStep = currentStepId.startsWith('slide-');
-  const slideIndex = isSlideStep ? slides.findIndex((s) => `slide-${s.id}` === currentStepId) : -1;
 
   const renderStep = () => {
     if (currentStepId === 'language') return <LanguageStep onNext={handleNext} />;
@@ -484,10 +388,6 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
         isPremium={isPremium} onGoPremium={() => onNavigate('premium')} />
     );
     if (currentStepId === 'auth') return <AuthStep onNext={handleNext} onAuth={onAuth} />;
-    if (currentStepId === 'personal-intro') return <PersonalIntroStep onNext={handleNext} />;
-    if (isSlideStep && slideIndex >= 0) return (
-      <SlideStep slide={slides[slideIndex]} isLast={stepIndex === total - 1} onNext={handleNext} />
-    );
     return null;
   };
 

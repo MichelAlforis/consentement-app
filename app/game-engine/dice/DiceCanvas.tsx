@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useMemo, Suspense } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
 import type { DiceFace, DiceConfig } from './types';
-import type { GainedCard } from '../../lib/computeGainedCards';
-import { CardMesh, RarityLights } from '../cards/CollectorCardCanvas';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -276,45 +274,24 @@ function AnimatedCube({
 
 // ─── Ajusteur de caméra — tire la caméra en arrière quand la carte apparaît ──
 
-function CameraUpdater({ showCard }: { showCard: boolean }) {
-  const { camera } = useThree();
-  useEffect(() => {
-    const cam = camera as THREE.PerspectiveCamera;
-    // Avec carte (scale 0.72) : recul + FOV légèrement plus large pour contenir die+card
-    cam.position.z = showCard ? 3.4 : 2.5;
-    cam.fov = showCard ? 54 : 45;
-    cam.updateProjectionMatrix();
-  }, [showCard, camera]);
-  return null;
-}
-
 // ─── Scène complète ───────────────────────────────────────────────────────────
 
 function DiceScene({
-  faces, targetFaceId, isRolling, onRollComplete, mode, previewCard, showCard,
+  faces, targetFaceId, isRolling, onRollComplete, mode,
 }: {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
   mode?: 'category' | 'numeric';
-  previewCard?: GainedCard | null;
-  showCard?: boolean;
 }) {
-  // dpr géré par la prop Canvas — gl.setPixelRatio retiré (bypass R3F)
-
-  const hasCard = !!(showCard && previewCard);
-  // Dé décalé à gauche quand la carte est présente — les deux objets se partagent le canvas
-  const dieX = hasCard ? -0.52 : 0;
-
   return (
     <>
-      <CameraUpdater showCard={hasCard} />
       <pointLight position={[3, 4, 4]} intensity={0.55} castShadow />
       <pointLight position={[-3, -2, 1]} intensity={0.18} />
       <Suspense fallback={null}>
         <Environment preset="studio" />
-        <group position={[dieX, 0, 0]}>
+        <group position={[0, 0, 0]}>
           <AnimatedCube
             faces={faces}
             targetFaceId={targetFaceId}
@@ -332,15 +309,6 @@ function DiceScene({
             resolution={256}
           />
         </group>
-        {hasCard && (
-          // scale 0.72 → carte ~55×83px vs dé ~77×77px — proportions équilibrées
-          <group position={[0.70, 0, 0]} scale={0.72}>
-            <Suspense fallback={null}>
-              <CardMesh card={previewCard} isFlipped={true} />
-            </Suspense>
-            <RarityLights rarity={previewCard.rarity} />
-          </group>
-        )}
       </Suspense>
     </>
   );
@@ -355,11 +323,9 @@ export interface DiceCanvasProps {
   onRollComplete?: () => void;
   size?: number;
   mode?: 'category' | 'numeric';
-  previewCard?: GainedCard | null;
-  showCard?: boolean;
 }
 
-export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 180, mode = 'category', previewCard, showCard }: DiceCanvasProps) {
+export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, size = 180, mode = 'category' }: DiceCanvasProps) {
   const targetFaceId = currentFace?.id ?? 1;
 
   return (
@@ -385,8 +351,6 @@ export function DiceCanvas({ config, currentFace, isRolling, onRollComplete, siz
           isRolling={isRolling}
           onRollComplete={onRollComplete}
           mode={mode}
-          previewCard={previewCard}
-          showCard={showCard}
         />
       </Canvas>
     </div>

@@ -52,6 +52,8 @@ export const data = {
     { name: 'Fil Santé Jeunes', desc: 'Anonymous and free' },
     { name: 'Violences Femmes Info', desc: '24/7' },
     { name: 'Planning Familial', desc: 'Sexuality, contraception' },
+    { name: 'Suicide Prevention', desc: 'Available 24/7' },
+    { name: 'Child Protection', desc: 'Free, 24/7' },
   ] as { name: string; desc: string }[],
 
   quiz: [

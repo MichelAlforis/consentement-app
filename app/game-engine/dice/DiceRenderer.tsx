@@ -285,11 +285,9 @@ export interface DiceRendererProps {
   size?: number;
   /** 'category' (défaut) : faces gradients + icône | 'numeric' : dé classique à points */
   mode?: 'category' | 'numeric';
-  previewCard?: import('../../lib/computeGainedCards').GainedCard | null;
-  showCard?: boolean;
 }
 
-export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer: rendererProp, size, mode = 'category', previewCard, showCard }: DiceRendererProps) {
+export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, renderer: rendererProp, size, mode = 'category' }: DiceRendererProps) {
   const storeMode = useRenderMode();
   // prop explicite en override (pages de test) ; sinon → store adaptatif
   const renderer = rendererProp ?? (storeMode === 'r3f' ? 'webgl' : 'css');
@@ -302,8 +300,6 @@ export function DiceRenderer({ config, currentFace, isRolling, onRollComplete, r
         onRollComplete={onRollComplete}
         size={size ?? 200}
         mode={mode}
-        previewCard={previewCard}
-        showCard={showCard}
       />
     );
   }

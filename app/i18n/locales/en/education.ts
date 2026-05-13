@@ -32,10 +32,10 @@ export const education = {
   },
 
   pornoVsRealiteScreen: {
-    title: 'Porn vs. Reality',
+    title: 'Sex vs. Reality',
     subtitle: "What films don't show you",
-    intro: "Porn is a <strong>fiction film</strong> made with actors. It doesn't show how real relationships work — nor consent, communication, or boundaries.",
-    inPorno: 'In porn',
+    intro: "Adult films are <strong>fiction</strong> made with actors. They don't show how real relationships work — nor consent, communication, or boundaries.",
+    inPorno: 'In adult films',
     inReality: 'In reality',
     closing: "Real intimacy is built with communication, respect and consent. Not by imitating a film.",
     markRead: "I've read it — See my card",

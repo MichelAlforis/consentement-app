@@ -5,6 +5,7 @@ import { spaces } from './spaces';
 import { education } from './education';
 import { games } from './games';
 import { data } from './data';
+import { quizMultiLevel } from './quizMultiLevel';
 
-export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data };
+export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data, ...quizMultiLevel };
 export type Translations = typeof fr;

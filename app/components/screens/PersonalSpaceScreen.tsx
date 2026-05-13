@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, ShieldAlert, Save } from 'lucide-react';
+import { User, ShieldAlert, Save, Flame } from 'lucide-react';
 import { Button, Card, ComfortSlider } from '../ui';
+import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { comfortCategories } from '../../data';
 import { PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -21,7 +22,7 @@ export function PersonalSpaceScreen({ profile, onUpdateLevel, onUpdateSafeword, 
   const { t } = useTranslation();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 pb-36">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -95,6 +96,30 @@ export function PersonalSpaceScreen({ profile, onUpdateLevel, onUpdateSafeword, 
           </motion.div>
         )
       )}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45 }}
+        className="mb-6"
+      >
+        <Card variant="elevated" padding="lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Flame size={20} style={{ color: '#ef4444' }} />
+              <div>
+                <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+                  {t('settings.explicit.title')}
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
+                  {t('settings.explicit.desc')}
+                </p>
+              </div>
+            </div>
+            <ExplicitModeToggle pillOnly />
+          </div>
+        </Card>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

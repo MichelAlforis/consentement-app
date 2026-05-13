@@ -17,6 +17,7 @@ import {
   PornoVsRealiteScreen,
   LoiConsentementScreen,
   QuizConsentementScreen,
+  QuizHubScreen,
   AccompagnementMineurScreen,
   AccompagnementAdulteScreen,
   AnnuaireSexologuesScreen,
@@ -154,6 +155,9 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
 
   'quiz-consentement': (ctx) =>
     <QuizConsentementScreen onComplete={() => ctx.navigateTo('hall-of-cards')} />,
+
+  'quiz-hub': (ctx) =>
+    <QuizHubScreen onNavigate={ctx.navigateTo} />,
 
   'accompagnement-mineur': (ctx) => (
     <AccompagnementMineurScreen onNavigate={ctx.navigateTo} onComplete={() => ctx.navigateTo('hall-of-cards')} />

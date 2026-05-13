@@ -19,6 +19,7 @@ export type Screen =
   | 'porno-vs-realite'
   | 'loi-consentement'
   | 'quiz-consentement'
+  | 'quiz-hub'
   | 'accompagnement-mineur'
   | 'accompagnement-adulte'
   | 'annuaire-sexologues'

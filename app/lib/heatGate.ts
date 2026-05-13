@@ -1,15 +1,19 @@
 import type { HeatLevel } from './heatLevel';
 
 export type HeatGatedFeature =
-  | 'explicit'       // Contenu explicite — palier 2
-  | 'scenarios'      // Mode Scénario — palier 3 (à venir)
-  | 'kamasutra'      // Gamme Kamasutra — palier 4 (à venir)
-  | 'expert-cards';  // Cartes Expert — palier 5 (à venir)
+  | 'explicit'           // Contenu explicite — palier 2
+  | 'quiz-intermediaire' // Quiz niveau Intermédiaire — palier 2
+  | 'scenarios'          // Mode Scénario — palier 3 (à venir)
+  | 'kamasutra'          // Gamme Kamasutra — palier 4 (à venir)
+  | 'quiz-expert'        // Quiz niveau Expert — palier 4
+  | 'expert-cards';      // Cartes Expert — palier 5 (à venir)
 
 const GATE_THRESHOLDS: Record<HeatGatedFeature, HeatLevel> = {
   'explicit': 2,
+  'quiz-intermediaire': 2,
   'scenarios': 3,
   'kamasutra': 4,
+  'quiz-expert': 4,
   'expert-cards': 5,
 };
 

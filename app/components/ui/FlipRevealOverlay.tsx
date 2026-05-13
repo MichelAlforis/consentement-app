@@ -75,6 +75,18 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/94 backdrop-blur-[14px]"
     >
+      {/* Bouton fermer */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        onClick={onDone}
+        className="absolute top-[52px] right-5 w-9 h-9 rounded-[18px] bg-white/[0.08] border border-white/[0.14] flex items-center justify-center z-10 cursor-pointer"
+        whileTap={{ scale: 0.9 }}
+      >
+        <X size={16} color="rgba(255,255,255,0.7)" />
+      </motion.button>
+
       {/* Header */}
       <motion.div
         key={`header-${index}`}
