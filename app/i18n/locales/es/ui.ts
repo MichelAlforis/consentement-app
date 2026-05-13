@@ -12,7 +12,7 @@ export const ui = {
     help: 'Ayuda',
     settings: 'Ajustes',
     resourcesMinor: 'Comprender',
-    pornoVsRealite: 'Porno vs. Realidad',
+    pornoVsRealite: 'Sexo vs. Realidad',
     loi: 'La Ley',
     quiz: 'Quiz',
     accompagnement: 'Tengo preguntas',
@@ -126,7 +126,7 @@ export const ui = {
     rewardRare: '1 carta rara',
     rewardUnique: '1 carta única',
     quiz:          { title: 'Test de Consentimiento',          desc: '8 preguntas para comprobar lo que realmente sabes' },
-    porno:         { title: 'Porno vs Realidad',                desc: 'Lo que las películas no te muestran' },
+    porno:         { title: 'Sexo vs. Realidad',               desc: 'Lo que las películas no te muestran' },
     loi:           { title: 'La ley y el consentimiento',       desc: 'Tus derechos, la edad legal, qué es un delito' },
     pratiques:     { title: 'Prácticas avanzadas',             desc: 'Módulo redactado por nuestro jurista — próximamente' },
     accompagnement:{ title: 'Me hago preguntas',               desc: 'Preguntas para hacerse. Sin juicio.' },
@@ -134,6 +134,8 @@ export const ui = {
     rewardBase:    '24 cartas comunes',
     allDone:       '¡Recorrido completado!',
     allDoneSub:    'Has explorado todo el contenido disponible. ¡Ahora juega!',
+    heatRequired:  'Nivel {palier} requerido · {pts} pts',
+    heatPoints:    '+{n} pts',
   },
 
   moi: {
@@ -145,5 +147,7 @@ export const ui = {
     premiumDesc:      'Todos los juegos · contenido profundo · sin límite',
     accompagnementAdulteDesc: '¿Estás pasando por algo? Recursos confidenciales.',
     annuaireDesc: 'Encontrar un·a profesional — presencial o teleconsulta',
+    heatTitle:    'Mi Barómetro',
+    heatDesc:     '{pts} pts · Nivel {level} de 5',
   },
 } as const;

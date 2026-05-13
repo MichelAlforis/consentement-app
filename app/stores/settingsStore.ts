@@ -14,6 +14,8 @@ interface SettingsStore {
   selectTheme: (mode: ThemeMode) => void;
   changeLanguage: (lang: Language) => void;
   toggleExplicitMode: () => void;
+  /** Appelé quand le palier de chaleur change — force explicitMode=false si palier < 2 */
+  syncExplicitWithHeat: (heatLevel: number) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -32,6 +34,10 @@ export const useSettingsStore = create<SettingsStore>()(
 
       toggleExplicitMode: () =>
         set({ explicitMode: !get().explicitMode }),
+
+      syncExplicitWithHeat: (heatLevel) => {
+        if (heatLevel < 2 && get().explicitMode) set({ explicitMode: false });
+      },
     }),
     {
       name: 'consentement-settings',

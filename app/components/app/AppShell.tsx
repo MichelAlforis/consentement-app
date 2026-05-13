@@ -23,6 +23,9 @@ import {
   selectIsTabContext,
 } from '../../stores';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
+import { useHeatLevel } from '../../lib/useHeatLevel';
+import { usePalierUp } from '../../lib/usePalierUp';
+import { PalierUpOverlay } from '../ui';
 import { HeaderController } from './HeaderController';
 import { RouteRenderer } from './RouteRenderer';
 import { AdController } from './AdController';
@@ -89,6 +92,13 @@ export function AppShell() {
   useAndroidBackButton();
   useAppDiagnostics(currentScreen);
 
+  // Sync explicit mode avec le niveau de chaleur — force OFF si palier < 2
+  const { level: heatLevel } = useHeatLevel();
+  const syncExplicitWithHeat = useSettingsStore((s) => s.syncExplicitWithHeat);
+  useEffect(() => { syncExplicitWithHeat(heatLevel); }, [heatLevel, syncExplicitWithHeat]);
+
+  const { justUnlocked, clear } = usePalierUp(heatLevel);
+
   // Minimum splash duration — prevents sub-100ms flash on fast devices
   const [minDone, setMinDone] = useState(false);
   useEffect(() => {
@@ -135,6 +145,12 @@ export function AppShell() {
     <>
       <AnimatePresence>
         {showSplash && <SplashScreen key="splash" />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {justUnlocked && (
+          <PalierUpOverlay key={`palier-${justUnlocked}`} level={justUnlocked} onDismiss={clear} />
+        )}
       </AnimatePresence>
 
       {!showSplash && (

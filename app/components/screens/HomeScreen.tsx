@@ -4,11 +4,14 @@ import { motion } from 'framer-motion';
 import { Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
 import { AppLogo } from '../ui';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
+import { HeatThermometer } from '../ui/HeatThermometer';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useUnlockStore, useModuleProgressStore } from '../../stores';
 import { getProgressLevel } from '../../lib/progressLevel';
+import { computeHeatPoints, getHeatLevel } from '../../lib/heatLevel';
+import { isHeatUnlocked } from '../../lib/heatGate';
 import { isModuleCompleted } from '../../lib/moduleIds';
 import { collectorCards } from '../../data/cards-collector';
 import { getModuleSequence } from '../../modules';
@@ -106,6 +109,60 @@ function CollectionButton({ ownedCount, onNavigate }: { ownedCount: number; onNa
   );
 }
 
+function HeatGatedExplicitMode({ delay }: { delay: number }) {
+  const { completedModules } = useModuleProgressStore();
+  const { ownedCards, sessionCount } = useUnlockStore();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const points = computeHeatPoints({ completedModules, ownedCards, sessionCount });
+  const level = getHeatLevel(points);
+  const unlocked = isHeatUnlocked('explicit', level);
+
+  if (unlocked) return <ExplicitModeToggle delay={delay} />;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      className="flex items-center gap-3 p-3.5 rounded-2xl"
+      style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, opacity: 0.65 }}
+    >
+      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+        style={{ background: '#ef444412' }}>
+        <span style={{ fontSize: 18 }}>🔒</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+          {t('settings.explicit.title')}
+        </p>
+        <p className="text-xs" style={{ color: colors.textMuted }}>
+          {t('heat.points_to_next', {
+            n: String(12 - points > 0 ? 12 - points : 0),
+            palier: t('heat.chaud'),
+          })}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+function HeatBar() {
+  const { completedModules } = useModuleProgressStore();
+  const { ownedCards, sessionCount } = useUnlockStore();
+  const points = computeHeatPoints({ completedModules, ownedCards, sessionCount });
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 12 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.15 }}
+      className="flex justify-end mb-4"
+    >
+      <HeatThermometer points={points} compact />
+    </motion.div>
+  );
+}
+
 function PrivacyText({ text }: { text: string }) {
   const { colors } = useTheme();
   return (
@@ -130,6 +187,7 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+      <HeatBar />
 
       {/* CTA principal */}
       <motion.button
@@ -179,7 +237,7 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
       {isAdult && (
         <div className="mt-4">
-          <ExplicitModeToggle delay={0.4} />
+          <HeatGatedExplicitMode delay={0.4} />
         </div>
       )}
 
@@ -205,6 +263,7 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+      <HeatBar />
 
       {/* Progression */}
       <motion.div
@@ -271,7 +330,7 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
       {isAdult && (
         <div className="mt-4">
-          <ExplicitModeToggle delay={0.4} />
+          <HeatGatedExplicitMode delay={0.4} />
         </div>
       )}
 
@@ -298,6 +357,7 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
+      <HeatBar />
 
       {/* Collection showcase */}
       <motion.button
@@ -390,7 +450,7 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
 
       {isAdult && (
         <div className="mt-2">
-          <ExplicitModeToggle delay={0.42} />
+          <HeatGatedExplicitMode delay={0.42} />
         </div>
       )}
 

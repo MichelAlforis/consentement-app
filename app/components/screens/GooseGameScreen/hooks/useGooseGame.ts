@@ -14,9 +14,11 @@ import { useConfetti } from './useConfetti';
 import { Player, Phase, TurnStep } from '../types';
 import { useHaptics } from '../../../../game-engine/shared/useHaptics';
 import { useSettingsStore } from '../../../../stores/settingsStore';
+import { useUnlockStore } from '../../../../stores';
 
 export function useGooseGame({ isAdult }: { isAdult: boolean }) {
   const explicitMode = useSettingsStore((s) => s.explicitMode);
+  const incrementSessionCount = useUnlockStore((s) => s.incrementSessionCount);
   // ── Phase ──────────────────────────────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>('intro');
 
@@ -70,6 +72,7 @@ export function useGooseGame({ isAdult }: { isAdult: boolean }) {
     switch (square.type) {
       case 'arrivee': {
         clearSavedGame();
+        incrementSessionCount();
         setPhase('end');
         vibrate([100, 80, 200]);
         return;

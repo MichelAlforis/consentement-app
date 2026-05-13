@@ -16,7 +16,7 @@ import { useSettingsStore } from '../../../stores/settingsStore';
 import { useUnlockStore } from '../../../stores';
 import { sampleCardByFace } from '../../../lib/sampleCard';
 import type { GainedCard } from '../../../lib/computeGainedCards';
-import { FlipRevealOverlay } from '../../ui/FlipRevealOverlay';
+import { CardFullscreenOverlay } from '../../ui/CardFullscreenOverlay';
 
 type GameMode = 'pick' | 'rolling' | 'practice' | 'duo-p1' | 'duo-hidden' | 'duo-p2' | 'duo-reveal';
 type DuoAnswer = 'yes' | 'no' | null;
@@ -44,7 +44,6 @@ interface DiceGameScreenProps {
 export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const rarityColor: Record<string, string> = { common: colors.textMuted, rare: colors.rare, unique: colors.unique };
   const explicitMode = useSettingsStore((s) => s.explicitMode);
   const [mode, setMode] = useState<GameMode>('pick');
   const [isSolo, setIsSolo] = useState(true);
@@ -65,10 +64,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     [available],
   );
 
-  const ownedCards = useUnlockStore((s) => s.ownedCards);
+  const { ownedCards, incrementSessionCount } = useUnlockStore();
   const [previewCard, setPreviewCard] = useState<GainedCard | null>(null);
-  const [showCard, setShowCard] = useState(false);
-  const [showReveal, setShowReveal] = useState(false);
+  const [showCardPreview, setShowCardPreview] = useState(false);
 
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
@@ -82,7 +80,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    setShowCard(false);
+    setShowCardPreview(false);
     setPreviewCard(null);
     setShowReveal(false);
     setRollCount((c) => c + 1);
@@ -93,7 +91,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setMode('rolling');
     setP1Answer(null);
     setP2Answer(null);
-    setShowCard(false);
+    setShowCardPreview(false);
     setPreviewCard(null);
     setShowReveal(false);
     setRollCount((c) => c + 1);
@@ -104,9 +102,14 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     setMode('pick');
     setP1Answer(null);
     setP2Answer(null);
-    setShowCard(false);
+    setShowCardPreview(false);
     setPreviewCard(null);
     setShowReveal(false);
+  };
+
+  const handleQuit = () => {
+    if (rollCount > 0) incrementSessionCount();
+    onNavigate('jeux');
   };
 
   return (
@@ -189,12 +192,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                   setMode('practice');
                   const card = samplePreviewCard(currentItem?.faceId ?? 0);
                   setPreviewCard(card);
-                  setShowCard(!!card);
                 }}
                 renderer="webgl"
                 size={240}
-                previewCard={previewCard}
-                showCard={showCard}
               />
 
               <AnimatePresence>
@@ -215,7 +215,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     <span className="text-white/60 text-xs font-semibold ml-1">#{rollCount}</span>
                   </motion.div>
                 )}
-                {mode === 'practice' && showCard && previewCard && (
+                {mode === 'practice' && previewCard && (
                   <motion.button
                     key="card-label"
                     initial={{ opacity: 0, y: 4 }}
@@ -223,18 +223,17 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     exit={{ opacity: 0 }}
                     transition={{ delay: 0.6 }}
                     whileTap={{ scale: 0.97 }}
-                    onClick={() => setShowReveal(true)}
-                    className="mt-2 px-3 py-2 rounded-xl flex items-center gap-2 text-left"
-                    style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, maxWidth: 210 }}
+                    onClick={() => setShowCardPreview(true)}
+                    className="mt-3 px-4 py-2.5 rounded-2xl flex items-center gap-3"
+                    style={{ background: previewCard.gradient, boxShadow: `0 4px 16px ${previewCard.border}60` }}
                   >
                     <span
-                      className="mt-0.5 w-2 h-2 rounded-full shrink-0"
-                      style={{ background: rarityColor[previewCard.rarity] }}
+                      className="w-2 h-2 rounded-full shrink-0 bg-white/60"
                     />
-                    <p className="text-xs leading-snug line-clamp-2 flex-1" style={{ color: colors.textSecondary }}>
+                    <p className="text-xs font-semibold leading-snug line-clamp-1 flex-1 text-white/90">
                       {previewCard.text}
                     </p>
-                    <ChevronRight size={12} className="shrink-0" style={{ color: colors.textMuted, opacity: 0.6 }} />
+                    <ChevronRight size={14} className="shrink-0 text-white/70" />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -254,7 +253,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     <div className="space-y-3 mt-auto">
                       <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
                       <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
-                      <Button onClick={() => onNavigate('jeux')} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
+                      <Button onClick={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
                     </div>
                   ) : (
                     <div className="mt-auto">
@@ -409,7 +408,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
             <div className="space-y-3 w-full max-w-xs mt-6">
               <Button onClick={reroll} fullWidth><Dices size={18} />{t('diceGame.newRoll')}</Button>
               <Button onClick={reset} variant="secondary" fullWidth><RotateCcw size={16} />{t('diceGame.changeMode')}</Button>
-              <Button onClick={() => onNavigate('jeux')} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
+              <Button onClick={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
             </div>
             </div>
           </motion.div>
@@ -419,10 +418,10 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     </motion.div>
 
     <AnimatePresence>
-      {showReveal && previewCard && (
-        <FlipRevealOverlay
-          cards={[previewCard]}
-          onDone={() => setShowReveal(false)}
+      {showCardPreview && previewCard && (
+        <CardFullscreenOverlay
+          card={previewCard}
+          onClose={() => setShowCardPreview(false)}
         />
       )}
     </AnimatePresence>

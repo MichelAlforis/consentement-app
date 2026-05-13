@@ -12,7 +12,7 @@ export const ui = {
     help: 'Aide',
     settings: 'Paramètres',
     resourcesMinor: 'Comprendre',
-    pornoVsRealite: 'Porno vs. Réalité',
+    pornoVsRealite: 'Sexe vs. Réalité',
     loi: 'La Loi',
     quiz: 'Quiz',
     accompagnement: 'Je me pose des questions',
@@ -128,7 +128,7 @@ export const ui = {
     rewardRare: '1 carte rare',
     rewardUnique: '1 carte unique',
     quiz:          { title: 'Quiz Consentement',         desc: '8 questions pour tester ce que tu sais vraiment' },
-    porno:         { title: 'Porno vs Réalité',           desc: 'Ce que les films ne te montrent pas' },
+    porno:         { title: 'Sexe vs. Réalité',            desc: 'Ce que les films ne te montrent pas' },
     loi:           { title: 'La loi & le consentement',   desc: "Tes droits, l'âge légal, ce qui est un crime" },
     pratiques:     { title: 'Pratiques avancées',         desc: 'Module rédigé par notre juriste — à venir' },
     accompagnement:{ title: 'Je me questionne',           desc: 'Des questions à se poser. Sans jugement.' },
@@ -136,6 +136,8 @@ export const ui = {
     rewardBase:    '24 cartes communes',
     allDone:       'Parcours complété !',
     allDoneSub:    'Tu as exploré tout le contenu disponible. Maintenant, joue !',
+    heatRequired:  'Palier {palier} requis · {pts} pts',
+    heatPoints:    '+{n} pts',
   },
 
   moi: {
@@ -147,5 +149,7 @@ export const ui = {
     premiumDesc:      'Tous les jeux · contenus profonds · sans limite',
     accompagnementAdulteDesc: 'Tu traverses quelque chose ? Des ressources confidentielles.',
     annuaireDesc: 'Trouver un·e professionnel·le — présentiel ou téléconsultation',
+    heatTitle:    'Mon Baromètre',
+    heatDesc:     '{pts} pts · Palier {level} sur 5',
   },
 } as const;

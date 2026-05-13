@@ -14,7 +14,7 @@ export const home = {
     cards: {
       learn: {
         title: 'Comprender',
-        desc: 'Porno, quiz y la ley — información real',
+        desc: 'Sexualidad, quiz y la ley — información real',
       },
       guide: {
         title: 'Tengo preguntas',
@@ -31,7 +31,7 @@ export const home = {
     },
     resources: {
       porno: {
-        title: 'Porno vs. Realidad',
+        title: 'Sexo vs. Realidad',
         desc: 'Lo que las películas no te muestran',
         tag: 'Esencial',
       },
@@ -93,11 +93,31 @@ export const home = {
       goFurther: 'Ir más lejos',
     },
     modules: {
-      'porno-vs-realite': 'Porno vs Realidad',
+      'porno-vs-realite': 'Sexo vs. Realidad',
       'quiz-consentement': 'Quiz Consentimiento',
       'loi-consentement': 'La ley y el consentimiento',
       'duo-flow': 'Duo Flow',
       'accompagnement-mineur': 'Tengo preguntas',
     },
+  },
+
+  heat: {
+    tiede: 'Tibio',
+    chaud: 'Caliente',
+    ardent: 'Ardiente',
+    brulant: 'Ardiendo',
+    incandescent: 'Incandescente',
+    points_to_next: '{n} pts para {palier}',
+    max_reached: 'Nivel máximo alcanzado',
+    palierUp: '¡Nivel {palier} alcanzado!',
+    palierUp_cta: 'Continuar',
+    palierUp_explicit: 'El contenido explícito está ahora desbloqueado 🔥',
+    palierUp_scenarios: 'Modo Escenario — próximamente',
+    palierUp_kamasutra: 'Gama Kamasutra — próximamente',
+    palierUp_expert: 'Cartas Expertas — próximamente',
+    fomo_scenarios: 'Modo Escenario',
+    fomo_kamasutra: 'Gama Kamasutra',
+    fomo_expert: 'Cartas Expertas',
+    fomo_pts: '{n} pts para desbloquear',
   },
 } as const;

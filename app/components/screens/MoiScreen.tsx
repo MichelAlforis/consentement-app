@@ -2,11 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHeart, BookUser } from 'lucide-react';
-import { AppLogo } from '../ui';
+import { AppLogo, HeatThermometer } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore, usePremiumStore } from '../../stores';
 import { useTranslation } from '../../i18n';
+import { useHeatLevel } from '../../lib/useHeatLevel';
 
 interface MoiScreenProps {
   isAdult: boolean | null;
@@ -66,6 +67,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const { t } = useTranslation();
   const userName = useAuthStore((s) => s.userName);
   const { isPremium } = usePremiumStore();
+  const { points, level: heatLevel } = useHeatLevel();
 
   let cardIndex = 0;
 
@@ -95,6 +97,25 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           ) : (
             <span className="text-xs" style={{ color: colors.textMuted }}>Consentement</span>
           )}
+        </div>
+      </motion.div>
+
+      {/* Baromètre du Hot */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-2xl p-4 mb-6 flex items-center gap-4"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+      >
+        <HeatThermometer points={points} />
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-sm" style={{ color: colors.textPrimary }}>
+            {t('moi.heatTitle')}
+          </p>
+          <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
+            {t('moi.heatDesc', { pts: String(points), level: String(heatLevel) })}
+          </p>
         </div>
       </motion.div>
 

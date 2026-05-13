@@ -21,6 +21,9 @@ import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useTranslation } from '../../i18n';
 import { isModuleCompleted } from '../../lib/moduleIds';
 import { MODULES, moduleAudience } from '../../modules';
+import { useHeatLevel } from '../../lib/useHeatLevel';
+import { MODULE_POINTS, HEAT_THRESHOLDS } from '../../lib/heatLevel';
+import type { EffectiveModuleId } from '../../modules';
 
 interface ApprendreScreenProps {
   isAdult: boolean | null;
@@ -39,6 +42,9 @@ type ModuleMeta = {
   rarity: Rarity;
   rarityLabel: string;
   available: boolean;
+  heatPoints: number;
+  /** Palier requis si le module est verrouillé par la chaleur (non disponible mais visible) */
+  requiredHeatLevel?: 2 | 3 | 4 | 5;
 };
 
 const MODULE_ICONS: Record<string, ReactNode> = {
@@ -54,15 +60,19 @@ function ModuleCard({
   module,
   completed,
   index,
+  currentHeatLevel,
   onNavigate,
 }: {
   module: ModuleMeta;
   completed: boolean;
   index: number;
+  currentHeatLevel: number;
   onNavigate: (screen: Screen) => void;
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const heatLocked = !module.available && module.requiredHeatLevel !== undefined;
+  const heatUnlockable = heatLocked && module.requiredHeatLevel !== undefined && currentHeatLevel >= (module.requiredHeatLevel ?? 99);
   const rarity = {
     common: {
       bg: `color-mix(in srgb, ${colors.textMuted} 15%, transparent)`,
@@ -88,13 +98,13 @@ function ModuleCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.07 }}
       whileTap={{ scale: 0.98 }}
-      disabled={!module.available}
+      disabled={!module.available && !heatUnlockable}
       onClick={() => module.screen && onNavigate(module.screen)}
       className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
       style={{
         background: colors.bgCard,
-        border: `1px solid ${completed ? r.text + '50' : colors.border}`,
-        opacity: module.available ? 1 : 0.55,
+        border: `1px solid ${completed ? r.text + '50' : heatLocked ? '#f9731640' : colors.border}`,
+        opacity: module.available || heatLocked ? 1 : 0.55,
       }}
     >
       <div
@@ -120,19 +130,38 @@ function ModuleCard({
           >
             {module.rarityLabel}
           </span>
+          {module.heatPoints > 0 && (
+            <span
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
+              style={{ background: '#f9731620', color: '#f97316' }}
+            >
+              {t('apprendre.heatPoints', { n: String(module.heatPoints) })}
+            </span>
+          )}
         </div>
         <p className="text-xs leading-snug" style={{ color: colors.textSecondary }}>
           {module.desc}
         </p>
-        <p className="text-[10px] mt-1 font-medium" style={{ color: r.text }}>
-          {t('apprendre.rewardPrefix')}
-          {module.reward}
-        </p>
+        {heatLocked && module.requiredHeatLevel !== undefined ? (
+          <p className="text-[10px] mt-1 font-medium" style={{ color: '#f97316' }}>
+            {t('apprendre.heatRequired', {
+              palier: t(`heat.${['', 'tiede', 'chaud', 'ardent', 'brulant', 'incandescent'][module.requiredHeatLevel]}`),
+              pts: String(HEAT_THRESHOLDS[module.requiredHeatLevel]),
+            })}
+          </p>
+        ) : (
+          <p className="text-[10px] mt-1 font-medium" style={{ color: r.text }}>
+            {t('apprendre.rewardPrefix')}
+            {module.reward}
+          </p>
+        )}
       </div>
 
       <div className="shrink-0 ml-1">
         {completed ? (
           <CheckCircle size={20} style={{ color: r.text }} />
+        ) : heatLocked ? (
+          <span style={{ fontSize: 16 }}>🔥</span>
         ) : !module.available ? (
           <Lock size={16} style={{ color: colors.textMuted }} />
         ) : (
@@ -147,6 +176,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { completedModules } = useModuleProgressStore();
+  const { level: heatLevel } = useHeatLevel();
   const audience = moduleAudience(isAdult);
   const modules: ModuleMeta[] = MODULES.filter(
     (module) =>
@@ -155,19 +185,26 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
         (audience === 'adult' && module.id === 'module-pratiques-adultes'))
   )
     .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99))
-    .map((module) => ({
-      id: module.id,
-      screen: module.screen,
-      icon: MODULE_ICONS[module.id],
-      title: t(module.titleKey),
-      desc: 'descriptionKey' in module && module.descriptionKey ? t(module.descriptionKey) : '',
-      reward: t(module.rewardKey),
-      rarity: module.reward.rarity,
-      rarityLabel: t(
-        `apprendre.rarity${module.reward.rarity[0].toUpperCase()}${module.reward.rarity.slice(1)}`
-      ),
-      available: module.available[audience],
-    }));
+    .map((module) => {
+      const effectiveId = module.effectiveId[audience];
+      const pts = MODULE_POINTS[effectiveId as EffectiveModuleId] ?? 0;
+      const isHeatGated = !module.available[audience] && module.id === 'module-pratiques-adultes';
+      return {
+        id: module.id,
+        screen: module.screen,
+        icon: MODULE_ICONS[module.id],
+        title: t(module.titleKey),
+        desc: 'descriptionKey' in module && module.descriptionKey ? t(module.descriptionKey) : '',
+        reward: t(module.rewardKey),
+        rarity: module.reward.rarity,
+        rarityLabel: t(
+          `apprendre.rarity${module.reward.rarity[0].toUpperCase()}${module.reward.rarity.slice(1)}`
+        ),
+        available: module.available[audience],
+        heatPoints: pts,
+        requiredHeatLevel: isHeatGated ? 3 as const : undefined,
+      };
+    });
   const availableModules = modules.filter((m) => m.available);
   const completedCount = availableModules.filter((m) =>
     isModuleCompleted(m.id, completedModules, isAdult)
@@ -237,6 +274,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
             module={module}
             completed={isModuleCompleted(module.id, completedModules, isAdult)}
             index={i + 1}
+            currentHeatLevel={heatLevel}
             onNavigate={onNavigate}
           />
         ))}

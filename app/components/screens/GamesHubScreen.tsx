@@ -8,6 +8,9 @@ import { useTranslation } from '../../i18n';
 import { useUnlockStore } from '../../stores';
 import { collectorCards } from '../../data/cards-collector';
 import { GameMenuCard } from '../ui';
+import { useHeatLevel } from '../../lib/useHeatLevel';
+import { isHeatUnlocked } from '../../lib/heatGate';
+import { HEAT_THRESHOLDS } from '../../lib/heatLevel';
 import {
   getGameDescriptionKey,
   getVisibleGameMenuItems,
@@ -39,6 +42,7 @@ export function GamesHubScreen({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { ownedCards } = useUnlockStore();
+  const { points, level: heatLevel } = useHeatLevel();
   const totalCards = collectorCards.filter((c) => c.deck === 'A').length;
   const ownedCount = ownedCards.length;
   const freeItems = getVisibleGameMenuItems(isAdult, 'free');
@@ -72,12 +76,52 @@ export function GamesHubScreen({
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <h2 className="text-xl font-bold mb-0.5" style={{ color: colors.textPrimary }}>
-          {t('games.title')}
-        </h2>
-        <p className="text-sm" style={{ color: colors.textSecondary }}>
-          {t('games.subtitle')}
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold mb-0.5" style={{ color: colors.textPrimary }}>
+              {t('games.title')}
+            </h2>
+            <p className="text-sm" style={{ color: colors.textSecondary }}>
+              {t('games.subtitle')}
+            </p>
+          </div>
+          {/* Badge palier actuel */}
+          <div
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl shrink-0"
+            style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+          >
+            <span style={{ fontSize: 14 }}>🌡️</span>
+            <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>
+              {t(`heat.${['', 'tiede', 'chaud', 'ardent', 'brulant', 'incandescent'][heatLevel]}`)}
+            </span>
+            <span className="text-[10px]" style={{ color: colors.textMuted }}>{points}pts</span>
+          </div>
+        </div>
+
+        {/* FOMO — contenus verrouillés par chaleur */}
+        {(
+          [
+            { feature: 'scenarios' as const, labelKey: 'heat.fomo_scenarios', palier: 3 },
+            { feature: 'kamasutra' as const, labelKey: 'heat.fomo_kamasutra', palier: 4 },
+            { feature: 'expert-cards' as const, labelKey: 'heat.fomo_expert', palier: 5 },
+          ] as const
+        )
+          .filter(({ palier }) => heatLevel < palier)
+          .map(({ feature: _f, labelKey, palier }) => (
+            <div
+              key={labelKey}
+              className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl"
+              style={{ background: '#f9731610', border: '1px solid #f9731630' }}
+            >
+              <span style={{ fontSize: 12 }}>🔒</span>
+              <span className="text-xs font-medium flex-1" style={{ color: '#f97316' }}>
+                {t(labelKey)}
+              </span>
+              <span className="text-[10px]" style={{ color: colors.textMuted }}>
+                {t('heat.fomo_pts', { n: String(HEAT_THRESHOLDS[palier as 2 | 3 | 4 | 5] - points) })}
+              </span>
+            </div>
+          ))}
       </motion.div>
 
       {/* Gratuit */}

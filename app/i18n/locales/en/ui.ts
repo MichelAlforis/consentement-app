@@ -12,7 +12,7 @@ export const ui = {
     help: 'Help',
     settings: 'Settings',
     resourcesMinor: 'Understand',
-    pornoVsRealite: 'Porn vs. Reality',
+    pornoVsRealite: 'Sex vs. Reality',
     loi: 'The Law',
     quiz: 'Quiz',
     accompagnement: 'I have questions',
@@ -126,7 +126,7 @@ export const ui = {
     rewardRare: '1 rare card',
     rewardUnique: '1 unique card',
     quiz:          { title: 'Consent Quiz',        desc: '8 questions to test what you really know' },
-    porno:         { title: 'Porn vs Reality',      desc: "What films don't show you" },
+    porno:         { title: 'Sex vs. Reality',       desc: "What films don't show you" },
     loi:           { title: 'Law & Consent',        desc: 'Your rights, the legal age, what is a crime' },
     pratiques:     { title: 'Advanced Practices',   desc: 'Module written by our legal expert — coming soon' },
     accompagnement:{ title: 'I Have Questions',     desc: 'Questions to ask yourself. Without judgment.' },
@@ -134,6 +134,8 @@ export const ui = {
     rewardBase:    '24 common cards',
     allDone:       'Journey complete!',
     allDoneSub:    "You've explored all available content. Now play!",
+    heatRequired:  'Level {palier} required · {pts} pts',
+    heatPoints:    '+{n} pts',
   },
 
   moi: {
@@ -145,5 +147,7 @@ export const ui = {
     premiumDesc:      'All games · deep content · no limits',
     accompagnementAdulteDesc: 'Going through something? Confidential resources.',
     annuaireDesc: 'Find a professional — in person or teleconsultation',
+    heatTitle:    'My Barometer',
+    heatDesc:     '{pts} pts · Level {level} of 5',
   },
 } as const;
