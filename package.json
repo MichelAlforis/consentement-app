@@ -9,6 +9,9 @@
   "packageManager": "pnpm@11.1.2",
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
+    "mobile:start": "pnpm --filter @ouiclair/mobile start",
+    "mobile:ios": "pnpm --filter @ouiclair/mobile ios",
+    "mobile:android": "pnpm --filter @ouiclair/mobile android",
     "vitrine:dev": "pnpm --filter=apps/vitrine dev",
     "vitrine:build": "pnpm --filter=apps/vitrine build",
     "dev": "next dev",

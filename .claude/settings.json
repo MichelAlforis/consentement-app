@@ -75,7 +75,21 @@
       "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/consentement/\")",
       "Bash(curl -sI https://ouiclair.com/symbol.svg)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('workspaces:', d.get\\('workspaces'\\)\\); print\\('scripts:', list\\(d.get\\('scripts',{}\\).keys\\(\\)\\)\\)\")",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('workspaces:', d.get\\('workspaces'\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('workspaces:', d.get\\('workspaces'\\)\\)\")",
+      "Bash(corepack enable *)",
+      "Bash(corepack prepare *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm build:main)",
+      "Bash(cd /Users/test/Documents/Consentement/consentement-app && sed -i '' 's/createCoreStorage<[A-Za-z]*>\\(\\)/createCoreStorage\\(\\)/g' packages/core/src/stores/*.ts && grep -n \"createCoreStorage\" packages/core/src/stores/*.ts)",
+      "Bash(pnpm tsc *)",
+      "Bash(pnpm vitest *)",
+      "Bash(pnpm --filter=@ouiclair/core test)",
+      "Bash(npx create-expo-app@latest apps/mobile --template blank-typescript --no-install)",
+      "Bash(pnpm --filter=@ouiclair/core exec tsc --noEmit)",
+      "Bash(pnpm install *)"
+    ],
+    "additionalDirectories": [
+      "/Users/test/Documents/Consentement/consentement-app/packages/core/packages/core/src/stores"
     ]
   },
   "enableAllProjectMcpServers": true

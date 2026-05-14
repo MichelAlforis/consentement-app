@@ -1,5 +1,6 @@
 # dependencies
 node_modules
+.pnpm-store/
 
 # eslint cache
 .eslintcache
@@ -18,6 +19,7 @@ build
 
 # misc
 .DS_Store
+.expo/
 *.pem
 
 # debug
