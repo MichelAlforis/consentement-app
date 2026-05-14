@@ -139,11 +139,15 @@ ouiclair-monorepo/
 | 2 | POC R3F/native + shell Expo | 5–7 j | **✅ Fait** (test device physique à faire) | — | Dé 3D sur device → go/no-go |
 | 3 | Composants UI | 12–18 j | **✅ Fait** — 26 composants portés, 3 audits GO | — | ~26 composants RN validés |
 | 4 | Onboarding + Nav principale | 10–12 j | **✅ Fait** — 11 écrans + AppShell + RouteRenderer | — | 11 écrans navigables |
-| 5 | Modules + Ressources | 15–20 j | 🔜 Prochaine | **Phase 5b** | 24 écrans contenu |
-| 5b | Features natives critiques | 8–10 j | À faire | **Phase 5** | secure-store + IAP + deep links |
-| 6 | Collection + Social | 8–12 j | À faire | — | HallOfCards, DuoSpace |
+| 5A | FichePratiqueScreen + 7 modules batch A | — | **✅ Fait** | — | composant base + 7 modules |
+| 5B | 7 modules batch B | — | **✅ Fait** (commit fd47ea5, fixes 433f7be) | — | 7 modules |
+| 5C | 10 écrans Ressources/Info | — | **✅ Fait** (commit 86402ec) | — | help, quiz, premium, annuaire… |
+| 5D | Sprint contenu — données i18n réelles | 3–5 j | **⏸ Reportée après Phase 7** | — | brancher vraies données pédagogiques |
+| 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
+| 6 | Collection + Social | 8–12 j | **🔜 Prochaine** | — | HallOfCards, DuoSpace |
 | 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
 | 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
+| 5D | Sprint contenu (blocker stores) | 3–5 j | Après Phase 7 | — | i18n réel + validation pédagogique |
 | 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
@@ -467,20 +471,41 @@ CardFullscreenOverlay, CollectorCardFace, ThemeEffects, ExplicitModeToggle
 
 ---
 
-## Phase 5 — Modules + Ressources ‖ Phase 5b — Features natives critiques
-**Phases en parallèle — durée 15–20 jours**
+## Phase 5 — Modules + Ressources
+**Découpée en 4 sous-phases suite à audit 2026-05-14**
 
-### Phase 5 : 24 écrans de contenu
+### Phase 5A ✅ — FichePratiqueScreen + 7 modules batch A
 
-**Modules éducatifs (14)** : `module-de-base`, `pratiques-base`, `pratiques-avancees`, `pratiques-explicit`, `lexique-consent`, `scenarios-quotidiens`, `bdsm-consent`, `sexting`, `pression-manip`, `rupture-harcele`, `content-non-consenti`, `zones-grises`, `lgbtq-consent`, `alcool-consent`
+`module-de-base`, `pratiques-base`, `pratiques-avancees`, `pratiques-explicit`, `lexique-consent`, `scenarios-quotidiens`, `bdsm-consent`
 
-Pattern : FichePratiqueScreen comme base, i18n via useTranslation(), ScrollView + composants Phase 3.
+Composant `FichePratiqueScreen` générique créé avec gates premium, AnimatePresence entre fiches, 4 sections colorées.
+Items = **stubs** (3 items placeholder par module) — les vraies données arrivent Phase 5D.
 
-**Ressources/Info (10)** : `help`, `quiz-hub`, `quiz-consentement`, `porno-vs-realite`, `loi-consentement`, `accompagnement-mineur`, `accompagnement-adulte`, `annuaire-sexologues`, `resources-minor`, `premium`
+### Phase 5B ✅ — 7 modules batch B (commit fd47ea5)
 
-**ScenarioGame (1)** : jeu textuel pur, port direct.
+`sexting`, `pression-manip`, `rupture-harcele`, `content-non-consenti`, `zones-grises`, `lgbtq-consent`, `alcool-consent`
 
-### Phase 5b : Blockers stores (en parallèle)
+Même pattern FichePratiqueScreen, items stubs.
+
+### Phase 5C 🔄 En cours — 10 écrans Ressources/Info
+
+`help`, `quiz-hub`, `quiz-consentement`, `porno-vs-realite`, `loi-consentement`, `accompagnement-mineur`, `accompagnement-adulte`, `annuaire-sexologues`, `resources-minor`, `premium`
+
+Écrans hétérogènes (accordéon FAQ, quiz stateful, annuaire, pitch abonnement).
+
+### Phase 5D ⏸ Reportée après Phase 7 — Sprint contenu
+
+**Décision 2026-05-14 :** `VraiFauxItem` (V3) est structurellement incompatible avec `FichePratiqueItem` (V4).
+Ce n'est pas une migration technique — c'est un **sprint éditorial** :
+- Reformatage manuel ou supervisé des données par module
+- Création des clés i18n par module et par langue
+- Validation pédagogique (contenu sensible : BDSM, sexting, harcèlement)
+
+**5D est un blocker stores, pas un blocker technique.** Les écrans fonctionnent avec des stubs jusqu'à la publication.
+
+**Ordre révisé :** 5A ✅ → 5B ✅ → 5C → 5b → Phase 6 → Phase 7 → **5D** → Phase 8 → Phase 9
+
+### Phase 5b — Features natives critiques (après 5C)
 
 Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évite qu'elles bloquent la soumission finale.
 

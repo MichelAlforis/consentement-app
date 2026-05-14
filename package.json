@@ -86,5 +86,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --cache-location node_modules/.cache/.eslintcache --quiet"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    }
   }
 }

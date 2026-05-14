@@ -15,6 +15,13 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
+// Force React + React Native to always resolve from the app — prevents dual-instance
+// hook crashes when packages/core or its deps (zustand) import React indirectly.
+config.resolver.extraNodeModules = {
+  react: path.resolve(projectRoot, 'node_modules/react'),
+  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+};
+
 // PNG + standard assets
 config.resolver.assetExts = [...config.resolver.assetExts, 'png', 'jpg', 'jpeg', 'gif', 'webp'];
 
