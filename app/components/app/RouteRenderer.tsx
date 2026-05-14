@@ -268,7 +268,7 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
   sexting: (ctx) => (
     <VraiFauxModuleScreen
       items={sextingItems}
-      namespace="sexting.vraiFaux"
+      namespace={ctx.isAdult === false ? 'sexting.vraiFauxMineur' : 'sexting.vraiFaux'}
       moduleId="sexting"
       onComplete={() => ctx.navigateTo('hall-of-cards')}
     />

@@ -66,7 +66,13 @@
       "Bash(node node_modules/.bin/next build --experimental-app)",
       "Bash(npx --prefix apps/vitrine next build)",
       "Bash(rsync -az --delete -e \"ssh -i ~/.ssh/id_rsa_hetzner\" /Users/test/Documents/Consentement/consentement-app/apps/vitrine/out/ root@159.69.108.234:/srv/ouiclair/vitrine/)",
-      "Bash(dig ouiclair.com TXT @1.1.1.1 +short)"
+      "Bash(dig ouiclair.com TXT @1.1.1.1 +short)",
+      "Bash(bash deploy-vitrine.sh)",
+      "Bash(pkill -f \"chrome\\\\|chromium\\\\|playwright\")",
+      "Bash(awk '{print $2}')",
+      "Bash(openssl rand *)",
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/\")",
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/consentement/\")"
     ]
   },
   "enableAllProjectMcpServers": true

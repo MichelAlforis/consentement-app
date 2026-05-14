@@ -9,6 +9,5 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
     },
     sitemap: 'https://ouiclair.com/sitemap.xml',
-    host: 'https://ouiclair.com',
   };
 }

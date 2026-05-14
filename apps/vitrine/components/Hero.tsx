@@ -30,8 +30,8 @@ function HeroContent() {
       {/* Badge */}
       <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-oui-violet/8 border border-oui-violet/20">
         <span className="w-2 h-2 rounded-full bg-oui-violet animate-pulse-slow flex-shrink-0" />
-        <span className="text-oui-violet-light text-xs font-semibold tracking-wide">
-          Éducation sexuelle · Consentement · Dès 13 ans
+        <span className="text-oui-violet-light text-xs font-semibold tracking-wide whitespace-nowrap">
+          Éducation · Consentement · 13+
         </span>
       </div>
 
