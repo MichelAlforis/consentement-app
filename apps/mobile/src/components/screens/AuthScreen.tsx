@@ -12,7 +12,6 @@ import { useNavigationStore, useAuthStore } from '@ouiclair/core';
 import { useTheme } from '../../theme/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { Card, Button } from '../ui';
-import { secureTokenStore } from '../../storage/secureTokenStore';
 
 const PRONOUNS = ['il', 'elle', 'iel', 'neutre'] as const;
 type PronounKey = typeof PRONOUNS[number];
@@ -29,14 +28,12 @@ export function AuthScreen() {
   const [hasError, setHasError] = useState(false);
   const [selectedPronoun, setSelectedPronoun] = useState<PronounKey | null>(null);
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     if (name.trim()) {
       Keyboard.dismiss();
       impactAsync(ImpactFeedbackStyle.Light);
       setPronouns(selectedPronoun);
       authenticate(name.trim());
-      const { pbToken } = useAuthStore.getState();
-      if (pbToken) await secureTokenStore.save(pbToken);
       replaceWith('home');
     } else {
       setHasError(true);

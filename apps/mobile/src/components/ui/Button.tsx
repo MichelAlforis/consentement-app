@@ -24,6 +24,7 @@ interface ButtonProps {
   disabled?: boolean;
   icon?: ReactNode;
   style?: ViewStyle;
+  testID?: string;
 }
 
 export function Button({
@@ -35,6 +36,7 @@ export function Button({
   disabled = false,
   icon,
   style,
+  testID,
 }: ButtonProps) {
   const { colors } = useTheme();
 
@@ -57,7 +59,7 @@ export function Button({
     '#ffffff';
 
   return (
-    <Pressable onPress={disabled ? undefined : onPress} disabled={disabled}>
+    <Pressable onPress={disabled ? undefined : onPress} disabled={disabled} testID={testID}>
       {({ pressed }) => (
         <MotiView
           animate={{ scale: pressed ? 0.97 : 1 }}

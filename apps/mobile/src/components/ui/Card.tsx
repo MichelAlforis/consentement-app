@@ -26,6 +26,7 @@ interface CardProps {
   delay?: number;
   blur?: boolean;
   blurIntensity?: number;
+  testID?: string;
 }
 
 const PADDING: Record<NonNullable<CardProps['padding']>, number> = {
@@ -51,6 +52,7 @@ export function Card({
   delay = 0,
   blur = false,
   blurIntensity = 18,
+  testID,
 }: CardProps) {
   const theme = useTheme();
   const cardStyle = getVariantStyle(variant, theme.colors);
@@ -80,7 +82,7 @@ export function Card({
   if (!onClick) return content;
 
   return (
-    <Pressable accessibilityRole="button" onPress={onClick}>
+    <Pressable accessibilityRole="button" onPress={onClick} testID={testID}>
       {({ pressed }) => (
         <MotiView animate={{ scale: pressed ? 0.98 : 1 }} transition={{ type: 'timing', duration: 120 }}>
           {content}

@@ -134,7 +134,7 @@ function ModuleCard({
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ delay: index * 70, type: 'timing', duration: 280 }}
     >
-      <Pressable disabled={fullyLocked || heatLocked} onPress={() => module.screen && onNavigate(module.screen)}>
+      <Pressable testID={`module-card-${module.id}`} disabled={fullyLocked || heatLocked} onPress={() => module.screen && onNavigate(module.screen)}>
         {({ pressed }) => (
           <MotiView
             animate={{ scale: pressed ? 0.98 : 1 }}

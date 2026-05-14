@@ -129,12 +129,10 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
   const showDice = mode === 'pick' || mode === 'rolling' || mode === 'practice';
 
-  const samplePreviewCard = (faceId: number) => sampleCardByFace(faceId, ownedCards);
-
   const handleRollComplete = useCallback(() => {
     onRollComplete();
     setMode('practice');
-    const card = samplePreviewCard(currentFace?.id ?? 0);
+    const card = sampleCardByFace(currentFace?.id ?? 0, ownedCards);
     setPreviewCard(card);
   }, [currentFace?.id, onRollComplete, ownedCards]);
 
@@ -259,11 +257,12 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
 
               <View style={styles.modeList}>
                 {([
-                  [true,  t('diceGame.solo.title'), t('diceGame.solo.desc'),  '#fef3c7', '#fbbf24', <User key="u" size={22} color="#f59e0b" />],
-                  [false, t('diceGame.duo.title'),  t('diceGame.duo.desc'),   '#fff7ed', '#fed7aa', <Users key="us" size={22} color="#f97316" />],
-                ] as [boolean, string, string, string, string, React.ReactNode][]).map(([solo, title, desc, bg, border, icon]) => (
+                  [true,  t('diceGame.solo.title'), t('diceGame.solo.desc'),  '#fef3c7', '#fbbf24', <User key="u" size={22} color="#f59e0b" />, 'btn-dice-mode-solo'],
+                  [false, t('diceGame.duo.title'),  t('diceGame.duo.desc'),   '#fff7ed', '#fed7aa', <Users key="us" size={22} color="#f97316" />, 'btn-dice-mode-duo'],
+                ] as [boolean, string, string, string, string, React.ReactNode, string][]).map(([solo, title, desc, bg, border, icon, testID]) => (
                   <Pressable
                     key={title}
+                    testID={testID}
                     onPress={() => pickRoll(solo as boolean)}
                     style={[styles.modeCard, { backgroundColor: colors.bgCard, borderColor: border }]}
                   >
@@ -315,9 +314,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
 
                     {isSolo ? (
                       <View style={styles.actions}>
-                        <Button onPress={reroll} fullWidth icon={<Dices size={18} color="#fff" />}>{t('diceGame.newRoll')}</Button>
+                        <Button testID="btn-dice-reroll" onPress={reroll} fullWidth icon={<Dices size={18} color="#fff" />}>{t('diceGame.newRoll')}</Button>
                         <Button onPress={reset} variant="secondary" fullWidth icon={<RotateCcw size={16} color="#fff" />}>{t('diceGame.changeMode')}</Button>
-                        <Button onPress={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
+                        <Button testID="btn-dice-quit" onPress={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
                       </View>
                     ) : (
                       <View style={styles.duoVoteStart}>
@@ -488,9 +487,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                 )}
 
                 <View style={styles.revealActions}>
-                  <Button onPress={reroll} fullWidth icon={<Dices size={18} color="#fff" />}>{t('diceGame.newRoll')}</Button>
+                  <Button testID="btn-dice-reroll" onPress={reroll} fullWidth icon={<Dices size={18} color="#fff" />}>{t('diceGame.newRoll')}</Button>
                   <Button onPress={reset} variant="secondary" fullWidth icon={<RotateCcw size={16} color="#fff" />}>{t('diceGame.changeMode')}</Button>
-                  <Button onPress={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
+                  <Button testID="btn-dice-quit" onPress={handleQuit} variant="ghost" fullWidth>{t('diceGame.quit')}</Button>
                 </View>
               </View>
             </MotiView>

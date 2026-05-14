@@ -28,10 +28,12 @@ export function AppProviders({ children }: Props) {
       const isPremium = await checkPremiumEntitlement();
       if (isPremium) usePremiumStore.getState().activatePremium();
 
+      // Restaure pbToken depuis SecureStore (source de vérité unique hors MMKV)
       try {
         const token = await secureTokenStore.load();
         if (token) {
           const { pbUserId } = useAuthStore.getState();
+          useAuthStore.setState({ pbToken: token });
           if (pbUserId) {
             const { pb } = await import('@ouiclair/core/lib/pb');
             pb.authStore.save(token, { id: pbUserId } as never);
@@ -41,6 +43,17 @@ export function AppProviders({ children }: Props) {
         // Token corrompu ou expiré — non fatal, pb.authStore reste vide
       }
     })();
+
+    // Sync pbToken → SecureStore à chaque mise à jour (ex: re-auth PocketBase)
+    let prevToken: string | null = useAuthStore.getState().pbToken;
+    const unsubscribe = useAuthStore.subscribe(async (state) => {
+      if (state.pbToken !== prevToken) {
+        prevToken = state.pbToken;
+        if (state.pbToken) await secureTokenStore.save(state.pbToken);
+        else await secureTokenStore.clear();
+      }
+    });
+    return unsubscribe;
   }, []);
 
   return (

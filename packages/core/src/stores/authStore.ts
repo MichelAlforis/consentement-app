@@ -82,7 +82,7 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: state.isAuthenticated,
         deviceId: state.deviceId,
         pbUserId: state.pbUserId,
-        pbToken: state.pbToken,
+        // pbToken exclu volontairement : géré par SecureStore dans apps/mobile
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

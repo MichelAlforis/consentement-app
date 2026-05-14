@@ -161,7 +161,7 @@ function WelcomeAgeStep({ onNext }: StepProps) {
       </Text>
 
       <View style={{ gap: 12 }}>
-        <Card onClick={handleMinor} variant="elevated" delay={1}>
+        <Card testID="btn-age-minor" onClick={handleMinor} variant="elevated" delay={1}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
             <IconBox size="xl" rounded="2xl" style={{ backgroundColor: '#d1fae5' }}>
               <Sprout size={24} color="#059669" />
@@ -177,7 +177,7 @@ function WelcomeAgeStep({ onNext }: StepProps) {
           </View>
         </Card>
 
-        <Card onClick={handleAdult} variant="elevated" delay={2}>
+        <Card testID="btn-age-adult" onClick={handleAdult} variant="elevated" delay={2}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
             <IconBox size="xl" rounded="2xl" style={{ backgroundColor: '#ede9fe' }}>
               <TreeDeciduous size={24} color="#7c3aed" />
@@ -265,7 +265,7 @@ function ThemeSelectStep({ onNext }: StepProps) {
               animate={{ opacity: 1, translateX: 0 }}
               transition={{ delay: 100 + i * 80 }}
             >
-              <Pressable onPress={() => handleSelect(mode)}>
+              <Pressable testID={`btn-theme-${mode}`} onPress={() => handleSelect(mode)}>
                 {({ pressed }) => (
                   <LinearGradient
                     colors={THEME_GRADIENT_COLORS[mode]}
@@ -448,7 +448,7 @@ function AuthStep({ onNext }: StepProps) {
           </View>
         </Card>
 
-        <Button onPress={handleContinue} fullWidth size="lg" icon={<KeyRound size={18} color="#fff" />}>
+        <Button testID="btn-onboarding-continue" onPress={handleContinue} fullWidth size="lg" icon={<KeyRound size={18} color="#fff" />}>
           {t('auth.btnContinue')}
         </Button>
       </ScrollView>
