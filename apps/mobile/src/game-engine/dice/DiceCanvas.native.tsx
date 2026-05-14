@@ -147,21 +147,25 @@ function AnimatedCube({
 
   const bounce = useRef({ active: false, elapsed: 0 });
   const cumulative = useRef({ x: 0, y: 0 });
+  const idle = useRef({ t: 0 });
 
   useEffect(() => {
     if (!isRolling || !groupRef.current) return;
 
+    // Resync cumulative avec la rotation réelle (qui inclut l'offset idle)
+    const actualY = groupRef.current.rotation.y;
+    const actualX = groupRef.current.rotation.x;
     const [tx, ty] = FACE_ROTATIONS[targetFaceId] ?? [0, 0];
-    const baseX = Math.round(cumulative.current.x / (Math.PI * 2)) * Math.PI * 2;
-    const baseY = Math.round(cumulative.current.y / (Math.PI * 2)) * Math.PI * 2;
+    const baseX = Math.round(actualX / (Math.PI * 2)) * Math.PI * 2;
+    const baseY = Math.round(actualY / (Math.PI * 2)) * Math.PI * 2;
     const finalX = baseX + Math.PI * 6 + tx;
     const finalY = baseY + Math.PI * 4 + ty;
     cumulative.current = { x: finalX, y: finalY };
 
     anim.current = {
       rolling: true,
-      startX: groupRef.current.rotation.x,
-      startY: groupRef.current.rotation.y,
+      startX: actualX,
+      startY: actualY,
       targetX: finalX,
       targetY: finalY,
       elapsed: 0,
@@ -217,7 +221,21 @@ function AnimatedCube({
       b.active = false;
       group.scale.set(1, 1, 1);
       group.position.y = 0;
+      idle.current.t = 0;
     }
+  });
+
+  // Animation idle : flottement + oscillation douce quand le dé est au repos
+  useFrame((_, delta) => {
+    const group = groupRef.current;
+    const a = anim.current;
+    const b = bounce.current;
+    if (!group || a.rolling || b.active) return;
+    idle.current.t += delta;
+    const t = idle.current.t;
+    // Oscillation Y douce (±10°) + flottement vertical (±0.06 unités)
+    group.rotation.y = cumulative.current.y + Math.sin(t * 0.45) * 0.17;
+    group.position.y = Math.sin(t * 0.8) * 0.06;
   });
 
   return (
