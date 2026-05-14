@@ -16,6 +16,8 @@ import {
   Flame,
   Lightbulb,
   MessageCircle,
+  Heart,
+  Zap,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Screen } from '../../types';
@@ -55,7 +57,6 @@ type ModuleMeta = {
 const HEAT_GATES: Partial<Record<string, 2 | 3 | 4 | 5>> = {
   'bdsm-consent':       2,
   'pratiques-explicit': 2,
-  'lgbtq-consent':      2,
   'pratiques-avancees': 3,
 };
 
@@ -77,6 +78,8 @@ const MODULE_ICONS: Record<string, ReactNode> = {
   'content-non-consenti': <Film size={20} className="text-white" />,
   'pratiques-explicit': <Flame size={20} className="text-white" />,
   'zones-grises': <Lightbulb size={20} className="text-white" />,
+  'lgbtq-consent': <Heart size={20} className="text-white" />,
+  'pratiques-avancees': <Zap size={20} className="text-white" />,
 };
 
 function ModuleCard({

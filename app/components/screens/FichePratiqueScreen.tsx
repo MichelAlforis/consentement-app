@@ -56,7 +56,11 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
   return (
     <div className="flex flex-col min-h-0 flex-1">
       {/* Header */}
-      <div className="shrink-0 px-5 pt-5 pb-3">
+      <motion.div
+        className="shrink-0 px-5 pt-5 pb-3"
+        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
         <h1 className="text-xl font-bold" style={{ color: colors.textPrimary }}>
           {t(`${namespace}.fiches.title`)}
         </h1>
@@ -74,7 +78,7 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
             />
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Card */}
       <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 scrollbar-hide">
@@ -88,7 +92,10 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
             className="space-y-3"
           >
             {/* Card header */}
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="flex items-center gap-3 p-4 rounded-2xl"
               style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
             >
@@ -106,14 +113,17 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
                   {index + 1} / {items.length}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* 4 sections */}
-            {CONTENT_KEYS.map(({ section, content }) => {
+            {/* 4 sections — stagger cascade à chaque navigation */}
+            {CONTENT_KEYS.map(({ section, content }, si) => {
               const sectionColors = SECTION_COLORS[section];
               return (
-                <div
+                <motion.div
                   key={section}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + si * 0.07, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
                   className="p-4 rounded-2xl"
                   style={{ background: sectionColors.bg, border: `1px solid ${sectionColors.border}` }}
                 >
@@ -126,7 +136,7 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
                   <p className="text-sm leading-relaxed" style={{ color: colors.textPrimary }}>
                     {t(`${namespace}.fiches.${index}.${content}`)}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
           </motion.div>
@@ -139,13 +149,14 @@ export function FichePratiqueScreen({ namespace, items, moduleId, onComplete }: 
         style={{ background: `linear-gradient(180deg, transparent, ${colors.bgPrimary} 20%)` }}
       >
         {index > 0 && (
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             onClick={handlePrev}
             className="h-14 px-5 rounded-2xl flex items-center justify-center gap-1.5 font-semibold text-sm shrink-0"
             style={{ background: colors.bgSecondary, color: colors.textSecondary }}
           >
             <ChevronLeft size={18} />
-          </button>
+          </motion.button>
         )}
         <motion.button
           whileTap={{ scale: 0.97 }}

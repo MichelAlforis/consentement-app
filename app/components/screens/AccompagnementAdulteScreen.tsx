@@ -73,10 +73,12 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
               {t('accompagnementAdulte.situation.question')}
             </p>
             <div className="space-y-3">
-              <button
+              <motion.button
                 onClick={() => selectSituation('victim')}
                 className="w-full p-4 rounded-2xl text-left"
                 style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 }} whileTap={{ scale: 0.97 }}
               >
                 <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
                   {t('accompagnementAdulte.situation.victim.title')}
@@ -84,11 +86,13 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                   {t('accompagnementAdulte.situation.victim.desc')}
                 </p>
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => selectSituation('self')}
                 className="w-full p-4 rounded-2xl text-left"
                 style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }} whileTap={{ scale: 0.97 }}
               >
                 <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
                   {t('accompagnementAdulte.situation.self.title')}
@@ -96,11 +100,13 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                   {t('accompagnementAdulte.situation.self.desc')}
                 </p>
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => selectSituation('witness')}
                 className="w-full p-4 rounded-2xl text-left"
                 style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.22 }} whileTap={{ scale: 0.97 }}
               >
                 <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
                   {t('accompagnementAdulte.situation.witness.title')}
@@ -108,7 +114,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                   {t('accompagnementAdulte.situation.witness.desc')}
                 </p>
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}
@@ -206,13 +212,19 @@ function ResourceList({ resources }: { resources: Resource[] }) {
         );
         const cls = "flex items-center gap-3 p-4 rounded-2xl w-full text-left";
         const style = { background: colors.bgCard, border: `1px solid ${colors.border}` };
+        const motionProps = {
+          initial: { opacity: 0, y: 10 },
+          animate: { opacity: 1, y: 0 },
+          transition: { delay: i * 0.07 },
+          whileTap: { scale: 0.97 },
+        };
         if (r.tel)
-          return <a key={i} href={`tel:${r.tel}`} className={cls} style={style}>{inner}</a>;
+          return <motion.a key={i} href={`tel:${r.tel}`} className={cls} style={style} {...motionProps}>{inner}</motion.a>;
         if (r.href)
-          return <a key={i} href={r.href} target="_blank" rel="noopener noreferrer" className={cls} style={style}>{inner}</a>;
+          return <motion.a key={i} href={r.href} target="_blank" rel="noopener noreferrer" className={cls} style={style} {...motionProps}>{inner}</motion.a>;
         if (r.onPress)
-          return <button key={i} onClick={r.onPress} className={cls} style={style}>{inner}</button>;
-        return <div key={i} className={cls} style={style}>{inner}</div>;
+          return <motion.button key={i} onClick={r.onPress} className={cls} style={style} {...motionProps}>{inner}</motion.button>;
+        return <motion.div key={i} className={cls} style={style} {...motionProps}>{inner}</motion.div>;
       })}
     </div>
   );

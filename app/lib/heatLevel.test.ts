@@ -195,6 +195,19 @@ describe('MODULE_POINTS — couverture complète', () => {
     'quiz-d1', 'quiz-d2', 'quiz-d3',
     'quiz-i1', 'quiz-i2', 'quiz-i3',
     'quiz-e1', 'quiz-e2', 'quiz-e3',
+    'pratiques-base',
+    'lexique-consent', 'lexique-consent-mineur',
+    'scenarios-quotidiens', 'scenarios-quotidiens-mineur',
+    'alcool-consent',
+    'bdsm-consent',
+    'sexting',
+    'pression-manip',
+    'rupture-harcele',
+    'content-non-consenti',
+    'pratiques-explicit',
+    'zones-grises',
+    'lgbtq-consent', 'lgbtq-consent-mineur',
+    'pratiques-avancees',
   ];
 
   it('tous les modules attendus ont des points définis', () => {

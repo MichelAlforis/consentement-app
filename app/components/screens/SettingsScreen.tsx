@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Palette, LifeBuoy, Crown, ChevronRight, CheckCircle2, Globe,
-  Flame, Heart, RotateCcw, BookOpen,
+  Flame, Heart, RotateCcw, BookOpen, Trash2,
 } from 'lucide-react';
 import { Screen } from '../../types';
 import type { Language } from '../../types';
@@ -155,6 +155,62 @@ function PronounPills() {
   );
 }
 
+// ── Delete account modal ──────────────────────────────────────────────────────
+
+function DeleteAccountModal({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 60, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        className="w-full max-w-sm rounded-3xl p-6 space-y-4"
+        style={{ background: colors.bgCard, border: `1px solid ${colors.danger}40` }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: `${colors.danger}18` }}>
+            <Trash2 size={18} style={{ color: colors.danger }} />
+          </div>
+          <h3 className="text-lg font-bold" style={{ color: colors.textPrimary }}>
+            {t('settings.deleteAccount.confirmTitle')}
+          </h3>
+        </div>
+        <p className="text-sm leading-relaxed" style={{ color: colors.textMuted }}>
+          {t('settings.deleteAccount.confirmBody')}
+        </p>
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={onClose}
+            className="flex-1 py-3 rounded-2xl text-sm font-semibold"
+            style={{ background: colors.bgSecondary, color: colors.textSecondary }}
+          >
+            {t('settings.deleteAccount.cancel')}
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 py-3 rounded-2xl text-sm font-semibold"
+            style={{ background: colors.danger, color: '#fff' }}
+          >
+            {t('settings.deleteAccount.cta')}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 // ── Reset modal ───────────────────────────────────────────────────────────────
 
 function ResetModal({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
@@ -213,6 +269,7 @@ export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScree
   const { userName, setName } = useAuthStore();
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
   const [showReset, setShowReset] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [nameDraft, setNameDraft] = useState(userName);
   const [nameFocused, setNameFocused] = useState(false);
 
@@ -226,6 +283,11 @@ export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScree
   const handleReset = () => {
     resetAllData();
     setShowReset(false);
+  };
+
+  const handleDeleteAccount = () => {
+    resetAllData();
+    setShowDeleteAccount(false);
   };
 
   const handleReplayIntro = () => {
@@ -372,11 +434,24 @@ export function SettingsScreen({ isPremium, isAdult, onNavigate }: SettingsScree
           onClick={() => setShowReset(true)}
           danger
         />
+
+        <SettingsRow
+          icon={<Trash2 size={20} style={{ color: colors.danger }} />}
+          title={t('settings.deleteAccount.title')}
+          desc={t('settings.deleteAccount.desc')}
+          delay={d()}
+          accent={colors.danger}
+          onClick={() => setShowDeleteAccount(true)}
+          danger
+        />
       </motion.div>
 
       <AnimatePresence>
         {showReset && (
           <ResetModal onClose={() => setShowReset(false)} onConfirm={handleReset} />
+        )}
+        {showDeleteAccount && (
+          <DeleteAccountModal onClose={() => setShowDeleteAccount(false)} onConfirm={handleDeleteAccount} />
         )}
       </AnimatePresence>
     </>

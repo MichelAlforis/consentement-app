@@ -99,6 +99,14 @@ export const ui = {
       cta: 'Réinitialiser',
       cancel: 'Annuler',
     },
+    deleteAccount: {
+      title: 'Supprimer mon compte',
+      desc: 'RGPD — supprime toutes tes données définitivement',
+      confirmTitle: 'Supprimer mes données ?',
+      confirmBody: 'Cette action supprime définitivement toutes tes données personnelles (profil, progression, cartes, préférences). Conforme au droit de suppression RGPD (art. 17). Irréversible.',
+      cta: 'Supprimer définitivement',
+      cancel: 'Annuler',
+    },
   },
 
   themeSelect: {
