@@ -146,7 +146,9 @@ ouiclair-monorepo/
 | 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
 | 6A | HallOfCardsScreen | — | **✅ Fait** (commit a66f058) | 6B | carousel + gyroscope + tilt |
 | 6B | DuoSpace + PersonalSpace | — | **✅ Fait** (8bb909b, fixes 3d5a079) | 6A | realtime stub + profil comfort |
-| 7 | Jeux R3F | 20–30 j | **🔜 Prochaine** (EAS Preview recommandé avant) | — | DiceGame → CardGame → GooseGame |
+| 7A | DiceGame | — | **✅ Fait** (commit 265872d) — test device 45fps prérequis 7B | — | DiceCanvas + useDiceEngine + GameEndCinematic |
+| 7B | CardGame | — | **🔜 Prochaine** (après test device DiceGame) | — | CollectorCardCanvas.native + CardGame screen |
+| 7C | GooseGame | — | À faire (après 7B) — ⚠️ MMKV requis avant lancement | — | BoardRenderer.native + GooseGame screen |
 | 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
 | 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
@@ -545,8 +547,17 @@ Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évit
 
 ### Ordre (du plus simple au plus complexe)
 
-**1. DiceGame** (3–5 j)
-- DiceCanvas.native.tsx déjà fait Phase 2 → compléter DiceRenderer, useDiceEngine, GameEndCinematic, écran + overlays
+**1. DiceGame** ✅ (commit 265872d)
+- game-engine/shared/ créé : useAntiRepeat, useHaptics (expo-haptics), usePersist (session-only useRef), GameEndCinematic
+- game-engine/dice/ : types, useDiceEngine, DiceRenderer (bascule R3F/FlatTile)
+- DiceGameScreen feature folder : useSettingsStore + useUnlockStore + 7 useState
+
+⚠️ **WARNs Phase 7A** :
+- W5 — `DiceFace` défini dans types.ts ET local dans DiceCanvas.native.tsx → à extraire dans @ouiclair/core (TODO déjà tracé)
+- W7b — bascule R3F/FlatTile manuelle uniquement, pas de GPU-tier detection → outiller Phase 8 si besoin
+- W10b 🔴 — `usePersist` session-only (useRef) : **bloquant pour Phase 7C GooseGame** (parties 20-30 min). Migrer vers MMKV avant de porter GooseGame.
+
+🔴 **Prérequis Phase 7B** : test device DiceGame ≥ 45fps obligatoire avant de lancer CardGame (Bloom + Vignette).
 
 **2. CardGame** (8–12 j)
 - CollectorCardCanvas 1247 lignes, Bloom + Vignette
@@ -560,6 +571,7 @@ Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évit
 - `window.resize` / `window.orientationchange` → `useWindowDimensions()` RN
 - ConfettiParticles (drei Sparkles) → compatible expo-gl
 - Overlays (AccordFlow, ActivityOverlay, ChanceOverlay) + phases (Intro, Setup, Pacte, End)
+- 🔴 **Prérequis bloquant** : migrer usePersist de useRef → MMKV (`react-native-mmkv`) avant de porter
 
 ### Point de contrôle Bloom
 Avant CardGame : tester `mipmapBlur: true` vs `false` sur device. Si crash ou dégradation sévère :
