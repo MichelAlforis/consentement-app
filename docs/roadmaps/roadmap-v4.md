@@ -636,40 +636,54 @@ Pas de `detect-gpu`. Stratégie V4 :
 ## Phase 9 — Tests + Publication
 **Durée : 8–12 jours**
 
-### Tests
+### Tests ✅ (commit 7f095a9)
 
-**packages/core** → Vitest (déjà en place, 15 fichiers portés Phase 1, 198 tests OK au 2026-05-14)
+**packages/core** → Vitest : `__DEV__` polyfillé dans vitest.config.ts, 198 tests OK
 
-**apps/mobile** → Jest + React Native Testing Library :
-- Nouveaux tests pour les hooks RN-spécifiques (useRenderMode, mmkvStorage, nativeEventSource)
-- Pas de portage exhaustif des tests UI — trop coûteux, coverage visuelle sur device suffit à ce stade
+**apps/mobile** :
+- `mmkvStorage.test.ts` : roundtrip set/get, removeItem, clé absente → null
+- `vitest.config.ts` créé
 
-**Flows Maestro (3 critiques)** :
-1. Onboarding complet → auth → HomeScreen
-2. Module éducatif → gain carte → HallOfCards
-3. DiceGame → résultat → session complète
+**Flows Maestro ✅** (`.maestro/`) :
+1. `01_onboarding.yaml` — launch → 4 étapes → HomeScreen
+2. `02_module_to_hall.yaml` — module éducatif → carte gagnée → HallOfCards
+3. `03_dice_game.yaml` — tab jeux → lancer dé → résultat → quitter
 
-### EAS Build
+### EAS Build ✅ (commit 7f095a9)
 
-```json
-// eas.json
-{
-  "build": {
-    "development": { "developmentClient": true, "distribution": "internal" },
-    "preview":     { "distribution": "internal" },
-    "production":  { "autoIncrement": true }
-  }
-}
-```
+`eas.json` configuré : profils `development` / `device` / `preview` / `production`
+`app.json` complet : scheme `ouiclair`, buildNumber/versionCode, permissions caméra
 
-- Un seul appId (`fr.consentement.app`) — gating interne pour le contenu explicit
-- Build iOS : Xcode Cloud ou local avec certificat distribution
-- Build Android : keystore géré par EAS
+### Store metadata ✅ (commits 4f5fb32 + d440c10)
 
-### Publication
+Fichiers dans `docs/store/` :
+- `app-store-fr.md` + `app-store-en.md` — titre, sous-titre, description, mots-clés, notes review Apple
+- `google-play-fr.md` + `google-play-en.md` — titre (≤30 car.), descriptions
+- `screenshots-spec.md` — résolutions iPhone 6.9" (16 Pro Max) + 6.7" (16 Plus) + Android
 
-1. Screenshots : Simulator (iPhone 15 Pro + Pixel 8) → App Store Connect + Play Console
-2. Metadata : réutiliser les textes existants de V3 + vitrine
+### Deep links ✅ (commit 7f095a9)
+
+`deepLinkHandler.ts` — scheme `ouiclair://` → navigateTo (premium, hall-of-cards, jeux)
+
+---
+
+### 🔴 Checklist avant soumission — tâches manuelles
+
+| # | Tâche | Fichier |
+|---|-------|---------|
+| 1 | Remplacer `REVENUECAT_IOS_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` |
+| 2 | Remplacer `REVENUECAT_ANDROID_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` |
+| 3 | Remplacer `ouiclair_premium_monthly` (ID produit IAP réel) | `src/iap/iapService.ts` + App Store Connect + Play Console |
+| 4 | Remplacer `SENTRY_DSN_PLACEHOLDER` | `App.tsx` |
+| 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` |
+| 6 | Déposer `google-service-account.json` | racine `apps/mobile/` (ne pas committer — ajouter à .gitignore) |
+| 7 | Screenshots device (iPhone 16 Pro Max + Pixel 8) | Xcode Simulator + Android Studio |
+| 8 | **Sprint R3F** : décider FlatTile / Skia / continuer R3F | voir section Phase 7 |
+
+### Publication (à faire après checklist)
+
+1. `eas build --platform ios --profile production`
+2. `eas build --platform android --profile production`
 3. TestFlight beta (iOS) + Google Play Internal Testing → beta testing
 4. Contenu sensible : catégorie 17+ iOS, ContentRating IARC Play
 5. Soumission production
