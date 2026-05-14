@@ -15,6 +15,7 @@ import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { useSettingsStore } from '../../../stores/settingsStore';
 import { useUnlockStore } from '../../../stores';
 import { sampleCardByFace } from '../../../lib/sampleCard';
+import { completeGameSession } from '../../../lib/completeGameSession';
 import type { GainedCard } from '../../../lib/computeGainedCards';
 import { CardFullscreenOverlay } from '../../ui/CardFullscreenOverlay';
 
@@ -64,7 +65,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     [available],
   );
 
-  const { ownedCards, incrementSessionCount, drawFromPool } = useUnlockStore();
+  const { ownedCards } = useUnlockStore();
   const [previewCard, setPreviewCard] = useState<GainedCard | null>(null);
   const [showCardPreview, setShowCardPreview] = useState(false);
 
@@ -106,8 +107,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
 
   const handleQuit = () => {
     if (rollCount > 0) {
-      incrementSessionCount();
-      const drawn = drawFromPool();
+      const drawn = completeGameSession('dice');
       if (drawn) { onNavigate('hall-of-cards'); return; }
     }
     onNavigate('jeux');

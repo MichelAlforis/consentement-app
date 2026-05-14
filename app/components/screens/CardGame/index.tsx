@@ -16,6 +16,7 @@ import { computeGainedCards } from '../../../lib/computeGainedCards';
 import type { GainedCard } from '../../../lib/computeGainedCards';
 import { collectorCards, getCollectorCardById } from '../../../data/cards-collector';
 import { useUnlockStore } from '../../../stores/unlockStore';
+import { completeGameSession } from '../../../lib/completeGameSession';
 import type { Screen } from '../../../types';
 
 export type { GainedCard };
@@ -113,13 +114,12 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
   const { t } = useTranslation();
   const s = useCardSession(isAdult);
 
-  const { ownedCards, sessionCount, unlockCards, incrementSessionCount, drawFromPool } = useUnlockStore();
+  const { ownedCards, sessionCount, unlockCards } = useUnlockStore();
   const [gainedCards, setGainedCards] = useState<GainedCard[]>([]);
 
   const handleGoToEnd = useCallback(() => {
     const ownedIds = new Set(ownedCards.map((c) => c.id));
     const nextSessionCount = sessionCount + 1;
-    incrementSessionCount();
 
     const { gained, ownedCards: newOwned } = computeGainedCards({
       sessionMode: s.sessionMode,
@@ -134,8 +134,8 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
 
     if (newOwned.length > 0) unlockCards(newOwned);
 
-    // Tirage pool lexique : ajoute une carte gagnée via unlock de terme
-    const drawn = drawFromPool();
+    // Incrément séance + tirage pool lexique
+    const drawn = completeGameSession('card');
     if (drawn) {
       const card = getCollectorCardById(drawn.id);
       if (card) {
@@ -149,7 +149,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
 
     setGainedCards(gained);
     s.goToEnd();
-  }, [ownedCards, sessionCount, incrementSessionCount, s, unlockCards, isPremium, drawFromPool]);
+  }, [ownedCards, sessionCount, s, unlockCards, isPremium]);
 
   const deckRemaining = s.sessionMode === 'seance'
     ? Math.max(0, s.seanceSize - s.cardCount)

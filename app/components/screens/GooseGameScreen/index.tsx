@@ -23,7 +23,7 @@ import { ActivityOverlay } from './overlays/ActivityOverlay';
 import { ChanceOverlay } from './overlays/ChanceOverlay';
 import { AccordFlow } from './overlays/AccordFlow';
 
-import { useUnlockStore } from '../../../stores/unlockStore';
+import { completeGameSession } from '../../../lib/completeGameSession';
 import type { Screen } from '../../../types';
 
 // ─── Orientation hook ─────────────────────────────────────────────────────────
@@ -82,11 +82,8 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
   const { t } = useTranslation();
   const isLandscape = useIsLandscape();
   const game = useGooseGame({ isAdult });
-  const { incrementSessionCount, drawFromPool } = useUnlockStore();
-
   const handleQuit = () => {
-    incrementSessionCount();
-    const drawn = drawFromPool();
+    const drawn = completeGameSession('goose');
     if (drawn) { onNavigate('hall-of-cards'); return; }
     onNavigate('jeux');
   };
