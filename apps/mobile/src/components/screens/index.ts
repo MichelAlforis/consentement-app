@@ -44,3 +44,4 @@ export { PersonalSpaceScreen } from './PersonalSpace';
 export { DuoSpaceScreen } from './DuoSpace';
 export { DiceGameScreen } from './DiceGame';
 export type { DiceGameScreenProps } from './DiceGame';
+export { JeuxScreen } from './JeuxScreen';
