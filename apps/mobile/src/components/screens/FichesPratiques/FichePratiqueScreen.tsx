@@ -27,6 +27,7 @@ import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
 import type { FichePratiqueItem, FichePratiqueScreenProps } from '../../../types/fiches-pratiques';
 
+// TODO: une fois tous les consommateurs migrés vers types/, supprimer ce re-export.
 export type { FichePratiqueItem, FichePratiqueScreenProps };
 
 const SECTION_COLORS = {
