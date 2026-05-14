@@ -132,13 +132,13 @@ ouiclair-monorepo/
 
 ## Vue d'ensemble des phases
 
-| Phase | Nom | Durée est. | Statut au 2026-05-14 | En parallèle | Livrable clé |
-|-------|-----|-----------|----------------------|--------------|--------------|
-| 0 | Monorepo étendu | 2–3 j | **✅ Fait** (tag v3-freeze + `pnpm build:main` à confirmer) | — | workspace prêt, Turborepo, TS refs |
+| Phase | Nom | Durée est. | Statut | En parallèle | Livrable clé |
+|-------|-----|-----------|--------|--------------|--------------|
+| 0 | Monorepo étendu | 2–3 j | **✅ Fait** | — | workspace prêt, Turborepo, TS refs |
 | 1 | packages/core | 10–15 j | **✅ Fait** — 11 stores, utils, 198 tests OK, tsc clean | — | stores + utils portables, Vitest vert |
 | 2 | POC R3F/native + shell Expo | 5–7 j | **✅ Fait** (test device physique à faire) | — | Dé 3D sur device → go/no-go |
-| 3 | Composants UI | 12–18 j | À faire | — | ~20 composants RN validés |
-| 4 | Onboarding + Nav principale | 10–12 j | À faire | — | 11 écrans navigables |
+| 3 | Composants UI | 12–18 j | **✅ Fait** — 26 composants portés, 3 audits GO | — | ~26 composants RN validés |
+| 4 | Onboarding + Nav principale | 10–12 j | 🔜 Prochaine | — | 11 écrans navigables |
 | 5 | Modules + Ressources | 15–20 j | À faire | **Phase 5b** | 24 écrans contenu |
 | 5b | Features natives critiques | 8–10 j | À faire | **Phase 5** | secure-store + IAP + deep links |
 | 6 | Collection + Social | 8–12 j | À faire | — | HallOfCards, DuoSpace |
@@ -190,9 +190,38 @@ ouiclair-monorepo/
   2. Les 6 faces affichent les bons chiffres (Asset.fromModule URI résolu)
   3. Framerate ≥ 45fps lancé actif sur iPhone mid-range + Pixel 6
 
+### Phase 3 — ✅ Fait (2026-05-14)
+
+**26 composants portés** en 3 groupes (3 sessions agents) — tous audits GO.
+
+**Agent 1 — Simples (10 composants)** : `AppLogo`, `Button`, `Header`, `IconBox`, `TabBar`, `Toast`, `ErrorBoundary`, `DailyQuestionCard`, `MenuCard`, `GameMenuCard`
+
+**Agent 2 — Moyens/SVG (8 composants)** : `PositionSVG`, `Card`, `ComfortSlider`, `QRCode`, `HeatRoadmapSheet`, `LegalCredentialSheet`, `AdBanner`, `HeatThermometer`
+
+**Agent 3 — Complexes/Reanimated (8 composants)** : `CardFullscreenOverlay`, `CollectorCardFace`, `ThemeEffects`, `FlipRevealOverlay`, `PalierUpOverlay`, `ExplicitModeToggle`, `CollectorCardFace` (CardBack intégré), `HeatRoadmapSheet`
+
+**Livraisons techniques complémentaires :**
+- `babel.config.js` créé — `react-native-reanimated/plugin` en dernier (requis Reanimated 4.1.x)
+- `useTranslation()` étendu : `t(key, params?)` avec substitution `{{var}}` — résout 5 erreurs TS2554
+- `apps/mobile/src/i18n/index.ts` stub étendu ; JSON de traduction à brancher en Phase 5
+- `expo-linear-gradient ~15.0.8` ajouté (requis pour gradients dans MenuCard, GameMenuCard Phase 5b)
+- `react-native-svg 15.12.1` résolu
+- Barrel `src/components/ui/index.ts` : 26 exports nominatifs, 0 `export *`
+- Divergences V3→V4 documentées en tête de fichier (TabBar props supprimées, onClick→onPress, PanResponder vs drag="y")
+
+**⚠️ WARN non-bloquants — à traiter avant build iOS Phase 7 :**
+
+| # | Warning | Impact | Phase cible |
+|---|---------|--------|-------------|
+| W1 | `expo-sensors` absent de `app.json/plugins` → `NSMotionUsageDescription` manquant → `DeviceMotion` silencieusement rejeté iOS 17+ | HallOfCards gyroscope muet sur iOS sans crash | **Phase 6** — ajouter le plugin avant HallOfCards |
+| W2 | `PanResponder` dans Modal (`CardFullscreenOverlay`) → comportement drag-to-dismiss non validé sur Android | Possible non-fonctionnement du dismiss | **Phase 7** — test device Android obligatoire |
+| W3 | `index.ts` réécrit par l'outil linter à deux reprises (suppression des exports ajoutés) | Risque de perte silencieuse d'exports lors des prochaines sessions | **Immédiat** — voir note ci-dessous |
+
+> **Note W3 — Protection de `index.ts`** : Le linter (`lint-staged` + eslint autofix) a écrasé les exports des agents à deux reprises. Solution retenue : le fichier `apps/mobile/src/components/ui/index.ts` doit être maintenu manuellement et vérifié en début de chaque session agents. Ajouter une règle dans `.eslintignore` ou utiliser `/* eslint-disable */` ciblé si le problème persiste. À surveiller en Phase 4.
+
 ### Non démarré
 
-- Phase 3 et suivantes.
+- Phase 4 et suivantes.
 
 ## Phase 0 — Monorepo étendu
 **Durée : 2–3 jours**
@@ -367,32 +396,40 @@ export interface IRealtimeAdapter {
 
 ---
 
-## Phase 3 — Composants UI
-**Durée : 12–18 jours**
+## Phase 3 — Composants UI ✅
+**Durée : 12–18 jours — Fait le 2026-05-14**
 
 ### Objectif
 Porter les ~20 composants de `app/components/ui/` vers React Native. Bibliothèque utilisée par tous les écrans.
 
-### Composants par complexité
+### Composants par complexité — état final
 
-**Simples** (Moti, View/Text) :
-Button, Toast, Header, TabBar, AppLogo, MenuCard, GameMenuCard, IconBox, ComfortSlider, ExplicitModeToggle
+**Simples ✅** (Moti, View/Text) :
+Button, Toast, Header, TabBar, AppLogo, MenuCard, GameMenuCard, IconBox, DailyQuestionCard, ErrorBoundary
 
-**Moyens** (BlurView, react-native-svg, Reanimated flip) :
-Card, FlipRevealOverlay, PalierUpOverlay, HeatThermometer, QRCode (`react-native-qrcode-svg`), PositionSVG (447 lignes SVG → react-native-svg, paths portables tels quels)
+**Moyens ✅** (BlurView, react-native-svg, Reanimated flip) :
+Card, FlipRevealOverlay, PalierUpOverlay, HeatThermometer, QRCode, PositionSVG, ComfortSlider, AdBanner, HeatRoadmapSheet, LegalCredentialSheet
 
-**Complexes** (attente ou Reanimated direct) :
-- `CollectorCardFace + CardBack` → attendre Phase 7
-- `CardFullscreenOverlay` → Reanimated `useSharedValue + useDerivedValue + useAnimatedStyle` (tilt 3D)
-- `ThemeEffects` → effets shimmer/grain adaptés RN
+**Complexes ✅** (Reanimated direct) :
+CardFullscreenOverlay, CollectorCardFace, ThemeEffects, ExplicitModeToggle
+- `CollectorCardFace` portée en Phase 3 (pas Phase 7 comme prévu initialement) ← gain de temps
+- `CardFullscreenOverlay` : Reanimated `useSharedValue + useDerivedValue + useAnimatedStyle` (tilt 3D)
+  ⚠️ PanResponder modal → tester drag-to-dismiss Android en Phase 7
+- `ThemeEffects` : shimmer animé (MotiView) + grain PNG statique (limitation : tiling CSS non reproductible RN, grain cover utilisé à la place — acceptable visuellement)
 
-### Règles de portage
+### Règles de portage appliquées
 - `backdrop-blur-*` → `<BlurView intensity={X} tint="dark">` (expo-blur)
 - `framer-motion` → Moti pour 95%, Reanimated direct pour CardFullscreenOverlay
 - SVG inline → react-native-svg (mêmes balises, import différent)
 - `mix-blend-overlay` → supprimé ou opacity fallback (pas de support RN)
-- `window.matchMedia('prefers-color-scheme')` → `useColorScheme()` hook RN built-in (réagit aux changements, contrairement à `Appearance.getColorScheme()`)
-- `iconFromName.tsx` : si utilisé dans core → créer `IIcon` abstraction. Si mobile-only → lucide-react-native direct.
+- `window.matchMedia('prefers-color-scheme')` → `useColorScheme()` hook RN built-in
+- Gradients CSS → couleurs solides pour l'instant. TODO Phase 5b : `expo-linear-gradient ~15.0.8`
+- `onClick` → `onPress` (convention RN) — documenté en tête de fichier quand divergence d'API V3
+
+### Fichiers clés
+- `apps/mobile/src/components/ui/` — 26 composants + barrel `index.ts`
+- `apps/mobile/babel.config.js` — `react-native-reanimated/plugin` en dernier
+- `apps/mobile/src/i18n/index.ts` — stub `t(key, params?)` avec substitution `{{var}}`
 
 ---
 
