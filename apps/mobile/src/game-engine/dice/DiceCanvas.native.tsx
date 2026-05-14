@@ -1,19 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Animated, StyleSheet, Text as RNText, View } from 'react-native';
+import { View } from 'react-native';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
-import { Heart, HelpCircle, Layers, MessageCircle, Sparkles, Target } from 'lucide-react-native';
-import type { LucideIcon } from 'lucide-react-native';
-
-const FACE_ICONS: Record<string, LucideIcon> = {
-  Layers,
-  MessageCircle,
-  HelpCircle,
-  Target,
-  Sparkles,
-  Heart,
-};
 
 interface DiceFace {
   id: number;
@@ -43,7 +32,7 @@ const DICE_SCALE = 1.08;
 const FACE_OFFSET = 0.512;
 const FACE_TEXT_OFFSET = FACE_OFFSET + 0.018;
 const PIP_RADIUS = 0.038;
-const MARK_COLOR = 'rgba(255,255,255,0.94)';
+const MARK_COLOR = '#ffffff';
 
 // BoxGeometry groups: 0=+X 1=-X 2=+Y 3=-Y 4=+Z 5=-Z
 // Derived from getPipTransform: face1→+Z, face2→+X, face3→+Y, face4→-Y, face5→-X, face6→-Z
@@ -549,17 +538,6 @@ export function DiceCanvas({
   mode = 'category',
 }: DiceCanvasProps) {
   const targetFaceId = currentFace?.id ?? 1;
-  const overlayOpacity = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    if (isRolling) {
-      Animated.timing(overlayOpacity, { toValue: 0, duration: 120, useNativeDriver: true }).start();
-    } else if (currentFace) {
-      Animated.timing(overlayOpacity, { toValue: 1, duration: 280, delay: 80, useNativeDriver: true }).start();
-    }
-  }, [isRolling, currentFace, overlayOpacity]);
-
-  const IconComponent = currentFace ? FACE_ICONS[currentFace.iconName] : null;
 
   return (
     <View style={{ width: size, height: size }}>
@@ -577,25 +555,6 @@ export function DiceCanvas({
           mode={mode}
         />
       </Canvas>
-      {mode === 'category' && IconComponent && currentFace && (
-        <Animated.View style={[StyleSheet.absoluteFill, styles.overlay, { opacity: overlayOpacity }]}>
-          <IconComponent size={size * 0.22} color="rgba(255,255,255,0.95)" />
-          <RNText style={[styles.faceLabel, { fontSize: size * 0.09 }]}>{currentFace.label}</RNText>
-        </Animated.View>
-      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  faceLabel: {
-    color: 'rgba(255,255,255,0.92)',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-});
