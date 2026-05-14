@@ -42,3 +42,5 @@ export { QuizConsentementScreen } from './QuizConsentement';
 export { HallOfCardsScreen } from './HallOfCards';
 export { PersonalSpaceScreen } from './PersonalSpace';
 export { DuoSpaceScreen } from './DuoSpace';
+export { DiceGameScreen } from './DiceGame';
+export type { DiceGameScreenProps } from './DiceGame';

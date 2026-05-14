@@ -52,6 +52,7 @@ const QuizConsentementScreen = lazy(() => import('../components/screens/QuizCons
 const HallOfCardsScreen = lazy(() => import('../components/screens/HallOfCards').then((m) => ({ default: m.HallOfCardsScreen })));
 const PersonalSpaceScreen = lazy(() => import('../components/screens/PersonalSpace').then((m) => ({ default: m.PersonalSpaceScreen })));
 const DuoSpaceScreen = lazy(() => import('../components/screens/DuoSpace').then((m) => ({ default: m.DuoSpaceScreen })));
+const DiceGameScreen = lazy(() => import('../components/screens/DiceGame').then((m) => ({ default: m.DiceGameScreen })));
 
 const TAB_SCREENS = new Set<Screen>(['home', 'apprendre', 'moi', 'jeux']);
 const FULLSCREEN_ONBOARDING = new Set<Screen>(['welcome', 'onboarding', 'age-check', 'auth', 'theme-select', 'language']);
@@ -101,13 +102,14 @@ function RenderScreen({ screen }: { screen: Screen }) {
       return <PersonalSpaceScreen />;
     case 'duo-space':
       return <DuoSpaceScreen />;
+    case 'jeu-des':
+      return <DiceGameScreen isPremium={isPremium} isAdult={isAdult === true} onNavigate={navigateTo} />;
     case 'welcome':
     case 'personal-intro':
     case 'learn':
     case 'scenarios-minor':
     case 'feelings':
     case 'jeux':
-    case 'jeu-des':
     case 'jeu-oie':
     case 'jeu-cartes':
       return <PlaceholderScreen screen={screen} />;
