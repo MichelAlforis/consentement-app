@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Sparkles, X } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import { CARD_POINTS } from '../../lib/heatLevel';
 import { CollectorCardFace } from './CollectorCardFace';
 
 interface FlipRevealOverlayProps {
@@ -67,6 +68,9 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
     ? t('flipReveal.titleOne')
     : t('flipReveal.titlePlural', { count: String(total) });
 
+  const totalHeatPts = cards.reduce((sum, c) => sum + (CARD_POINTS[c.rarity] ?? 0), 0);
+  const currentCardPts = CARD_POINTS[card.rarity] ?? 0;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -99,6 +103,16 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
             : t('flipReveal.progress', { current: String(index + 1), total: String(total) })}
         </p>
         <h2 className="text-xl font-black text-white">{title}</h2>
+        {/* Badge heat pts */}
+        <motion.span
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-xs font-bold px-2.5 py-0.5 rounded-full"
+          style={{ background: 'rgba(249,115,22,0.18)', color: '#fb923c', border: '1px solid rgba(249,115,22,0.35)' }}
+        >
+          {t('flipReveal.heatPts', { n: String(batchMode ? totalHeatPts : currentCardPts) })}
+        </motion.span>
       </motion.div>
 
       {batchMode ? (

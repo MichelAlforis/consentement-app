@@ -233,6 +233,7 @@ export const games = {
     cardsUnlockedLabel: '{count} cartes débloquées',
     hintScroll: 'Glisse pour voir toutes les cartes · Touche pour retourner',
     hintTap: 'Touche une carte pour la retourner',
+    heatPts: '+{n} pts 🌡️',
   },
 
   hallOfCards: {
