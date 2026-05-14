@@ -136,9 +136,13 @@ function ModuleCard({
           {module.heatPoints > 0 && (
             <span
               className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
-              style={{ background: '#f9731620', color: '#f97316' }}
+              style={completed
+                ? { background: `${colors.success}18`, color: colors.success }
+                : { background: '#f9731620', color: '#f97316' }}
             >
-              {t('apprendre.heatPoints', { n: String(module.heatPoints) })}
+              {completed
+                ? t('apprendre.heatPointsEarned', { n: String(module.heatPoints) })
+                : t('apprendre.heatPoints', { n: String(module.heatPoints) })}
             </span>
           )}
         </div>

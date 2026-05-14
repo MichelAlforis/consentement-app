@@ -1,6 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DuoStep, PartnerProfile } from '../../../../types';
-import { generatePartnerProfile, PARTNER_NAMES, PARTNER_SAFEWORDS } from '../utils';
+import { PARTNER_NAMES, PARTNER_SAFEWORDS } from '../utils';
+import { useProfileStore } from '../../../../stores/profileStore';
+import { useAuthStore } from '../../../../stores/authStore';
+import { useDuoStore } from '../../../../stores/duoStore';
 
 export type ConnectionMode = 'choice' | 'generate' | 'scan' | 'manual';
 
@@ -14,6 +17,8 @@ interface DuoSession {
   inputCode: string;
   isScanning: boolean;
   copied: boolean;
+  isConnecting: boolean;
+  connectionError: string | null;
   setConnectionMode: (mode: ConnectionMode) => void;
   setGeneratedCode: (code: string) => void;
   setInputCode: (code: string) => void;
@@ -40,6 +45,13 @@ export function useDuoSession(): DuoSession {
   const [inputCode, setInputCode] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+
+  const personalProfile = useProfileStore((s) => s.personalProfile);
+  const pbUserId = useAuthStore((s) => s.pbUserId);
+  const { setPartnerProfile: storeDuoPartner, saveCachedResult } = useDuoStore();
 
   const [partnerName] = useState(
     () => PARTNER_NAMES[Math.floor(Math.random() * PARTNER_NAMES.length)]
@@ -48,15 +60,66 @@ export function useDuoSession(): DuoSession {
     () => PARTNER_SAFEWORDS[Math.floor(Math.random() * PARTNER_SAFEWORDS.length)]
   );
 
-  const handleConnect = useCallback(() => {
-    setPartnerProfile(generatePartnerProfile());
-    setDuoStep('connected');
+  // Génère la session PocketBase quand le mode passe à 'generate'
+  useEffect(() => {
+    if (connectionMode !== 'generate' || !pbUserId) return;
+
+    let cancelled = false;
+    import('../../../../lib/sync/duoSync').then(({ createDuoSession, subscribeToSession }) => {
+      if (cancelled) return;
+      createDuoSession(personalProfile, pbUserId).then(({ code, sessionId }) => {
+        if (cancelled) return;
+        setGeneratedCode(code);
+        // Écoute l'arrivée du partenaire
+        const unsub = subscribeToSession(sessionId, (record) => {
+          if (record.partner_profile) {
+            setPartnerProfile(record.partner_profile);
+            storeDuoPartner(record.partner_profile, sessionId);
+            setDuoStep('connected');
+          }
+        });
+        unsubscribeRef.current = unsub;
+      }).catch(() => {
+        if (!cancelled) setConnectionError('Impossible de créer la session. Vérifiez votre connexion.');
+      });
+    });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectionMode, pbUserId]);
+
+  // Nettoyage de la subscription à la fin de session
+  useEffect(() => {
+    return () => { unsubscribeRef.current?.(); };
   }, []);
 
+  const handleConnect = useCallback(() => {
+    if (!pbUserId) {
+      // Mode offline / sans PocketBase — connexion impossible
+      setConnectionError('Connexion au serveur requise pour Notre Espace.');
+      return;
+    }
+    if (inputCode.length !== 6) return;
+    setIsConnecting(true);
+    setConnectionError(null);
+
+    import('../../../../lib/sync/duoSync').then(({ joinDuoSession }) => {
+      joinDuoSession(inputCode, personalProfile, pbUserId)
+        .then(({ sessionId, initiatorProfile }) => {
+          setPartnerProfile(initiatorProfile);
+          storeDuoPartner(initiatorProfile, sessionId);
+          setDuoStep('connected');
+        })
+        .catch(() => setConnectionError('Code invalide ou expiré.'))
+        .finally(() => setIsConnecting(false));
+    });
+  }, [inputCode, personalProfile, pbUserId, storeDuoPartner]);
+
   const handleBumpSuccess = useCallback(() => {
-    setPartnerProfile(generatePartnerProfile());
-    setDuoStep('connected');
-  }, []);
+    // Bump = même flow que connexion manuelle mais code vient du NFC/BLE
+    // Pour l'instant on redirige vers la saisie manuelle si pas de code
+    if (inputCode.length === 6) handleConnect();
+  }, [inputCode, handleConnect]);
 
   const handleFallbackQR = useCallback(() => {
     setDuoStep('qr-fallback');
@@ -64,24 +127,29 @@ export function useDuoSession(): DuoSession {
   }, []);
 
   const handleReset = useCallback(() => {
+    unsubscribeRef.current?.();
+    unsubscribeRef.current = null;
     setDuoStep('choice');
     setConnectionMode('choice');
     setPartnerProfile(null);
     setInputCode('');
     setGeneratedCode('');
+    setConnectionError(null);
   }, []);
+
+  const handleRevealComplete = useCallback(() => {
+    // Sauvegarder le résultat en cache pour l'offline
+    if (partnerProfile) {
+      saveCachedResult(partnerProfile, personalProfile);
+    }
+    setDuoStep('summary');
+  }, [partnerProfile, personalProfile, saveCachedResult]);
 
   const handleGoToStep = useCallback(
     (step: DuoStep) => {
-      if (
-        !partnerProfile &&
-        ['connected', 'pact', 'filling', 'waiting', 'ready', 'reveal', 'summary'].includes(step)
-      ) {
-        setPartnerProfile(generatePartnerProfile());
-      }
       setDuoStep(step);
     },
-    [partnerProfile]
+    []
   );
 
   return {
@@ -94,6 +162,8 @@ export function useDuoSession(): DuoSession {
     inputCode,
     isScanning,
     copied,
+    isConnecting,
+    connectionError,
     setConnectionMode,
     setGeneratedCode,
     setInputCode,
@@ -107,7 +177,7 @@ export function useDuoSession(): DuoSession {
     handleFillingComplete: useCallback(() => setDuoStep('waiting'), []),
     handlePartnerReady: useCallback(() => setDuoStep('ready'), []),
     handleRevealStart: useCallback(() => setDuoStep('reveal'), []),
-    handleRevealComplete: useCallback(() => setDuoStep('summary'), []),
+    handleRevealComplete,
     handleGoToStep,
     handleReset,
   };

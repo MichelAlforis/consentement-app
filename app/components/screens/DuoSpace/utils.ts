@@ -1,22 +1,5 @@
-import { PartnerProfile, PersonalProfile, CommonGround } from '../../../types';
+import { PersonalProfile, PartnerProfile, CommonGround } from '../../../types';
 import { comfortCategories } from '../../../data';
-
-export function generatePartnerProfile(): PartnerProfile {
-  const profile: PartnerProfile = { tenderness: {}, intensity: {}, trust: {} };
-  const baseComfort = Math.random() > 0.5 ? 3 : 2;
-  const variance = () => Math.floor(Math.random() * 2) - 1;
-
-  (Object.keys(comfortCategories) as Array<keyof typeof comfortCategories>).forEach((cat) => {
-    const categoryMod = cat === 'tenderness' ? 1 : cat === 'intensity' ? 0 : -1;
-    comfortCategories[cat].items.forEach((item) => {
-      let itemMod = 0;
-      if (['kisses', 'cuddles', 'holding', 'words'].includes(item.id)) itemMod = 1;
-      if (['filming', 'power', 'restraint'].includes(item.id)) itemMod = -1;
-      profile[cat][item.id] = Math.max(0, Math.min(4, baseComfort + categoryMod + itemMod + variance()));
-    });
-  });
-  return profile;
-}
 
 export function calculateCommonGround(personal: PersonalProfile, partner: PartnerProfile): CommonGround {
   const common: CommonGround = { tenderness: {}, intensity: {}, trust: {} };

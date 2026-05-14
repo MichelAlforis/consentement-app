@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from './storageKeys';
 
 interface LexiqueStore {
   unlockedIds: string[];
@@ -19,6 +20,6 @@ export const useLexiqueStore = create<LexiqueStore>()(
       },
       reset: () => set({ unlockedIds: [] }),
     }),
-    { name: 'consentement-lexique', version: 1 }
+    { name: STORAGE_KEYS.LEXIQUE, version: 1, migrate: (s) => s }
   )
 );

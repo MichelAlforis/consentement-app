@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from './storageKeys';
 
 export type Rarity = 'common' | 'rare' | 'unique';
 
@@ -39,7 +40,7 @@ export const useUnlockStore = create<UnlockStore>()(
       reset: () => set({ ownedCards: [], sessionCount: 0 }),
     }),
     {
-      name: 'consentement-unlocks',
+      name: STORAGE_KEYS.UNLOCKS,
     }
   )
 );

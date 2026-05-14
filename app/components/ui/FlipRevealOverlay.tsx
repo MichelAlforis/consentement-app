@@ -68,7 +68,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
     ? t('flipReveal.titleOne')
     : t('flipReveal.titlePlural', { count: String(total) });
 
-  const totalHeatPts = cards.reduce((sum, c) => sum + (CARD_POINTS[c.rarity] ?? 0), 0);
+  const pageHeatPts = pageCards.reduce((sum, c) => sum + (CARD_POINTS[c.rarity] ?? 0), 0);
   const currentCardPts = CARD_POINTS[card.rarity] ?? 0;
 
   return (
@@ -111,7 +111,7 @@ export function FlipRevealOverlay({ cards, onDone }: FlipRevealOverlayProps) {
           className="text-xs font-bold px-2.5 py-0.5 rounded-full"
           style={{ background: 'rgba(249,115,22,0.18)', color: '#fb923c', border: '1px solid rgba(249,115,22,0.35)' }}
         >
-          {t('flipReveal.heatPts', { n: String(batchMode ? totalHeatPts : currentCardPts) })}
+          {t('flipReveal.heatPts', { n: String(batchMode ? pageHeatPts : currentCardPts) })}
         </motion.span>
       </motion.div>
 

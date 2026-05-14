@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from './storageKeys';
 
 interface PremiumStore {
   isPremium: boolean;
@@ -17,7 +18,7 @@ export const usePremiumStore = create<PremiumStore>()(
       deactivatePremium: () => set({ isPremium: false }),
     }),
     {
-      name: 'consentement-premium',
+      name: STORAGE_KEYS.PREMIUM,
     }
   )
 );

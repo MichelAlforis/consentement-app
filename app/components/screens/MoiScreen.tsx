@@ -125,6 +125,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
                 ['moi.heatBreak_cards', breakdown.cards, '🃏'],
                 ['moi.heatBreak_sessions', breakdown.sessions, '🎲'],
                 ['moi.heatBreak_profile', breakdown.profile, '👤'],
+                ['moi.heatBreak_lexique', breakdown.lexique, '📖'],
               ] as const).filter(([, n]) => n > 0).map(([key, n, emoji]) => (
                 <span key={key} className="flex items-center gap-1 text-[10px]" style={{ color: colors.textMuted }}>
                   <span>{emoji}</span>

@@ -196,6 +196,58 @@ export const collectorCards: CollectorCard[] = [
   // DECK B — Adultes · explicite (stub — contenu juriste à venir)
   // ═══════════════════════════════════════════════════════════════════════
   { id: 'cb-001', deck: 'B', theme: 'verite', depth: 3, rarity: 'unique', unlockedBy: 'decouverte-desirs', tags: ['pratique'], visual: V.verite, text: 'À venir — contenu rédigé par le juriste.' },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // LEXIQUE — Deck A · débloquées par palier Baromètre du Hot
+  // Une carte par mot du Lexique du consentement.
+  // unlockedBy: 'heat-N' (N = palier atteint, PAS la rareté)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // ── heat-1 · 9 cartes ────────────────────────────────────────────────
+  // Justification : fondamental, question simple → common
+  { id: 'lex-001', deck: 'A', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-1', tags: ['lexique', 'juridique'],  visual: V.defi,      text: 'Chacun explique le consentement dans ses propres mots. Vos définitions se rejoignent-elles ?' },
+  // Justification : pratique direct, exercice simple → common
+  { id: 'lex-002', deck: 'A', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-1', tags: ['lexique', 'pratique'],   visual: V.defi,      text: 'Entraînez-vous : dites "non" à voix haute. Plus facile ou plus dur que prévu ?' },
+  // Justification : heat-1 accessible, rare car action à créer ensemble — moment fort
+  { id: 'lex-003', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare',   unlockedBy: 'heat-1', tags: ['lexique', 'pratique'],   visual: V['et-si'],  text: 'Et si vous choisissiez votre safeword ensemble maintenant — lequel serait-il ?' },
+  // Justification : difficile à articuler à voix haute → rare
+  { id: 'lex-004', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare',   unlockedBy: 'heat-1', tags: ['lexique', 'emotionnel'],  visual: V.douceur,   text: 'Nomme une limite que tu as du mal à exprimer. Prends le temps de la dire maintenant.' },
+  // Justification : vérité légale directe, question accessible → common
+  { id: 'lex-005', deck: 'A', theme: 'verite',  depth: 1, rarity: 'common', unlockedBy: 'heat-1', tags: ['lexique', 'juridique'],  visual: V.verite,    text: 'Avez-vous déjà eu une vraie conversation sur ce qui constitue légalement un viol ?' },
+  // Justification : chiffre légal surprenant mais simple à énoncer → common
+  { id: 'lex-006', deck: 'A', theme: 'verite',  depth: 1, rarity: 'common', unlockedBy: 'heat-1', tags: ['lexique', 'juridique'],  visual: V.verite,    text: 'Saviez-vous que l\'agression sexuelle inclut des actes sans pénétration ? Qu\'est-ce que ça change ?' },
+  // Justification : difficile à reconnaître en soi, crée un vrai moment → rare
+  { id: 'lex-007', deck: 'A', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-1', tags: ['lexique', 'emotionnel'],  visual: V.parlez,    text: 'Y a-t-il une fois où tu as ressenti de la pression — même légère — pour dire oui ? Raconte.' },
+  // Justification : concept accessible, exercice facile → common
+  { id: 'lex-008', deck: 'A', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-1', tags: ['lexique', 'pratique'],   visual: V.parlez,    text: 'Donnez chacun un exemple concret de bonne communication dans votre relation.' },
+  // Justification : difficile à définir et construire, crée un vrai moment → rare
+  { id: 'lex-009', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare',   unlockedBy: 'heat-1', tags: ['lexique', 'emotionnel'],  visual: V.douceur,   text: 'Nomme une chose que ton partenaire fait qui te fait vraiment te sentir en confiance.' },
+
+  // ── heat-2 · 7 cartes ────────────────────────────────────────────────
+  // Justification : vérité inconfortable mais directe → common
+  { id: 'lex-010', deck: 'A', theme: 'verite',  depth: 1, rarity: 'common', unlockedBy: 'heat-2', tags: ['lexique', 'juridique'],  visual: V.verite,    text: 'As-tu déjà utilisé une forme de pression pour convaincre quelqu\'un ? Même douce — sois honnête.' },
+  // Justification : douloureux à reconnaître, difficile à dire à voix haute → rare
+  { id: 'lex-011', deck: 'A', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-2', tags: ['lexique', 'emotionnel'],  visual: V.verite,    text: 'Y a-t-il un schéma dans votre relation qui ressemble à de la manipulation — même involontaire ?' },
+  // Justification : définition légale directe, question de sensibilisation → common
+  { id: 'lex-012', deck: 'A', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-2', tags: ['lexique', 'juridique'],  visual: V.defi,      text: 'Savez-vous identifier un comportement de harcèlement sexuel au quotidien ? Donnez un exemple.' },
+  // Justification : standard exigeant, crée un engagement fort → rare
+  { id: 'lex-013', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare',   unlockedBy: 'heat-2', tags: ['lexique', 'pratique'],   visual: V['et-si'],  text: 'Et si vous exigiez tous les deux un vrai oui enthousiaste — plus jamais juste l\'absence de non ?' },
+  // Justification : concept contre-intuitif, révélation forte, mémorable → unique
+  { id: 'lex-014', deck: 'A', theme: 'osez',    depth: 3, rarity: 'unique', unlockedBy: 'heat-2', tags: ['lexique', 'pratique'],   visual: V.osez,      text: 'Avez-vous déjà continué quelque chose alors que l\'enthousiasme de l\'autre avait clairement disparu ?' },
+  // Justification : difficile à reconnaître chez l'autre, crée de la conscience → rare
+  { id: 'lex-015', deck: 'A', theme: 'douceur', depth: 2, rarity: 'rare',   unlockedBy: 'heat-2', tags: ['lexique', 'emotionnel'],  visual: V.douceur,   text: 'Comment tu reconnais chez l\'autre qu\'il/elle n\'est plus vraiment libre de décider ?' },
+  // Justification : concept médico-légal accessible, question ouverte → common
+  { id: 'lex-016', deck: 'A', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-2', tags: ['lexique', 'juridique'],  visual: V.parlez,    text: 'Y a-t-il des pratiques intimes pour lesquelles vous n\'avez jamais vraiment donné un consentement éclairé ?' },
+
+  // ── heat-3 · 4 cartes ────────────────────────────────────────────────
+  // Justification : invite une confidence profonde, situation mémorable → unique
+  { id: 'lex-017', deck: 'A', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-3', tags: ['lexique', 'pratique'],   visual: V.verite,    text: 'Partagez une situation passée qui était une vraie zone grise — ni oui clair, ni non clair.' },
+  // Justification : nuancé, crée une prise de conscience difficile → rare
+  { id: 'lex-018', deck: 'A', theme: 'et-si',   depth: 2, rarity: 'rare',   unlockedBy: 'heat-3', tags: ['lexique', 'emotionnel'],  visual: V['et-si'],  text: 'Y a-t-il un déséquilibre dans votre relation qui influence parfois votre liberté de dire non ?' },
+  // Justification : principe médical appliqué à l'intime, question directe → common
+  { id: 'lex-019', deck: 'A', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-3', tags: ['lexique', 'medical'],    visual: V.parlez,    text: 'Y a-t-il une pratique intime sur laquelle vous n\'avez jamais vraiment expliqué les risques ?' },
+  // Justification : chiffre choc (30 ans), mémorable, surprenant → unique
+  { id: 'lex-020', deck: 'A', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-3', tags: ['lexique', 'juridique'],  visual: V.verite,    text: '30 ans après leur majorité pour les victimes mineures. Ce chiffre vous surprend-il ?' },
 ];
 
 export type ThemeCategory = {

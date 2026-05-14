@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from './storageKeys';
 
 export type RenderMode = 'css' | 'r3f';
 
@@ -72,7 +73,7 @@ export const useRenderModeStore = create<RenderModeStore>()(
       _setHydrated: () => set({ isHydrated: true }),
     }),
     {
-      name: 'consentement-render-mode',
+      name: STORAGE_KEYS.RENDER_MODE,
       // Quand un override est actif on écrit {} → localStorage reste vierge
       // → la prochaine visite sans param repart en détection normale
       partialize: (state) =>
@@ -91,7 +92,7 @@ if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
     console.info(`[renderMode] forcé → ${mode}`);
   };
   window.__clearRenderMode = () => {
-    localStorage.removeItem('consentement-render-mode');
+    localStorage.removeItem(STORAGE_KEYS.RENDER_MODE);
     location.reload();
   };
 }

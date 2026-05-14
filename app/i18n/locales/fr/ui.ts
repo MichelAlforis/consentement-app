@@ -140,7 +140,8 @@ export const ui = {
     allDone:       'Parcours complété !',
     allDoneSub:    'Tu as exploré tout le contenu disponible. Maintenant, joue !',
     heatRequired:  'Palier {palier} requis · {pts} pts',
-    heatPoints:    '+{n} pts',
+    heatPoints:        '+{n} pts',
+    heatPointsEarned:  '✓ {n} pts',
   },
 
   moi: {
@@ -162,6 +163,7 @@ export const ui = {
     heatBreak_cards:    'Cartes',
     heatBreak_sessions: 'Séances',
     heatBreak_profile:  'Profil',
+    heatBreak_lexique:  'Lexique',
     heatBreak_pts:      '{n} pts',
   },
 } as const;

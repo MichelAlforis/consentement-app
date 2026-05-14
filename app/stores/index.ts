@@ -28,6 +28,7 @@ import { useDuoStore } from './duoStore';
 import { useUnlockStore } from './unlockStore';
 import { useModuleProgressStore } from './moduleProgressStore';
 import { useLexiqueStore } from './lexiqueStore';
+import { STORAGE_KEYS } from './storageKeys';
 import { initialPersonalProfile } from '../data';
 
 export function resetAllData() {
@@ -41,14 +42,15 @@ export function resetAllData() {
   useModuleProgressStore.getState().reset();
   useLexiqueStore.getState().reset();
 
-  // Clear all persisted storage
+  // Clear all persisted storage (RENDER_MODE intentionnellement exclu — préférence technique)
+  // Clear all persisted storage (RENDER_MODE intentionnellement exclu — préférence technique)
   [
-    'consentement-auth',
-    'consentement-settings',
-    'consentement-profile',
-    'consentement-premium',
-    'consentement-unlocks',
-    'consentement-modules',
-    'consentement-lexique',
+    STORAGE_KEYS.AUTH,
+    STORAGE_KEYS.SETTINGS,
+    STORAGE_KEYS.PROFILE,
+    STORAGE_KEYS.PREMIUM,
+    STORAGE_KEYS.UNLOCKS,
+    STORAGE_KEYS.MODULES,
+    STORAGE_KEYS.LEXIQUE,
   ].forEach((key) => localStorage.removeItem(key));
 }

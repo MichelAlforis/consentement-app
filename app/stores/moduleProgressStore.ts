@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { OnboardingStatus, resolveOnboardingStatus } from '../lib/moduleIds';
+import { STORAGE_KEYS } from './storageKeys';
 
 interface ModuleProgressStore {
   completedModules: string[];
@@ -34,7 +35,7 @@ export const useModuleProgressStore = create<ModuleProgressStore>()(
       reset: () => set({ completedModules: [], onboardingStatus: 'not_started' }),
     }),
     {
-      name: 'consentement-modules',
+      name: STORAGE_KEYS.MODULES,
       version: 1,
       // Without migrate, Zustand v5 discards stored state on version mismatch
       // and calls merge(undefined, initialState) — losing all progress.

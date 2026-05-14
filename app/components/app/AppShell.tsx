@@ -1,6 +1,10 @@
 'use client';
 
 import { Suspense, useEffect, useRef, useState } from 'react';
+import type { GainedCard } from '../../lib/computeGainedCards';
+import { collectorCards } from '../../data/cards-collector';
+import { useUnlockStore } from '../../stores/unlockStore';
+import { FlipRevealOverlay } from '../ui/FlipRevealOverlay';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TabBar } from '../ui/TabBar';
 import { Toast } from '../ui';
@@ -100,6 +104,30 @@ export function AppShell() {
 
   const { justUnlocked, clear } = usePalierUp(heatLevel);
 
+  // Déblocage des cartes lexique au franchissement d'un palier heat
+  const unlockCardsStore = useUnlockStore((s) => s.unlockCards);
+  const [pendingHeatCards, setPendingHeatCards] = useState<GainedCard[]>([]);
+  const prevHeatRef = useRef(heatLevel);
+  useEffect(() => {
+    if (heatLevel <= prevHeatRef.current) { prevHeatRef.current = heatLevel; return; }
+    prevHeatRef.current = heatLevel;
+    const owned = new Set(useUnlockStore.getState().ownedCards.map((c) => c.id));
+    const toUnlock = collectorCards.filter(
+      (c) => c.unlockedBy === `heat-${heatLevel}` && !owned.has(c.id),
+    );
+    if (!toUnlock.length) return;
+    unlockCardsStore(toUnlock.map((c) => ({
+      id: c.id, rarity: c.rarity,
+      gainedOn: new Date().toISOString(),
+      unlockedBy: `heat-${heatLevel}`,
+    })));
+    setPendingHeatCards(toUnlock.map((c) => ({
+      id: c.id, text: c.text, theme: c.theme,
+      rarity: c.rarity, gradient: c.visual.gradient,
+      iconName: c.visual.iconName, border: c.visual.border,
+    })));
+  }, [heatLevel, unlockCardsStore]);
+
   // Minimum splash duration — prevents sub-100ms flash on fast devices
   const [minDone, setMinDone] = useState(false);
   useEffect(() => {
@@ -152,6 +180,13 @@ export function AppShell() {
       <AnimatePresence>
         {justUnlocked && (
           <PalierUpOverlay key={`palier-${justUnlocked}`} level={justUnlocked} onDismiss={clear} />
+        )}
+        {!justUnlocked && pendingHeatCards.length > 0 && (
+          <FlipRevealOverlay
+            key="heat-lexique-reveal"
+            cards={pendingHeatCards}
+            onDone={() => setPendingHeatCards([])}
+          />
         )}
       </AnimatePresence>
 

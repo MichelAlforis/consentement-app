@@ -88,7 +88,8 @@ export interface HeatBreakdown {
   modules: number;
   cards: number;
   sessions: number;
-  profile: number;
+  profile: number;  // safeword + pronoms + confort (max 8 pts)
+  lexique: number;  // mots de lexique débloqués (+1 pt / mot)
 }
 
 export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
@@ -105,15 +106,16 @@ export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
   const profile =
     (input.profileComfortCategories ?? 0) +
     (input.safewordDefined ? 3 : 0) +
-    (input.pronounsDefined ? 2 : 0) +
-    (input.lexiqueWords ?? 0);
+    (input.pronounsDefined ? 2 : 0);
 
-  return { modules, cards, sessions, profile };
+  const lexique = input.lexiqueWords ?? 0;
+
+  return { modules, cards, sessions, profile, lexique };
 }
 
 export function computeHeatPoints(input: HeatInput): number {
-  const { modules, cards, sessions, profile } = computeHeatBreakdown(input);
-  return modules + cards + sessions + profile;
+  const { modules, cards, sessions, profile, lexique } = computeHeatBreakdown(input);
+  return modules + cards + sessions + profile + lexique;
 }
 
 export function getHeatLevel(points: number): HeatLevel {

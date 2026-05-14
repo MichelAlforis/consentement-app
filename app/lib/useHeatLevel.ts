@@ -63,7 +63,7 @@ export function useHeatLevel(): HeatState {
   );
 
   const breakdown = useMemo(() => computeHeatBreakdown(input), [input]);
-  const points = breakdown.modules + breakdown.cards + breakdown.sessions + breakdown.profile;
+  const points = breakdown.modules + breakdown.cards + breakdown.sessions + breakdown.profile + breakdown.lexique;
 
   return useMemo(() => ({
     points,

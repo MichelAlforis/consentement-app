@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(node -e ' *)",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
+      "Bash(./node_modules/.bin/tsc --noEmit --project tsconfig.check.json)",
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"uname -a && lsb_release -a 2>/dev/null && free -h && df -h /\")",
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/ /opt/ 2>/dev/null && echo '---' && systemctl list-units --type=service --state=running --no-pager | grep -v 'systemd\\\\|snap\\\\|apt\\\\|ufw\\\\|ssh\\\\|cron\\\\|getty' | head -20\")",
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"cat /etc/caddy/Caddyfile\")"
     ]
   },
   "enableAllProjectMcpServers": true

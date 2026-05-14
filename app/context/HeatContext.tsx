@@ -6,7 +6,7 @@ import type { HeatState } from '../lib/useHeatLevel';
 
 const defaultHeat: HeatState = {
   points: 0, level: 1, progress: 0, toNext: 12,
-  breakdown: { modules: 0, cards: 0, sessions: 0, profile: 0 },
+  breakdown: { modules: 0, cards: 0, sessions: 0, profile: 0, lexique: 0 },
   profileDetails: { comfortFilled: 0, safewordSet: false, pronounsSet: false },
 };
 

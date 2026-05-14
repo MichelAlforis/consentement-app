@@ -92,10 +92,17 @@ function renderWizard(props: Partial<WizardProps> = {}) {
   return render(<OnboardingWizard {...defaults} {...props} />);
 }
 
-/** Avance depuis le step 0 (langue) vers le step 1. */
+/** Avance depuis le step 0 (langue) vers le step 1 (welcome-age). */
 async function goToStep1() {
   fireEvent.click(screen.getByText('Français'));
   await act(async () => { vi.advanceTimersByTime(300); });
+}
+
+/** Avance jusqu'au step 2 (theme-select) en passant par langue → mineur. */
+async function goToThemeStep() {
+  await goToStep1();
+  const [minorCard] = screen.getAllByTestId('card');
+  fireEvent.click(minorCard);
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -164,11 +171,7 @@ describe('OnboardingWizard', () => {
       mockUseTheme.mockReturnValue({ colors: mockColors, id: 'youth' });
 
       renderWizard({ isAdult: false });
-      await goToStep1();
-
-      // Cliquer mineur → step 2 (theme-select)
-      const [minorCard] = screen.getAllByTestId('card');
-      fireEvent.click(minorCard);
+      await goToThemeStep();
 
       // La carte youth doit avoir un outline non-transparent
       const youthBtn = screen.getByTestId('theme-card-youth');
@@ -219,6 +222,38 @@ describe('OnboardingWizard', () => {
       expect(dots[2].style.background).toBe(inactiveColor);
 
       vi.useRealTimers();
+    });
+  });
+
+  // 5 — Fin du wizard ────────────────────────────────────────────────────────
+
+  describe('Fin du wizard', () => {
+    it('appelle markOnboardingSkipped puis onNavigate("home") au dernier step (mineur)', async () => {
+      vi.useFakeTimers();
+      const onNavigate = vi.fn();
+      renderWizard({ isAdult: false, onNavigate });
+
+      // language → welcome-age → theme-select (dernier step pour un mineur)
+      await goToThemeStep();
+
+      // Cliquer une carte de thème → délai 200 ms → fin du wizard
+      fireEvent.click(screen.getByTestId('theme-card-youth'));
+      await act(async () => { vi.advanceTimersByTime(200); });
+
+      expect(mockMarkOnboardingSkipped).toHaveBeenCalledOnce();
+      expect(onNavigate).toHaveBeenCalledWith('home');
+
+      vi.useRealTimers();
+    });
+
+    it('appelle onNavigate("home") via le bouton Passer', () => {
+      const onNavigate = vi.fn();
+      renderWizard({ onNavigate });
+
+      fireEvent.click(screen.getByText('onboarding.skip'));
+
+      expect(mockMarkOnboardingSkipped).toHaveBeenCalledOnce();
+      expect(onNavigate).toHaveBeenCalledWith('home');
     });
   });
 });

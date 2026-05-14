@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sprout, TreeDeciduous, Lock,
@@ -179,7 +179,7 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
               initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }} whileTap={{ scale: 0.98 }}
               data-testid={`theme-card-${mode}`}
-              onClick={() => { vibrate('light'); onSelectTheme(mode); onNext(); }}
+              onClick={() => { vibrate('light'); onSelectTheme(mode); setTimeout(onNext, 200); }}
               className="relative overflow-hidden rounded-2xl p-4 text-left w-full"
               style={{
                 background: themeGradients[mode],
@@ -302,12 +302,15 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   const markOnboardingSkipped = useModuleProgressStore((s) => s.markOnboardingSkipped);
   const [stepIndex, setStepIndex] = useState(0);
 
-  const steps: Array<{ id: string }> = [
+  // Figé à la première instanciation — évite de modifier total en cours de route
+  // si le parent met isAdult à jour après la sélection d'âge.
+  const steps = useMemo<Array<{ id: string }>>(() => [
     { id: 'language' },
     { id: 'welcome-age' },
     { id: 'theme-select' },
     ...(isAdult !== false ? [{ id: 'auth' }] : []),
-  ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], []);
 
   const total = steps.length;
 

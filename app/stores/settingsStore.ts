@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware';
 import { ThemeMode, Theme, themes } from '../types/theme';
 import { Language } from '../types';
 import { isAdultApp } from '../lib/appVariant';
+import { STORAGE_KEYS } from './storageKeys';
 
 interface SettingsStore {
   themeMode: ThemeMode | null;
@@ -40,7 +41,7 @@ export const useSettingsStore = create<SettingsStore>()(
       },
     }),
     {
-      name: 'consentement-settings',
+      name: STORAGE_KEYS.SETTINGS,
       partialize: (state) => ({
         themeMode: state.themeMode,
         language: state.language,

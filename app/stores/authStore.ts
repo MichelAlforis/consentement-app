@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Language } from '../types';
 import { isAdultApp } from '../lib/appVariant';
+import { STORAGE_KEYS } from './storageKeys';
 
 interface AuthStore {
   isAuthenticated: boolean;
@@ -11,36 +12,76 @@ interface AuthStore {
   userName: string;
   pronouns: string | null;
   isHydrated: boolean;
+
+  // Identité PocketBase anonyme (device UUID)
+  deviceId: string;
+  pbUserId: string | null;
+  pbToken: string | null;
+
   setAgeGroup: (adult: boolean) => void;
   authenticate: (name: string) => void;
   setName: (name: string) => void;
   setPronouns: (pronouns: string | null) => void;
   _setHydrated: () => void;
+  authenticateWithPocketBase: () => Promise<void>;
+}
+
+function generateDeviceId(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
 }
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isAuthenticated: false,
       isAdult: isAdultApp ? true : null,
       userName: '',
       pronouns: null,
       isHydrated: false,
+      deviceId: generateDeviceId(),
+      pbUserId: null,
+      pbToken: null,
 
       setAgeGroup: (adult) => set({ isAdult: adult }),
       authenticate: (name) => set({ isAuthenticated: true, userName: name }),
       setName: (name) => set({ userName: name }),
       setPronouns: (pronouns) => set({ pronouns }),
-
       _setHydrated: () => set({ isHydrated: true }),
+
+      authenticateWithPocketBase: async () => {
+        const { pb } = await import('../lib/pb');
+        const { deviceId } = get();
+        const email = `${deviceId}@device.local`;
+        const password = deviceId;
+        try {
+          // Tente le login d'abord (device déjà connu du serveur)
+          const auth = await pb.collection('users').authWithPassword(email, password);
+          set({ pbUserId: auth.record.id, pbToken: auth.token });
+        } catch {
+          try {
+            // Première fois → créer le compte
+            await pb.collection('users').create({ email, password, passwordConfirm: password });
+            const auth = await pb.collection('users').authWithPassword(email, password);
+            set({ pbUserId: auth.record.id, pbToken: auth.token });
+          } catch {
+            // Offline ou erreur serveur — on continue sans PocketBase
+          }
+        }
+      },
     }),
     {
-      name: 'consentement-auth',
+      name: STORAGE_KEYS.AUTH,
       partialize: (state) => ({
         isAdult: state.isAdult,
         userName: state.userName,
         pronouns: state.pronouns,
         isAuthenticated: state.isAuthenticated,
+        deviceId: state.deviceId,
+        pbUserId: state.pbUserId,
+        pbToken: state.pbToken,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
