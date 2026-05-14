@@ -1,6 +1,7 @@
-import type { CollectorCard, Rarity } from '../data/cards-collector';
+import type { CollectorCard } from '../data/cards-collector';
+import type { Rarity } from '../types';
 import type { OwnedCard } from '../types';
-import { getModuleReward } from '../modules';
+import { getModuleReward } from '../data/modules';
 
 function shuffled<T>(arr: T[]): T[] {
   const copy = [...arr];

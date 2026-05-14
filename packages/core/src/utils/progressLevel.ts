@@ -1,4 +1,4 @@
-import { MODULES } from '../modules';
+import { MODULES } from '../data/modules';
 
 const DEEP_MODULES = MODULES
   .filter((module) => module.reward.rarity !== 'common')

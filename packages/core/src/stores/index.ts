@@ -12,3 +12,5 @@ export { useLexiqueStore } from './lexiqueStore';
 export { useDuoStore } from './duoStore';
 export type { DuoCachedResult } from './duoStore';
 export { usePreferencesStore } from './preferencesStore';
+export { useGooseGameStore } from './gooseGameStore';
+export type { SavedGooseGame } from './gooseGameStore';

@@ -175,16 +175,20 @@ Importer `react-native-sse` dans core casserait l'import depuis Next.js.
 
 ---
 
-## R6 — tsconfig packages/core : "lib" = ["ES2022"] uniquement
+## R6 — tsconfig packages/core : pas de "DOM"
 
 ```json
 // packages/core/tsconfig.json
 {
   "compilerOptions": {
-    "lib": ["ES2022"]   // Jamais "DOM" — violation = violation de R2
+    "lib": ["ES2022", "WebWorker"]   // "WebWorker" OK (WebCrypto) — jamais "DOM"
   }
 }
 ```
+
+`"WebWorker"` est autorisé car il fournit les types de l'API WebCrypto (`CryptoKey`,
+`SubtleCrypto`) disponibles sur toutes les cibles (browser, Node 18+, Hermes/RN),
+sans exposer `window`, `localStorage`, `document` ni `navigator` complet.
 
 > **Signal voulu — ne pas "corriger" :**
 > Si tu rencontres `Cannot find name 'localStorage'` ou `Cannot find name 'window'`

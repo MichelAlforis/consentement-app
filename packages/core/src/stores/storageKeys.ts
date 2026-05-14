@@ -10,4 +10,5 @@ export const STORAGE_KEYS = {
   RENDER_MODE: 'consentement-render-mode',
   DUO_RESULT:   'consentement-duo-result',
   PREFERENCES:  'consentement-preferences',
+  GOOSE_GAME:   'goose-game-save',
 } as const;

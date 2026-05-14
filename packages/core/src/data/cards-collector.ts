@@ -1,7 +1,5 @@
-import type { IconName } from '../types';
+import type { IconName, Rarity } from '../types';
 import type { PositionKey } from '../types';
-
-export type Rarity = 'common' | 'rare' | 'unique';
 
 export type CardTheme = 'osez' | 'parlez' | 'et-si' | 'defi' | 'verite' | 'douceur';
 

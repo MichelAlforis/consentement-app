@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MODULES, getModuleSequence, getVisibleLearningModules, moduleAudience } from './modules';
-import { ROUTES } from './routes';
+import { MODULES, getModuleSequence, getVisibleLearningModules, moduleAudience } from './data/modules';
+import { ROUTES } from './lib/routes';
 
 describe('modules registry', () => {
   it('only exposes sequenced modules with real screens', () => {

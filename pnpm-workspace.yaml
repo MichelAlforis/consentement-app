@@ -1,0 +1,9 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  canvas: true
+  dtrace-provider: false
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

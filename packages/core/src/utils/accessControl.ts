@@ -1,5 +1,5 @@
 import type { Screen } from '../types';
-import { getRoute } from '../routes';
+import { getRoute } from '../lib/routes';
 import { isHeatUnlocked } from './heatGate';
 import type { HeatLevel } from './heatLevel';
 

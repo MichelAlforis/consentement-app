@@ -1,4 +1,4 @@
-import { MODULES, resolveModuleId } from '../modules';
+import { MODULES, resolveModuleId } from '../data/modules';
 
 export type OnboardingStatus = 'completed' | 'skipped' | 'not_started';
 

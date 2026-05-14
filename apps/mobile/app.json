@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "OuiClair",
+    "slug": "ouiclair",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0d0d0d"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "fr.consentement.app",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "Cette donnée nous aide à améliorer l'application."
+      }
+    },
+    "android": {
+      "package": "fr.consentement.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0d0d0d"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": []
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Cette donnée nous aide à améliorer l'application."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "TODO_FILL_AFTER_EAS_INIT"
+      }
+    }
+  }
+}

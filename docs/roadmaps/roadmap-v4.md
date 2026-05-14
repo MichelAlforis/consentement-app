@@ -7,8 +7,8 @@
 **Versions :**
 - V1–V2 : prototypes early
 - V3 : stack actuelle (Next.js + Capacitor + R3F) — **gelée Phase 0, archivée à la sortie V4**
-- **V4 : Expo SDK 55 + RN 0.83 (stable, mai 2026)**
-  - SDK 56 beta disponible (RN 0.85 + React 19.2) — attendre stable avant d'upgrader, chantier séparé
+- **V4 : Expo SDK 54 + RN 0.81.5** (latest stable au 2026-05-14 — SDK 55 non encore sorti)
+  - SDK 55 + RN 0.83 à prévoir en upgrade séparé quand stable
 
 **Deux entités distinctes dans le repo :**
 - **V3 root** (`app/`, `ios/`, `android/`) : app applicative complète (45 écrans, jeux, R3F). Pas une vitrine. **Gelée dès Phase 0** — aucun utilisateur prod, pas besoin de la maintenir vivante.
@@ -132,22 +132,55 @@ ouiclair-monorepo/
 
 ## Vue d'ensemble des phases
 
-| Phase | Nom | Durée est. | En parallèle | Livrable clé |
-|-------|-----|-----------|--------------|--------------|
-| 0 | Monorepo étendu | 2–3 j | — | workspace prêt, Turborepo, TS refs |
-| 1 | packages/core | 10–15 j | — | stores + utils portables, Vitest vert |
-| 2 | POC R3F/native + shell Expo | 5–7 j | — | Dé 3D sur device → go/no-go |
-| 3 | Composants UI | 12–18 j | — | ~20 composants RN validés |
-| 4 | Onboarding + Nav principale | 10–12 j | — | 11 écrans navigables |
-| 5 | Modules + Ressources | 15–20 j | **Phase 5b** | 24 écrans contenu |
-| 5b | Features natives critiques | 8–10 j | **Phase 5** | secure-store + IAP + deep links |
-| 6 | Collection + Social | 8–12 j | — | HallOfCards, DuoSpace |
-| 7 | Jeux R3F | 20–30 j | — | DiceGame → CardGame → GooseGame |
-| 8 | Polish + ATT + Sentry | 4–6 j | — | app prête stores |
-| 9 | Tests + Publication | 8–12 j | — | EAS build, soumission |
-| **Total** | | **102–145 j** | | **6–10 mois calendaires** (+30% buffer imprévus) |
+| Phase | Nom | Durée est. | Statut au 2026-05-14 | En parallèle | Livrable clé |
+|-------|-----|-----------|----------------------|--------------|--------------|
+| 0 | Monorepo étendu | 2–3 j | **✅ Fait** (tag v3-freeze + `pnpm build:main` à confirmer) | — | workspace prêt, Turborepo, TS refs |
+| 1 | packages/core | 10–15 j | **✅ Fait** — 11 stores, utils, 198 tests OK, tsc clean | — | stores + utils portables, Vitest vert |
+| 2 | POC R3F/native + shell Expo | 5–7 j | **✅ Fait** (test device physique à faire) | — | Dé 3D sur device → go/no-go |
+| 3 | Composants UI | 12–18 j | À faire | — | ~20 composants RN validés |
+| 4 | Onboarding + Nav principale | 10–12 j | À faire | — | 11 écrans navigables |
+| 5 | Modules + Ressources | 15–20 j | À faire | **Phase 5b** | 24 écrans contenu |
+| 5b | Features natives critiques | 8–10 j | À faire | **Phase 5** | secure-store + IAP + deep links |
+| 6 | Collection + Social | 8–12 j | À faire | — | HallOfCards, DuoSpace |
+| 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
+| 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
+| 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
+| **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
 ---
+
+## État d'avancement — 2026-05-14
+
+### Phase 0 — ✅ Fait
+
+- Monorepo racine `ouiclair-monorepo` en place : `pnpm` workspaces (`apps/*`, `packages/*`), `turbo.json`, `tsconfig.base.json`.
+- `apps/vitrine/` reste séparée de la migration mobile.
+- `packages/core/` et `packages/textures/` créés avec `package.json`, `tsconfig.json`.
+- **Reste** : tag git `v3-freeze` + confirmer `pnpm build:main`.
+
+### Phase 1 — ✅ Fait
+
+- 11 stores Zustand avec `createCoreStorage()` dans `packages/core/src/stores/`.
+- Utils purs, types, data, constants, `lib/pb`, `lib/sync/duoSync`, `lib/sync/profileSync`, `storage/IStorage`, `realtime/IRealtimeAdapter`.
+- 15 fichiers de tests, **198 tests OK**, `pnpm tsc --noEmit` clean (core + racine).
+- **Reste** : brancher V3 root sur `@ouiclair/core` (optionnel pendant migration) ; valider `react-native-sse` pour realtime PocketBase ; décider `completeGameSession.ts`.
+
+### Phase 2 — ✅ Fait (test device physique à faire)
+
+- `apps/mobile/` initialisé — Expo SDK 54 / RN 0.81.5 (New Architecture activée).
+- `app.json` : `bundleIdentifier: fr.consentement.app`, plugins expo-secure-store + ATT.
+- `App.tsx` : polyfill EventSource (react-native-sse), `initStorage(mmkvStorage)`.
+- Shell : `AppProviders`, `RouteRenderer` (squelette), `ThemeContext` (port V3 sans DOM), `mmkvStorage.ts` (IStorage MMKV).
+- `metro.config.js` : `watchFolders` monorepo + symlinks pnpm + `nodeModulesPaths`.
+- `eas.json` : profils development / preview / production.
+- `packages/textures/scripts/generate.ts` : 8 PNG générés au build (6 faces dé + grain-128 + grain-256).
+- `DiceCanvas.native.tsx` : port R3F/native, `useTexture(require(...))` pour faces numériques, `THREE.DataTexture` 1×1 pour catégories (TODO PNG catégorie).
+- Symlinks pnpm OK : `node_modules/@ouiclair/textures/assets/dice/` → PNG accessibles par Metro.
+- **Reste** : test sur device physique (seuil go ≥ 45fps) → décision go/no-go Phase 3.
+
+### Non démarré
+
+- Phase 3 et suivantes.
 
 ## Phase 0 — Monorepo étendu
 **Durée : 2–3 jours**
@@ -157,30 +190,32 @@ ouiclair-monorepo/
 
 ### Tâches
 
-1. **Geler V3** : créer un tag git `v3-freeze` sur le commit actuel.
+1. **Geler V3** : créer un tag git `v3-freeze` sur le commit actuel. **À confirmer / faire.**
 
-2. **Ajouter les workspaces** dans `package.json` racine :
+2. **Ajouter les workspaces** dans `package.json` racine : **fait via glob `apps/*`, `packages/*`.**
    ```json
-   "workspaces": ["apps/vitrine", "apps/mobile", "packages/core", "packages/textures"]
+   "workspaces": ["apps/*", "packages/*"]
    ```
 
-3. **Setup Turborepo** :
+3. **Setup Turborepo** : **fait.**
    ```bash
    pnpm add -Dw turbo
    ```
    - `turbo.json` avec pipelines `build`, `test`, `dev`
    - Caching local activé
 
-4. **TypeScript project references** :
+4. **TypeScript project references** : **base en place.**
    - `tsconfig.base.json` à la racine (shared compiler options)
    - Chaque package/app étend la base
 
-5. **Créer les squelettes vides** :
-   - `packages/core/package.json` + `src/index.ts`
-   - `packages/textures/package.json` + `src/`
-   - `apps/mobile/` → init Expo en Phase 2
+5. **Créer les squelettes** :
+   - `packages/core/package.json` + `src/index.ts` : **fait**
+   - `packages/textures/package.json` + `src/` : **fait**
+   - `apps/mobile/` → **à faire en Phase 2**
 
-6. **Vérifier** : `pnpm install` résout tout, `pnpm build:main` passe encore.
+6. **Vérifier** :
+   - `pnpm tsc --noEmit` racine : **OK le 2026-05-14**
+   - `pnpm install` et `pnpm build:main` : **à confirmer**
 
 ### Fichiers clés
 - `package.json` (racine) — ajout workspaces
@@ -243,11 +278,20 @@ export interface IRealtimeAdapter {
 
 ### Stratégie tests dans core
 
-`packages/core` tourne en Node pur → **garder Vitest**. Les 28 tests existants sont en quasi-totalité sur de la logique pure (stores, utils) → portage quasi direct, pas de réécriture Jest. Seuls les tests avec `document.querySelectorAll` (OnboardingWizard.test.tsx) restent dans V3 root ou sont adaptés.
+`packages/core` tourne en Node pur → **garder Vitest**. Les tests de logique pure et de stores ont été portés directement depuis V3 vers `packages/core/src/`. Les tests avec hooks React/jsdom, UI, intégration backend et mocks PocketBase complexes restent dans V3 root ou seront adaptés plus tard côté mobile.
+
+**État au 2026-05-14 :**
+- `packages/core/vitest.config.ts` : `environment: 'node'`, include `src/**/*.{test,spec}.{ts,tsx}`, `passWithNoTests: true`.
+- 15 fichiers de tests portés.
+- 198 tests passent.
+- `localStorage.clear()` supprimé des tests stores, car `createCoreStorage()` est no-op par défaut en Node.
+- `pnpm tsc --noEmit` dans `packages/core` passe.
 
 ### Validation
-- `pnpm test:unit` : tous les tests Vitest passent, imports depuis `@ouiclair/core`
-- `pnpm dev` (V3 root) : app Next.js fonctionne toujours
+- `cd packages/core && pnpm vitest run` : **OK le 2026-05-14**
+- `cd packages/core && pnpm tsc --noEmit` : **OK le 2026-05-14**
+- `cd <racine> && pnpm tsc --noEmit` : **OK le 2026-05-14**
+- `pnpm dev` (V3 root) : **à confirmer manuellement**
 
 ### Fichiers clés
 - `packages/core/src/stores/` (11 fichiers)
@@ -258,7 +302,7 @@ export interface IRealtimeAdapter {
 
 ---
 
-## Phase 2 — POC R3F/native + shell Expo
+## Phase 2 — POC R3F/native + shell Expo ✅
 **Durée : 5–7 jours**
 
 ### Objectif
@@ -457,7 +501,7 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 ### Tests
 
-**packages/core** → Vitest (déjà en place, 28 tests portés Phase 1)
+**packages/core** → Vitest (déjà en place, 15 fichiers portés Phase 1, 198 tests OK au 2026-05-14)
 
 **apps/mobile** → Jest + React Native Testing Library :
 - Nouveaux tests pour les hooks RN-spécifiques (useRenderMode, mmkvStorage, nativeEventSource)
@@ -518,7 +562,7 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 ## Règles transverses
 
-1. **Feature freeze V3** dès Phase 0. Tag git `v3-freeze` créé.
+1. **Feature freeze V3** dès Phase 0. Tag git `v3-freeze` à créer (voir Reste Phase 0).
 2. `packages/core` = seul endroit où la logique métier évolue. Jamais dupliquée.
 3. Chaque phase se termine par un test sur device physique (pas simulateur).
 4. Tout canvas 2D → `packages/textures/scripts/generate.ts` (compile-time). Jamais à runtime.

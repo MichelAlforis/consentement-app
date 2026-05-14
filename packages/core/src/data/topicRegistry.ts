@@ -1,4 +1,4 @@
-import type { EffectiveModuleId } from '../modules';
+import type { EffectiveModuleId } from './modules';
 
 export type TopicId = string;
 

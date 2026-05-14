@@ -1,0 +1,13 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "types": ["@react-three/fiber"],
+    "paths": {
+      "@ouiclair/core": ["../../packages/core/src/index.ts"],
+      "@ouiclair/textures/*": ["../../packages/textures/assets/*"]
+    }
+  },
+  "include": ["src", "App.tsx", "index.ts"],
+  "exclude": ["node_modules"]
+}

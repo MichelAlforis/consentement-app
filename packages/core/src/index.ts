@@ -28,8 +28,8 @@ export * from './lib/sync/duoSync';
 export * from './lib/sync/profileSync';
 
 // Modules + Routes
-export * from './modules';
-export * from './routes';
+export * from './data/modules';
+export * from './lib/routes';
 
 // Data
 export * from './data';

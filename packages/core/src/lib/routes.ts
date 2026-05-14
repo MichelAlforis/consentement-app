@@ -1,4 +1,4 @@
-import type { Screen } from './types';
+import type { Screen } from '../types';
 
 export interface RouteConfig {
   requiresAdult?: boolean;

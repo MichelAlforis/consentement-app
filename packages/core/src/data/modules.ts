@@ -1,5 +1,5 @@
-import type { Rarity } from './data/cards-collector';
-import type { Screen } from './types';
+import type { Rarity } from '../types';
+import type { Screen } from '../types';
 
 export type ModuleId =
   | 'module-de-base'

@@ -1,5 +1,5 @@
 import type { OwnedCard } from '../types';
-import type { EffectiveModuleId } from '../modules';
+import type { EffectiveModuleId } from '../data/modules';
 
 export type HeatLevel = 1 | 2 | 3 | 4 | 5;
 

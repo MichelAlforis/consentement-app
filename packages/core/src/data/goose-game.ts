@@ -1,7 +1,5 @@
 import { diePractices, DICE_CATEGORIES, DiePractice } from './index';
 import type { IconName } from '../types';
-import { logger } from '../lib/logger';
-
 export type SquareType = 'depart' | 'normal' | 'chance' | 'pause' | 'accord' | 'complicite' | 'arrivee';
 
 export interface BoardSquare {
@@ -227,36 +225,3 @@ export function getSquareIconName(square: BoardSquare): IconName {
   return (SQUARE_VISUAL[square.type].iconName || 'Star') as IconName;
 }
 
-export interface SavedGooseGame {
-  players: [{ name: string; pawn: IconName }, { name: string; pawn: IconName }];
-  positions: [number, number];
-  currentPlayer: 0 | 1;
-  accordsCount: number;
-}
-
-const SAVE_KEY = 'consentement_jeu_oie_v2';
-
-export function loadSavedGame(): SavedGooseGame | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const s = localStorage.getItem(SAVE_KEY);
-    return s ? JSON.parse(s) : null;
-  } catch (err) {
-    logger.warn('loadSavedGame failed', err instanceof Error ? err : undefined, { extra: { key: SAVE_KEY } });
-    return null;
-  }
-}
-
-export function saveGame(data: SavedGooseGame): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  } catch (err) {
-    logger.warn('saveGame failed', err instanceof Error ? err : undefined, { extra: { key: SAVE_KEY } });
-  }
-}
-
-export function clearSavedGame(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(SAVE_KEY);
-}

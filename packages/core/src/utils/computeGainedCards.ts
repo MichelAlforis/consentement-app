@@ -1,5 +1,6 @@
 import { THEME_CATEGORIES } from '../data/cards-collector';
-import type { CollectorCard, Rarity, CardTheme } from '../data/cards-collector';
+import type { CollectorCard, CardTheme } from '../data/cards-collector';
+import type { Rarity } from '../types';
 import type { OwnedCard } from '../types';
 import type { IconName } from '../types';
 import type { PositionKey } from '../types';

@@ -1,0 +1,18 @@
+{
+  "name": "@ouiclair/textures",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./assets/*": "./assets/*"
+  },
+  "scripts": {
+    "generate": "tsx scripts/generate.ts"
+  },
+  "dependencies": {
+    "canvas": "^3.2.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
