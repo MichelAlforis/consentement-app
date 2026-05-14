@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&display=swap');
+
+/* ── Variables ──────────────────────────────────────────────────────────────── */
+:root {
+  --bg: #0d0714;
+  --violet: #8b5cf6;
+  --pink: #ec4899;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #0d0714;
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Grain overlay ──────────────────────────────────────────────────────────── */
+/* Texture cinématographique subtile, z-index hors du flux */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Selection ───────────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(139, 92, 246, 0.35);
+  color: #f8fafc;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2e1f46; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.6); }
+
+/* ── Gradient border utility ─────────────────────────────────────────────────── */
+/* Usage : <div class="grad-border rounded-2xl"><div class="grad-inner rounded-[calc(...)]">...</div></div> */
+.grad-border-violet {
+  background: linear-gradient(135deg, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.08) 50%, transparent 100%);
+  padding: 1px;
+}
+.grad-border-pink {
+  background: linear-gradient(135deg, rgba(236,72,153,0.35) 0%, rgba(236,72,153,0.08) 50%, transparent 100%);
+  padding: 1px;
+}
+.grad-border-amber {
+  background: linear-gradient(135deg, rgba(245,158,11,0.35) 0%, rgba(245,158,11,0.08) 50%, transparent 100%);
+  padding: 1px;
+}
+.grad-border-emerald {
+  background: linear-gradient(135deg, rgba(16,185,129,0.35) 0%, rgba(16,185,129,0.08) 50%, transparent 100%);
+  padding: 1px;
+}
+.grad-border-duo {
+  background: linear-gradient(135deg, rgba(139,92,246,0.25) 0%, rgba(236,72,153,0.25) 100%);
+  padding: 1px;
+}
+.grad-inner {
+  background: #1a1128;
+  height: 100%;
+  width: 100%;
+}
+
+/* ── Dot grid background ─────────────────────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(139,92,246,0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── Animate gradient text ───────────────────────────────────────────────────── */
+.text-gradient-main {
+  background: linear-gradient(
+    90deg,
+    #a78bfa 0%,
+    #ec4899 40%,
+    #a78bfa 80%,
+    #ec4899 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% center; }
+  50%  { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+/* ── Shimmer (gradient text static fallback) ─────────────────────────────────── */
+.text-gradient-static {
+  background: linear-gradient(135deg, #a78bfa, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

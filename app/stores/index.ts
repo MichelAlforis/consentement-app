@@ -18,6 +18,8 @@ export { useUnlockStore } from './unlockStore';
 export type { OwnedCard, Rarity } from './unlockStore';
 export { useModuleProgressStore } from './moduleProgressStore';
 export { useLexiqueStore } from './lexiqueStore';
+export { usePreferencesStore } from './preferencesStore';
+export type { PoolEntry } from './unlockStore';
 
 import { useNavigationStore, NAVIGATION_INITIAL_STATE } from './navigationStore';
 import { useAuthStore } from './authStore';
@@ -28,6 +30,7 @@ import { useDuoStore } from './duoStore';
 import { useUnlockStore } from './unlockStore';
 import { useModuleProgressStore } from './moduleProgressStore';
 import { useLexiqueStore } from './lexiqueStore';
+import { usePreferencesStore } from './preferencesStore';
 import { STORAGE_KEYS } from './storageKeys';
 import { initialPersonalProfile } from '../data';
 
@@ -41,8 +44,8 @@ export function resetAllData() {
   useUnlockStore.getState().reset();
   useModuleProgressStore.getState().reset();
   useLexiqueStore.getState().reset();
+  usePreferencesStore.getState().reset();
 
-  // Clear all persisted storage (RENDER_MODE intentionnellement exclu — préférence technique)
   // Clear all persisted storage (RENDER_MODE intentionnellement exclu — préférence technique)
   [
     STORAGE_KEYS.AUTH,
@@ -52,6 +55,7 @@ export function resetAllData() {
     STORAGE_KEYS.UNLOCKS,
     STORAGE_KEYS.MODULES,
     STORAGE_KEYS.LEXIQUE,
+    STORAGE_KEYS.PREFERENCES,
   ].forEach((key) => localStorage.removeItem(key));
 
   void import('../lib/pb').then(({ pb }) => pb.authStore.clear());

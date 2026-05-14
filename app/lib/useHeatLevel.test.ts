@@ -37,7 +37,7 @@ describe('useHeatLevel — état initial', () => {
 
   it('breakdown toutes sources à 0', () => {
     const { result } = renderHook(() => useHeatLevel());
-    expect(result.current.breakdown).toEqual({ modules: 0, cards: 0, sessions: 0, profile: 0, lexique: 0 });
+    expect(result.current.breakdown).toEqual({ modules: 0, cards: 0, sessions: 0, profile: 0, lexique: 0, preferences: 0 });
   });
 
   it('profileDetails initial : tout à zéro / false', () => {

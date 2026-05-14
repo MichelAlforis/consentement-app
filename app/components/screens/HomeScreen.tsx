@@ -1,10 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
 import { AppLogo, IconBox } from '../ui';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { HeatThermometer } from '../ui/HeatThermometer';
+import { HeatRoadmapSheet } from '../ui/HeatRoadmapSheet';
+import { DailyQuestionCard } from '../ui/DailyQuestionCard';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -143,16 +146,29 @@ function HeatGatedExplicitMode({ delay }: { delay: number }) {
 }
 
 function HeatBar() {
-  const { points } = useHeat();
+  const { points, level } = useHeat();
+  const [showRoadmap, setShowRoadmap] = useState(false);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 12 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.15 }}
-      className="flex justify-end mb-4"
-    >
-      <HeatThermometer points={points} compact />
-    </motion.div>
+    <>
+      <motion.div
+        initial={{ opacity: 0, x: 12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.15 }}
+        className="flex justify-end mb-4"
+      >
+        <HeatThermometer points={points} compact onPress={() => setShowRoadmap(true)} />
+      </motion.div>
+      <AnimatePresence>
+        {showRoadmap && (
+          <HeatRoadmapSheet
+            currentLevel={level}
+            currentPoints={points}
+            onClose={() => setShowRoadmap(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -228,8 +244,9 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
       </motion.div>
 
       {isAdult && (
-        <div className="mt-4">
-          <HeatGatedExplicitMode delay={0.4} />
+        <div className="mt-4 space-y-3">
+          <DailyQuestionCard onPress={() => onNavigate('moi')} delay={0.45} />
+          <HeatGatedExplicitMode delay={0.5} />
         </div>
       )}
 
@@ -320,8 +337,9 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
       <CollectionButton ownedCount={ownedCards.length} onNavigate={onNavigate} />
 
       {isAdult && (
-        <div className="mt-4">
-          <HeatGatedExplicitMode delay={0.4} />
+        <div className="mt-4 space-y-3">
+          <DailyQuestionCard onPress={() => onNavigate('moi')} delay={0.38} />
+          <HeatGatedExplicitMode delay={0.43} />
         </div>
       )}
 
@@ -437,8 +455,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
       )}
 
       {isAdult && (
-        <div className="mt-2">
-          <HeatGatedExplicitMode delay={0.42} />
+        <div className="mt-2 space-y-3">
+          <DailyQuestionCard onPress={() => onNavigate('moi')} delay={0.4} />
+          <HeatGatedExplicitMode delay={0.45} />
         </div>
       )}
 

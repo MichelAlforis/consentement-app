@@ -11,6 +11,12 @@ export const onboarding = {
     privacy: "100% private — nothing is recorded without your consent",
     appName: 'Consentement',
     legalBadge: 'Created with a criminal lawyer',
+    legalSheet: {
+      title: 'Verified by a lawyer',
+      role: 'Criminal law · Consent specialist',
+      bio: "All educational content has been reviewed and validated by a lawyer specializing in criminal consent law. Our commitment: reliable, accurate, and legally sound information.",
+      close: 'Close',
+    },
   },
 
   ageCheck: {

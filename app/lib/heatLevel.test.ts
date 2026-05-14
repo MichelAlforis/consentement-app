@@ -246,7 +246,7 @@ describe('dual-reward : module-de-base — progression complète', () => {
       ownedCards: starterCards,
       sessionCount: 0,
     };
-    expect(computeHeatBreakdown(input)).toEqual({ modules: 3, cards: 24, sessions: 0, profile: 0, lexique: 0 });
+    expect(computeHeatBreakdown(input)).toEqual({ modules: 3, cards: 24, sessions: 0, profile: 0, lexique: 0, preferences: 0 });
   });
 });
 

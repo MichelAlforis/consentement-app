@@ -6,6 +6,7 @@ export const lexiqueConsent = {
       filterAll: 'Tous',
       btnUnlock: 'Déverrouiller',
       heatEarned: '+1 pt',
+      palierLock: '🔥 Palier {n} requis',
       markDone: 'Terminer le lexique — Voir ma carte',
       niveaux: {
         debutant: 'Débutant',

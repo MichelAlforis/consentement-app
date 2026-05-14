@@ -8,5 +8,6 @@ export const STORAGE_KEYS = {
   MODULES:     'consentement-modules',
   LEXIQUE:     'consentement-lexique',
   RENDER_MODE: 'consentement-render-mode',
-  DUO_RESULT:  'consentement-duo-result',
+  DUO_RESULT:   'consentement-duo-result',
+  PREFERENCES:  'consentement-preferences',
 } as const;

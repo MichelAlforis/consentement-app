@@ -5,6 +5,60 @@
 
 ---
 
+## État d'avancement — 2026-05-14
+
+### Prérequis contenu ✅
+
+| Fichier | Type | Sujet | i18n FR |
+|---------|------|-------|---------|
+| `app/data/alcoolConsent.ts` | Quiz + Loi | Alcool & consentement | ✅ |
+| `app/data/sexting.ts` | Vrai/Faux | Sexting & images intimes (adulte + mineur) | ✅ |
+| `app/data/pressionManip.ts` | Quiz | Pression & manipulation | ✅ |
+| `app/data/ruptureHarcele.ts` | Loi | Harcèlement post-rupture | ✅ |
+| `app/data/bdsmConsent.ts` | Vrai/Faux | BDSM & consentement | ✅ |
+| `app/data/contentNonConsenti.ts` | Loi | Contenus non consentis (revenge porn) | ✅ |
+| `app/data/pratiquesExplicit.ts` | Quiz | Pratiques explicites & communication | ✅ |
+| `app/data/zonesGrises.ts` | Quiz | Zones grises & ambiguïté | ✅ |
+
+EN/ES translations : 🔲 (seul FR généré)
+Screens + routing pour ces 8 modules : 🔲
+
+### Prompts de génération de contenu ✅
+
+| Fichier | Formats couverts |
+|---------|-----------------|
+| `docs/contenu/prompt-generation-modules.md` | Quiz (QCM), Vrai/Faux, Dans la loi? |
+| `docs/contenu/prompt-generation-modules-2.md` | Fiche pratique, Scénario, Lexique basique |
+| `docs/contenu/prompt-generation-lexique.md` | Lexique heat-gated → cartes collector (rareté ⊥ palier) |
+
+### Corrections techniques ✅
+
+- `ApprendreScreen.tsx` — variable morte `isHeatGated` supprimée (TS2367)
+- `.githooks/pre-push` — workaround Next.js 15.5.15 : vérification `out/index.html` au lieu du code de sortie
+
+### Architecture lexique — décisions actées ✅
+
+- `LexiqueEntry.palier` (1-5) = gate de déblocage (heat requis)
+- `LexiqueEntry.rarity` = valeur collectionnable — **axe indépendant** du palier
+- `unlockedBy: 'heat-N'` dans `collectorCards` = convention de déblocage automatique
+- `card.text` = question/défi de conversation — jamais la définition brute
+- Pool simplifié : `{ rarity, sourceTermId }` résolu au tirage (Deck B non possédées)
+
+### Phases d'implémentation
+
+| Phase | Description | État |
+|-------|-------------|------|
+| 0 | Audit IDs + mapping lex-xxx → terme → topicId | 🔲 |
+| 1 | `topicRegistry.ts` + `useAvailableTopics()` | 🔲 |
+| 2 | `preferencesStore` + `unlockStore` v2 (pool) | 🔲 |
+| 3 | `unlockLexiqueTerm()` + `LexiqueScreen` | 🔲 |
+| 4 | `LexiqueScreen` gatée par `entry.palier` | 🔲 |
+| 5 | Heat preferences + `MoiScreen` progressif | 🔲 |
+| 6 | `completeGameSession()` partagé | 🔲 |
+| 7 | Duo-flow intersection | 🔲 |
+
+---
+
 ## Principe directeur
 
 > La logique "qui dépend de quoi" sort des stores et des écrans.
@@ -185,32 +239,42 @@ export function useAvailableTopics(): TopicDefinition[] {
 
 ---
 
-## Backend — Architecture de stockage (màj 2026-05-14)
+## Backend — Architecture (màj 2026-05-14)
 
-Le backend adopte le pattern **Zustand persist + `sqliteStorage` adapter** :
+### Deux couches distinctes
 
-```ts
-// Tous les stores :
-persist(fn, {
-  name: STORAGE_KEYS.XXX,
-  storage: () => sqliteStorage,  // ← remplace localStorage
-})
+```
+App Capacitor (iOS/Android)
+    ↓
+app/lib/storage.ts       ← stockage local (localStorage bridge → Capacitor Preferences)
+    +
+app/lib/pb.ts            ← PocketBase client (pb.ouiclair.com)
+    +
+app/lib/sync/            ← fonctions de sync online (duoSync.ts, profileSync.ts…)
 ```
 
-`app/lib/storage.ts` = le seul point de contact avec le backend SQLite.
-Les stores ne changent pas leur API — seul le moteur de persistance change.
+**PocketBase `pb.ouiclair.com`** = backend online uniquement :
+- Collection `duo_sessions` — session duo temps réel (code 6 chars, subscribe/unsubscribe)
+- Collection `profiles` — sync profil utilisateur (pushProfile / pullProfile)
+- Testé via `duoSync.test.ts` + `profileSync.test.ts` (Vitest + mocks PocketBase)
 
-**Stores à migrer vers `sqliteStorage` :**
-- `unlockStore` ✅ migré
-- `lexiqueStore` ✅ migré
+**`app/lib/storage.ts`** ✅ créé — pont localStorage → `StateStorage` Zustand.
+Prêt à être swappé pour `@capacitor/preferences` sans toucher aux stores.
+
+### Stores migrés vers `sqliteStorage`
+- `unlockStore` ✅
+- `lexiqueStore` ✅
+- `duoStore` ✅ (persist `cachedResult` uniquement — état éphémère non persisté)
 - `moduleProgressStore` 🔲
 - `profileStore` 🔲
 - `authStore` 🔲
 - `preferencesStore` 🔲 (à créer directement avec sqliteStorage)
 
-**Impact sur le moteur topics :**
-- Les fonctions métier (`unlockLexiqueTerm`, `completeGameSession`) appellent `.getState()` sur les stores → fonctionnent identiquement que le storage soit SQLite ou localStorage
-- Ces fonctions sont les points naturels pour de futures mutations API REST si le backend évolue au-delà de SQLite local
+### Impact sur Phase 7 — Duo intersection
+
+L'infrastructure PocketBase est déjà là (`duoSync.ts` + `duoStore.ts`).
+Phase 7 = étendre `DuoSessionRecord` avec les préférences et ajouter l'intersection dans `duoStore.getCommonGround()`.
+La Phase 5 n'est plus une inconnue architecturale — elle s'appuie sur `duo_sessions`.
 
 ---
 

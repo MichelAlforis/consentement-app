@@ -1,8 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck, BookOpen, MessageCircle, ArrowRight, BadgeCheck } from 'lucide-react';
 import { Button, AppLogo } from '../ui';
+import { LegalCredentialSheet } from '../ui/LegalCredentialSheet';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -13,6 +15,7 @@ interface WelcomeScreenProps {
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const [showLegal, setShowLegal] = useState(false);
 
   const pillars = [
     { icon: <ShieldCheck size={15} />, label: t('welcome.pillars.consent') },
@@ -80,16 +83,22 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           ))}
         </motion.div>
 
-        <motion.div
+        <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.0 }}
-          className="flex items-center gap-1.5 mt-5 text-xs font-medium"
-          style={{ color: colors.textMuted }}
+          onClick={() => setShowLegal(true)}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-1.5 mt-5 text-xs font-medium px-3 py-1.5 rounded-full"
+          style={{ color: colors.textMuted, background: colors.bgSecondary, border: `1px solid ${colors.divider}` }}
         >
           <BadgeCheck size={13} className="text-violet-500 shrink-0" />
           {t('welcome.legalBadge')}
-        </motion.div>
+        </motion.button>
+
+        <AnimatePresence>
+          {showLegal && <LegalCredentialSheet onClose={() => setShowLegal(false)} />}
+        </AnimatePresence>
       </div>
 
       <motion.div

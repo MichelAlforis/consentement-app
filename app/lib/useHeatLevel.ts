@@ -6,6 +6,7 @@ import { useUnlockStore } from '../stores/unlockStore';
 import { useProfileStore } from '../stores/profileStore';
 import { useAuthStore } from '../stores/authStore';
 import { useLexiqueStore } from '../stores/lexiqueStore';
+import { usePreferencesStore } from '../stores/preferencesStore';
 import {
   computeHeatBreakdown,
   getHeatLevel,
@@ -40,6 +41,7 @@ export function useHeatLevel(): HeatState {
   const personalProfile = useProfileStore((s) => s.personalProfile);
   const pronouns = useAuthStore((s) => s.pronouns);
   const lexiqueWords = useLexiqueStore((s) => s.unlockedIds.length);
+  const preferencesAnswered = usePreferencesStore((s) => Object.keys(s.answers).length);
 
   // Toutes les dérivations profil dans un seul useMemo — zéro recalcul parasite
   const profileDetails = useMemo<HeatProfileDetails>(() => {
@@ -58,12 +60,13 @@ export function useHeatLevel(): HeatState {
       profileComfortCategories: profileDetails.comfortFilled,
       safewordDefined: profileDetails.safewordSet,
       pronounsDefined: profileDetails.pronounsSet,
+      preferencesAnswered,
     }),
-    [completedModules, ownedCards, sessionCount, profileDetails, lexiqueWords]
+    [completedModules, ownedCards, sessionCount, profileDetails, lexiqueWords, preferencesAnswered]
   );
 
   const breakdown = useMemo(() => computeHeatBreakdown(input), [input]);
-  const points = breakdown.modules + breakdown.cards + breakdown.sessions + breakdown.profile + breakdown.lexique;
+  const points = breakdown.modules + breakdown.cards + breakdown.sessions + breakdown.profile + breakdown.lexique + breakdown.preferences;
 
   return useMemo(() => ({
     points,

@@ -1,9 +1,14 @@
 {
-  "name": "consentement-app",
+  "name": "ouiclair-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/vitrine"
+  ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
+    "vitrine:dev": "npm run dev --workspace=apps/vitrine",
+    "vitrine:build": "npm run build --workspace=apps/vitrine",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

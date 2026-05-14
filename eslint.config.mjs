@@ -23,7 +23,9 @@ const config = [
   {
     ignores: [
       '.next/**',
+      '**/.next/**',
       'out/**',
+      '**/out/**',
       'node_modules/**',
       'android/**',
       'ios/**',

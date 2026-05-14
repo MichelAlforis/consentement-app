@@ -25,8 +25,9 @@ export interface HeatInput {
   safewordDefined?: boolean;
   /** Pronoms renseignés dans le profil */
   pronounsDefined?: boolean;
-  /** Réservé V2 — lexique non implémenté */
   lexiqueWords?: number;
+  /** Nombre de réponses préférences données dans MoiScreen (+1 pt chacune) */
+  preferencesAnswered?: number;
 }
 
 // Points par module (récompense l'apprentissage — indépendant des cartes gagnées)
@@ -88,8 +89,9 @@ export interface HeatBreakdown {
   modules: number;
   cards: number;
   sessions: number;
-  profile: number;  // safeword + pronoms + confort (max 8 pts)
-  lexique: number;  // mots de lexique débloqués (+1 pt / mot)
+  profile: number;      // safeword + pronoms + confort (max 8 pts)
+  lexique: number;      // mots de lexique débloqués (+1 pt / mot)
+  preferences: number;  // réponses préférences données (+1 pt / réponse)
 }
 
 export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
@@ -109,13 +111,14 @@ export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
     (input.pronounsDefined ? 2 : 0);
 
   const lexique = input.lexiqueWords ?? 0;
+  const preferences = input.preferencesAnswered ?? 0;
 
-  return { modules, cards, sessions, profile, lexique };
+  return { modules, cards, sessions, profile, lexique, preferences };
 }
 
 export function computeHeatPoints(input: HeatInput): number {
-  const { modules, cards, sessions, profile, lexique } = computeHeatBreakdown(input);
-  return modules + cards + sessions + profile + lexique;
+  const { modules, cards, sessions, profile, lexique, preferences } = computeHeatBreakdown(input);
+  return modules + cards + sessions + profile + lexique + preferences;
 }
 
 export function getHeatLevel(points: number): HeatLevel {

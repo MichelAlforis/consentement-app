@@ -20,6 +20,8 @@ interface HeatThermometerProps {
   compact?: boolean;
   /** Mode sidebar : SVG fluide (width/height 100%) qui remplit son conteneur */
   sidebar?: boolean;
+  /** Callback optionnel — rend le composant tappable */
+  onPress?: () => void;
 }
 
 const LEVEL_NAMES: Record<HeatLevel, string> = {
@@ -62,7 +64,7 @@ function getDims(compact: boolean, sidebar: boolean): Dims {
 
 const TICK_LVLS = [2, 3, 4] as const;
 
-export function HeatThermometer({ points, compact = false, sidebar = false }: HeatThermometerProps) {
+export function HeatThermometer({ points, compact = false, sidebar = false, onPress }: HeatThermometerProps) {
   const rawId = useId();
   const uid   = rawId.replace(/[^a-zA-Z0-9]/g, '');
   const { colors } = useTheme();
@@ -93,14 +95,19 @@ export function HeatThermometer({ points, compact = false, sidebar = false }: He
   const spring = { type: 'spring' as const, stiffness: 90, damping: 18 };
   const trans  = reduced ? { duration: 0 } : spring;
 
+  const Wrapper = onPress ? motion.button : motion.div;
+
   return (
-    <div
+    <Wrapper
       className={sidebar ? 'h-full w-full flex items-center justify-center' : 'flex items-end gap-2'}
-      role="meter"
+      role={onPress ? 'button' : 'meter'}
       aria-label={`Baromètre du Hot : ${levelName}`}
       aria-valuenow={points}
       aria-valuemin={0}
       aria-valuemax={HEAT_THRESHOLDS[5]}
+      onClick={onPress}
+      whileTap={onPress ? { scale: 0.93 } : undefined}
+      style={onPress ? { cursor: 'pointer', background: 'none', border: 'none', padding: 0 } : undefined}
     >
       {/* ── SVG thermomètre ── */}
       <svg
@@ -230,6 +237,6 @@ export function HeatThermometer({ points, compact = false, sidebar = false }: He
           </span>
         </div>
       )}
-    </div>
+    </Wrapper>
   );
 }

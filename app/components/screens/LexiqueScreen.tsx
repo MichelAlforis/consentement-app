@@ -7,6 +7,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 import { useModuleComplete } from '../../lib/useModuleComplete';
 import { useLexiqueStore } from '../../stores/lexiqueStore';
+import { useHeat } from '../../context/HeatContext';
+import { unlockLexiqueTerm } from '../../lib/unlockLexiqueTerm';
 import type { LexiqueEntry } from '../../data/lexiqueConsent';
 import type { ModuleId } from '../../modules';
 
@@ -36,7 +38,8 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
   const { colors } = useTheme();
   const { t } = useTranslation();
   const complete = useModuleComplete();
-  const { unlockedIds, unlock } = useLexiqueStore();
+  const { unlockedIds } = useLexiqueStore();
+  const { level: heatLevel } = useHeat();
   const [niveauFilter, setNiveauFilter] = useState<NiveauFilter>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -48,8 +51,11 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
   const allUnlocked = unlockedCount === entries.length;
 
   const handleTap = (entry: LexiqueEntry) => {
+    const isPalierBlocked = (heatLevel as number) < entry.palier;
+    if (isPalierBlocked) return; // guard dans le handler
+
     if (!unlockedIds.includes(entry.id)) {
-      unlock(entry.id);
+      unlockLexiqueTerm(entry.id, heatLevel);
     }
     setExpandedId((prev) => (prev === entry.id ? null : entry.id));
   };
@@ -109,6 +115,7 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
       <div className="flex-1 min-h-0 overflow-y-auto px-5 pb-4 scrollbar-hide space-y-2">
         {filtered.map((entry, i) => {
           const isUnlocked = unlockedIds.includes(entry.id);
+          const isPalierBlocked = (heatLevel as number) < entry.palier;
           const isExpanded = expandedId === entry.id;
           const niveauColor = NIVEAU_COLORS[entry.niveau] ?? NIVEAU_COLORS.debutant;
           const catColor = CATEGORIE_COLORS[entry.categorie] ?? colors.textMuted;
@@ -125,22 +132,30 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
                 className="w-full text-left p-4 rounded-2xl transition-all"
                 style={{
                   background: isUnlocked ? colors.bgCard : `${colors.bgCard}cc`,
-                  border: `1px solid ${isUnlocked ? colors.border : colors.border}`,
-                  opacity: isUnlocked ? 1 : 0.8,
+                  border: `1px solid ${isPalierBlocked ? '#f9731630' : colors.border}`,
+                  opacity: isPalierBlocked ? 0.6 : 1,
+                  cursor: isPalierBlocked ? 'default' : 'pointer',
                 }}
               >
                 <div className="flex items-start gap-3">
-                  {/* Lock / unlock icon */}
+                  {/* Icône état */}
                   <div
                     className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                     style={{
-                      background: isUnlocked ? `${colors.success}20` : `${colors.textMuted}15`,
+                      background: isUnlocked
+                        ? `${colors.success}20`
+                        : isPalierBlocked
+                          ? '#f9731615'
+                          : `${colors.textMuted}15`,
                     }}
                   >
-                    {isUnlocked
-                      ? <CheckCircle size={16} style={{ color: colors.success }} />
-                      : <Lock size={14} style={{ color: colors.textMuted }} />
-                    }
+                    {isUnlocked ? (
+                      <CheckCircle size={16} style={{ color: colors.success }} />
+                    ) : isPalierBlocked ? (
+                      <span style={{ fontSize: 14 }}>🔥</span>
+                    ) : (
+                      <Lock size={14} style={{ color: colors.textMuted }} />
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -160,12 +175,22 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
                       >
                         {t(`${namespace}.lexique.categories.${entry.categorie}`)}
                       </span>
-                      {!isUnlocked && (
+
+                      {/* Badge selon état */}
+                      {!isUnlocked && !isPalierBlocked && (
                         <span
                           className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
                           style={{ background: '#f9731618', color: '#f97316' }}
                         >
                           {t(`${namespace}.lexique.heatEarned`)}
+                        </span>
+                      )}
+                      {isPalierBlocked && (
+                        <span
+                          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
+                          style={{ background: '#f9731620', color: '#f97316' }}
+                        >
+                          {t(`${namespace}.lexique.palierLock`, { n: String(entry.palier) })}
                         </span>
                       )}
                     </div>
@@ -183,7 +208,7 @@ export function LexiqueScreen({ namespace, entries, moduleId, onComplete }: Lexi
                           {t(`${namespace}.lexique.${entry.id}.definition`)}
                         </motion.p>
                       )}
-                      {!isUnlocked && (
+                      {!isUnlocked && !isPalierBlocked && (
                         <motion.p
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}

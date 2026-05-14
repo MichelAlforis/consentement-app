@@ -13,4 +13,7 @@ export { AppLogo } from './AppLogo';
 export type { LogoVariant } from './AppLogo';
 export { HeatThermometer } from './HeatThermometer';
 export { PalierUpOverlay } from './PalierUpOverlay';
+export { HeatRoadmapSheet } from './HeatRoadmapSheet';
+export { DailyQuestionCard } from './DailyQuestionCard';
+export { LegalCredentialSheet } from './LegalCredentialSheet';
 export { IconBox } from './IconBox';

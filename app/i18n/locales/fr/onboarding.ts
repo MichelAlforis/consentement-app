@@ -11,6 +11,12 @@ export const onboarding = {
     privacy: "100% privé — rien n'est enregistré sans ton accord",
     appName: 'Consentement',
     legalBadge: 'Créé avec un juriste en droit pénal',
+    legalSheet: {
+      title: 'Validé par un juriste',
+      role: 'Droit pénal · Spécialité consentement',
+      bio: "Tous les contenus éducatifs ont été relus et validés par un juriste spécialisé en droit pénal du consentement. Notre engagement : une information fiable, exacte et juridiquement défendable.",
+      close: 'Fermer',
+    },
   },
 
   ageCheck: {

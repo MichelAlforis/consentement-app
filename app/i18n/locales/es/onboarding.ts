@@ -11,6 +11,12 @@ export const onboarding = {
     privacy: "100% privado — nada se registra sin tu consentimiento",
     appName: 'Consentement',
     legalBadge: 'Creado con un abogado penalista',
+    legalSheet: {
+      title: 'Validado por un abogado',
+      role: 'Derecho penal · Especialista en consentimiento',
+      bio: "Todos los contenidos educativos han sido revisados y validados por un abogado especializado en derecho penal del consentimiento. Nuestro compromiso: información fiable, exacta y jurídicamente defendible.",
+      close: 'Cerrar',
+    },
   },
 
   ageCheck: {

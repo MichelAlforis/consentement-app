@@ -20,7 +20,11 @@ export function computeModuleGain(
   if (!config) return [];
 
   const pool = allCards.filter(
-    (c) => c.deck === config.deck && c.rarity === config.rarity && !ownedIds.has(c.id)
+    (c) =>
+      c.deck === config.deck &&
+      c.rarity === config.rarity &&
+      !c.id.startsWith('lex-') &&
+      !ownedIds.has(c.id)
   );
 
   if (pool.length === 0) return [];

@@ -1,13 +1,113 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHeart, BookUser } from 'lucide-react';
+import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHeart, BookUser, Lock } from 'lucide-react';
 import { AppLogo, HeatThermometer } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuthStore, usePremiumStore } from '../../stores';
 import { useTranslation } from '../../i18n';
 import { useHeat } from '../../context/HeatContext';
+import { usePreferenceTopics } from '../../lib/useAvailableTopics';
+import { usePreferencesStore } from '../../stores/preferencesStore';
+import type { PreferenceAnswer, TopicDefinition } from '../../data/topicRegistry';
+
+const PREF_ANSWERS: { value: PreferenceAnswer; emoji: string; tKey: string }[] = [
+  { value: 'curious',         emoji: '🤔', tKey: 'moi.prefAnswer_curious' },
+  { value: 'comfortable',     emoji: '😊', tKey: 'moi.prefAnswer_comfortable' },
+  { value: 'want-to-explore', emoji: '✨', tKey: 'moi.prefAnswer_want_to_explore' },
+  { value: 'not-for-me',      emoji: '🙅', tKey: 'moi.prefAnswer_not_for_me' },
+  { value: 'no-comment',      emoji: '🔒', tKey: 'moi.prefAnswer_no_comment' },
+];
+
+const TOPIC_LABEL_KEYS: Record<string, string> = {
+  'topic-fellation':             'moi.prefTopic_fellation',
+  'topic-cunnilingus':           'moi.prefTopic_cunnilingus',
+  'topic-masturbation-mutuelle': 'moi.prefTopic_masturbation_mutuelle',
+  'topic-penetration':           'moi.prefTopic_penetration',
+  'topic-sodomie':               'moi.prefTopic_sodomie',
+};
+
+function TopicAnswerCard({ topic, index }: { topic: TopicDefinition; index: number }) {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const currentAnswer = usePreferencesStore((s) => s.answers[topic.id]);
+  const answerFn = usePreferencesStore((s) => s.answer);
+  const labelKey = TOPIC_LABEL_KEYS[topic.id] ?? topic.id;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.06 }}
+      className="rounded-2xl p-4"
+      style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+    >
+      <p className="text-sm font-semibold mb-3" style={{ color: colors.textPrimary }}>
+        {t(labelKey as Parameters<typeof t>[0])}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {PREF_ANSWERS.map(({ value, emoji, tKey }) => {
+          const isSelected = currentAnswer === value;
+          return (
+            <button
+              key={value}
+              onClick={() => answerFn(topic.id, value)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+              style={{
+                background: isSelected ? `${colors.accent}22` : colors.bgSecondary,
+                border: `1px solid ${isSelected ? colors.accent : colors.border}`,
+                color: isSelected ? colors.accent : colors.textSecondary,
+              }}
+            >
+              <span>{emoji}</span>
+              <span>{t(tKey as Parameters<typeof t>[0])}</span>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+function PreferenceSection() {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const availableTopics = usePreferenceTopics();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.15 }}
+      className="mb-6"
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-sm font-bold" style={{ color: colors.textPrimary }}>
+          {t('moi.prefSection_title')}
+        </p>
+        <Lock size={12} style={{ color: colors.textMuted }} />
+      </div>
+
+      {availableTopics.length === 0 ? (
+        <div
+          className="rounded-2xl p-4 text-center"
+          style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+        >
+          <p className="text-xs" style={{ color: colors.textMuted }}>
+            {t('moi.prefSection_empty')}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {availableTopics.map((topic, i) => (
+            <TopicAnswerCard key={topic.id} topic={topic} index={i} />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
 
 interface MoiScreenProps {
   isAdult: boolean | null;
@@ -121,11 +221,12 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           {points > 0 && (
             <div className="flex gap-3 mt-2 flex-wrap">
               {([
-                ['moi.heatBreak_modules', breakdown.modules, '📚'],
-                ['moi.heatBreak_cards', breakdown.cards, '🃏'],
-                ['moi.heatBreak_sessions', breakdown.sessions, '🎲'],
-                ['moi.heatBreak_profile', breakdown.profile, '👤'],
-                ['moi.heatBreak_lexique', breakdown.lexique, '📖'],
+                ['moi.heatBreak_modules',     breakdown.modules,     '📚'],
+                ['moi.heatBreak_cards',        breakdown.cards,       '🃏'],
+                ['moi.heatBreak_sessions',     breakdown.sessions,    '🎲'],
+                ['moi.heatBreak_profile',      breakdown.profile,     '👤'],
+                ['moi.heatBreak_lexique',      breakdown.lexique,     '📖'],
+                ['moi.heatBreak_preferences',  breakdown.preferences, '💬'],
               ] as const).filter(([, n]) => n > 0).map(([key, n, emoji]) => (
                 <span key={key} className="flex items-center gap-1 text-[10px]" style={{ color: colors.textMuted }}>
                   <span>{emoji}</span>
@@ -171,6 +272,9 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           )}
         </div>
       </motion.div>
+
+      {/* Section préférences — adultes uniquement */}
+      {isAdult && <PreferenceSection />}
 
       <div className="space-y-3">
         {/* Adult-only: personal space + duo */}
