@@ -4,13 +4,14 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sprout, TreeDeciduous, Lock,
-  ShieldCheck, KeyRound, Shield, User,
+  ShieldCheck, KeyRound, Shield, User, Check,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../i18n';
 import { useAuthStore } from '../../stores/authStore';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
+import { useHaptics } from '../../game-engine/shared/useHaptics';
 import { AppLogo } from '../ui/AppLogo';
 import { Button, Card } from '../ui';
 import { themes, type ThemeMode } from '../../types/theme';
@@ -37,6 +38,7 @@ function LanguageStep({ onNext }: StepProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { language, changeLanguage } = useLanguage();
+  const { vibrate } = useHaptics();
   const LANGUAGES: { code: Language; nativeName: string }[] = [
     { code: 'fr', nativeName: 'Français' },
     { code: 'en', nativeName: 'English' },
@@ -56,7 +58,7 @@ function LanguageStep({ onNext }: StepProps) {
             <motion.button
               key={lang.code}
               whileTap={{ scale: 0.97 }}
-              onClick={() => changeLanguage(lang.code)}
+              onClick={() => { vibrate('light'); changeLanguage(lang.code); setTimeout(onNext, 300); }}
               className="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-left"
               style={{
                 background: active ? `${colors.accent}18` : colors.bgCard,
@@ -76,7 +78,6 @@ function LanguageStep({ onNext }: StepProps) {
           );
         })}
       </div>
-      <Button onClick={onNext} fullWidth size="lg">{t('language.cta')}</Button>
     </div>
   );
 }
@@ -87,6 +88,7 @@ function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { vibrate } = useHaptics();
   return (
     <div className="flex flex-col px-6 py-8 gap-5">
       <div className="text-center">
@@ -97,7 +99,7 @@ function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
       </div>
       <p className="text-center font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.title')}</p>
       <div className="space-y-3">
-        <Card onClick={() => { onSetAge(false); onSelectTheme('youth'); onNext(); }} variant="elevated" delay={1}>
+        <Card onClick={() => { vibrate('light'); onSetAge(false); onSelectTheme('youth'); onNext(); }} variant="elevated" delay={1}>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center shrink-0">
               <Sprout size={24} className="text-emerald-600" />
@@ -108,7 +110,7 @@ function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
             </div>
           </div>
         </Card>
-        <Card onClick={() => { onSetAge(true); onNext(); }} variant="elevated" delay={2}>
+        <Card onClick={() => { vibrate('light'); onSetAge(true); onNext(); }} variant="elevated" delay={2}>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-200 flex items-center justify-center shrink-0">
               <TreeDeciduous size={24} className="text-purple-600" />
@@ -152,7 +154,8 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
   onGoPremium: () => void;
 }) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, id: currentMode } = useTheme();
+  const { vibrate } = useHaptics();
   const isMinor = isAdult === false;
   const freeThemes: ThemeMode[] = isMinor ? ['youth', 'warm', 'calm'] : ['warm', 'calm'];
 
@@ -170,24 +173,36 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
       <div className="space-y-3">
         {freeThemes.map((mode, i) => {
           const theme = themes[mode];
+          const isSelected = mode === currentMode;
           return (
             <motion.button key={mode}
               initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }} whileTap={{ scale: 0.98 }}
-              onClick={() => { onSelectTheme(mode); onNext(); }}
+              onClick={() => { vibrate('light'); onSelectTheme(mode); onNext(); }}
               className="relative overflow-hidden rounded-3xl p-5 text-left w-full"
-              style={{ background: themeGradients[mode], boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}>
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px"
+              style={{
+                background: themeGradients[mode],
+                boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+                outline: isSelected ? `2px solid ${theme.colors.accent}` : '2px solid transparent',
+                outlineOffset: '2px',
+              }}>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px shrink-0"
                   style={{ background: theme.colors.accentGradient }}>
                   {themePreviewColors[mode].map((c) => (
                     <div key={c} className="rounded-[3px]" style={{ backgroundColor: c }} />
                   ))}
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
                   <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>
                 </div>
+                {isSelected && (
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: theme.colors.accent }}>
+                    <Check size={13} className="text-white" />
+                  </div>
+                )}
               </div>
             </motion.button>
           );
@@ -294,7 +309,6 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   ];
 
   const total = steps.length;
-  const progress = total > 1 ? (stepIndex / (total - 1)) * 100 : 0;
 
   const handleNext = useCallback(() => {
     if (stepIndex < total - 1) {
@@ -327,10 +341,18 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
-      <div className="shrink-0 flex items-center gap-3 px-5 pt-5 pb-3 safe-area-top">
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>
-          <motion.div className="h-full rounded-full" style={{ background: colors.accent }}
-            animate={{ width: `${progress}%` }} transition={{ duration: 0.4, ease: 'easeOut' }} />
+      {/* Top bar — step dots + skip */}
+      <div className="shrink-0 flex items-center justify-between px-5 pt-5 pb-3 safe-area-top">
+        <div className="flex gap-1.5">
+          {steps.map((_, i) => (
+            <motion.div
+              key={i}
+              className="h-2 rounded-full"
+              animate={{ width: i === stepIndex ? 20 : 8 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              style={{ background: i <= stepIndex ? colors.accent : colors.bgSecondary }}
+            />
+          ))}
         </div>
         <button onClick={handleSkip} className="shrink-0 text-sm font-medium px-4 py-1.5 rounded-full"
           style={{ color: colors.textMuted, background: colors.bgSecondary }}>
