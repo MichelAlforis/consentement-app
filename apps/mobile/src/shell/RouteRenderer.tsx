@@ -16,10 +16,10 @@ import { ErrorBoundary } from '../components/ui';
 import { useTheme } from '../theme/ThemeContext';
 import { AppShell } from './AppShell';
 
-const HomeScreen = lazy(() => import('../components/screens/HomeScreen').then((module) => ({ default: module.HomeScreen })));
-const ApprendreScreen = lazy(() => import('../components/screens/ApprendreScreen').then((module) => ({ default: module.ApprendreScreen })));
-const MoiScreen = lazy(() => import('../components/screens/MoiScreen').then((module) => ({ default: module.MoiScreen })));
-const SettingsScreen = lazy(() => import('../components/screens/SettingsScreen').then((module) => ({ default: module.SettingsScreen })));
+const HomeScreen = lazy(() => import('../components/screens/Home').then((module) => ({ default: module.HomeScreen })));
+const ApprendreScreen = lazy(() => import('../components/screens/Apprendre').then((module) => ({ default: module.ApprendreScreen })));
+const MoiScreen = lazy(() => import('../components/screens/Moi').then((module) => ({ default: module.MoiScreen })));
+const SettingsScreen = lazy(() => import('../components/screens/Settings').then((module) => ({ default: module.SettingsScreen })));
 const OnboardingWizard = lazy(() => import('../components/screens/OnboardingWizard').then((module) => ({ default: module.OnboardingWizard })));
 const AgeCheckScreen = lazy(() => import('../components/screens/AgeCheckScreen').then((module) => ({ default: module.AgeCheckScreen })));
 const AuthScreen = lazy(() => import('../components/screens/AuthScreen').then((module) => ({ default: module.AuthScreen })));

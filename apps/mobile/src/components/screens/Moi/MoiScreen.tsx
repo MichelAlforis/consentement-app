@@ -1,5 +1,7 @@
-// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
-//     useAuthStore/usePreferencesStore/usePremiumStore/useModuleProgressStore au lieu de props.
+// V4 divergence: navigation via useNavigationStore (pas de Next.js router)
+// V4 divergence: HeatThermometer + useHeat() pour affichage des points — inexistant en V3
+// V4 divergence: PreferenceAnswer/TopicDefinition types locaux (non exposés dans @ouiclair/core)
+
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,10 +26,10 @@ import {
   usePremiumStore,
   type Screen,
 } from '@ouiclair/core';
-import { useHeat } from '../../context/HeatContext';
-import { useTranslation } from '../../i18n';
-import { useTheme } from '../../theme/ThemeContext';
-import { AppLogo, HeatThermometer } from '../ui';
+import { useHeat } from '../../../context/HeatContext';
+import { useTranslation } from '../../../i18n';
+import { useTheme } from '../../../theme/ThemeContext';
+import { AppLogo, HeatThermometer } from '../../ui';
 
 interface MoiScreenProps {
   isAdult?: boolean | null;

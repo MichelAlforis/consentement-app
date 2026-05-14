@@ -4,10 +4,10 @@
 // les conflits de noms silencieux et les régressions de types.
 // Ne pas supprimer d'exports, ne pas convertir en glob,
 // ne pas toucher à ce commentaire.
-export { HomeScreen } from './HomeScreen';
-export { ApprendreScreen } from './ApprendreScreen';
-export { MoiScreen } from './MoiScreen';
-export { SettingsScreen } from './SettingsScreen';
+export { HomeScreen } from './Home';
+export { ApprendreScreen } from './Apprendre';
+export { MoiScreen } from './Moi';
+export { SettingsScreen } from './Settings';
 export { OnboardingWizard } from './OnboardingWizard';
 export { AgeCheckScreen } from './AgeCheckScreen';
 export { AuthScreen } from './AuthScreen';

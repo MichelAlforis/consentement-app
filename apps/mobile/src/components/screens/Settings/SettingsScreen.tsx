@@ -1,5 +1,7 @@
-// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
-//     useSettingsStore/useAuthStore au lieu de props, Modal RN natif.
+// V4 divergence: navigation via useNavigationStore (pas de Next.js router)
+// V4 divergence: resetAllMobileData() inline — pas d'équivalent dans @ouiclair/core (stores multiples)
+// V4 divergence: Modal RN natif à la place d'un dialog web, Header depuis ../ui
+
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,9 +34,9 @@ import {
   type Language,
   type Screen,
 } from '@ouiclair/core';
-import { useTranslation } from '../../i18n';
-import { useTheme } from '../../theme/ThemeContext';
-import { Button, ExplicitModeToggle, Header } from '../ui';
+import { useTranslation } from '../../../i18n';
+import { useTheme } from '../../../theme/ThemeContext';
+import { Button, ExplicitModeToggle, Header } from '../../ui';
 
 interface SettingsScreenProps {
   isPremium?: boolean;
@@ -341,7 +343,6 @@ export function SettingsScreen({ isPremium: propPremium, isAdult: propAdult, onN
           title={isPremium ? t('settings.premiumActive.title') : t('settings.premium.title')}
           desc={isPremium ? t('settings.premiumActive.desc') : t('settings.premium.desc')}
           accent={isPremium ? colors.unique : colors.textMuted}
-          // TODO Phase 5: gate premium — comportement complet quand IAP branché
           onPress={isPremium ? undefined : () => onNavigate('premium')}
           right={isPremium ? <CheckCircle2 size={18} color={colors.unique} /> : undefined}
         />

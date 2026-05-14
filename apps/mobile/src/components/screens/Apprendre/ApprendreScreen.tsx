@@ -1,5 +1,7 @@
-// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
-//     useAuthStore/useNavigationStore/useModuleProgressStore au lieu de props.
+// V4 divergence: navigation via useNavigationStore (pas de Next.js router)
+// V4 divergence: heat gates (bdsm-consent/pratiques-explicit/pratiques-avancees) — V3 n'avait pas ce système
+// V4 divergence: Rarity importé depuis @ouiclair/core (R3 — pas de redéfinition locale)
+
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,19 +34,18 @@ import {
   useModuleProgressStore,
   useNavigationStore,
   type EffectiveModuleId,
+  type Rarity,
   type Screen,
 } from '@ouiclair/core';
-import { useHeat } from '../../context/HeatContext';
-import { useTranslation } from '../../i18n';
-import { useTheme } from '../../theme/ThemeContext';
-import { IconBox } from '../ui';
+import { useHeat } from '../../../context/HeatContext';
+import { useTranslation } from '../../../i18n';
+import { useTheme } from '../../../theme/ThemeContext';
+import { IconBox } from '../../ui';
 
 interface ApprendreScreenProps {
   isAdult?: boolean | null;
   onNavigate?: (screen: Screen) => void;
 }
-
-type Rarity = 'common' | 'rare' | 'unique';
 
 type ModuleMeta = {
   id: string;

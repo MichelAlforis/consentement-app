@@ -1,5 +1,7 @@
-// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
-//     useHomeProps() résout isAdult/userName/onNavigate depuis stores.
+// V4 divergence: navigation via useNavigationStore (pas de Next.js router)
+// V4 divergence: progression 3 niveaux (Découverte/Apprentissage/Maîtrise) via getProgressLevel() — @ouiclair/core
+// V4 divergence: MotiView animate à la place de framer-motion, SafeAreaInsets pour le padding
+
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,11 +27,11 @@ import {
   useUnlockStore,
   type Screen,
 } from '@ouiclair/core';
-import { collectorCards } from '../../data/cards-collector';
-import { useHeat } from '../../context/HeatContext';
-import { useTranslation } from '../../i18n';
-import { useTheme } from '../../theme/ThemeContext';
-import { AppLogo, DailyQuestionCard, ExplicitModeToggle, IconBox } from '../ui';
+import { collectorCards } from '../../../data/cards-collector';
+import { useHeat } from '../../../context/HeatContext';
+import { useTranslation } from '../../../i18n';
+import { useTheme } from '../../../theme/ThemeContext';
+import { AppLogo, DailyQuestionCard, ExplicitModeToggle, IconBox } from '../../ui';
 
 interface HomeScreenProps {
   isAdult?: boolean | null;
