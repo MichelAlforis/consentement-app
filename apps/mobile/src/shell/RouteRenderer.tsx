@@ -39,6 +39,16 @@ const ContentNonConsentiScreen = lazy(() => import('../components/screens/Conten
 const ZonesGrisesScreen = lazy(() => import('../components/screens/ZonesGrises').then((m) => ({ default: m.ZonesGrisesScreen })));
 const LgbtqConsentScreen = lazy(() => import('../components/screens/LgbtqConsent').then((m) => ({ default: m.LgbtqConsentScreen })));
 const AlcoolConsentScreen = lazy(() => import('../components/screens/AlcoolConsent').then((m) => ({ default: m.AlcoolConsentScreen })));
+const HelpScreen = lazy(() => import('../components/screens/HelpScreen').then((m) => ({ default: m.HelpScreen })));
+const PornoVsRealiteScreen = lazy(() => import('../components/screens/PornoVsRealiteScreen').then((m) => ({ default: m.PornoVsRealiteScreen })));
+const LoiConsentementScreen = lazy(() => import('../components/screens/LoiConsentementScreen').then((m) => ({ default: m.LoiConsentementScreen })));
+const ResourcesMinorScreen = lazy(() => import('../components/screens/ResourcesMinorScreen').then((m) => ({ default: m.ResourcesMinorScreen })));
+const AccompagnementMineurScreen = lazy(() => import('../components/screens/AccompagnementMineurScreen').then((m) => ({ default: m.AccompagnementMineurScreen })));
+const AccompagnementAdulteScreen = lazy(() => import('../components/screens/AccompagnementAdulteScreen').then((m) => ({ default: m.AccompagnementAdulteScreen })));
+const AnnuaireSexologuesScreen = lazy(() => import('../components/screens/AnnuaireSexologuesScreen').then((m) => ({ default: m.AnnuaireSexologuesScreen })));
+const PremiumScreen = lazy(() => import('../components/screens/PremiumScreen').then((m) => ({ default: m.PremiumScreen })));
+const QuizHubScreen = lazy(() => import('../components/screens/QuizHub').then((m) => ({ default: m.QuizHubScreen })));
+const QuizConsentementScreen = lazy(() => import('../components/screens/QuizConsentement').then((m) => ({ default: m.QuizConsentementScreen })));
 
 const TAB_SCREENS = new Set<Screen>(['home', 'apprendre', 'moi', 'jeux']);
 const FULLSCREEN_ONBOARDING = new Set<Screen>(['welcome', 'onboarding', 'age-check', 'auth', 'theme-select', 'language']);
@@ -89,23 +99,32 @@ function RenderScreen({ screen }: { screen: Screen }) {
     case 'personal-space':
     case 'duo-space':
     case 'learn':
-    case 'help':
     case 'scenarios-minor':
     case 'feelings':
-    case 'resources-minor':
-    case 'porno-vs-realite':
-    case 'loi-consentement':
-    case 'quiz-consentement':
-    case 'quiz-hub':
-    case 'accompagnement-mineur':
-    case 'accompagnement-adulte':
-    case 'annuaire-sexologues':
     case 'jeux':
     case 'jeu-des':
     case 'jeu-oie':
     case 'jeu-cartes':
     case 'hall-of-cards':
       return <PlaceholderScreen screen={screen} />;
+    case 'help':
+      return <HelpScreen />;
+    case 'resources-minor':
+      return <ResourcesMinorScreen />;
+    case 'porno-vs-realite':
+      return <PornoVsRealiteScreen />;
+    case 'loi-consentement':
+      return <LoiConsentementScreen />;
+    case 'quiz-hub':
+      return <QuizHubScreen />;
+    case 'quiz-consentement':
+      return <QuizConsentementScreen />;
+    case 'accompagnement-mineur':
+      return <AccompagnementMineurScreen />;
+    case 'accompagnement-adulte':
+      return <AccompagnementAdulteScreen />;
+    case 'annuaire-sexologues':
+      return <AnnuaireSexologuesScreen />;
     case 'module-de-base':
       return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
     case 'pratiques-base':
@@ -135,6 +154,7 @@ function RenderScreen({ screen }: { screen: Screen }) {
     case 'alcool-consent':
       return <AlcoolConsentScreen isAdult={isAdult} onNavigate={navigateTo} />;
     case 'premium':
+      return <PremiumScreen />;
     case 'scenario-game':
       return <PlaceholderScreen screen={screen} />;
   }

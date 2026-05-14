@@ -1,4 +1,9 @@
-import type { FichePratiqueItem } from '../components/screens/FichesPratiques';
+// TODO Phase 5 contenu — les exports actuels sont des STUBS (3 items
+// par module). Le contenu pédagogique réel sera migré depuis
+// app/data/ (V3) vers packages/core/src/data/ via les fichiers i18n JSON.
+// Cibles : 14 modules × 5-15 items selon le module V3 d'origine.
+// Ne pas considérer ces stubs comme du contenu final.
+import type { FichePratiqueItem } from '../types/fiches-pratiques';
 
 export const MODULE_DE_BASE_ITEMS: FichePratiqueItem[] = [
   { id: '1', iconName: 'Heart' },
