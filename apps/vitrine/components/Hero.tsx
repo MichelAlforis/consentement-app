@@ -203,13 +203,7 @@ function AppContent() {
           <span className="text-oui-violet-light text-[10px] font-bold">Palier 2</span>
         </div>
         <div className="w-full h-2 rounded-full bg-oui-border overflow-hidden">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: '68%',
-              background: 'linear-gradient(90deg, #8b5cf6, #ec4899)',
-            }}
-          />
+          <div className="bar-fill-anim h-full rounded-full" />
         </div>
         <div className="flex justify-between mt-1.5">
           <span className="text-white/30 text-[9px]">28 pts</span>

@@ -209,77 +209,77 @@ export const collectorCards: CollectorCard[] = [
   // Positions classiques — défi de communication simple
 
   // Justification rareté : exercice direct, question accessible → common
-  { id: 'cb-001', deck: 'B', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'missionnaire'],  visual: VB.fire,    text: 'Avant votre prochaine fois en missionnaire : dites chacun un réglage précis qui changerait tout — rythme, angle, contact.' },
+  { id: 'cb-001', deck: 'B', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'missionnaire'],  visual: deckBVisuals.fire,    text: 'Avant votre prochaine fois en missionnaire : dites chacun un réglage précis qui changerait tout — rythme, angle, contact.' },
   // Justification rareté : signal à inventer ensemble, simple → common
-  { id: 'cb-002', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'levrette'],      visual: VB.fire,    text: 'La levrette coupe le contact visuel. Inventez maintenant un signal pour "j\'adore ça" et un pour "ralentis".' },
+  { id: 'cb-002', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'levrette'],      visual: deckBVisuals.fire,    text: 'La levrette coupe le contact visuel. Inventez maintenant un signal pour "j\'adore ça" et un pour "ralentis".' },
   // Justification rareté : question directe sur une habitude → common
-  { id: 'cb-003', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cuillere'],      visual: VB.fire,    text: 'En cuillère, qui initie d\'habitude ? Discutez si cette répartition vous convient vraiment à tous les deux.' },
+  { id: 'cb-003', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cuillere'],      visual: deckBVisuals.fire,    text: 'En cuillère, qui initie d\'habitude ? Discutez si cette répartition vous convient vraiment à tous les deux.' },
   // Justification rareté : réflexion concrète sur le contrôle → common
-  { id: 'cb-004', deck: 'B', theme: 'osez',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cowgirl'],       visual: VB.fire,    text: 'La personne du dessus contrôle le rythme. Partenaire du dessous : comment exprimes-tu tes préférences sans briser l\'élan ?' },
+  { id: 'cb-004', deck: 'B', theme: 'osez',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cowgirl'],       visual: deckBVisuals.fire,    text: 'La personne du dessus contrôle le rythme. Partenaire du dessous : comment exprimes-tu tes préférences sans briser l\'élan ?' },
   // Justification rareté : signal non-verbal à définir ensemble → common
-  { id: 'cb-005', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'andromaque'],    visual: VB.fire,    text: 'En andromaque vous ne vous voyez pas. Quel geste utilisez-vous pour signaler "j\'adore" ou "ralentis" ? Définissez-le maintenant.' },
+  { id: 'cb-005', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'andromaque'],    visual: deckBVisuals.fire,    text: 'En andromaque vous ne vous voyez pas. Quel geste utilisez-vous pour signaler "j\'adore" ou "ralentis" ? Définissez-le maintenant.' },
   // Justification rareté : négociation simple avant la position → common
-  { id: 'cb-006', deck: 'B', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'papillon'],      visual: VB.fire,    text: 'Au bord du lit, partenaire allongé. Avant d\'essayer le papillon : négociez l\'angle, le rythme et la profondeur à voix haute.' },
+  { id: 'cb-006', deck: 'B', theme: 'defi',    depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'papillon'],      visual: deckBVisuals.fire,    text: 'Au bord du lit, partenaire allongé. Avant d\'essayer le papillon : négociez l\'angle, le rythme et la profondeur à voix haute.' },
   // Justification rareté : communication sur l'inconfort, directe → common
-  { id: 'cb-007', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'equerre'],       visual: VB.fire,    text: 'Jambe levée sur l\'épaule. Dites clairement comment vous voulez que l\'autre ajuste sa position si quelque chose devient inconfortable.' },
+  { id: 'cb-007', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'equerre'],       visual: deckBVisuals.fire,    text: 'Jambe levée sur l\'épaule. Dites clairement comment vous voulez que l\'autre ajuste sa position si quelque chose devient inconfortable.' },
   // Justification rareté : question sur le consentement simultané → common
-  { id: 'cb-008', deck: 'B', theme: 'verite',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', '69'],            visual: VB.fire,    text: 'Le 69 c\'est du simultané. Comment vérifiez-vous que les deux ont la même envie au même moment ?' },
+  { id: 'cb-008', deck: 'B', theme: 'verite',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', '69'],            visual: deckBVisuals.fire,    text: 'Le 69 c\'est du simultané. Comment vérifiez-vous que les deux ont la même envie au même moment ?' },
   // Justification rareté : réflexion sur l'adaptation physique → common
-  { id: 'cb-009', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'debout'],        visual: VB.fire,    text: 'Debout demande de la synchronisation physique. Qui s\'adapte à qui — et l\'avez-vous décidé ensemble avant ?' },
+  { id: 'cb-009', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'debout'],        visual: deckBVisuals.fire,    text: 'Debout demande de la synchronisation physique. Qui s\'adapte à qui — et l\'avez-vous décidé ensemble avant ?' },
   // Justification rareté : signal de plaisir dans position sans contact visuel → common
-  { id: 'cb-010', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cowgirl-inv'],   visual: VB.fire,    text: 'En cowgirl inversée vous ne vous regardez pas. Comment la personne du dessous communique-t-elle son plaisir ou son inconfort ?' },
+  { id: 'cb-010', deck: 'B', theme: 'parlez',  depth: 1, rarity: 'common', unlockedBy: 'heat-4', tags: ['kamasutra', 'cowgirl-inv'],   visual: deckBVisuals.fire,    text: 'En cowgirl inversée vous ne vous regardez pas. Comment la personne du dessous communique-t-elle son plaisir ou son inconfort ?' },
 
   // ── heat-4 · rare · depth 2 ───────────────────────────────────────────
   // Positions qui demandent une conversation plus profonde
 
   // Justification rareté : silence intime, vulnérabilité difficile à nommer → rare
-  { id: 'cb-011', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'lotus'],         visual: VB.passion, text: 'Lotus : corps enlacés, face à face. Restez dans cette position 30 secondes sans bouger. Qu\'est-ce que ça révèle sur votre façon de vous regarder ?' },
+  { id: 'cb-011', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'lotus'],         visual: deckBVisuals.passion, text: 'Lotus : corps enlacés, face à face. Restez dans cette position 30 secondes sans bouger. Qu\'est-ce que ça révèle sur votre façon de vous regarder ?' },
   // Justification rareté : question sur le contrôle, difficile à aborder → rare
-  { id: 'cb-012', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'amazone'],       visual: VB.passion, text: 'L\'amazone met l\'un d\'entre vous en position dominante. Avez-vous déjà parlé explicitement de qui "prend le contrôle" — et si ça vous convient ?' },
+  { id: 'cb-012', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'amazone'],       visual: deckBVisuals.passion, text: 'L\'amazone met l\'un d\'entre vous en position dominante. Avez-vous déjà parlé explicitement de qui "prend le contrôle" — et si ça vous convient ?' },
   // Justification rareté : code non-verbal à créer ensemble, créatif → rare
-  { id: 'cb-013', deck: 'B', theme: 'et-si',   depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'balancier'],     visual: VB.passion, text: 'Le balancier se rythme à deux. Inventez un code non-verbal pour vous synchroniser sans parler — et testez-le.' },
+  { id: 'cb-013', deck: 'B', theme: 'et-si',   depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'balancier'],     visual: deckBVisuals.passion, text: 'Le balancier se rythme à deux. Inventez un code non-verbal pour vous synchroniser sans parler — et testez-le.' },
   // Justification rareté : question sur l'autorité dans la position → rare
-  { id: 'cb-014', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'mur'],           visual: VB.passion, text: 'Contre le mur — soutien et puissance. Qui donne le signal pour changer de position ou s\'arrêter — et comment ?' },
+  { id: 'cb-014', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'mur'],           visual: deckBVisuals.passion, text: 'Contre le mur — soutien et puissance. Qui donne le signal pour changer de position ou s\'arrêter — et comment ?' },
   // Justification rareté : limite de profondeur difficile à nommer → rare
-  { id: 'cb-015', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'jambes-epaules'], visual: VB.passion, text: 'Jambes sur les épaules augmente la profondeur. Avez-vous déjà dit à voix haute où est votre limite — et qu\'est-ce qui l\'a changée ?' },
+  { id: 'cb-015', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'jambes-epaules'], visual: deckBVisuals.passion, text: 'Jambes sur les épaules augmente la profondeur. Avez-vous déjà dit à voix haute où est votre limite — et qu\'est-ce qui l\'a changée ?' },
   // Justification rareté : ancrage corporel, réflexion intime → rare
-  { id: 'cb-016', deck: 'B', theme: 'douceur', depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'cuillere-jambe'], visual: VB.passion, text: 'Double cuillère, jambe levée — contact maximal. Quelle partie du corps vous ancre dans cette position, et pourquoi ?' },
+  { id: 'cb-016', deck: 'B', theme: 'douceur', depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'cuillere-jambe'], visual: deckBVisuals.passion, text: 'Double cuillère, jambe levée — contact maximal. Quelle partie du corps vous ancre dans cette position, et pourquoi ?' },
   // Justification rareté : vulnérabilité du face à face total → rare
-  { id: 'cb-017', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'assis-face'],    visual: VB.passion, text: 'Face à face assis, jambes enroulées — vulnérabilité totale. Qu\'est-ce que vous permettez à l\'autre de voir dans cette position que vous gardez habituellement ?' },
+  { id: 'cb-017', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'assis-face'],    visual: deckBVisuals.passion, text: 'Face à face assis, jambes enroulées — vulnérabilité totale. Qu\'est-ce que vous permettez à l\'autre de voir dans cette position que vous gardez habituellement ?' },
   // Justification rareté : verbalisation en continu, difficile → rare
-  { id: 'cb-018', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'vague'],         visual: VB.passion, text: 'Mouvement de vague, lent et synchronisé. Pouvez-vous rester 5 minutes ainsi en verbalisant à voix basse tout ce que vous ressentez ?' },
+  { id: 'cb-018', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'vague'],         visual: deckBVisuals.passion, text: 'Mouvement de vague, lent et synchronisé. Pouvez-vous rester 5 minutes ainsi en verbalisant à voix basse tout ce que vous ressentez ?' },
   // Justification rareté : communication dans une position de moindre contrôle → rare
-  { id: 'cb-019', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'chaise-longue'],  visual: VB.passion, text: 'Position chaise longue — l\'un a moins de contrôle. Comment exprimes-tu tes préférences de mouvement dans cette situation ?' },
+  { id: 'cb-019', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'chaise-longue'],  visual: deckBVisuals.passion, text: 'Position chaise longue — l\'un a moins de contrôle. Comment exprimes-tu tes préférences de mouvement dans cette situation ?' },
   // Justification rareté : check-in pendant l'effort physique, souvent oublié → rare
-  { id: 'cb-020', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'arc'],           visual: VB.passion, text: 'Position de l\'arc — dos cambré, physiquement exigeant. Comment vérifiez-vous que l\'autre est encore à l\'aise pendant une position intense ?' },
+  { id: 'cb-020', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-4', tags: ['kamasutra', 'arc'],           visual: deckBVisuals.passion, text: 'Position de l\'arc — dos cambré, physiquement exigeant. Comment vérifiez-vous que l\'autre est encore à l\'aise pendant une position intense ?' },
 
   // ── heat-5 · rare · depth 2 ───────────────────────────────────────────
   // Pratiques intimes qui demandent une communication explicite totale
 
   // Justification rareté : guidage à voix haute pendant l'acte, difficile → rare
-  { id: 'cb-021', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'oral'],          visual: VB.passion, text: 'Guidez l\'autre à voix haute pendant un moment de plaisir oral. Dites ce que vous aimez, ce que vous voulez, ce que vous ne voulez pas — sans sous-entendre.' },
+  { id: 'cb-021', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'oral'],          visual: deckBVisuals.passion, text: 'Guidez l\'autre à voix haute pendant un moment de plaisir oral. Dites ce que vous aimez, ce que vous voulez, ce que vous ne voulez pas — sans sous-entendre.' },
   // Justification rareté : retour en temps réel, rare à pratiquer → rare
-  { id: 'cb-022', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'oral'],          visual: VB.passion, text: 'Cunnilingus guidé : décrivez en temps réel ce qui vous fait le plus de bien. L\'autre écoute et s\'adapte — sans deviner.' },
+  { id: 'cb-022', deck: 'B', theme: 'parlez',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'oral'],          visual: deckBVisuals.passion, text: 'Cunnilingus guidé : décrivez en temps réel ce qui vous fait le plus de bien. L\'autre écoute et s\'adapte — sans deviner.' },
   // Justification rareté : conditions non-négociables, conversation difficile → rare
-  { id: 'cb-023', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'anal'],          visual: VB.passion, text: 'Si vous voulez explorer la pénétration anale : nommez maintenant trois conditions non-négociables chacun. Aucune ne peut être ignorée.' },
+  { id: 'cb-023', deck: 'B', theme: 'verite',  depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'anal'],          visual: deckBVisuals.passion, text: 'Si vous voulez explorer la pénétration anale : nommez maintenant trois conditions non-négociables chacun. Aucune ne peut être ignorée.' },
   // Justification rareté : coordination et contrôle à négocier → rare
-  { id: 'cb-024', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'sextoy'],        visual: VB.passion, text: 'Sextoy en couple : décidez ensemble de son usage — qui contrôle, quel signal pour changer, comment vous communiquez en temps réel.' },
+  { id: 'cb-024', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'sextoy'],        visual: deckBVisuals.passion, text: 'Sextoy en couple : décidez ensemble de son usage — qui contrôle, quel signal pour changer, comment vous communiquez en temps réel.' },
   // Justification rareté : safeword testé à froid, engagement fort → rare
-  { id: 'cb-025', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'bondage-leger'],  visual: VB.passion, text: 'Liens légers convenus. Quel mot arrête tout immédiatement — et l\'avez-vous testé une fois à froid, hors du moment ?' },
+  { id: 'cb-025', deck: 'B', theme: 'defi',    depth: 2, rarity: 'rare',   unlockedBy: 'heat-5', tags: ['kamasutra', 'bondage-leger'],  visual: deckBVisuals.passion, text: 'Liens légers convenus. Quel mot arrête tout immédiatement — et l\'avez-vous testé une fois à froid, hors du moment ?' },
 
   // ── heat-5 · unique · depth 3 ─────────────────────────────────────────
   // Défis mémorables — moments fondateurs dans la relation
 
   // Justification rareté : création partagée, permanente dans la relation → unique
-  { id: 'cb-026', deck: 'B', theme: 'osez',    depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'creation'],      visual: VB.noir,    text: 'Inventez ensemble une position qui n\'existe pas encore. Donnez-lui un nom. Elle vous appartient.' },
+  { id: 'cb-026', deck: 'B', theme: 'osez',    depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'creation'],      visual: deckBVisuals.noir,    text: 'Inventez ensemble une position qui n\'existe pas encore. Donnez-lui un nom. Elle vous appartient.' },
   // Justification rareté : première fois ensemble, révélation de désirs cachés → unique
-  { id: 'cb-027', deck: 'B', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'premiers'],      visual: VB.noir,    text: 'Choisissez chacun une chose que vous n\'avez jamais faite ensemble et qui vous fait envie. Négociez laquelle vous allez explorer — là, maintenant.' },
+  { id: 'cb-027', deck: 'B', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'premiers'],      visual: deckBVisuals.noir,    text: 'Choisissez chacun une chose que vous n\'avez jamais faite ensemble et qui vous fait envie. Négociez laquelle vous allez explorer — là, maintenant.' },
   // Justification rareté : contact visuel total, révèle une vulnérabilité profonde → unique
-  { id: 'cb-028', deck: 'B', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'miroir'],        visual: VB.noir,    text: 'Face à face, gardez le contact visuel pendant tout un acte sans le couper. Qu\'est-ce que vous permettez à l\'autre de voir que vous masquiez habituellement ?' },
+  { id: 'cb-028', deck: 'B', theme: 'verite',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'miroir'],        visual: deckBVisuals.noir,    text: 'Face à face, gardez le contact visuel pendant tout un acte sans le couper. Qu\'est-ce que vous permettez à l\'autre de voir que vous masquiez habituellement ?' },
   // Justification rareté : verbalisation continue, exige une confiance totale → unique
-  { id: 'cb-029', deck: 'B', theme: 'parlez',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'marathon'],      visual: VB.noir,    text: 'Pendant 10 minutes d\'intimité, verbalisez à voix haute tout ce que vous ressentez — plaisir, inconfort, désir, hésitation. Rien ne reste non-dit.' },
+  { id: 'cb-029', deck: 'B', theme: 'parlez',  depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'marathon'],      visual: deckBVisuals.noir,    text: 'Pendant 10 minutes d\'intimité, verbalisez à voix haute tout ce que vous ressentez — plaisir, inconfort, désir, hésitation. Rien ne reste non-dit.' },
   // Justification rareté : intention posée avant l'acte, rituel fondateur → unique
-  { id: 'cb-030', deck: 'B', theme: 'douceur', depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'intention'],     visual: VB.noir,    text: 'Avant de commencer, chacun dit ce qu\'il veut que ce moment soit. Pas de sous-entendus. Puis laissez vos corps faire le reste.' },
+  { id: 'cb-030', deck: 'B', theme: 'douceur', depth: 3, rarity: 'unique', unlockedBy: 'heat-5', tags: ['kamasutra', 'intention'],     visual: deckBVisuals.noir,    text: 'Avant de commencer, chacun dit ce qu\'il veut que ce moment soit. Pas de sous-entendus. Puis laissez vos corps faire le reste.' },
 
   // ═══════════════════════════════════════════════════════════════════════
   // LEXIQUE — Deck A · débloquées par palier Baromètre du Hot
