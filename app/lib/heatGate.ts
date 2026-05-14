@@ -8,7 +8,7 @@ export type HeatGatedFeature =
   | 'quiz-expert'        // Quiz niveau Expert — palier 4
   | 'expert-cards';      // Cartes Expert — palier 5 (à venir)
 
-const GATE_THRESHOLDS: Record<HeatGatedFeature, HeatLevel> = {
+export const GATE_THRESHOLDS: Record<HeatGatedFeature, HeatLevel> = {
   'explicit': 2,
   'quiz-intermediaire': 2,
   'scenarios': 3,

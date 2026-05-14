@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import {
   computeHeatPoints,
+  computeHeatBreakdown,
   getHeatLevel,
   getHeatLevelFromInput,
   heatLevelProgress,
   pointsToNextLevel,
   HEAT_THRESHOLDS,
+  MODULE_POINTS,
+  CARD_POINTS,
+  SESSION_POINT_VALUE,
 } from './heatLevel';
 import type { HeatInput } from './heatLevel';
 import type { OwnedCard } from '../stores/unlockStore';
@@ -164,4 +168,105 @@ describe('heatLevelProgress', () => {
   it('retourne 0.5 au milieu du palier 1→2', () => expect(heatLevelProgress(6)).toBe(0.5));
   it('retourne 1 au palier max', () => expect(heatLevelProgress(130)).toBe(1));
   it('retourne 1 au-delà du palier max', () => expect(heatLevelProgress(200)).toBe(1));
+});
+
+describe('SESSION_POINT_VALUE', () => {
+  it('vaut exactement 1', () => expect(SESSION_POINT_VALUE).toBe(1));
+  it('est utilisé par computeHeatBreakdown (sessions = count × valeur)', () => {
+    const { sessions } = computeHeatBreakdown({ completedModules: [], ownedCards: [], sessionCount: 7 });
+    expect(sessions).toBe(7 * SESSION_POINT_VALUE);
+  });
+});
+
+describe('CARD_POINTS — cohérence rareté', () => {
+  it('common < rare < unique', () => {
+    expect(CARD_POINTS.common).toBeLessThan(CARD_POINTS.rare);
+    expect(CARD_POINTS.rare).toBeLessThan(CARD_POINTS.unique);
+  });
+});
+
+describe('MODULE_POINTS — couverture complète', () => {
+  const expectedModules = [
+    'module-de-base', 'module-de-base-mineur',
+    'porno-vs-realite', 'porno-vs-realite-mineur',
+    'quiz-consentement', 'quiz-consentement-mineur',
+    'loi-consentement', 'loi-consentement-mineur',
+    'duo-flow', 'module-pratiques-adultes', 'accompagnement-mineur',
+    'quiz-d1', 'quiz-d2', 'quiz-d3',
+    'quiz-i1', 'quiz-i2', 'quiz-i3',
+    'quiz-e1', 'quiz-e2', 'quiz-e3',
+  ];
+
+  it('tous les modules attendus ont des points définis', () => {
+    for (const id of expectedModules) {
+      expect(MODULE_POINTS[id as keyof typeof MODULE_POINTS], `MODULE_POINTS['${id}'] manquant`).toBeGreaterThan(0);
+    }
+  });
+
+  it('tous les points sont positifs', () => {
+    for (const [id, pts] of Object.entries(MODULE_POINTS)) {
+      expect(pts, `MODULE_POINTS['${id}'] doit être > 0`).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('dual-reward : module-de-base — progression complète', () => {
+  // module-de-base donne :
+  //   MODULE_POINTS = 3 pts (apprentissage)
+  //   + 24 cartes common × 1pt = 24 pts (collection starter)
+  //   = 27 pts total → dépasse directement le palier 2 (seuil 12)
+  const starterCards: OwnedCard[] = Array.from({ length: 24 }, (_, i) => ({
+    id: `ca-${i.toString().padStart(2, '0')}`,
+    rarity: 'common' as const,
+    gainedOn: '2026-01-01',
+    unlockedBy: 'module-de-base',
+  }));
+
+  it('3 pts module + 24 cartes common = 27 pts total', () => {
+    const input: HeatInput = {
+      completedModules: ['module-de-base'],
+      ownedCards: starterCards,
+      sessionCount: 0,
+    };
+    expect(computeHeatPoints(input)).toBe(27);
+  });
+
+  it('atteint directement le palier 2 (12 pts requis)', () => {
+    const input: HeatInput = {
+      completedModules: ['module-de-base'],
+      ownedCards: starterCards,
+      sessionCount: 0,
+    };
+    expect(getHeatLevelFromInput(input)).toBe(2);
+  });
+
+  it('breakdown : modules=3, cards=24, sessions=0, profile=0', () => {
+    const input: HeatInput = {
+      completedModules: ['module-de-base'],
+      ownedCards: starterCards,
+      sessionCount: 0,
+    };
+    expect(computeHeatBreakdown(input)).toEqual({ modules: 3, cards: 24, sessions: 0, profile: 0 });
+  });
+});
+
+describe('dual-reward : module-pratiques-adultes (max reward)', () => {
+  it('10 pts module + 1 unique (5pts) = 15 pts', () => {
+    const input: HeatInput = {
+      completedModules: ['module-pratiques-adultes'],
+      ownedCards: [{ id: 'u-01', rarity: 'unique', gainedOn: '2026-01-01', unlockedBy: 'module-pratiques-adultes' }],
+      sessionCount: 0,
+    };
+    expect(computeHeatPoints(input)).toBe(15);
+  });
+});
+
+describe('HEAT_THRESHOLDS — cohérence des seuils', () => {
+  it('palier 1 commence à 0', () => expect(HEAT_THRESHOLDS[1]).toBe(0));
+  it('les seuils sont strictement croissants', () => {
+    expect(HEAT_THRESHOLDS[1]).toBeLessThan(HEAT_THRESHOLDS[2]);
+    expect(HEAT_THRESHOLDS[2]).toBeLessThan(HEAT_THRESHOLDS[3]);
+    expect(HEAT_THRESHOLDS[3]).toBeLessThan(HEAT_THRESHOLDS[4]);
+    expect(HEAT_THRESHOLDS[4]).toBeLessThan(HEAT_THRESHOLDS[5]);
+  });
 });

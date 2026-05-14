@@ -3,6 +3,18 @@ import type { EffectiveModuleId } from '../modules';
 
 export type HeatLevel = 1 | 2 | 3 | 4 | 5;
 
+/**
+ * Système de points DUAL-REWARD intentionnel :
+ *
+ * Compléter un module donne des points DE DEUX SOURCES DISTINCTES :
+ *   1. MODULE_POINTS[moduleId]  — récompense l'apprentissage lui-même
+ *   2. CARD_POINTS × cartes gagnées — récompense la collection débloquée
+ *
+ * Ce n'est PAS du double-comptage : les deux stores (moduleProgressStore
+ * et unlockStore) sont indépendants et mesurent des choses différentes.
+ * Le deck starter de module-de-base (24 cartes common) donne donc 3 + 24 = 27 pts,
+ * ce qui propulse immédiatement l'utilisateur au palier 2 lors de sa première session.
+ */
 export interface HeatInput {
   completedModules: string[];
   ownedCards: OwnedCard[];
@@ -17,7 +29,7 @@ export interface HeatInput {
   lexiqueWords?: number;
 }
 
-// Points par module (basés sur la rareté de la récompense)
+// Points par module (récompense l'apprentissage — indépendant des cartes gagnées)
 export const MODULE_POINTS: Partial<Record<EffectiveModuleId, number>> = {
   'module-de-base': 3,
   'module-de-base-mineur': 3,
@@ -35,12 +47,15 @@ export const MODULE_POINTS: Partial<Record<EffectiveModuleId, number>> = {
   'quiz-e1': 8, 'quiz-e2': 8, 'quiz-e3': 8,
 };
 
-// Points par rareté de carte
+// Points par rareté de carte (s'accumulent séparément des MODULE_POINTS)
 export const CARD_POINTS: Record<OwnedCard['rarity'], number> = {
   common: 1,
   rare: 2,
   unique: 5,
 };
+
+// 1 point par séance de jeu complète
+export const SESSION_POINT_VALUE = 1;
 
 // Seuils des 5 paliers (pts minimum pour atteindre le palier)
 export const HEAT_THRESHOLDS: Record<HeatLevel, number> = {
@@ -50,6 +65,24 @@ export const HEAT_THRESHOLDS: Record<HeatLevel, number> = {
   4: 80,
   5: 130,
 };
+
+/**
+ * Tableau de référence : total de points maximum qu'un module peut rapporter
+ * (MODULE_POINTS + CARD_POINTS × cartes données par ce module selon modules.ts).
+ *
+ * module-de-base      : 3 + 24×1 = 27 pts  (deck starter 24 common)
+ * porno-vs-realite    : 2 +  1×1 =  3 pts
+ * quiz-consentement   : 2 +  1×1 =  3 pts
+ * loi-consentement    : 5 +  1×2 =  7 pts  (1 rare)
+ * duo-flow            : 5 +  1×2 =  7 pts  (1 rare)
+ * accompagnement-mineur: 5 + 1×2 =  7 pts  (1 rare)
+ * module-pratiques-adultes: 10 + 1×5 = 15 pts (1 unique)
+ * quiz-d1/d2/d3       : 2 +  1×1 =  3 pts  chacun
+ * quiz-i1/i2/i3       : 4 +  1×2 =  6 pts  chacun
+ * quiz-e1/e2/e3       : 8 +  1×5 = 13 pts  chacun
+ *
+ * Bonus profil max    : 3 (confort) + 3 (safeword) + 2 (pronoms) = 8 pts
+ */
 
 export interface HeatBreakdown {
   modules: number;
@@ -67,7 +100,7 @@ export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
     return sum + (CARD_POINTS[card.rarity] ?? 0);
   }, 0);
 
-  const sessions = input.sessionCount;
+  const sessions = input.sessionCount * SESSION_POINT_VALUE;
 
   const profile =
     (input.profileComfortCategories ?? 0) +
