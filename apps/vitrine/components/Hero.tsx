@@ -240,7 +240,7 @@ function AppContent() {
           <div className="text-white/70 text-[10px] font-medium">Lexique</div>
           <div className="text-white/30 text-[9px]">3 nouveaux termes débloqués</div>
         </div>
-        <span className="text-oui-violet-light text-[10px] font-bold">+3</span>
+        <span className="text-oui-violet-light text-[10px] font-bold badge-pop">+3</span>
       </div>
     </div>
   );

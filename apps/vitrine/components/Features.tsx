@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { SectionLabel } from './WhySection';
 
 const IMG_CARD_BG =
@@ -35,10 +36,25 @@ const SECONDARY = [
 ];
 
 export default function Features() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setRevealed(true); obs.disconnect(); } },
+      { threshold: 0.08 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="features"
-      className="py-28 px-6 relative"
+      className={`py-28 px-6 relative${revealed ? ' features-revealed' : ''}`}
       style={{ background: 'linear-gradient(to bottom, #0d0714, rgba(26,17,40,0.5), #0d0714)' }}
     >
       {/* Image décorative Midjourney — fond flou droite */}
@@ -70,15 +86,15 @@ export default function Features() {
 
         {/* Featured 2-col */}
         <div className="grid sm:grid-cols-2 gap-5 mb-5">
-          {FEATURED.map((f) => (
-            <FeaturedCard key={f.label} {...f} />
+          {FEATURED.map((f, i) => (
+            <FeaturedCard key={f.label} {...f} revealDelay={i * 80} />
           ))}
         </div>
 
         {/* Secondary grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {SECONDARY.map((f, i) => (
-            <SecondaryCard key={f.label} {...f} highlight={i === 6} />
+            <SecondaryCard key={f.label} {...f} highlight={i === 6} revealDelay={160 + i * 60} />
           ))}
         </div>
       </div>
@@ -87,10 +103,13 @@ export default function Features() {
 }
 
 function FeaturedCard({
-  icon, label, desc, accent, borderClass,
-}: (typeof FEATURED)[0]) {
+  icon, label, desc, accent, borderClass, revealDelay,
+}: (typeof FEATURED)[0] & { revealDelay: number }) {
   return (
-    <div className={`${borderClass} rounded-2xl`}>
+    <div
+      className={`${borderClass} rounded-2xl reveal-item`}
+      style={{ '--reveal-delay': `${revealDelay}ms` } as React.CSSProperties}
+    >
       <div
         className="grad-inner rounded-[calc(1rem-1px)] p-8 h-full flex flex-col gap-5 transition-all duration-200 hover:scale-[1.01]"
         style={{ background: `linear-gradient(145deg, ${accent}, #1a1128 60%)` }}
@@ -111,18 +130,19 @@ function FeaturedCard({
 }
 
 function SecondaryCard({
-  icon, label, desc, highlight,
-}: { icon: string; label: string; desc: string; highlight?: boolean }) {
+  icon, label, desc, highlight, revealDelay,
+}: { icon: string; label: string; desc: string; highlight?: boolean; revealDelay: number }) {
   return (
     <div
-      className={`p-5 rounded-2xl flex flex-col gap-3 transition-all duration-200 hover:scale-[1.02] ${
+      className={`p-5 rounded-2xl flex flex-col gap-3 transition-all duration-200 hover:scale-[1.02] reveal-item ${
         highlight ? 'sm:col-span-2 lg:col-span-1' : ''
       }`}
       style={{
         background: 'rgba(26,17,40,0.7)',
         border: '1px solid rgba(255,255,255,0.05)',
         backdropFilter: 'blur(8px)',
-      }}
+        '--reveal-delay': `${revealDelay}ms`,
+      } as React.CSSProperties}
     >
       <span className="text-2xl">{icon}</span>
       <div>
