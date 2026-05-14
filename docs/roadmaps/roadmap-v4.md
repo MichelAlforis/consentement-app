@@ -545,18 +545,25 @@ Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évit
 ## Phase 7 — Jeux R3F
 **Durée : 20–30 jours**
 
-### ⚠️ PROBLÈME R3F CONSTATÉ EN TEST DEVICE (2026-05-14)
+### ⚠️ PROBLÈME R3F — DIAGNOSTIC EN COURS (2026-05-14)
 
-Le rendu R3F (`@react-three/fiber/native` + expo-gl) n'est pas concluant sur device physique.
-**Phase 7 incomplète — les jeux fonctionnent côté logique mais le rendu 3D est à revoir.**
+**Findings session debug device (iPhone 17 Pro) :**
+- ✅ GL context expo-gl créé (`onCreated` fire)
+- ✅ Render loop `useFrame` actif
+- ✅ `shadows` fonctionnel (WARN PCFSoftShadowMap = dépréciation mineure)
+- ❌ `Environment preset="studio"` → charge HDR externe → `Suspense fallback=null` → cube invisible → **supprimé**
+- ❌ `MeshPhysicalMaterial` sans envMap → cube invisible (IBL manquant) → **migré vers `MeshLambertMaterial`**
+- ❌ Animation statique : `roll effect` fire avec `hasRef:true, isRolling:false` — l'effet se déclenche au mount (isRolling=false), pas encore observé avec isRolling=true → à continuer
 
-Options à évaluer :
-- **A) Fallback 2D pur** : remplacer DiceCanvas R3F par un rendu RN natif (SVG + Reanimated). Déjà possible via le mode `FlatTile` existant dans DiceRenderer.
-- **B) Expo Three.js GL** : investiguer les problèmes précis (crash ? fps ? artefacts ?) et corriger ciblés.
-- **C) Skia** : `@shopify/react-native-skia` — alternative R3F, meilleure intégration RN, supporte shaders + filtres. Implique réécriture des 3 Canvas.
-- **D) Abandon R3F** : version 1.0 sans jeux 3D → game-engine stub + upgrade ultérieur.
+**État actuel (commit a930db8) :** dé visible avec Lambert + lumières directes. Animation non validée.
 
-**→ Décision à prendre avant de relancer Phase 7. Pas de travail R3F tant que le problème n'est pas diagnostiqué.**
+**Prochaine étape R3F (sprint dédié) :**
+Valider que `roll effect` fire avec `isRolling:true` après tap "Lancer". Si `hasRef:false` → timing issue React/R3F à corriger via `useCallback` + ref check dans `useFrame`. Logs diagnostics conservés dans DiceCanvas.
+
+Options de repli si animation reste bloquée :
+- **A) FlatTile** : `renderer="flat"` dans DiceRenderer — déjà implémenté, 0 R3F
+- **B) Skia** : `@shopify/react-native-skia` — réécriture Canvas, meilleure intégration RN
+- **C) Continuer R3F** : corriger timing ref + animation dans sprint dédié
 
 ### Ordre (du plus simple au plus complexe)
 
