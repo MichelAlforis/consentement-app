@@ -121,15 +121,11 @@ function AnimatedCube({
   // RoundedBoxGeometry de three-stdlib : coins arrondis + 6 groupes BoxGeometry
   const geometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 2, 0.08), []);
 
+  // MeshLambertMaterial : pas besoin d'envMap (MeshPhysicalMaterial → noir sans IBL sur expo-gl)
   const matArray = useMemo(() => {
     const mat = (texIdx: number) =>
-      new THREE.MeshPhysicalMaterial({
+      new THREE.MeshLambertMaterial({
         map: textures[texIdx],
-        roughness: 0.45,
-        metalness: 0,
-        envMapIntensity: 0.25,
-        clearcoat: 0.15,
-        clearcoatRoughness: 0.4,
       });
     return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
   }, [textures]);
@@ -151,6 +147,7 @@ function AnimatedCube({
   const idle = useRef({ t: 0 });
 
   useEffect(() => {
+    console.log('[DiceCanvas] roll effect', { isRolling, hasRef: !!groupRef.current });
     if (!isRolling || !groupRef.current) return;
 
     // Resync cumulative avec la rotation réelle (qui inclut l'offset idle)
@@ -237,6 +234,7 @@ function AnimatedCube({
     const a = anim.current;
     const b = bounce.current;
     if (!group || a.rolling || b.active) return;
+    if (idle.current.t === 0) console.log('[DiceCanvas] useFrame idle — premier tick ✓');
     idle.current.t += delta;
     const t = idle.current.t;
     // Oscillation Y (±26°) + tilt X (±8°) + flottement vertical (±0.12)
@@ -270,9 +268,9 @@ function DiceScene({
   return (
     <>
       {/* Environment preset supprimé : charge HDR externe → échec silencieux → Suspense fallback=null */}
-      <ambientLight intensity={0.6} />
-      <pointLight position={[3, 4, 4]} intensity={1.2} castShadow />
-      <pointLight position={[-3, -2, 1]} intensity={0.4} />
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[3, 4, 4]} intensity={1.0} />
+      <directionalLight position={[-3, -2, 1]} intensity={0.4} />
       <Suspense fallback={null}>
         <group position={[0, 0, 0]}>
           <AnimatedCube
@@ -327,9 +325,9 @@ export function DiceCanvas({
         frameloop="always"
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
-        onCreated={(state) => {
+        onCreated={() => {
           // DIAG: log GL context — si absent → expo-gl n'initialise pas
-          console.log('[DiceCanvas] GL context created', state.gl.getParameter(state.gl.VERSION));
+          console.log('[DiceCanvas] GL context created ✓');
         }}
         gl={{
           antialias: true,
