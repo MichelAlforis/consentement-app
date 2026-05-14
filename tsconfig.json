@@ -38,7 +38,7 @@
     "node_modules",
     "**/.next/**",
     "**/out/**",
-    "apps/vitrine/**",
+    "apps/**",
     "packages/**"
   ]
 }
