@@ -1,0 +1,55 @@
+export const zonesGrises = {
+  zonesGrises: {
+    fiches: {
+      title: 'Zones grises',
+      subtitle: 'Les situations où la réponse n\'est pas évidente.',
+      sectionDef: 'La situation',
+      sectionConsent: 'La bonne réponse',
+      sectionLoi: 'Le contexte légal',
+      sectionQuestion: 'Question à retenir',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Quand les deux ont bu',
+        definition: 'Vous avez tous les deux bu. Les deux semblez d\'accord. L\'alcool brouille-t-il réellement le consentement dans ces cas ?',
+        consentement: 'Attendre d\'être sobre pour prendre cette décision — ou au moins vérifier sobrement — est la seule option responsable. Reporter à plus tard est toujours valide. Deux personnes ivres peuvent toutes les deux être incapables de consentir valablement.',
+        loi: '"On était pareil" ne résout pas le problème — ça le double. La particulière vulnérabilité liée à l\'ivresse est une circonstance aggravante reconnue (art. 222-22-1 CP), quelle que soit la situation des deux parties.',
+        question: 'Suis-je en état de décider librement et clairement à ce moment précis, ou est-ce que je devrais reporter cette décision ?',
+      },
+      1: {
+        titre: 'Habitude et changement d\'avis',
+        definition: 'Tu as déjà dit oui à cette pratique avec cette personne, mais ce soir tu n\'as pas envie. Est-il "injuste" de dire non maintenant ?',
+        consentement: 'Le consentement n\'est jamais acquis par habitude. Chaque situation est une nouvelle décision. Dire non ce soir après avoir dit oui d\'autres fois est parfaitement légitime — sans explication nécessaire.',
+        loi: 'En droit, aucune habitude ne crée d\'obligation de consentement futur. Le consentement implicite lié à une relation ou une pratique habituelle est régulièrement contesté et rejeté par les tribunaux.',
+        question: 'Est-ce que mon "non" ce soir est respecté de la même façon que si c\'était la première fois ?',
+      },
+      2: {
+        titre: '"Comme tu veux"',
+        definition: 'L\'autre dit "comme tu veux" d\'un ton neutre. Est-ce un consentement suffisant pour continuer ?',
+        consentement: '"Comme tu veux" signale souvent une absence d\'envie, pas une absence d\'objection. La différence entre "pas de refus" et "envie réelle" est au cœur du consentement enthousiaste. S\'arrêter et poser la question directement est la bonne réponse.',
+        loi: 'Le standard légal du consentement exige un accord libre et non équivoque. "Comme tu veux" est ambigu et ne constitue pas un accord clair. En cas de litige, cette ambiguïté se retourne contre celui qui a agi.',
+        question: 'Est-ce que je cherche un "oui" clair et enthousiaste, ou est-ce que je me contente d\'une absence d\'objection ?',
+      },
+      3: {
+        titre: 'Réaliser après coup',
+        definition: 'Tu réalises après coup que l\'autre n\'était peut-être pas vraiment à l\'aise pendant ce qui s\'est passé.',
+        consentement: 'Vérifier avec l\'autre, même si c\'est inconfortable, peut changer beaucoup de choses pour lui ou elle. "Est-ce que tu étais vraiment ok l\'autre soir ?" est une question qui montre que tu prends les choses au sérieux.',
+        loi: 'Rouvrir la conversation après coup n\'est pas une auto-incrimination — c\'est de la responsabilité. Cela peut aussi aider à clarifier une situation ambiguë et éviter qu\'elle se reproduise.',
+        question: 'Ai-je osé poser la question après coup, même si la réponse pouvait être inconfortable ?',
+      },
+      4: {
+        titre: 'Larmes après l\'acte',
+        definition: 'La personne n\'a pas dit non, mais elle a pleuré après. Que signifie cette réaction ?',
+        consentement: 'Les larmes après un rapport peuvent signifier beaucoup de choses, dont une détresse réelle. Ne pas dramatiser ≠ ignorer. Prendre soin de l\'autre et demander comment il ou elle va est toujours la bonne réponse.',
+        loi: 'Des pleurs post-rapport sont un signal sérieux à prendre en compte, pas à minimiser. Si la détresse réelle est ignorée et que les actes se répètent, cela peut aggraver la qualification légale d\'une situation déjà problématique.',
+        question: 'Ai-je pris le temps de vérifier comment l\'autre allait après l\'acte, sans minimiser ses émotions ?',
+      },
+      5: {
+        titre: 'Changer d\'avis sans le dire',
+        definition: 'Vous étiez tous les deux d\'accord au début, mais l\'un de vous a changé d\'avis en cours de route sans le dire — par peur, dissociation ou inconfort.',
+        consentement: 'Les deux dimensions comptent sans culpabiliser qui que ce soit : l\'un peut avoir du mal à parler (dissociation, peur du conflit), l\'autre peut ne pas avoir vérifié régulièrement. La communication est une responsabilité partagée.',
+        loi: 'La dissociation ou la sidération (état de choc) peuvent empêcher quelqu\'un d\'exprimer un retrait de consentement. Ce blocage physiologique ne signifie pas que l\'acte était consenti. La loi reconnaît cet état.',
+        question: 'Est-ce que je vérifie régulièrement que l\'autre est toujours à l\'aise en cours d\'acte, sans attendre un signal de refus ?',
+      },
+    },
+  },
+};

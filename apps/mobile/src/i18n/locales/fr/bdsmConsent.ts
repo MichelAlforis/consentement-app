@@ -1,0 +1,62 @@
+export const bdsmConsent = {
+  bdsmConsent: {
+    fiches: {
+      title: 'BDSM & consentement',
+      subtitle: 'Démêler les mythes des pratiques réelles.',
+      sectionDef: 'Idée reçue',
+      sectionConsent: 'La réalité',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'BDSM et consentement',
+        definition: 'En BDSM, pas besoin de consentement puisque la douleur est voulue.',
+        consentement: 'Le BDSM est la pratique sexuelle qui requiert le plus de consentement explicite. Le cadre repose sur la négociation préalable, les limites définies ensemble, et les mots de sécurité.',
+        loi: 'Sans consentement clair et informé, une pratique BDSM devient une agression — peu importe ce que la personne "avait l\'air de vouloir". Les infractions sont qualifiées identiquement hors contexte BDSM.',
+        question: 'Avons-nous négocié explicitement les limites, les pratiques autorisées et le mot de sécurité avant cette séance ?',
+      },
+      1: {
+        titre: 'Le safeword, pour les débutants ?',
+        definition: 'Avoir un mot de sécurité, c\'est pour les débutants. Les vrais pratiquants n\'en ont pas besoin.',
+        consentement: 'Le mot de sécurité est utilisé par les pratiquants expérimentés, précisément parce qu\'ils en comprennent l\'importance. Même dans une relation de confiance longue durée, les émotions et les limites évoluent.',
+        loi: 'Un mot de sécurité n\'est pas un aveu d\'inexpérience — c\'est un outil de communication essentiel qui doit toujours être respecté immédiatement. L\'ignorer peut constituer une agression (art. 222-22 CP).',
+        question: 'Est-ce que je tiens compte du mot de sécurité — y compris quand l\'utiliser me surprend ou m\'interrompt ?',
+      },
+      2: {
+        titre: 'Le contrat BDSM',
+        definition: 'Si quelqu\'un a signé un "contrat" BDSM, il ne peut plus dire non.',
+        consentement: 'Un contrat BDSM est un outil de communication sur les désirs et limites — pas un document légalement contraignant. Le consentement peut être retiré à tout moment, même en pleine scène.',
+        loi: 'Aucun contrat ne peut retirer le droit de retirer son consentement. Ignorer un mot de sécurité ou forcer malgré un refus est une agression, contrat ou non (art. 222-22 CP).',
+        question: 'Est-ce que je comprends qu\'un accord préalable ne supprime pas le droit de changer d\'avis à tout moment ?',
+      },
+      3: {
+        titre: 'Pouvoir de la personne soumise',
+        definition: 'La personne soumise n\'a pas de pouvoir dans la relation.',
+        consentement: 'Dans une relation BDSM éthique, la personne soumise détient un pouvoir réel — celui de stopper la scène. La domination est accordée, pas imposée. La personne soumise définit les limites et peut les retirer.',
+        loi: 'Le concept de "pouvoir consenti" (power exchange) est central en BDSM éthique. Ignorer le pouvoir de la personne soumise, c\'est confondre fantasme et agression réelle.',
+        question: 'Est-ce que la personne en position soumise comprend et exerce réellement son pouvoir de stopper la scène ?',
+      },
+      4: {
+        titre: 'Les marques prouvent le consentement',
+        definition: 'Les marques physiques prouvent que le consentement était là.',
+        consentement: 'Des marques ne prouvent rien sur le consentement — elles peuvent même être une preuve d\'agression. Le consentement se documente avant, pas après une interaction.',
+        loi: 'Des traces physiques sans négociation préalable documentée constituent une preuve d\'agression, pas de consentement. C\'est l\'accord préalable qui compte légalement, pas le résultat physique.',
+        question: 'Est-ce que je documente nos accords préalables plutôt que de supposer que les résultats visibles parlent d\'eux-mêmes ?',
+      },
+      5: {
+        titre: 'BDSM hors scène',
+        definition: 'Le BDSM justifie des comportements hors scène (contrôle permanent, isolement).',
+        consentement: 'Les dynamiques BDSM saines restent dans les limites négociées. Hors scène, les deux personnes ont des droits égaux. Utiliser une dynamique D/s comme excuse pour contrôler une personne dans tous les aspects de sa vie est de la violence conjugale.',
+        loi: 'La violence conjugale est punie de 3 ans d\'emprisonnement et 45 000 € d\'amende (art. 222-14 CP), aggravée en cas de particulière vulnérabilité de la victime. Le contexte BDSM n\'est pas une circonstance atténuante.',
+        question: 'La dynamique BDSM est-elle clairement délimitée dans le temps et l\'espace, ou déborde-t-elle sur la vie quotidienne ?',
+      },
+      6: {
+        titre: 'Intensité et légitimité',
+        definition: 'Si on ne saigne pas ou si on ne pleure pas, c\'est du "vrai" BDSM raté.',
+        consentement: 'Le BDSM couvre un spectre immense — du jeu de rôle léger aux pratiques intenses. Aucune pratique n\'est plus "vraie" qu\'une autre. Ce qui compte, c\'est que les deux personnes aient négocié, consenti, et aient les outils pour stopper.',
+        loi: 'L\'intensité d\'une pratique ne la valide pas. Des pratiques très intenses peuvent être légales avec un consentement clair. Des pratiques légères peuvent être une agression sans ce consentement.',
+        question: 'Est-ce que je cherche à valider une pratique par son intensité plutôt que par la qualité du consentement ?',
+      },
+    },
+  },
+};

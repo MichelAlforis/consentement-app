@@ -1,0 +1,55 @@
+export const ruptureHarcele = {
+  ruptureHarcele: {
+    fiches: {
+      title: 'Rupture & harcèlement',
+      subtitle: 'Ce que la loi protège après une relation.',
+      sectionDef: 'Le contexte',
+      sectionConsent: 'Ce qu\'il faut savoir',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Harcèlement moral : définition légale',
+        definition: 'Après une rupture, certains comportements — messages répétés, appels insistants, surveillance — sont assimilés à du harcèlement moral.',
+        consentement: 'La fin d\'une relation n\'autorise aucune pression pour renouer le contact. La personne qui a rompu a le droit au silence et à la distance, sans avoir à se justifier.',
+        loi: 'Envoyer des messages répétés, appeler de façon insistante ou surveiller une personne après une rupture constitue du harcèlement moral (art. 222-33-2 CP), puni de 2 ans de prison et 30 000 € d\'amende.',
+        question: 'Est-ce que je respecte le silence ou le refus de contact de mon/ma ex, sans chercher à le/la relancer ?',
+      },
+      1: {
+        titre: 'Cyberharcèlement post-rupture',
+        definition: 'Harceler quelqu\'un via les réseaux sociaux, les messages, ou en demandant à des ami·e·s communs de contacter l\'ex.',
+        consentement: 'Le harcèlement par procuration — demander à son entourage de contacter l\'ex — est aussi illégal que le contact direct. La distance physique ou numérique ne change pas la nature de l\'acte.',
+        loi: 'Depuis 2018, le harcèlement via les réseaux sociaux ou par procuration est explicitement visé par la loi. Il est puni de 2 ans d\'emprisonnement et 30 000 € d\'amende (art. 222-33-2-2 CP).',
+        question: 'Est-ce que j\'utilise des tiers (ami·e·s, famille, collègues) pour maintenir un contact que l\'autre a refusé ?',
+      },
+      2: {
+        titre: 'L\'ordonnance de protection',
+        definition: 'Face à une situation de danger avéré, une protection judiciaire rapide peut être obtenue pour éloigner un harceleur.',
+        consentement: 'L\'ordonnance de protection est accessible même sans dépôt de plainte préalable. Elle protège efficacement — mais il faut connaître son existence et ne pas hésiter à la demander.',
+        loi: 'Un·e juge aux affaires familiales peut délivrer une ordonnance de protection en 6 jours. Elle peut interdire au harceleur d\'approcher la victime, d\'accéder à son domicile ou de la contacter (loi du 9 juillet 2010).',
+        question: 'Est-ce que je connais les recours judiciaires disponibles si ma sécurité est menacée par un·e ex ?',
+      },
+      3: {
+        titre: 'Sextorsion et menaces d\'images',
+        definition: 'Menacer de publier des photos ou vidéos intimes pour forcer quelqu\'un à revenir ou pour se venger après une rupture.',
+        consentement: 'Toute menace de diffuser des images intimes — même jamais mise à exécution — est en elle-même un délit. La victime n\'a aucune obligation de céder à ce chantage.',
+        loi: 'La sextorsion est punie jusqu\'à 5 ans d\'emprisonnement et 75 000 € d\'amende (art. 312-10 CP). Exécuter la menace constitue en plus l\'infraction de diffusion non consentie d\'images (art. 226-2-1 CP).',
+        question: 'Ai-je reçu des menaces de diffusion d\'images intimes ? Si oui, est-ce que je sais que je peux porter plainte immédiatement ?',
+      },
+      4: {
+        titre: 'Constituer des preuves',
+        definition: 'Conserver les messages, appels manqués et emails reçus après une rupture, en prévision d\'un éventuel dépôt de plainte.',
+        consentement: 'Conserver les preuves n\'oblige pas à agir immédiatement. Mais des preuves bien conservées (captures horodatées, imports de messageries) renforcent considérablement la position de la victime en cas de poursuite.',
+        loi: 'Les captures d\'écran horodatées, les emails et les rapports de signalement sur les plateformes sont des éléments de preuve recevables en justice. Le signalement sur cybermalveillance.gouv.fr laisse également une trace.',
+        question: 'Ai-je conservé les preuves des contacts non voulus reçus après la rupture, même si je n\'ai pas encore décidé d\'agir ?',
+      },
+      5: {
+        titre: 'Où obtenir de l\'aide',
+        definition: 'Les ressources disponibles en France pour les victimes de harcèlement post-rupture.',
+        consentement: 'Contacter une association ou un service d\'écoute ne signifie pas s\'engager à porter plainte. Ces services aident à comprendre sa situation, ses droits, et les options disponibles — sans pression.',
+        loi: '3919 (Violences Femmes Info, 24h/24, gratuit, anonyme) · Commission d\'aide aux victimes de votre tribunal judiciaire · France Victimes : 116 006 · En ligne : arretonslesviolences.gouv.fr.',
+        question: 'Est-ce que je sais que des ressources gratuites et anonymes sont disponibles si je vis une situation de harcèlement post-rupture ?',
+      },
+    },
+  },
+};

@@ -1,0 +1,62 @@
+export const lgbtqConsent = {
+  lgbtqConsent: {
+    fiches: {
+      title: 'LGBTQ+ & Consent',
+      subtitle: 'Separating myths from reality — all orientations.',
+      sectionDef: 'Common misconception',
+      sectionConsent: 'The reality',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'Universal rules',
+        definition: 'Consent between LGBTQ+ people works differently than between heterosexuals.',
+        consentement: 'The rules of consent are universal — independent of sexual orientation or gender. Free, informed, explicit and revocable consent: these four principles apply regardless of the identities involved.',
+        loi: 'The Penal Code defines sexual offences neutrally with respect to orientation or gender identity. No orientation is exempt from these protections or favoured over another.',
+        question: 'Do I apply the same consent standards regardless of my partner\'s orientation or gender identity?',
+      },
+      1: {
+        titre: 'Assumed roles',
+        definition: 'In a same-sex couple, roles are fixed and defined in advance by appearance or personality.',
+        consentement: 'Assuming someone plays a specific role because of how they look or act is projection, not consent. Every preference is discussed explicitly, every time.',
+        loi: 'Role presumption is a form of stereotype that can lead to ignoring someone\'s real limits. Acting based on an assumed role without checking can constitute assault.',
+        question: 'Do I explicitly discuss preferences and roles with my partners, without assuming anything?',
+      },
+      2: {
+        titre: 'Gender identity disclosure',
+        definition: 'A trans person is obligated to disclose their gender identity before any intimate relationship.',
+        consentement: 'In France, no law requires such disclosure. Sharing one\'s identity is an act of trust, not an obligation. Pressuring someone to disclose medical information is a form of violence.',
+        loi: 'Medical information, including trans status, is protected by medical confidentiality and the right to privacy (art. 9 of the Civil Code). Forcing disclosure may constitute discrimination (art. 225-1 CP).',
+        question: 'Do I respect every person\'s right to choose what they share about their identity, without pressure or conditions?',
+      },
+      3: {
+        titre: 'Automatic desire',
+        definition: 'Between people of the same sex, desire is automatic — "you must want the same things".',
+        consentement: 'Sharing a sexual orientation does not mean sharing the same desires, limits or pace. Every person has their own preferences. The presumption of automatic desire short-circuits communication and minimises refusal.',
+        loi: 'The presumption of consent based on sexual orientation does not provide legal protection. It may even aggravate the classification of an offence, as it demonstrates a deliberate absence of verification.',
+        question: 'Do I actively verify my partners\' desires and limits, without assuming they are identical to mine?',
+      },
+      4: {
+        titre: 'Orientation and trauma',
+        definition: 'A gay or bisexual person "became" that way because of an assault or trauma.',
+        consentement: 'Sexual orientation is not caused or changed by an external event, traumatic or otherwise. This misconception is harmful and scientifically unfounded. Assaults deserve help and support — not an interpretation of orientation.',
+        loi: 'Conversion therapies are banned in France since 2022 (law of 26 January 2022), punishable by 2 years\' imprisonment and €30,000 fine.',
+        question: 'Do I question stereotypes about links between trauma and sexual orientation that I may have internalised?',
+      },
+      5: {
+        titre: 'Male victims',
+        definition: 'A gay or bisexual man cannot be raped by another man.',
+        consentement: 'Rape can affect any person, regardless of their sexual orientation or gender identity. The victim\'s sexual orientation is never a mitigating circumstance.',
+        loi: 'In France, rape is defined by art. 222-23 CP as any act of penetration without consent — regardless of the sex or orientation of those involved. Men represent approximately 20% of declared rape victims in France.',
+        question: 'Do I understand that any person can be a victim of sexual assault, regardless of their orientation or identity?',
+      },
+      6: {
+        titre: '"Corrective" violence',
+        definition: 'Sexual assault can "correct" or "convert" an LGBTQ+ person.',
+        consentement: 'There is no such thing as a "corrective" assault — it is a serious crime, treated as such by French law. This myth is at the origin of real violence, sometimes within families or communities.',
+        loi: 'Any sexual assault — whatever the motivation — is punishable by heavy prison sentences (art. 222-22 et seq. CP). A homophobic or transphobic motivation is an aggravating circumstance. In danger: call 3114 or 17.',
+        question: 'If I know someone facing this type of violence, do I know which resources to direct them to?',
+      },
+    },
+  },
+};

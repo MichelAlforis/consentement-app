@@ -1,0 +1,55 @@
+export const pressionManip = {
+  pressionManip: {
+    fiches: {
+      title: 'Pression & manipulation',
+      subtitle: 'Reconnaître ce qui ressemble à du consentement mais n\'en est pas.',
+      sectionDef: 'La situation',
+      sectionConsent: 'Ce que c\'est vraiment',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: '"Si tu m\'aimais, tu le ferais"',
+        definition: '"Si tu m\'aimais vraiment, tu le ferais." Cette phrase est présentée comme un test d\'amour ou une demande romantique.',
+        consentement: 'C\'est une forme de manipulation émotionnelle classique qui invalide le refus. Conditionner l\'amour à un acte sexuel est une technique de manipulation. Un·e partenaire qui t\'aime accepte ton refus sans le mettre en doute.',
+        loi: 'La manipulation émotionnelle pour obtenir un consentement invalide ce consentement légalement. Elle peut caractériser une contrainte au sens du droit pénal si elle aboutit à un acte sexuel contraint.',
+        question: 'Est-ce que quelqu\'un a déjà conditionné son affection ou sa présence à un acte sexuel dans ma relation actuelle ?',
+      },
+      1: {
+        titre: 'L\'insistance douce',
+        definition: 'Tu dis non. L\'autre continue à insister, gentiment mais sans arrêt, répétant la même demande ou ses variantes.',
+        consentement: 'C\'est du harcèlement, même si le ton est doux. L\'insistance répétée après un refus est une forme de pression qui nie ton "non". La douceur du ton ne change pas la nature de l\'acte.',
+        loi: 'L\'insistance répétée après un refus peut caractériser du harcèlement (art. 222-33 CP) si elle cause une altération de la santé ou du bien-être. La persistance n\'est pas de la persévérance romantique.',
+        question: 'Mon refus est-il respecté à la première expression, ou dois-je le répéter plusieurs fois pour qu\'il soit pris en compte ?',
+      },
+      2: {
+        titre: 'Le chantage affectif',
+        definition: '"De toute façon t\'as pas le choix si tu veux qu\'on reste ensemble." Ou toute menace implicite liée à la relation.',
+        consentement: 'C\'est une menace qui invalide tout consentement donné après. Un consentement donné sous menace n\'est pas libre — c\'est la définition même d\'un consentement vicié. La douceur ou l\'implicite de la menace ne change rien.',
+        loi: 'Le chantage affectif lié à une relation peut constituer des violences psychologiques (art. 222-14-3 CP) s\'il est répété et altère la santé. Un consentement vicié par la contrainte est nul en droit pénal.',
+        question: 'Est-ce que ma décision a été influencée par la peur des conséquences sur la relation plutôt que par mon désir réel ?',
+      },
+      3: {
+        titre: 'Interpréter l\'hésitation comme un oui',
+        definition: 'Tu hésites. L\'autre dit "je savais que tu finirais par dire oui" et continue — interprétant ton hésitation comme un accord.',
+        consentement: 'Une hésitation n\'est pas un oui. "Je ne sais pas" ou "peut-être" signifient "attends". Interpréter une hésitation comme un accord est une manipulation consciente ou inconsciente. Le doute se respecte, il ne s\'exploite pas.',
+        loi: 'Continuer sur la base d\'une hésitation interprétée comme un accord expose à une qualification d\'agression sexuelle si l\'accord n\'était pas clair. La présomption de consentement ne protège pas l\'auteur.',
+        question: 'Est-ce que je demande clairement un "oui" explicite plutôt que d\'interpréter le silence ou l\'hésitation comme une autorisation ?',
+      },
+      4: {
+        titre: 'Changer d\'avis sous pression émotionnelle',
+        definition: 'Après un refus, l\'autre boude, fait la tête, ou pleure. Tu changes d\'avis pour éviter sa peine ou son ressentiment.',
+        consentement: 'C\'est un consentement donné sous pression émotionnelle — pas vraiment libre. Utiliser sa propre tristesse ou colère pour faire céder l\'autre est une forme de manipulation. Ce changement d\'avis n\'est pas du consentement libre.',
+        loi: 'Un consentement obtenu en exploitant une réaction émotionnelle peut être contesté. La manipulation émotionnelle peut caractériser une contrainte au sens de l\'art. 222-22 CP si elle aboutit à un acte sexuel.',
+        question: 'Est-ce que je change d\'avis parce que je le veux vraiment, ou parce que je n\'arrive pas à supporter la réaction de l\'autre à mon refus ?',
+      },
+      5: {
+        titre: 'Corps et langage non-verbal',
+        definition: 'Quelqu\'un dit oui, mais son langage corporel dit clairement non : corps crispé, regard fuyant, tension physique, absence de participation.',
+        consentement: 'Le consentement se lit aussi dans le corps. Un visage crispé, une tension physique, un évitement du regard sont des signaux d\'alarme. S\'arrêter et demander ouvertement est toujours la bonne réponse, quel que soit le contexte.',
+        loi: 'Un "oui" verbal accompagné de signaux non-verbaux de détresse ne constitue pas un consentement libre au sens du droit. S\'arrêter et vérifier protège les deux partenaires légalement et humainement.',
+        question: 'Est-ce que je prends en compte l\'ensemble des signaux — verbaux ET non-verbaux — pour évaluer le consentement de l\'autre ?',
+      },
+    },
+  },
+};

@@ -1,0 +1,55 @@
+export const pratiquesExplicit = {
+  pratiquesExplicit: {
+    fiches: {
+      title: 'Pratiques explicites & communication',
+      subtitle: 'Parler de ce qu\'on fait — vraiment.',
+      sectionDef: 'Définition',
+      sectionConsent: 'Consentement',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Proposer une nouvelle pratique',
+        definition: 'Quand on veut essayer quelque chose de nouveau, le moment et la façon de le proposer changent tout à la qualité du consentement obtenu.',
+        consentement: 'Proposer dans un moment neutre — pas juste avant ou pendant — laisse à l\'autre l\'espace de réfléchir et de répondre librement, sans pression du moment ou de l\'ambiance.',
+        loi: 'Aucune pratique ne peut être imposée sans accord préalable. L\'enthousiasme du moment ou le contexte intime ne constituent pas un consentement à une pratique nouvelle.',
+        question: 'Ai-je proposé cette pratique dans un moment calme, sans créer de pression implicite ?',
+      },
+      1: {
+        titre: 'Le consentement de façade',
+        definition: 'Un "oui" donné pour faire plaisir, pour éviter un conflit ou pour que ça se termine plus vite n\'est pas un vrai consentement. Il est possible de dire oui sans réellement le vouloir.',
+        consentement: 'Vérifier ouvertement si l\'autre est vraiment à l\'aise — "Tu es vraiment ok avec ça ?" — est un acte de respect, pas de méfiance. L\'inconfort non verbal (silence, corps passif) est un signal à prendre au sérieux.',
+        loi: 'Le consentement doit être libre. Un accord donné sous pression implicite ou par crainte de la réaction de l\'autre n\'est pas juridiquement valide.',
+        question: 'Mon partenaire a-t-il ou elle vraiment dit oui, ou est-ce que je me contente d\'une absence de refus ?',
+      },
+      2: {
+        titre: 'Mot de sécurité et jeu de rôle',
+        definition: 'Dans un jeu de rôle, les partenaires peuvent convenir d\'ignorer certains mots usuels. Mais un signal de détresse réelle doit toujours être pris au sérieux, quel que soit le cadre.',
+        consentement: 'Si aucun mot de sécurité distinct n\'a été défini à l\'avance, tout signal de détresse (ton de voix, "stop", tension physique) doit conduire à s\'arrêter et à vérifier immédiatement.',
+        loi: 'Le cadre fictif d\'un jeu de rôle ne supprime pas le droit de retirer son consentement à tout moment. Continuer malgré un signal de détresse réelle constitue une agression (art. 222-22 CP).',
+        question: 'Avons-nous établi un mot de sécurité distinct avant de commencer ce jeu de rôle ?',
+      },
+      3: {
+        titre: 'La communication après',
+        definition: 'Parler après un rapport intime est aussi important que parler avant. Exprimer ce qu\'on aurait aimé différent permet d\'améliorer la relation — pas de la critiquer.',
+        consentement: '"J\'aurais aimé qu\'on fasse X différemment" est une conversation saine. Elle normalise le dialogue continu sur les désirs et les limites, dans les deux sens.',
+        loi: 'Aucune obligation légale de parler, mais des malentendus non résolus peuvent évoluer vers des situations plus graves. La communication après protège les deux partenaires.',
+        question: 'Ai-je exprimé ce que j\'aurais aimé différent, ou est-ce que je garde ça pour moi ?',
+      },
+      4: {
+        titre: 'Respecter une limite incomprise',
+        definition: 'Une limite n\'a pas besoin d\'être comprise pour être respectée. Chercher à convaincre ou à obtenir des explications, même avec douceur, est une forme de pression.',
+        consentement: 'Respecter une limite sans la comprendre entièrement est un signe de respect réel. Toute tentative de négociation — même bienveillante — remet en question le droit de l\'autre à poser ses limites.',
+        loi: 'Insister après un refus, y compris par des arguments ou des questions répétées, peut caractériser une pression au sens du droit pénal si elle conduit à un consentement non libre.',
+        question: 'Ai-je accepté la limite de l\'autre sans chercher à la comprendre, la discuter ou la contourner ?',
+      },
+      5: {
+        titre: 'Renouveler le consentement',
+        definition: 'Même dans une relation établie avec des pratiques habituelles, le consentement n\'est pas acquis une fois pour toutes. Il se renouvelle à chaque fois.',
+        consentement: 'Un regard, une question courte, un signal non verbal de bien-être suffisent. Vérifier reste un signe de respect, même dans une relation longue et de confiance.',
+        loi: 'L\'habitude ou la durée d\'une relation ne constituent pas un consentement permanent. Le consentement implicite lié à une relation est régulièrement contesté devant les tribunaux.',
+        question: 'Est-ce que je vérifie régulièrement que l\'autre est toujours à l\'aise, même quand c\'est devenu habituel ?',
+      },
+    },
+  },
+};

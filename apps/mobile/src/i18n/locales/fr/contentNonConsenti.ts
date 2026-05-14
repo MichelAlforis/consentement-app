@@ -1,0 +1,55 @@
+export const contentNonConsenti = {
+  contentNonConsenti: {
+    fiches: {
+      title: 'Contenu non consenti',
+      subtitle: 'Images & vidéos intimes partagées sans accord.',
+      sectionDef: 'Le principe',
+      sectionConsent: 'Ce qu\'il faut savoir',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Ce que couvre la loi',
+        definition: 'La diffusion non consentie d\'images intimes (revenge porn) est un délit pénal depuis 2016 en France.',
+        consentement: 'La loi punit quiconque diffuse, publie, transmet ou rend accessible une image à caractère sexuel d\'une personne identifiable sans son accord — qu\'il s\'agisse d\'une photo, vidéo, capture d\'écran ou GIF.',
+        loi: 'En France, partager une image intime sans accord est puni de 2 ans de prison et 60 000 € d\'amende (art. 226-2-1 CP) — même si l\'image a été envoyée volontairement à l\'origine.',
+        question: 'Est-ce que je comprends que partager une image intime sans accord explicite est un délit, quelle que soit l\'origine de l\'image ?',
+      },
+      1: {
+        titre: 'Comment l\'image a été obtenue',
+        definition: 'L\'infraction de diffusion non consentie est caractérisée quelle que soit la façon dont l\'image a été obtenue.',
+        consentement: 'Que l\'image ait été volée (piratage), prise à l\'insu de la personne, ou envoyée librement dans un contexte de confiance — la diffusion sans accord reste illégale. "Elle me l\'avait envoyée" n\'est pas une défense.',
+        loi: 'L\'art. 226-2-1 CP ne distingue pas selon le mode d\'obtention de l\'image. La seule question est : la diffusion a-t-elle eu lieu sans l\'accord de la personne concernée ?',
+        question: 'Est-ce que je comprends que même une image qu\'on m\'a envoyée volontairement ne m\'appartient pas au point de pouvoir la partager sans accord ?',
+      },
+      2: {
+        titre: 'Circonstances aggravantes',
+        definition: 'Certaines circonstances aggravent les peines prévues pour la diffusion non consentie d\'images intimes.',
+        consentement: 'Si l\'image a été obtenue par des moyens frauduleux (espionnage, piratage de compte), si la victime est mineur·e, ou si la diffusion a touché un grand nombre de personnes, les peines sont significativement alourdies.',
+        loi: 'Les circonstances aggravantes peuvent porter la peine jusqu\'à 5 ans d\'emprisonnement et 150 000 € d\'amende. La minorité de la victime est toujours une circonstance aggravante en droit pénal français.',
+        question: 'Ai-je obtenu des images intimes de quelqu\'un par des moyens détournés ? Si oui, est-ce que je mesure les risques légaux liés à leur seule détention ?',
+      },
+      3: {
+        titre: 'Faire retirer une image',
+        definition: 'Des procédures existent pour faire retirer rapidement une image intime partagée sans accord sur les plateformes en ligne.',
+        consentement: 'La plupart des plateformes (Instagram, Twitter/X, Snapchat, OnlyFans) ont une procédure de signalement accélérée pour les contenus intimes non consentis. Ces procédures peuvent aboutir en moins de 24h.',
+        loi: 'En France, la CNIL peut intervenir si une plateforme ne réagit pas. Le portail cybermalveillance.gouv.fr aide à constituer le dossier et à initier les démarches officielles.',
+        question: 'Est-ce que je connais les procédures d\'urgence des plateformes pour signaler et faire retirer du contenu intime non consenti ?',
+      },
+      4: {
+        titre: 'Cybermalveillance.gouv.fr',
+        definition: 'Le portail gouvernemental de référence pour les victimes de violence numérique, dont les images intimes partagées sans accord.',
+        consentement: 'Ce portail propose une aide concrète : faire retirer du contenu, identifier les recours judiciaires, être orienté vers des associations spécialisées. Disponible 24h/24, anonymement, sans obligation de porter plainte.',
+        loi: 'Le signalement sur ce portail laisse une trace officielle utilisable en justice. Il peut accélérer la coopération des plateformes et déclencher des enquêtes judiciaires dans les cas graves.',
+        question: 'Est-ce que je sais que je peux obtenir de l\'aide concrète et anonyme sur cybermalveillance.gouv.fr sans devoir immédiatement porter plainte ?',
+      },
+      5: {
+        titre: 'Ne pas contacter l\'auteur directement',
+        definition: 'Pourquoi contacter soi-même l\'auteur d\'une diffusion non consentie peut aggraver la situation.',
+        consentement: 'Menacer de porter plainte pour tenter de récupérer des images peut aggraver la situation si l\'auteur diffuse davantage en représailles. Passer par les plateformes et les autorités est plus efficace et protège mieux.',
+        loi: 'En contactant directement l\'auteur, la victime risque de fournir des éléments supplémentaires (nouveaux messages, numéros) exploitables. Les autorités ont des outils juridiques que la victime seule n\'a pas.',
+        question: 'Si je suis victime, est-ce que je sais qu\'il vaut mieux agir via les plateformes et les autorités plutôt que de contacter directement l\'auteur ?',
+      },
+    },
+  },
+};

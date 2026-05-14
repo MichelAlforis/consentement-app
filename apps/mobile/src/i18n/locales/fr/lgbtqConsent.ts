@@ -1,0 +1,62 @@
+export const lgbtqConsent = {
+  lgbtqConsent: {
+    fiches: {
+      title: 'LGBTQ+ & consentement',
+      subtitle: 'Démêler les mythes — toutes orientations confondues.',
+      sectionDef: 'Idée reçue',
+      sectionConsent: 'La réalité',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Règles universelles',
+        definition: 'Le consentement entre personnes LGBTQ+ fonctionnerait différemment qu\'entre hétérosexuels.',
+        consentement: 'Les règles du consentement sont universelles — indépendantes de l\'orientation sexuelle ou du genre. Consentement libre, éclairé, explicite et révocable : ces quatre principes s\'appliquent quelle que soit l\'identité des personnes.',
+        loi: 'Le Code pénal définit les infractions sexuelles de façon neutre par rapport à l\'orientation ou l\'identité de genre. Aucune orientation n\'est exemptée de ces protections, ni favorisée par rapport à une autre.',
+        question: 'Est-ce que j\'applique les mêmes standards de consentement quelle que soit l\'orientation ou l\'identité de genre de mon ou mes partenaires ?',
+      },
+      1: {
+        titre: 'Rôles présupposés',
+        definition: 'Dans un couple de même sexe, les rôles sont fixes et définis d\'avance par l\'apparence ou la personnalité.',
+        consentement: 'Supposer qu\'une personne joue un rôle précis parce qu\'elle est grande, petite, douce ou affirmée, c\'est une projection, pas du consentement. Chaque préférence se discute explicitement, à chaque fois.',
+        loi: 'La présomption de rôle est une forme de stéréotype qui peut conduire à ignorer les limites réelles d\'une personne. Agir sur la base d\'un rôle supposé sans vérification peut constituer une agression.',
+        question: 'Est-ce que je discute explicitement des préférences et des rôles avec mes partenaires, sans supposer quoi que ce soit ?',
+      },
+      2: {
+        titre: 'Identité de genre et divulgation',
+        definition: 'Une personne trans serait obligée de révéler son identité de genre avant toute relation intime.',
+        consentement: 'En France, aucune loi n\'impose cette divulgation. Partager son identité est un acte de confiance, pas une obligation. Faire pression sur quelqu\'un pour révéler des informations médicales est une forme de violence.',
+        loi: 'Les informations médicales, dont le statut transgenre, sont protégées par le secret médical et le droit à la vie privée (art. 9 du Code civil). Contraindre une divulgation peut constituer une discrimination (art. 225-1 CP).',
+        question: 'Est-ce que je respecte le droit de chaque personne à choisir ce qu\'elle partage sur son identité, sans pression ni condition ?',
+      },
+      3: {
+        titre: 'Désir automatique',
+        definition: 'Entre personnes du même sexe, le désir serait automatique — "vous voulez forcément la même chose".',
+        consentement: 'Partager une orientation sexuelle ne signifie pas partager les mêmes désirs, limites ou rythmes. Chaque personne a ses propres préférences. La présomption de désir automatique court-circuite la communication et minimise le refus.',
+        loi: 'La présomption de consentement basée sur l\'orientation sexuelle ne protège pas légalement. Elle peut même aggraver la qualification d\'une infraction, car elle démontre une absence délibérée de vérification.',
+        question: 'Est-ce que je vérifie activement les désirs et les limites de mes partenaires, sans supposer qu\'ils sont identiques aux miens ?',
+      },
+      4: {
+        titre: 'Orientation et traumatisme',
+        definition: 'Une personne gay ou bi "l\'est devenue" à cause d\'une agression ou d\'un traumatisme.',
+        consentement: 'L\'orientation sexuelle ne se cause pas et ne se change pas par un événement extérieur, traumatique ou non. Cette idée fausse est blessante et infondée scientifiquement. Les agressions méritent aide et accompagnement — pas une interprétation de l\'orientation.',
+        loi: 'Les thérapies de conversion (tentatives de changer l\'orientation sexuelle) sont interdites en France depuis 2022 (loi du 26 janvier 2022), punies de 2 ans d\'emprisonnement et 30 000 € d\'amende.',
+        question: 'Est-ce que je remets en question les stéréotypes sur les liens entre traumatisme et orientation sexuelle que j\'ai pu intérioriser ?',
+      },
+      5: {
+        titre: 'Victimes masculines',
+        definition: 'Un homme gay ou bisexuel ne pourrait pas être victime de viol par un autre homme.',
+        consentement: 'Le viol peut toucher toute personne, quelle que soit son orientation sexuelle ou son identité de genre. L\'orientation sexuelle de la victime n\'est jamais une circonstance atténuante, ni pour la qualification ni pour la peine.',
+        loi: 'En France, le viol est défini par l\'art. 222-23 CP comme tout acte de pénétration sans consentement — indépendamment du sexe ou de l\'orientation des personnes impliquées. Les hommes représentent environ 20 % des victimes déclarées de viol en France.',
+        question: 'Est-ce que je comprends que toute personne peut être victime d\'une agression sexuelle, quelle que soit son orientation ou son identité ?',
+      },
+      6: {
+        titre: 'Violence "corrective"',
+        definition: 'Une agression sexuelle pourrait "corriger" ou "convertir" une personne LGBTQ+.',
+        consentement: 'Il n\'existe aucune agression "corrective" — c\'est un crime grave, traité comme tel par la loi française. Ce mythe est à l\'origine de violences réelles, parfois au sein de la famille ou de la communauté.',
+        loi: 'Toute agression sexuelle — quelle qu\'en soit la motivation — est punie de lourdes peines de prison (art. 222-22 et suivants CP). La motivation homophobe ou transphobe est une circonstance aggravante. En cas de danger : 3114 ou 17.',
+        question: 'Si je connais quelqu\'un qui fait face à ce type de violence, est-ce que je sais vers quelles ressources l\'orienter ?',
+      },
+    },
+  },
+};

@@ -1,0 +1,55 @@
+export const alcoolConsent = {
+  alcoolConsent: {
+    fiches: {
+      title: 'Alcool & consentement',
+      subtitle: 'Ce que l\'alcool change — vraiment.',
+      sectionDef: 'La situation',
+      sectionConsent: 'Ce qu\'il faut savoir',
+      sectionLoi: 'Ce que dit la loi',
+      sectionQuestion: 'Question à se poser',
+      markRead: "J'ai lu — Voir ma carte",
+      0: {
+        titre: 'Un "oui" sous alcool est-il valable ?',
+        definition: 'Quelqu\'un a bu et dit "oui". Est-ce que ce consentement est valable ?',
+        consentement: 'Non — une personne ivre ne peut pas consentir valablement. Le consentement doit être libre et éclairé. Sous l\'influence de l\'alcool, le jugement est altéré, même si la personne semble lucide et dit oui.',
+        loi: 'Le Code pénal reconnaît que l\'ivresse peut empêcher un consentement valable. Profiter de l\'état d\'ivresse d\'une personne est une circonstance aggravante des infractions sexuelles (art. 222-22-1 CP).',
+        question: 'Est-ce que je m\'assure que la personne avec qui je suis est en état de consentir librement à ce moment précis ?',
+      },
+      1: {
+        titre: 'Regretter après une soirée',
+        definition: 'Tu as bu, tu regrettes ce qui s\'est passé. Peut-il y avoir eu agression, même si tu as semblé consentir sur le moment ?',
+        consentement: 'Oui — si tu n\'étais pas en état de consentir librement, une agression peut avoir eu lieu. Le regret seul ne suffit pas à caractériser une infraction, mais l\'incapacité à consentir, oui.',
+        loi: 'Profiter de l\'état d\'ivresse d\'une personne est une circonstance aggravante reconnue par le droit pénal français. Avoir un rapport avec une personne en état d\'ivresse avancée peut constituer un viol (art. 222-23 CP).',
+        question: 'Si tu as vécu une situation de ce type, sais-tu que des ressources existent pour en parler sans obligation de porter plainte immédiatement ?',
+      },
+      2: {
+        titre: 'Vérifier en cours de soirée',
+        definition: 'Votre soirée commence bien. Ton/ta partenaire boit beaucoup. Que faire dans ce contexte ?',
+        consentement: 'Vérifier verbalement ("Tu es ok ? Tu veux qu\'on continue ?") est la bonne pratique — pas paranoïaque, juste respectueux·se. La vigilance est une responsabilité partagée.',
+        loi: 'La vigilance active est une protection pour les deux personnes. Ne pas vérifier l\'état d\'un·e partenaire qui boit et continuer quand même expose à une qualification pénale si son état ne lui permettait pas de consentir.',
+        question: 'Est-ce que je prends l\'habitude de vérifier verbalement le consentement quand l\'alcool est présent, même dans une relation établie ?',
+      },
+      3: {
+        titre: 'La personne ne répond plus vraiment',
+        definition: 'Une personne répond à peine, les yeux mi-clos. Elle a dit "ouais" il y a 20 minutes.',
+        consentement: 'Stop. Elle n\'est clairement pas en état de consentir maintenant. Le consentement doit être actif et présent au moment de l\'acte. Un "oui" dit 20 minutes avant ne couvre pas ce qui se passe maintenant.',
+        loi: 'Le consentement est continu — il ne se conserve pas dans le temps. Continuer un acte sexuel avec une personne dont l\'état a évolué vers l\'incapacité constitue un viol ou une agression (art. 222-22 et 222-23 CP).',
+        question: 'Est-ce que je m\'arrête immédiatement si l\'état de l\'autre change, même si il ou elle avait consenti auparavant ?',
+      },
+      4: {
+        titre: 'Parler après une nuit floue',
+        definition: 'Après une soirée, tu n\'es pas sûr·e que l\'autre était vraiment ok. Que faire ?',
+        consentement: 'En parler franchement, même si c\'est inconfortable. "Est-ce que tu étais ok hier ?" est une question difficile mais nécessaire. Elle peut changer beaucoup de choses pour l\'autre.',
+        loi: 'Les conversations après coup n\'impliquent pas une auto-incrimination. Elles permettent de clarifier la situation et peuvent éviter des conséquences bien plus graves. Ne pas en parler ne fait pas disparaître la situation.',
+        question: 'Est-ce que j\'ose poser la question après une soirée incertaine, même si la réponse peut être inconfortable ?',
+      },
+      5: {
+        titre: 'Faire boire pour "faciliter les choses"',
+        definition: 'Servir de l\'alcool à quelqu\'un pour le/la rendre plus "disponible" ou plus "détendu·e".',
+        consentement: 'C\'est une forme de manipulation qui peut constituer une agression. Altérer délibérément la capacité de décision d\'une personne pour obtenir un accord est une technique contraire à tout principe de consentement.',
+        loi: 'Administrer volontairement une substance pour altérer le consentement est un délit en droit français, même si la personne "accepte" de boire. L\'intention de profiter de l\'état est ce qui est réprimé (art. 222-22 CP).',
+        question: 'Est-ce que je m\'assure que l\'alcool ou les substances présentes ne sont jamais utilisés pour influencer la décision de l\'autre ?',
+      },
+    },
+  },
+};
