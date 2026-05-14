@@ -3,6 +3,6 @@ interface AdBannerProps {
 }
 
 export function AdBanner(_props: AdBannerProps) {
-  // TODO Phase 5b: brancher expo-ads-admob si nécessaire.
+  // TODO Phase 8 features natives: brancher expo-ads-admob si nécessaire.
   return null;
 }

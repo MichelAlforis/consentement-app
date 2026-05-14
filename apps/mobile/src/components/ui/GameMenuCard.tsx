@@ -31,7 +31,7 @@ export function GameMenuCard({
   const { colors } = useTheme();
   const isPremium = variant === 'premium';
 
-  // TODO Phase 5b: remplacer par expo-linear-gradient (premiumGradient)
+  // TODO Phase 8 polish UI: remplacer par expo-linear-gradient (premiumGradient)
   const cardStyle: ViewStyle = isPremium
     ? { backgroundColor: colors.premium, padding: 20, borderRadius: 24 }
     : { backgroundColor: colors.bgCard, borderWidth: 1.5, borderColor: colors.border, padding: 16, borderRadius: 16 };

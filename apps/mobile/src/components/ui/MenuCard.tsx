@@ -27,7 +27,7 @@ export function MenuCard({
   const { colors } = useTheme();
   const isColored = variant !== 'default';
 
-  // TODO Phase 5b: remplacer par expo-linear-gradient (accentGradient, secondaryGradient, etc.)
+  // TODO Phase 8 polish UI: remplacer par expo-linear-gradient (accentGradient, secondaryGradient, etc.)
   const getCardStyle = (): ViewStyle => {
     switch (variant) {
       case 'accent':

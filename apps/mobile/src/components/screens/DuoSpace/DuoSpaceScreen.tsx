@@ -1,20 +1,27 @@
+// V4 divergence: realtime stub — useDuoStore (Zustand) pour état persisté, PB realtime TODO Phase 7
+// V4 divergence: QR via react-native-qrcode-svg (pas de canvas 2D browser)
+// V4 divergence: AccordFlow overlay → TODO Phase 7 (dépend CollectorCardCanvas)
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
 import { ChevronLeft, Link2, LogOut, QrCode, UserCheck } from 'lucide-react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { useNavigationStore } from '@ouiclair/core';
+import { useNavigationStore, useDuoStore } from '@ouiclair/core';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
 
-// TODO Phase 5b: brancher IRealtimeAdapter + useDuoSession
-// V4 divergence: realtime stub (useState local) — IRealtimeAdapter branché Phase 5b
-// V4 divergence: QR via react-native-qrcode-svg (pas de canvas 2D browser)
+// TODO Phase 7: AccordFlow overlay — affichage CommonGround + carte accord + CollectorCardCanvas
 
 type DuoView = 'choice' | 'create' | 'join';
 
-function generateCode(): string {
+function makeSessionCode(): string {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
@@ -22,32 +29,33 @@ export function DuoSpaceScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { goBack } = useNavigationStore();
 
-  const [isConnected, setIsConnected] = useState(false);
-  const [sessionCode, setSessionCode] = useState('');
-  const [partnerName, setPartnerName] = useState('');
+  const goBack = useNavigationStore((s) => s.goBack);
+  const duoConnected = useDuoStore((s) => s.duoConnected);
+  const connectDuo = useDuoStore((s) => s.connectDuo);
+  const resetDuo = useDuoStore((s) => s.reset);
+
+  // Local UI state — non persisté, réinitialisé à chaque montage
   const [view, setView] = useState<DuoView>('choice');
+  const [sessionCode, setSessionCode] = useState('');
   const [joinCode, setJoinCode] = useState('');
   const [qrError, setQrError] = useState(false);
 
   const handleCreate = () => {
     setQrError(false);
-    setSessionCode(generateCode());
+    setSessionCode(makeSessionCode());
     setView('create');
   };
 
   const handleJoin = () => {
     const code = joinCode.trim().toUpperCase();
-    if (!code) return;
-    setPartnerName(code);
-    setIsConnected(true);
+    if (code.length !== 6) return;
+    connectDuo(code); // useDuoStore → duoConnected = true
   };
 
   const handleDisconnect = () => {
-    setIsConnected(false);
+    resetDuo();
     setSessionCode('');
-    setPartnerName('');
     setJoinCode('');
     setView('choice');
   };
@@ -57,7 +65,13 @@ export function DuoSpaceScreen() {
       <MotiView
         from={{ opacity: 0, translateY: -8 }}
         animate={{ opacity: 1, translateY: 0 }}
-        style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, gap: 12 }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          gap: 12,
+        }}
       >
         <Pressable onPress={goBack} hitSlop={8}>
           <ChevronLeft size={24} color={colors.textPrimary} />
@@ -72,7 +86,8 @@ export function DuoSpaceScreen() {
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 32 }}
         keyboardShouldPersistTaps="handled"
       >
-        {isConnected ? (
+        {duoConnected ? (
+          /* ── État connecté ── */
           <MotiView
             from={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -99,9 +114,17 @@ export function DuoSpaceScreen() {
             >
               <UserCheck size={32} color={colors.accent} />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, textAlign: 'center' }}>
-              {t('duo.connected')} {partnerName}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: colors.textPrimary,
+                textAlign: 'center',
+              }}
+            >
+              {t('duo.connected')}
             </Text>
+            {/* TODO Phase 7: AccordFlow overlay — CommonGround + carte accord */}
             <Pressable
               onPress={handleDisconnect}
               style={{
@@ -121,6 +144,7 @@ export function DuoSpaceScreen() {
             </Pressable>
           </MotiView>
         ) : view === 'choice' ? (
+          /* ── Choix créer / rejoindre ── */
           <View style={{ gap: 16 }}>
             <MotiView
               from={{ opacity: 0, translateY: 12 }}
@@ -153,7 +177,9 @@ export function DuoSpaceScreen() {
                   <QrCode size={24} color={colors.accent} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
+                  <Text
+                    style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}
+                  >
                     {t('duo.createSession')}
                   </Text>
                 </View>
@@ -191,7 +217,9 @@ export function DuoSpaceScreen() {
                   <Link2 size={24} color={colors.textSecondary} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
+                  <Text
+                    style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}
+                  >
                     {t('duo.joinSession')}
                   </Text>
                 </View>
@@ -199,6 +227,7 @@ export function DuoSpaceScreen() {
             </MotiView>
           </View>
         ) : view === 'create' ? (
+          /* ── QR code de session ── */
           <MotiView
             from={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -240,6 +269,30 @@ export function DuoSpaceScreen() {
               {sessionCode}
             </Text>
 
+            {__DEV__ && (
+              <Pressable
+                onPress={() => {
+                  // TODO Phase 6C: remplacer par useDuoSession realtime via
+                  // IRealtimeAdapter + react-native-sse. Mock pour test du flow connected.
+                  setTimeout(() => connectDuo(sessionCode), 1500);
+                }}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: colors.textMuted,
+                  borderStyle: 'dashed',
+                }}
+              >
+                <Text
+                  style={{ fontSize: 11, fontWeight: '600', color: colors.textMuted, textAlign: 'center' }}
+                >
+                  [DEV] Simuler connexion partenaire
+                </Text>
+              </Pressable>
+            )}
+
             <Pressable
               onPress={() => setView('choice')}
               style={{
@@ -250,11 +303,12 @@ export function DuoSpaceScreen() {
               }}
             >
               <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textMuted }}>
-                Annuler
+                {t('duo.cancel')}
               </Text>
             </Pressable>
           </MotiView>
         ) : (
+          /* ── Saisie du code partenaire ── */
           <MotiView
             from={{ opacity: 0, translateY: 12 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -272,7 +326,7 @@ export function DuoSpaceScreen() {
             </Text>
             <TextInput
               value={joinCode}
-              onChangeText={setJoinCode}
+              onChangeText={(v) => setJoinCode(v.toUpperCase())}
               placeholder="ABC123"
               placeholderTextColor={colors.textMuted}
               autoCapitalize="characters"
@@ -297,6 +351,7 @@ export function DuoSpaceScreen() {
                 borderRadius: 14,
                 paddingVertical: 14,
                 alignItems: 'center',
+                opacity: joinCode.trim().length === 6 ? 1 : 0.5,
               }}
             >
               <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>
@@ -308,7 +363,7 @@ export function DuoSpaceScreen() {
               style={{ alignItems: 'center', paddingVertical: 8 }}
             >
               <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textMuted }}>
-                Annuler
+                {t('duo.cancel')}
               </Text>
             </Pressable>
           </MotiView>

@@ -40,5 +40,5 @@ export { PremiumScreen } from './PremiumScreen';
 export { QuizHubScreen } from './QuizHub';
 export { QuizConsentementScreen } from './QuizConsentement';
 export { HallOfCardsScreen } from './HallOfCards';
-export { PersonalSpaceScreen } from './PersonalSpaceScreen';
+export { PersonalSpaceScreen } from './PersonalSpace';
 export { DuoSpaceScreen } from './DuoSpace';

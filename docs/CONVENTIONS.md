@@ -295,6 +295,59 @@ pre-push hook).
 
 ---
 
+## R11 — Structure des écrans : plat vs feature folder
+
+S'applique à `apps/mobile/src/components/screens/`.
+
+**Règle de décision :**
+
+| Critère | Structure |
+|---|---|
+| 1 seul fichier `.tsx`, pas de hooks/sous-composants/data propre | **Plat** : `XxxScreen.tsx` |
+| ≥ 2 stores consommés, formulaire avec état local, machine d'état multi-étapes, ou sous-composants dédiés | **Feature folder** : `Xxx/XxxScreen.tsx` + `Xxx/index.ts` |
+
+**Critère pratique :** si l'écran consomme ≥ 2 stores OU gère un formulaire OU a un état multi-étapes → feature folder.
+
+**Structure minimale d'un feature folder :**
+```
+screens/Xxx/
+├── XxxScreen.tsx     — composant principal
+└── index.ts          — barrel R7 (export nominatif, commentaire de garde)
+```
+
+Fichiers optionnels dans le folder : `hooks.ts`, `types.ts`, `data.ts`, `components/`.
+
+**Import depuis RouteRenderer :**
+```ts
+// Correct — importe depuis le barrel du feature folder
+const XxxScreen = lazy(() => import('../components/screens/Xxx').then((m) => ({ default: m.XxxScreen })));
+
+// Correct — fichier plat
+const YyyScreen = lazy(() => import('../components/screens/YyyScreen').then((m) => ({ default: m.YyyScreen })));
+```
+
+**Exemples :**
+- `HelpScreen.tsx` → plat (info statique, 0 store, 0 formulaire)
+- `PersonalSpace/PersonalSpaceScreen.tsx` → folder (2 stores, formulaire multi-items, état local)
+- `DuoSpace/DuoSpaceScreen.tsx` → folder (store duo, machine d'état multi-vues, QR)
+
+---
+
+## R12 — RouteRenderer.tsx : modification réservée à l'orchestrateur
+
+`apps/mobile/src/shell/RouteRenderer.tsx` est modifié **exclusivement** par l'orchestrateur en fin de chaque phase batch, jamais par un agent en parallèle.
+
+**Justification :** éviter les conflits Git multi-agents quand plusieurs écrans sont portés simultanément (chaque agent qui ajoute un `case` dans le switch crée un conflit de merge).
+
+**Workflow :**
+1. Les agents créent leurs écrans + barrels
+2. Les agents signalent dans leur rapport : « Route `xxx-screen` à câbler dans RouteRenderer »
+3. L'orchestrateur fait **un seul commit dédié** de mise à jour RouteRenderer en fin de phase
+
+**Exception :** si un seul agent travaille séquentiellement (phase non parallélisée), il peut modifier RouteRenderer — mais doit le signaler en note d'audit.
+
+---
+
 ## Conventions de nommage
 
 | Catégorie | Convention | Exemple |
