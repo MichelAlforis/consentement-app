@@ -15,6 +15,7 @@
     "@ouiclair/core": "workspace:*",
     "@ouiclair/textures": "workspace:*",
     "expo": "~54.0.33",
+    "expo-asset": "~12.0.13",
     "expo-blur": "~14.0.3",
     "expo-gl": "~14.0.2",
     "expo-haptics": "~14.0.1",

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo, Suspense } from 'react';
 import { View } from 'react-native';
+import { Asset } from 'expo-asset';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import { useTexture, Environment, ContactShadows } from '@react-three/drei/native';
 import * as THREE from 'three';
@@ -52,8 +53,6 @@ function cubicBezier(t: number): number {
 // ─── Assets PNG pré-générés (build time via packages/textures/scripts/generate.ts) ──
 
 // require() statiques obligatoires pour le bundler Metro (pas de require dynamique)
-// TODO: si useTexture ne résout pas les modules RN nativement,
-//       résoudre avec Asset.fromModule(require(...)).uri (expo-asset)
 const NUMERIC_FACE_REQUIRES = [
   require('@ouiclair/textures/assets/dice/face-1.png'),
   require('@ouiclair/textures/assets/dice/face-2.png'),
@@ -62,6 +61,8 @@ const NUMERIC_FACE_REQUIRES = [
   require('@ouiclair/textures/assets/dice/face-5.png'),
   require('@ouiclair/textures/assets/dice/face-6.png'),
 ] as const;
+
+const NUMERIC_FACE_URIS = NUMERIC_FACE_REQUIRES.map((assetModule) => Asset.fromModule(assetModule).uri);
 
 // ─── Texture catégorie — fallback couleur unie (DataTexture, 1×1 px) ─────────
 // Canvas 2D API indisponible sur RN — génération dynamique de gradient/texte impossible.
@@ -105,9 +106,7 @@ function AnimatedCube({
 
   // Toujours chargées (règle des hooks) — utilisées uniquement si mode === 'numeric'
   // TODO: tester fps sur device physique (seuil go = 45fps)
-  const numericTextures = useTexture(
-    NUMERIC_FACE_REQUIRES as unknown as string[],
-  ) as THREE.Texture[];
+  const numericTextures = useTexture(NUMERIC_FACE_URIS) as THREE.Texture[];
 
   const categoryTextures = useMemo(() => faces.map(makeCategoryDataTexture), [faces]);
 
