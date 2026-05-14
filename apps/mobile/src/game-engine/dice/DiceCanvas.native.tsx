@@ -233,9 +233,10 @@ function AnimatedCube({
     if (!group || a.rolling || b.active) return;
     idle.current.t += delta;
     const t = idle.current.t;
-    // Oscillation Y douce (±10°) + flottement vertical (±0.06 unités)
-    group.rotation.y = cumulative.current.y + Math.sin(t * 0.45) * 0.17;
-    group.position.y = Math.sin(t * 0.8) * 0.06;
+    // Oscillation Y (±26°) + tilt X (±8°) + flottement vertical (±0.12)
+    group.rotation.y = cumulative.current.y + Math.sin(t * 0.9) * 0.45;
+    group.rotation.x = cumulative.current.x + Math.sin(t * 0.55) * 0.14;
+    group.position.y = Math.sin(t * 1.1) * 0.12;
   });
 
   return (
