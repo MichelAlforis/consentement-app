@@ -249,40 +249,67 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const nextModuleScreen = nextModule?.screen ?? null;
   const nextModuleTitle = nextModule ? t(nextModule.titleKey) : null;
   const progressPct = (progress / sequence.length) * 100;
+  const fillWidth = `${Math.max(progressPct, 1.5)}%`;
+  const fillTransition = { delay: 0.45, duration: 0.95, ease: [0.05, 0.8, 0.1, 1] } as const;
+  const glowOpacityBase = 0.3 + (progressPct / 100) * 0.35;
+  const pulseDuration = 3.6 - (progressPct / 100) * 1.8;
 
   return (
     <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
 
-      {/* Barre Hot — progression modules */}
+      {/* Barre Hot */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="rounded-2xl px-4 py-3.5 mb-3"
-        style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)' }}
+        transition={{ delay: 0.18 }}
+        className="mb-5"
       >
-        <div className="flex items-center justify-between mb-2.5">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">🌡️</span>
-            <span className="text-[11px] font-semibold" style={{ color: colors.textPrimary }}>
-              {t('homeV3.learning.progressLabel')}
-            </span>
-          </div>
-          <span className="text-[10px] font-bold" style={{ color: '#a78bfa' }}>
-            {t('homeV3.learning.moduleCount', { progress: String(progress), total: String(sequence.length) })}
+        {/* Labels */}
+        <div className="flex items-center justify-between mb-[10px]">
+          <span
+            className="text-[11px] font-medium tracking-wide"
+            style={{ color: colors.textSecondary }}
+          >
+            {t('homeV3.learning.progressLabel')}
+          </span>
+          <span
+            className="text-[11px] font-bold tabular-nums"
+            style={{ color: '#a78bfa' }}
+          >
+            {progress}&thinsp;/&thinsp;{sequence.length}
           </span>
         </div>
 
-        {/* Track */}
-        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
-          {/* Fill — gradient couleur animé */}
+        {/* Piste + glow */}
+        <div className="relative" style={{ paddingBlock: 7 }}>
+          {/* Glow pulsé — derrière la piste */}
           <motion.div
+            className="absolute left-0 top-0 bottom-0 rounded-full pointer-events-none"
+            style={{ filter: `blur(${7 + (progressPct / 100) * 9}px)`, background: 'linear-gradient(90deg, #8b5cf6, #ec4899)' }}
             initial={{ width: 0 }}
-            animate={{ width: `${Math.max(progressPct, 2)}%` }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.05, 0.8, 0.1, 1] }}
-            className="hot-bar-fill h-full rounded-full"
+            animate={{
+              width: fillWidth,
+              opacity: [glowOpacityBase * 0.55, glowOpacityBase, glowOpacityBase * 0.55],
+            }}
+            transition={{
+              width: fillTransition,
+              opacity: { duration: pulseDuration, repeat: Infinity, ease: 'easeInOut', delay: 1.1 },
+            }}
           />
+
+          {/* Piste */}
+          <div
+            className="relative h-[10px] rounded-full overflow-hidden"
+            style={{ background: 'rgba(255,255,255,0.055)' }}
+          >
+            <motion.div
+              className="hot-bar-fill h-full rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: fillWidth }}
+              transition={fillTransition}
+            />
+          </div>
         </div>
       </motion.div>
 
