@@ -145,7 +145,7 @@ ouiclair-monorepo/
 | 5D | Sprint contenu — données i18n réelles | 3–5 j | **✅ Fait** (commit 8bc5d72) | — | 14 modules FR + EN stubs, i18n réel |
 | 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
 | 6A | HallOfCardsScreen | — | 🔄 En cours | 6B | carousel + gyroscope + tilt |
-| 6B | DuoSpace + PersonalSpace | — | **✅ Fait** (commit 8bb909b) | 6A | realtime stub + profil comfort |
+| 6B | DuoSpace + PersonalSpace | — | **✅ Fait** (8bb909b, fixes 3d5a079) | 6A | realtime stub + profil comfort |
 | 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
 | 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
 | 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
