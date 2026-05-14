@@ -60,9 +60,13 @@ export function PremiumScreen({ onActivate, onBack }: PremiumScreenProps) {
               className="rounded-3xl p-6 mb-5 text-center"
               style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)' }}
             >
-              <div className="flex justify-center mb-3">
+              <motion.div
+                className="flex justify-center mb-3"
+                animate={{ y: [0, -5, 0], scale: [1, 1.03, 1] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 <AppLogo className="w-20 h-20" variant="dark" />
-              </div>
+              </motion.div>
               <h2 className="text-2xl font-bold text-white mb-1">{t('premium.heroTitle')}</h2>
               <p className="text-white/80 text-sm">{t('premium.heroSubtitle')}</p>
             </motion.div>

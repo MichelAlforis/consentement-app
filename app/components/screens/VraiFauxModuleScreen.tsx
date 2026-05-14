@@ -75,9 +75,13 @@ export function VraiFauxModuleScreen({ items, namespace, moduleId, onComplete }:
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       <div className="flex items-start gap-3 mb-5">
-        <div className="w-11 h-11 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
+        <motion.div
+          className="w-11 h-11 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0"
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        >
           <Lightbulb size={22} className="text-purple-600" />
-        </div>
+        </motion.div>
         <div>
           <h2 className="text-xl font-bold" style={{ color: colors.textPrimary }}>{tx(t, `${namespace}.title`)}</h2>
           <p className="text-sm" style={{ color: colors.textMuted }}>

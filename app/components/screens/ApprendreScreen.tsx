@@ -150,12 +150,27 @@ function ModuleCard({
           <span className="font-semibold text-sm min-w-0 truncate" style={{ color: colors.textPrimary }}>
             {module.title}
           </span>
-          <span
-            className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0"
-            style={{ background: r.bg, color: r.text }}
-          >
-            {module.rarityLabel}
-          </span>
+          {module.rarity === 'common' ? (
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0"
+              style={{ background: r.bg, color: r.text }}
+            >
+              {module.rarityLabel}
+            </span>
+          ) : (
+            <motion.span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0"
+              style={{ background: r.bg, color: r.text }}
+              animate={{ opacity: [0.65, 1, 0.65] }}
+              transition={{
+                duration: module.rarity === 'unique' ? 1.8 : 2.6,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            >
+              {module.rarityLabel}
+            </motion.span>
+          )}
           {module.heatPoints > 0 && (
             <span
               className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0"
@@ -189,9 +204,20 @@ function ModuleCard({
 
       <div className="shrink-0 ml-1">
         {completed ? (
-          <CheckCircle size={20} style={{ color: r.text }} />
+          <motion.div
+            animate={{ scale: [1, 1.18, 1], opacity: [0.75, 1, 0.75] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.2 }}
+          >
+            <CheckCircle size={20} style={{ color: r.text }} />
+          </motion.div>
         ) : heatLocked ? (
-          <span style={{ fontSize: 16 }}>🔥</span>
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ fontSize: 16, display: 'inline-block' }}
+          >
+            🔥
+          </motion.span>
         ) : fullyLocked ? (
           <Lock size={16} style={{ color: colors.textMuted }} />
         ) : (

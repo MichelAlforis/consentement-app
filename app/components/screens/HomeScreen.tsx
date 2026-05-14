@@ -1,12 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
 import { AppLogo, IconBox } from '../ui';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
-import { HeatThermometer } from '../ui/HeatThermometer';
-import { HeatRoadmapSheet } from '../ui/HeatRoadmapSheet';
 import { DailyQuestionCard } from '../ui/DailyQuestionCard';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
@@ -145,32 +142,6 @@ function HeatGatedExplicitMode({ delay }: { delay: number }) {
   );
 }
 
-function HeatBar() {
-  const { points, level } = useHeat();
-  const [showRoadmap, setShowRoadmap] = useState(false);
-
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, x: 12 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.15 }}
-        className="flex justify-end mb-4"
-      >
-        <HeatThermometer points={points} compact onPress={() => setShowRoadmap(true)} />
-      </motion.div>
-      <AnimatePresence>
-        {showRoadmap && (
-          <HeatRoadmapSheet
-            currentLevel={level}
-            currentPoints={points}
-            onClose={() => setShowRoadmap(false)}
-          />
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
 
 function PrivacyText({ text }: { text: string }) {
   const { colors } = useTheme();
@@ -196,7 +167,6 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   return (
     <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
-      <HeatBar />
 
       {/* CTA principal */}
       <motion.button
@@ -208,9 +178,14 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         className="w-full rounded-3xl p-5 mb-3 flex items-center gap-4"
         style={{ background: colors.accentGradient }}
       >
-        <IconBox size="xl" rounded="2xl" className="bg-white/20">
-          <BookOpen size={24} className="text-white" />
-        </IconBox>
+        <motion.div
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <IconBox size="xl" rounded="2xl" className="bg-white/20">
+            <BookOpen size={24} className="text-white" />
+          </IconBox>
+        </motion.div>
         <div className="flex-1 text-left">
           <span className="font-bold text-base text-white block mb-0.5">
             {isAdult ? t('homeV3.discovery.ctaAdult') : t('homeV3.discovery.ctaMinor')}
@@ -231,7 +206,12 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
         <IconBox style={{ background: colors.bgSecondary }}>
-          <Lock size={18} style={{ color: colors.textMuted }} />
+          <motion.div
+            animate={{ opacity: [0.45, 1, 0.45] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Lock size={18} style={{ color: colors.textMuted }} />
+          </motion.div>
         </IconBox>
         <div className="flex-1 min-w-0">
           <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
@@ -268,42 +248,42 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const nextModule = sequence.find((module) => module.id === nextModuleId);
   const nextModuleScreen = nextModule?.screen ?? null;
   const nextModuleTitle = nextModule ? t(nextModule.titleKey) : null;
+  const progressPct = (progress / sequence.length) * 100;
 
   return (
     <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
-      <HeatBar />
 
-      {/* Progression */}
+      {/* Barre Hot — progression modules */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="rounded-2xl p-4 mb-3"
-        style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
+        className="rounded-2xl px-4 py-3.5 mb-3"
+        style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)' }}
       >
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold" style={{ color: colors.textPrimary }}>
-            {t('homeV3.learning.progressLabel')}
-          </span>
-          <span className="text-xs font-medium" style={{ color: colors.accent }}>
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">🌡️</span>
+            <span className="text-[11px] font-semibold" style={{ color: colors.textPrimary }}>
+              {t('homeV3.learning.progressLabel')}
+            </span>
+          </div>
+          <span className="text-[10px] font-bold" style={{ color: '#a78bfa' }}>
             {t('homeV3.learning.moduleCount', { progress: String(progress), total: String(sequence.length) })}
           </span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: colors.bgSecondary }}>
+
+        {/* Track */}
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+          {/* Fill — gradient couleur animé */}
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: `${(progress / sequence.length) * 100}%` }}
-            transition={{ delay: 0.35, duration: 0.6, ease: 'easeOut' }}
-            className="h-full rounded-full"
-            style={{ background: colors.accentGradient }}
+            animate={{ width: `${Math.max(progressPct, 2)}%` }}
+            transition={{ delay: 0.4, duration: 0.8, ease: [0.05, 0.8, 0.1, 1] }}
+            className="hot-bar-fill h-full rounded-full"
           />
         </div>
-        <p className="text-xs mt-2" style={{ color: colors.textMuted }}>
-          {ownedCards.length === 1
-            ? t('homeV3.learning.cardsOne')
-            : t('homeV3.learning.cardsPlural', { count: String(ownedCards.length) })}
-        </p>
       </motion.div>
 
       {/* Prochain module suggéré */}
@@ -320,9 +300,14 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
             border: `1px solid ${colors.accent}40`,
           }}
         >
-          <IconBox style={{ background: colors.accentGradient }}>
-            <Star size={18} className="text-white" />
-          </IconBox>
+          <motion.div
+            animate={{ rotate: [0, 8, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }}
+          >
+            <IconBox style={{ background: colors.accentGradient }}>
+              <Star size={18} className="text-white" />
+            </IconBox>
+          </motion.div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
               style={{ color: colors.accent }}>{t('homeV3.learning.nextModuleLabel')}</p>
@@ -366,7 +351,6 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   return (
     <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
-      <HeatBar />
 
       {/* Collection showcase */}
       <motion.button
@@ -379,9 +363,14 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
         <div className="flex items-center gap-3 mb-2">
-          <IconBox style={{ background: colors.accentGradient }}>
-            <GalleryHorizontal size={18} className="text-white" />
-          </IconBox>
+          <motion.div
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
+          >
+            <IconBox style={{ background: colors.accentGradient }}>
+              <GalleryHorizontal size={18} className="text-white" />
+            </IconBox>
+          </motion.div>
           <div>
             <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
               {ownedCards.length === 1
@@ -414,9 +403,14 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
             border: '1px solid rgba(236,72,153,0.25)',
           }}
         >
-          <IconBox style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
-            <Users size={18} className="text-white" />
-          </IconBox>
+          <motion.div
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <IconBox style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
+              <Users size={18} className="text-white" />
+            </IconBox>
+          </motion.div>
           <div className="flex-1 min-w-0">
             <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
               {t('homeV3.mastery.duoTitle')}
@@ -440,9 +434,14 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           className="w-full rounded-2xl p-3.5 mb-3 flex items-center gap-3 text-left"
           style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
         >
-          <IconBox size="sm" style={{ background: colors.bgSecondary }}>
-            <Sparkles size={16} style={{ color: colors.accent }} />
-          </IconBox>
+          <motion.div
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', repeatDelay: 4 }}
+          >
+            <IconBox size="sm" style={{ background: colors.bgSecondary }}>
+              <Sparkles size={16} style={{ color: colors.accent }} />
+            </IconBox>
+          </motion.div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
               style={{ color: colors.accent }}>{t('homeV3.mastery.goFurther')}</p>

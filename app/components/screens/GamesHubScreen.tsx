@@ -89,7 +89,11 @@ export function GamesHubScreen({
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl shrink-0"
             style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
           >
-            <span style={{ fontSize: 14 }}>🌡️</span>
+            <motion.span
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ fontSize: 14, display: 'inline-block' }}
+            >🌡️</motion.span>
             <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>
               {t(`heat.${['', 'tiede', 'chaud', 'ardent', 'brulant', 'incandescent'][heatLevel]}`)}
             </span>
@@ -107,10 +111,12 @@ export function GamesHubScreen({
         )
           .filter(({ palier }) => heatLevel < palier)
           .map(({ feature: _f, labelKey, palier }) => (
-            <div
+            <motion.div
               key={labelKey}
               className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl"
               style={{ background: '#f9731610', border: '1px solid #f9731630' }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut', delay: palier * 0.3 }}
             >
               <span style={{ fontSize: 12 }}>🔒</span>
               <span className="text-xs font-medium flex-1" style={{ color: '#f97316' }}>
@@ -119,7 +125,7 @@ export function GamesHubScreen({
               <span className="text-[10px]" style={{ color: colors.textMuted }}>
                 {t('heat.fomo_pts', { n: String(HEAT_THRESHOLDS[palier as 2 | 3 | 4 | 5] - points) })}
               </span>
-            </div>
+            </motion.div>
           ))}
       </motion.div>
 

@@ -73,7 +73,8 @@
       "Bash(openssl rand *)",
       "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/\")",
       "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/consentement/\")",
-      "Bash(curl -sI https://ouiclair.com/symbol.svg)"
+      "Bash(curl -sI https://ouiclair.com/symbol.svg)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('workspaces:', d.get\\('workspaces'\\)\\); print\\('scripts:', list\\(d.get\\('scripts',{}\\).keys\\(\\)\\)\\)\")"
     ]
   },
   "enableAllProjectMcpServers": true

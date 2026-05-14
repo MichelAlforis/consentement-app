@@ -204,6 +204,18 @@
   }
 }
 
+/* ── Barre Hot — gradient couleur animé ────────────────────────────────────── */
+.hot-bar-fill {
+  background: linear-gradient(90deg, #8b5cf6, #ec4899, #c084fc, #8b5cf6);
+  background-size: 300% 100%;
+  animation: hot-bar-shift 3s linear infinite;
+}
+
+@keyframes hot-bar-shift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

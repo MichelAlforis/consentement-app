@@ -110,9 +110,21 @@ function VariantCard({
               : `${tier.color}22`,
         }}
       >
-        {locked ? <Lock size={16} color={colors.textMuted} /> : completed
-          ? <CheckCircle size={16} color="#fff" />
-          : tier.icon}
+        {locked ? (
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Lock size={16} color={colors.textMuted} />
+          </motion.div>
+        ) : completed ? (
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1.5 }}
+          >
+            <CheckCircle size={16} color="#fff" />
+          </motion.div>
+        ) : tier.icon}
       </div>
 
       <div className="flex-1 min-w-0">
