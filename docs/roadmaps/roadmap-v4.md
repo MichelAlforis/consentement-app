@@ -169,14 +169,23 @@ ouiclair-monorepo/
 
 - `apps/mobile/` initialisé — Expo SDK 54 / RN 0.81.5 (New Architecture activée).
 - `app.json` : `bundleIdentifier: fr.consentement.app`, plugins expo-secure-store + ATT.
-- `App.tsx` : polyfill EventSource (react-native-sse), `initStorage(mmkvStorage)`.
+- `App.tsx` : polyfill EventSource (react-native-sse default import), `initStorage(mmkvStorage)`.
 - Shell : `AppProviders`, `RouteRenderer` (squelette), `ThemeContext` (port V3 sans DOM), `mmkvStorage.ts` (IStorage MMKV).
 - `metro.config.js` : `watchFolders` monorepo + symlinks pnpm + `nodeModulesPaths`.
 - `eas.json` : profils development / preview / production.
-- `packages/textures/scripts/generate.ts` : 8 PNG générés au build (6 faces dé + grain-128 + grain-256).
-- `DiceCanvas.native.tsx` : port R3F/native, `useTexture(require(...))` pour faces numériques, `THREE.DataTexture` 1×1 pour catégories (TODO PNG catégorie).
+- `packages/textures/scripts/generate.ts` : 8 PNG au build (6 faces dé + grain-128 + grain-256).
+- `DiceCanvas.native.tsx` : port R3F/native complet —
+  - `useTexture(NUMERIC_FACE_URIS)` avec `Asset.fromModule(require(...)).uri` (TODO L55 résolu) ;
+  - `THREE.DataTexture` 1×1 pour catégories (TODO PNG catégorie en Phase 7 CardGame) ;
+  - `three-stdlib` `RoundedBoxGeometry` conservé (ajouté aux deps root + mobile) ;
+  - `apps/mobile/src/r3f.d.ts` pour JSX intrinsics R3F (`group`, `mesh`, `pointLight`…).
+- `pnpm tsc --noEmit` apps/mobile : **0 erreur** ✅
 - Symlinks pnpm OK : `node_modules/@ouiclair/textures/assets/dice/` → PNG accessibles par Metro.
-- **Reste** : test sur device physique (seuil go ≥ 45fps) → décision go/no-go Phase 3.
+- **Reste — go/no-go device physique** :
+  1. GL init sans crash (iOS + Android)
+  2. Les 6 faces affichent les bons chiffres (Asset.fromModule URI résolu)
+  3. Framerate ≥ 45fps lancé actif sur iPhone mid-range + Pixel 6
+  → Lancer : `eas build --profile preview --platform all` puis tester sur device.
 
 ### Non démarré
 
