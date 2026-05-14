@@ -48,6 +48,7 @@ fastlane/test_output
 *.dSYM.zip
 *.png
 !e2e/**/*.png
+!apps/mobile/assets/*.png
 !apps/vitrine/public/*.png
 !apps/vitrine/public/*.mp4
 .playwright-mcp/
