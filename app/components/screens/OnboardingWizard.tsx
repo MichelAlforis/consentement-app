@@ -178,6 +178,7 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
             <motion.button key={mode}
               initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }} whileTap={{ scale: 0.98 }}
+              data-testid={`theme-card-${mode}`}
               onClick={() => { vibrate('light'); onSelectTheme(mode); onNext(); }}
               className="relative overflow-hidden rounded-2xl p-4 text-left w-full"
               style={{
@@ -187,12 +188,12 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
                 outlineOffset: '2px',
               }}>
               <div className="flex items-center gap-4">
-                <IconBox size="xl" rounded="2xl" className="overflow-hidden grid grid-cols-2 gap-px p-px"
+                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px shrink-0"
                   style={{ background: theme.colors.accentGradient }}>
                   {themePreviewColors[mode].map((c) => (
                     <div key={c} className="rounded-[3px]" style={{ backgroundColor: c }} />
                   ))}
-                </IconBox>
+                </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
                   <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>
@@ -340,7 +341,7 @@ export function OnboardingWizard({ isAdult, isPremium, onSetAge, onSelectTheme, 
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
+    <div data-testid="screen-onboarding" className="flex-1 min-h-0 flex flex-col overflow-hidden" style={{ background: colors.bgGradient ?? colors.bgPrimary }}>
       {/* Top bar — step dots + skip */}
       <div className="shrink-0 flex items-center justify-between px-5 pt-5 pb-3 safe-area-top">
         <div className="flex gap-1.5">

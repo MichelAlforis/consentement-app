@@ -4,18 +4,19 @@ import { test, expect } from '@playwright/test';
 // Injecte le localStorage AVANT le premier render React (addInitScript)
 // pour que les stores zustand-persist démarrent directement dans le bon état.
 //
+// Stabilité : on attend le data-testid de l'écran cible plutôt qu'un délai fixe
+// — évite les faux positifs liés au splash screen (600ms hardcodé dans AppShell)
+// et aux variations de vitesse de rendu.
+//
 // Mode serial — évite les crashs Three.js cross-workers sur les tests qui suivent.
-// toMatchSnapshot — crée les snapshots de référence au premier run, compare ensuite.
 
 test.describe.configure({ mode: 'serial' });
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── State constants ────────────────────────────────────────────────────────────
 
 const ADULT_AUTH    = JSON.stringify({ state: { isAdult: true, userName: 'Test', pronouns: null, isAuthenticated: true }, version: 0 });
 const MODULES_DONE  = JSON.stringify({ state: { completedModules: [], onboardingStatus: 'completed' }, version: 1 });
 const SETTINGS_WARM = JSON.stringify({ state: { themeMode: 'warm', explicitMode: false }, version: 0 });
-
-const SETTLE = 700; // ms — laisse les animations framer-motion terminer (300-400 ms typique)
 
 // ── Onboarding (état vide — premier lancement) ─────────────────────────────────
 
@@ -25,8 +26,9 @@ test.describe('Visual — Onboarding', () => {
   test('onboarding · step 1 langue', async ({ page }) => {
     // Aucune injection — localStorage vide = premier lancement
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(SETTLE);
+    await page.locator('[data-testid="screen-onboarding"]').waitFor({ state: 'visible' });
+    // Laisse l'animation d'entrée framer-motion se terminer (300ms)
+    await page.waitForTimeout(350);
     const shot = await page.screenshot({ fullPage: false });
     expect(shot).toMatchSnapshot('onboarding-language-step.png');
   });
@@ -44,8 +46,8 @@ test.describe('Visual — Home', () => {
       localStorage.setItem('consentement-settings', settings);
     }, { auth: ADULT_AUTH, modules: MODULES_DONE, settings: SETTINGS_WARM });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(SETTLE);
+    await page.locator('[data-testid="screen-home"]').waitFor({ state: 'visible' });
+    await page.waitForTimeout(350);
     const shot = await page.screenshot({ fullPage: false });
     expect(shot).toMatchSnapshot('home-adult-discovery.png');
   });
@@ -63,12 +65,11 @@ test.describe('Visual — Apprendre', () => {
       localStorage.setItem('consentement-settings', settings);
     }, { auth: ADULT_AUTH, modules: MODULES_DONE, settings: SETTINGS_WARM });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(SETTLE);
+    await page.locator('[data-testid="screen-home"]').waitFor({ state: 'visible' });
 
-    // Clic sur l'onglet Apprendre
     await page.getByRole('button', { name: /apprendre/i }).click();
-    await page.waitForTimeout(SETTLE);
+    await page.locator('[data-testid="screen-apprendre"]').waitFor({ state: 'visible' });
+    await page.waitForTimeout(350);
 
     const shot = await page.screenshot({ fullPage: false });
     expect(shot).toMatchSnapshot('apprendre-adult-modules.png');

@@ -178,7 +178,7 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const { t } = useTranslation();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
+    <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
       <HeatBar />
 
@@ -253,7 +253,7 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const nextModuleTitle = nextModule ? t(nextModule.titleKey) : null;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
+    <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
       <HeatBar />
 
@@ -346,7 +346,7 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
   const nextModuleTitle  = nextModule ? t(nextModule.titleKey) : null;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
+    <motion.div data-testid="screen-home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5">
       {isAdult ? <GreetingCard userName={userName} /> : <MinorBadge />}
       <HeatBar />
 
