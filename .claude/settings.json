@@ -90,7 +90,10 @@
       "Bash(pnpm exec *)",
       "Bash(/Users/test/Documents/Consentement/consentement-app/apps/mobile/node_modules/.bin/tsc --noEmit --skipLibCheck)",
       "Bash(pnpm --filter @ouiclair/mobile exec tsc --noEmit)",
-      "Bash(./node_modules/.bin/eslint apps/mobile/src/ --ext .ts,.tsx)"
+      "Bash(./node_modules/.bin/eslint apps/mobile/src/ --ext .ts,.tsx)",
+      "Bash(node_modules/.bin/eslint apps/mobile/src/i18n/locales/es/ apps/mobile/src/i18n/index.ts --max-warnings=0)",
+      "Bash(pnpm --filter @ouiclair/mobile tsc --noEmit)",
+      "Bash(pnpm eslint *)"
     ],
     "additionalDirectories": [
       "/Users/test/Documents/Consentement/consentement-app/packages/core/packages/core/src/stores"

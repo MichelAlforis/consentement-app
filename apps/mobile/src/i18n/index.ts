@@ -1,8 +1,9 @@
 // BARREL — ne jamais transformer en export * glob (R7)
 import { fr } from './locales/fr';
 import { en } from './locales/en';
+import { es } from './locales/es';
 
-const LOCALES = { fr, en } as const;
+const LOCALES = { fr, en, es } as const;
 type Locale = keyof typeof LOCALES;
 
 function resolve(obj: unknown, path: string): string | undefined {

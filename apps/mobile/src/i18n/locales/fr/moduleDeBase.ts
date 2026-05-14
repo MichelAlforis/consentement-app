@@ -1,7 +1,7 @@
 export const moduleDeBase = {
   moduleDeBase: {
     fiches: {
-      title: '// CONTENU CRÉÉ Phase 5D — Module de base',
+      title: 'Module de base',
       subtitle: 'Les fondamentaux du consentement',
       sectionDef: 'Définition',
       sectionConsent: 'Consentement',
