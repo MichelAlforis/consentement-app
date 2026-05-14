@@ -54,7 +54,7 @@ export const useDuoStore = create<DuoStore>()(
         }
       },
 
-      updateDuoCode: (code) => set({ duoCode: code.replace(/\D/g, '') }),
+      updateDuoCode: (code) => set({ duoCode: code.replace(/[^A-Z0-9]/gi, '').toUpperCase() }),
 
       setShowComparison: (show) => set({ showComparison: show }),
 

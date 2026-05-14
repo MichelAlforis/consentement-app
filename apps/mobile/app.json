@@ -39,6 +39,7 @@
     "plugins": [
       "expo-secure-store",
       "expo-sensors",
+      "expo-camera",
       [
         "expo-tracking-transparency",
         {
