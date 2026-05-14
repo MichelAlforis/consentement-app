@@ -6,8 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initStorage } from '@ouiclair/core';
 import { mmkvStorage } from './src/storage/mmkvStorage';
-import { AppProviders } from './src/app/AppProviders';
-import { RouteRenderer } from './src/app/RouteRenderer';
+import { AppProviders } from './src/shell/AppProviders';
+import { RouteRenderer } from './src/shell/RouteRenderer';
 
 initStorage(mmkvStorage);
 
