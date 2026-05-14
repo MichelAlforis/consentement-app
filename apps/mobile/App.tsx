@@ -10,9 +10,8 @@ import { mmkvStorage } from './src/storage/mmkvStorage';
 import { AppProviders } from './src/shell/AppProviders';
 import { RouteRenderer } from './src/shell/RouteRenderer';
 
-// TODO Phase 9 (pré-production) : remplacer undefined par la vraie DSN Sentry
 Sentry.init({
-  dsn: __DEV__ ? undefined : 'SENTRY_DSN_PLACEHOLDER',
+  dsn: __DEV__ ? undefined : 'https://6bcf9c06debf4f28f4945b95ae7c549b@o4510205968187392.ingest.de.sentry.io/4511390422990928',
   enabled: !__DEV__,
   tracesSampleRate: 0.2,
 });
