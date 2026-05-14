@@ -17,6 +17,9 @@ import { ruptureHarcele } from './ruptureHarcele';
 import { contentNonConsenti } from './contentNonConsenti';
 import { pratiquesExplicit } from './pratiquesExplicit';
 import { zonesGrises } from './zonesGrises';
+import { lgbtqConsent } from './lgbtqConsent';
+import { pratiquesAvancees } from './pratiquesAvancees';
+import { scenarioGame } from './scenarioGame';
 
-export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data, ...quizMultiLevel, ...pratiquesBase, ...lexiqueConsent, ...scenariosQuotidiens, ...alcoolConsent, ...bdsmConsent, ...sexting, ...pressionManip, ...ruptureHarcele, ...contentNonConsenti, ...pratiquesExplicit, ...zonesGrises };
+export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data, ...quizMultiLevel, ...pratiquesBase, ...lexiqueConsent, ...scenariosQuotidiens, ...alcoolConsent, ...bdsmConsent, ...sexting, ...pressionManip, ...ruptureHarcele, ...contentNonConsenti, ...pratiquesExplicit, ...zonesGrises, ...lgbtqConsent, ...pratiquesAvancees, ...scenarioGame };
 export type Translations = typeof fr;

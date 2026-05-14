@@ -72,7 +72,8 @@
       "Bash(awk '{print $2}')",
       "Bash(openssl rand *)",
       "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/\")",
-      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/consentement/\")"
+      "Bash(ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 \"ls /srv/consentement/\")",
+      "Bash(curl -sI https://ouiclair.com/symbol.svg)"
     ]
   },
   "enableAllProjectMcpServers": true

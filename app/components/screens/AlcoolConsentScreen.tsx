@@ -22,6 +22,7 @@ export function AlcoolConsentScreen({ moduleId = 'alcool-consent', onComplete }:
           questions={alcoolConsentQuiz}
           namespace="alcoolConsent.quiz"
           moduleId={moduleId}
+          skipComplete
           onComplete={() => setPhase('loi')}
         />
       </motion.div>

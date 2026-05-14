@@ -42,6 +42,7 @@ import {
   VraiFauxModuleScreen,
   LoiModuleScreen,
   AlcoolConsentScreen,
+  ScenarioGameScreen,
 } from '../../routes';
 import { pratiquesBaseItems } from '../../data/pratiquesBase';
 import { lexiqueConsentEntries } from '../../data/lexiqueConsent';
@@ -53,6 +54,8 @@ import { ruptureHarceleLoiPoints } from '../../data/ruptureHarcele';
 import { contentNonConsentLoiPoints } from '../../data/contentNonConsenti';
 import { pratiquesExplicitQuiz } from '../../data/pratiquesExplicit';
 import { zonesGrisesQuiz } from '../../data/zonesGrises';
+import { lgbtqConsentItems } from '../../data/lgbtqConsent';
+import { pratiquesAvanceesItems } from '../../data/pratiquesAvancees';
 import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
 
@@ -318,6 +321,26 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
       onComplete={() => ctx.navigateTo('hall-of-cards')}
     />
   ),
+
+  'lgbtq-consent': (ctx) => (
+    <VraiFauxModuleScreen
+      items={lgbtqConsentItems}
+      namespace={ctx.isAdult === false ? 'lgbtqConsent.vraiFaux' : 'lgbtqConsent.vraiFaux'}
+      moduleId="lgbtq-consent"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'pratiques-avancees': (ctx) => (
+    <FichePratiqueScreen
+      items={pratiquesAvanceesItems}
+      namespace="pratiquesAvancees.fiches"
+      moduleId="pratiques-avancees"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'scenario-game': (_ctx) => <ScenarioGameScreen />,
 
   premium: (ctx) => (
     <PremiumScreen

@@ -1,7 +1,7 @@
 export const onboarding = {
   welcome: {
     tagline: 'Apprendre. Comprendre. Décider.',
-    description: "Le porno ne t'apprend pas le consentement. On est là pour ça — sans tabou, sans jugement.",
+    description: "Les films pour adultes ne t'apprennent pas le consentement. On est là pour ça — sans tabou, sans jugement.",
     pillars: {
       consent: 'Consentement',
       education: 'Éducation',

@@ -24,7 +24,9 @@ export type ModuleId =
   | 'rupture-harcele'
   | 'content-non-consenti'
   | 'pratiques-explicit'
-  | 'zones-grises';
+  | 'zones-grises'
+  | 'lgbtq-consent'
+  | 'pratiques-avancees';
 
 export type EffectiveModuleId =
   | ModuleId
@@ -34,6 +36,7 @@ export type EffectiveModuleId =
   | 'loi-consentement-mineur'
   | 'lexique-consent-mineur'
   | 'scenarios-quotidiens-mineur'
+  | 'lgbtq-consent-mineur'
   | 'alcool-consent'
   | 'bdsm-consent'
   | 'sexting'
@@ -41,7 +44,9 @@ export type EffectiveModuleId =
   | 'rupture-harcele'
   | 'content-non-consenti'
   | 'pratiques-explicit'
-  | 'zones-grises';
+  | 'zones-grises'
+  | 'lgbtq-consent'
+  | 'pratiques-avancees';
 
 type AudienceValue<T> = {
   adult: T;
@@ -204,6 +209,8 @@ export const MODULES = [
   { id: 'content-non-consenti', effectiveId: { adult: 'content-non-consenti', minor: 'content-non-consenti' }, screen: 'content-non-consenti', titleKey: 'apprendre.contentNonConsenti.title',  descriptionKey: 'apprendre.contentNonConsenti.desc', reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 13,   minor: null }, available: { adult: true, minor: false } },
   { id: 'pratiques-explicit',   effectiveId: { adult: 'pratiques-explicit',   minor: 'pratiques-explicit'   }, screen: 'pratiques-explicit',   titleKey: 'apprendre.pratiquesExplicit.title',  descriptionKey: 'apprendre.pratiquesExplicit.desc',  reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: 14,   minor: null }, available: { adult: true, minor: false } },
   { id: 'zones-grises',         effectiveId: { adult: 'zones-grises',         minor: 'zones-grises'         }, screen: 'zones-grises',         titleKey: 'apprendre.zonesGrises.title',        descriptionKey: 'apprendre.zonesGrises.desc',        reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 15,   minor: null }, available: { adult: true, minor: false } },
+  { id: 'lgbtq-consent',        effectiveId: { adult: 'lgbtq-consent',        minor: 'lgbtq-consent-mineur'  }, screen: 'lgbtq-consent',        titleKey: 'apprendre.lgbtqConsent.title',       descriptionKey: 'apprendre.lgbtqConsent.desc',       reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'M' }, sequence: { adult: 16,   minor: 8  }, available: { adult: true, minor: true  } },
+  { id: 'pratiques-avancees',   effectiveId: { adult: 'pratiques-avancees',   minor: 'pratiques-avancees'    }, screen: 'pratiques-avancees',   titleKey: 'apprendre.pratiquesAvancees.title',  descriptionKey: 'apprendre.pratiquesAvancees.desc',  reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 17,   minor: null }, available: { adult: true, minor: false } },
 ] as const satisfies readonly ModuleConfig[];
 
 export const MODULE_BY_ID = Object.fromEntries(MODULES.map((mod) => [mod.id, mod])) as Record<ModuleId, ModuleConfig>;

@@ -52,6 +52,9 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
   'content-non-consenti': {},
   'pratiques-explicit': {},
   'zones-grises': {},
+  'lgbtq-consent': {},
+  'pratiques-avancees': {},
+  'scenario-game': {},
   premium: {},
   'theme-select': {},
 

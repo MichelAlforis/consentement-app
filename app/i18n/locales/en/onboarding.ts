@@ -1,7 +1,7 @@
 export const onboarding = {
   welcome: {
     tagline: 'Learn. Understand. Decide.',
-    description: "Porn doesn't teach you about consent. We're here for that — no taboo, no judgment.",
+    description: "Adult films don't teach you about consent. We're here for that — no taboo, no judgment.",
     pillars: {
       consent: 'Consent',
       education: 'Education',

@@ -120,7 +120,10 @@ export const education = {
       message: "Tu peux faire quelque chose. Signaler, écouter, ou simplement orienter la personne vers les bonnes ressources — chaque geste compte.",
     },
     resources: {
-      violences: 'Violences Femmes Info',
+      violences: 'Violences conjugales',
+      violencesContact: '3919 — Gratuit, 24h/24, anonyme',
+      suicide: 'Prévention du Suicide',
+      suicideContact: '3114 — Disponible 24h/24, 7j/7',
       police: 'Police / Gendarmerie',
       signalement: 'Signaler en ligne',
       planning: 'Planning Familial',

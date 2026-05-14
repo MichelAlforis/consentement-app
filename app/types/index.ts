@@ -52,7 +52,10 @@ export type Screen =
   | 'rupture-harcele'
   | 'content-non-consenti'
   | 'pratiques-explicit'
-  | 'zones-grises';
+  | 'zones-grises'
+  | 'lgbtq-consent'
+  | 'pratiques-avancees'
+  | 'scenario-game';
 
 export type Language = 'fr' | 'en' | 'es';
 

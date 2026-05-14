@@ -13,6 +13,8 @@ import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
 import { useHaptics } from '../shared/useHaptics';
 import { drawIconNodes } from '../../utils/iconPaths';
+import { PositionSVG } from '../../components/ui/PositionSVG';
+import { drawPositionOnCanvas } from '../../utils/positionCanvasDraw';
 import { DURATION, EASING } from '../../constants/motion';
 import { RADIUS } from '../../constants/tokens';
 import { initGrain, getGrainCanvas } from '../../utils/grainTexture';
@@ -400,7 +402,11 @@ function makeFaceTexture(card: GainedCard, size = 512, refImage?: HTMLImageEleme
   ctx.beginPath();
   ctx.arc(size / 2, iconCy, iconR * 1.35, 0, Math.PI * 2);
   ctx.fill();
-  drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.65, inkColor);
+  if (card.positionKey) {
+    drawPositionOnCanvas(ctx, card.positionKey, size / 2, iconCy, iconR);
+  } else {
+    drawIconNodes(ctx, card.iconName, size / 2, iconCy, iconR * 1.65, inkColor);
+  }
 
   // Panneau texte
   const panelX = size * 0.075;
@@ -970,7 +976,10 @@ function CSSCardFallback({ card, isFlipped, size = 160 }: { card: GainedCard; is
             filter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
             WebkitFilter: `drop-shadow(0 0 ${Math.round(size * 0.10)}px ${card.border}) drop-shadow(0 0 ${Math.round(size * 0.05)}px ${card.border})`,
           }}>
-            <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
+            {card.positionKey
+              ? <PositionSVG position={card.positionKey} size={Math.round(size * 0.26 * 1.6)} />
+              : <DynamicIcon name={card.iconName} size={Math.round(size * 0.26)} color="rgba(255,255,255,0.88)" />
+            }
           </div>
 
           {/* Panneau texte — correction optique définie dans CARD_LAYOUT.panelTopDOM */}

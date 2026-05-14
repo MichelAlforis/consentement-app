@@ -51,6 +51,14 @@ type ModuleMeta = {
   requiredHeatLevel?: 2 | 3 | 4 | 5;
 };
 
+// Modules nécessitant un palier minimum du Baromètre pour être accessibles.
+const HEAT_GATES: Partial<Record<string, 2 | 3 | 4 | 5>> = {
+  'bdsm-consent':       2,
+  'pratiques-explicit': 2,
+  'lgbtq-consent':      2,
+  'pratiques-avancees': 3,
+};
+
 const MODULE_ICONS: Record<string, ReactNode> = {
   'quiz-consentement': <Brain size={20} className="text-white" />,
   'porno-vs-realite': <Film size={20} className="text-white" />,
@@ -86,8 +94,8 @@ function ModuleCard({
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const heatLocked = !module.available && module.requiredHeatLevel !== undefined;
-  const heatUnlockable = heatLocked && module.requiredHeatLevel !== undefined && currentHeatLevel >= (module.requiredHeatLevel ?? 99);
+  const heatLocked = module.requiredHeatLevel !== undefined && currentHeatLevel < module.requiredHeatLevel;
+  const fullyLocked = !module.available && !heatLocked;
   const rarity = {
     common: {
       bg: `color-mix(in srgb, ${colors.textMuted} 15%, transparent)`,
@@ -113,19 +121,23 @@ function ModuleCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.07 }}
       whileTap={{ scale: 0.98 }}
-      disabled={!module.available && !heatUnlockable}
-      onClick={() => module.screen && onNavigate(module.screen)}
+      disabled={fullyLocked || heatLocked}
+      onClick={() => !heatLocked && module.screen && onNavigate(module.screen)}
       className="w-full rounded-2xl p-4 flex items-center gap-3 text-left"
       style={{
         background: colors.bgCard,
         border: `1px solid ${completed ? r.text + '50' : heatLocked ? '#f9731640' : colors.border}`,
-        opacity: module.available || heatLocked ? 1 : 0.55,
+        opacity: fullyLocked ? 0.55 : 1,
       }}
     >
       <IconBox size="lg" style={{
-        background: completed || !module.available
+        background: completed
           ? r.iconBg
-          : `color-mix(in srgb, ${colors.locked} 20%, transparent)`,
+          : heatLocked
+            ? '#f9731622'
+            : !module.available
+              ? `color-mix(in srgb, ${colors.locked} 20%, transparent)`
+              : `color-mix(in srgb, ${colors.locked} 20%, transparent)`,
       }}>
         {module.icon}
       </IconBox>
@@ -177,7 +189,7 @@ function ModuleCard({
           <CheckCircle size={20} style={{ color: r.text }} />
         ) : heatLocked ? (
           <span style={{ fontSize: 16 }}>🔥</span>
-        ) : !module.available ? (
+        ) : fullyLocked ? (
           <Lock size={16} style={{ color: colors.textMuted }} />
         ) : (
           <ChevronRight size={18} style={{ color: colors.textMuted }} />
@@ -210,7 +222,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
         ),
         available: module.available[audience],
         heatPoints: pts,
-        requiredHeatLevel: undefined,
+        requiredHeatLevel: HEAT_GATES[module.id],
       };
     });
   const availableModules = modules.filter((m) => m.available);

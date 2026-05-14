@@ -57,6 +57,8 @@ export const MODULE_POINTS: Partial<Record<EffectiveModuleId, number>> = {
   'content-non-consenti': 5,
   'pratiques-explicit': 6,
   'zones-grises': 4,
+  'lgbtq-consent': 4, 'lgbtq-consent-mineur': 4,
+  'pratiques-avancees': 6,
 };
 
 // Points par rareté de carte (s'accumulent séparément des MODULE_POINTS)

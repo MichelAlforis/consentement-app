@@ -144,6 +144,8 @@ export const ui = {
     contentNonConsenti:   { title: 'Contenu non consenti',   desc: 'Images & vidéos intimes partagées sans accord — tes droits' },
     pratiquesExplicit:    { title: 'Pratiques explicites',   desc: 'Communication avant, pendant et après — ce qu\'on ne dit pas' },
     zonesGrises:          { title: 'Zones grises',           desc: 'Les situations où la réponse n\'est pas évidente' },
+    lgbtqConsent:         { title: 'LGBTQ+ & consentement', desc: '7 mythes sur l\'orientation sexuelle et le consentement' },
+    pratiquesAvancees:    { title: 'Pratiques avancées',    desc: 'Bondage, jeux de rôle, exploration — cadre et limites' },
     rewardBase:    '24 cartes communes',
     allDone:       'Parcours complété !',
     allDoneSub:    'Tu as exploré tout le contenu disponible. Maintenant, joue !',

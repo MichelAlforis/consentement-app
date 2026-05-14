@@ -1,0 +1,30 @@
+export const scenarioGame = {
+  scenarioGame: {
+    title: 'Mode Scénario',
+    subtitle: 'Lance les deux dés et laisse-toi guider',
+    rollBtn: 'Lancer les dés',
+    rerollBtn: 'Rejouer',
+    locked: 'Débloqué au palier Ardent',
+    lockedSub: 'Continue d\'explorer pour atteindre le palier 3.',
+    die1Label: 'Thème',
+    die2Label: 'Comment',
+    resultTitle: 'Votre scénario',
+    consent: 'Rappel : stoppez à tout moment si l\'un de vous n\'est plus à l\'aise.',
+    actions: {
+      massage:       { label: 'Massage & toucher',       instruction: 'Prenez le temps de vous masser. Guidez l\'autre vers ce que vous appréciez.' },
+      roleplay:      { label: 'Jeu de rôle',             instruction: 'Inventez ensemble un scénario et tenez le rôle que vous avez choisi.' },
+      exploration:   { label: 'Exploration du corps',    instruction: 'Explorez le corps de l\'autre comme si c\'était la première fois — sans aller trop vite.' },
+      communication: { label: 'Communication du désir',  instruction: 'Dites à voix haute ce que vous aimez et ce qui vous fait envie ce soir.' },
+      trust:         { label: 'Confiance & abandon',     instruction: 'Laissez l\'autre guider complètement. Faites confiance à son rythme.' },
+      surprise:      { label: 'Surprise mutuelle',       instruction: 'Chaque personne prépare une attention ou une initiative — sans la révéler avant.' },
+    },
+    modifiers: {
+      silence:   { label: 'En silence',              how: 'Sans prononcer un mot — communiquez uniquement par le toucher.' },
+      blindfold: { label: 'Les yeux bandés',         how: 'L\'un de vous a les yeux bandés. Changez de rôle à mi-chemin si vous le souhaitez.' },
+      turnbyturn:{ label: 'À tour de rôle',          how: 'Chaque personne guide pendant 5 minutes, puis les rôles s\'inversent.' },
+      slowly:    { label: 'Très lentement',          how: 'Ralentissez chaque geste — prenez deux fois plus de temps que d\'habitude.' },
+      verbal:    { label: 'En guidant verbalement',  how: 'Dites à voix haute exactement ce que vous voulez que l\'autre fasse.' },
+      accessory: { label: 'Avec un accessoire',      how: 'Choisissez ensemble un accessoire — huile, plume, glaçon — et intégrez-le.' },
+    },
+  },
+};

@@ -46,6 +46,9 @@ export const QuizModuleScreen = lazy(() => import('./components/screens/QuizModu
 export const VraiFauxModuleScreen = lazy(() => import('./components/screens/VraiFauxModuleScreen').then(m => ({ default: m.VraiFauxModuleScreen })));
 export const LoiModuleScreen = lazy(() => import('./components/screens/LoiModuleScreen').then(m => ({ default: m.LoiModuleScreen })));
 export const AlcoolConsentScreen = lazy(() => import('./components/screens/AlcoolConsentScreen').then(m => ({ default: m.AlcoolConsentScreen })));
+export const LgbtqConsentScreen = lazy(() => import('./components/screens/VraiFauxModuleScreen').then(m => ({ default: m.VraiFauxModuleScreen })));
+export const PratiquesAvanceesScreen = lazy(() => import('./components/screens/FichePratiqueScreen').then(m => ({ default: m.FichePratiqueScreen })));
+export const ScenarioGameScreen = lazy(() => import('./components/screens/ScenarioGameScreen').then(m => ({ default: m.ScenarioGameScreen })));
 
 const baseRoute = (
   component: unknown,
@@ -103,6 +106,9 @@ export const ROUTES = {
   'content-non-consenti': baseRoute(LoiModuleScreen, { titleKey: 'apprendre.contentNonConsenti.title', requiresAdult: true, showAd: true }),
   'pratiques-explicit': baseRoute(QuizModuleScreen, { titleKey: 'apprendre.pratiquesExplicit.title', requiresAdult: true, showAd: true }),
   'zones-grises': baseRoute(QuizModuleScreen, { titleKey: 'apprendre.zonesGrises.title', requiresAdult: true, showAd: true }),
+  'lgbtq-consent': baseRoute(LgbtqConsentScreen, { titleKey: 'apprendre.lgbtqConsent.title', showAd: true }),
+  'pratiques-avancees': baseRoute(PratiquesAvanceesScreen, { titleKey: 'apprendre.pratiquesAvancees.title', requiresAdult: true, showAd: true }),
+  'scenario-game': baseRoute(ScenarioGameScreen, { titleKey: 'scenarioGame.title', requiresAdult: true }),
   language: baseRoute(LanguageScreen),
   onboarding: baseRoute(OnboardingWizard),
   'personal-intro': baseRoute(PersonalIntroScreen),

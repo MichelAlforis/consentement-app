@@ -19,12 +19,15 @@ interface QuizModuleScreenProps {
   namespace: string;
   moduleId: ModuleId;
   onComplete?: () => void;
+  /** Passe à true quand QuizModuleScreen est un sous-composant (ex: AlcoolConsentScreen)
+   *  pour éviter le double appel à complete() — le composant parent gère la complétion. */
+  skipComplete?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tx = (t: (k: any) => string, key: string) => t(key);
 
-export function QuizModuleScreen({ questions, namespace, moduleId, onComplete }: QuizModuleScreenProps) {
+export function QuizModuleScreen({ questions, namespace, moduleId, onComplete, skipComplete = false }: QuizModuleScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const complete = useModuleComplete();
@@ -59,7 +62,7 @@ export function QuizModuleScreen({ questions, namespace, moduleId, onComplete }:
 
   const handleNext = () => {
     if (current + 1 >= total) {
-      complete(moduleId);
+      if (!skipComplete) complete(moduleId);
       setFinished(true);
     } else {
       setCurrent(c => c + 1);

@@ -58,12 +58,13 @@ export const gameMenuItems = [
   },
   {
     id: 'scenarios',
-    section: 'premium',
+    section: 'free',
     order: 40,
+    screen: 'scenario-game',
     icon: 'scenarios',
     titleKey: 'games.scenarios.title',
     descKey: 'games.scenarios.desc',
-    availability: 'coming-soon',
+    availability: 'available',
     audience: 'adult',
   },
   {

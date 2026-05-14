@@ -121,7 +121,8 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
               </p>
             </div>
             <ResourceList resources={[
-              { icon: <Phone size={18} className="text-white" />, bg: '#ec4899', label: t('accompagnementAdulte.resources.violences'), contact: '3919 — Gratuit, 24h/24, anonyme', tel: '3919' },
+              { icon: <Phone size={18} className="text-white" />, bg: '#ec4899', label: t('accompagnementAdulte.resources.violences'), contact: t('accompagnementAdulte.resources.violencesContact'), tel: '3919' },
+              { icon: <Phone size={18} className="text-white" />, bg: '#7c3aed', label: t('accompagnementAdulte.resources.suicide'), contact: t('accompagnementAdulte.resources.suicideContact'), tel: '3114' },
               { icon: <Shield size={18} className="text-white" />, bg: '#3b82f6', label: t('accompagnementAdulte.resources.police'), contact: '17 — Urgence', tel: '17' },
               { icon: <ExternalLink size={18} className="text-white" />, bg: '#6366f1', label: t('accompagnementAdulte.resources.signalement'), contact: 'signalement.gouv.fr', href: 'https://www.service-public.fr/particuliers/vosdroits/N31784' },
             ]} />
@@ -140,6 +141,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
               </p>
             </div>
             <ResourceList resources={[
+              { icon: <Phone size={18} className="text-white" />, bg: '#7c3aed', label: t('accompagnementAdulte.resources.suicide'), contact: t('accompagnementAdulte.resources.suicideContact'), tel: '3114' },
               { icon: <Phone size={18} className="text-white" />, bg: '#10b981', label: t('accompagnementAdulte.resources.planning'), contact: '0 800 08 11 11 — Gratuit, lun-sam', tel: '0800081111' },
               {
                 icon: <HelpCircle size={18} className="text-white" />, bg: '#8b5cf6',
@@ -162,7 +164,7 @@ export function AccompagnementAdulteScreen({ onBack, onGoAnnuaire }: Accompagnem
               </p>
             </div>
             <ResourceList resources={[
-              { icon: <Phone size={18} className="text-white" />, bg: '#ec4899', label: t('accompagnementAdulte.resources.violences'), contact: '3919 — Gratuit, 24h/24, anonyme', tel: '3919' },
+              { icon: <Phone size={18} className="text-white" />, bg: '#ec4899', label: t('accompagnementAdulte.resources.violences'), contact: t('accompagnementAdulte.resources.violencesContact'), tel: '3919' },
               { icon: <Shield size={18} className="text-white" />, bg: '#3b82f6', label: t('accompagnementAdulte.resources.police'), contact: '17 — Urgence', tel: '17' },
             ]} />
             <Button onClick={onBack} variant="secondary" fullWidth className="mt-5">
