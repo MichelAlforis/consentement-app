@@ -1,3 +1,7 @@
+// V4: port V3 → RN. Wrapper qui passe les données du module à
+//     FichePratiqueScreen générique. Logique entièrement dans le
+//     composant partagé. Données depuis apps/mobile/src/data/fiches-pratiques.ts
+//     (stubs Phase 5, contenu réel en Phase 5 contenu).
 import {
   useAuthStore,
   useNavigationStore,
