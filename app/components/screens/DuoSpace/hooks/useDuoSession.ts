@@ -71,7 +71,7 @@ export function useDuoSession(): DuoSession {
         if (cancelled) return;
         setGeneratedCode(code);
         // Écoute l'arrivée du partenaire
-        const unsub = subscribeToSession(sessionId, (record) => {
+        const unsub = subscribeToSession(sessionId, code, (record) => {
           if (record.partner_profile) {
             setPartnerProfile(record.partner_profile);
             storeDuoPartner(record.partner_profile, sessionId);

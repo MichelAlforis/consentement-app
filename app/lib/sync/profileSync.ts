@@ -1,16 +1,28 @@
 import { pb } from '../pb';
+import { deriveProfileKey, encryptJSON, decryptJSON } from '../crypto';
 import type { PersonalProfile } from '../../types';
+
+interface EncryptedProfileRecord {
+  id: string;
+  tenderness: { _enc: string };
+  intensity:  { _enc: string };
+  trust:      { _enc: string };
+  safeword:   string; // base64 chiffré
+}
 
 export async function pushProfile(
   profile: PersonalProfile,
   pbUserId: string,
+  deviceId: string,
 ): Promise<void> {
+  const key = await deriveProfileKey(deviceId);
+
   const payload = {
-    user: pbUserId,
-    tenderness: profile.tenderness,
-    intensity: profile.intensity,
-    trust: profile.trust,
-    safeword: profile.safeword,
+    user:       pbUserId,
+    tenderness: { _enc: await encryptJSON(profile.tenderness, key) },
+    intensity:  { _enc: await encryptJSON(profile.intensity,  key) },
+    trust:      { _enc: await encryptJSON(profile.trust,      key) },
+    safeword:   await encryptJSON({ v: profile.safeword }, key),
   };
 
   const existing = await pb
@@ -25,16 +37,22 @@ export async function pushProfile(
   }
 }
 
-export async function pullProfile(pbUserId: string): Promise<PersonalProfile | null> {
+export async function pullProfile(
+  pbUserId: string,
+  deviceId: string,
+): Promise<PersonalProfile | null> {
   try {
     const record = await pb
       .collection('profiles')
-      .getFirstListItem(`user="${pbUserId}"`);
+      .getFirstListItem<EncryptedProfileRecord>(`user="${pbUserId}"`);
+
+    const key = await deriveProfileKey(deviceId);
+
     return {
-      tenderness: record['tenderness'] as Record<string, number>,
-      intensity: record['intensity'] as Record<string, number>,
-      trust: record['trust'] as Record<string, number>,
-      safeword: (record['safeword'] as string) ?? '',
+      tenderness: await decryptJSON<Record<string, number>>(record.tenderness._enc, key),
+      intensity:  await decryptJSON<Record<string, number>>(record.intensity._enc,  key),
+      trust:      await decryptJSON<Record<string, number>>(record.trust._enc,      key),
+      safeword:   (await decryptJSON<{ v: string }>(record.safeword, key)).v,
     };
   } catch {
     return null;

@@ -58,7 +58,7 @@ export const useAuthStore = create<AuthStore>()(
         const password = deviceId;
 
         if (pbUserId && pbToken && !pb.authStore.isValid) {
-          pb.authStore.save(pbToken, { id: pbUserId });
+          pb.authStore.save(pbToken, { id: pbUserId } as Parameters<typeof pb.authStore.save>[1]);
         }
 
         try {

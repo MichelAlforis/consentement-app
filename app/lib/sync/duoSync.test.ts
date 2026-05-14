@@ -5,7 +5,7 @@ import {
   subscribeToSession,
   updateSessionStep,
 } from './duoSync';
-import type { PersonalProfile } from '../../types';
+import type { PersonalProfile, PartnerProfile } from '../../types';
 
 // ─── Mock PocketBase ───────────────────────────────────────────────────────────
 
@@ -18,13 +18,25 @@ const mockUnsubscribe = vi.hoisted(() => vi.fn());
 vi.mock('../pb', () => ({
   pb: {
     collection: vi.fn(() => ({
-      create:             mockCreate,
-      update:             mockUpdate,
-      getFirstListItem:   mockGetFirst,
-      subscribe:          mockSubscribe,
-      unsubscribe:        mockUnsubscribe,
+      create:           mockCreate,
+      update:           mockUpdate,
+      getFirstListItem: mockGetFirst,
+      subscribe:        mockSubscribe,
+      unsubscribe:      mockUnsubscribe,
     })),
   },
+}));
+
+// ─── Mock crypto ──────────────────────────────────────────────────────────────
+
+vi.mock('../crypto', () => ({
+  deriveDuoKey: vi.fn().mockResolvedValue('mock-key'),
+  encryptJSON: vi.fn().mockImplementation((data: object) =>
+    Promise.resolve('ENC:' + JSON.stringify(data)),
+  ),
+  decryptJSON: vi.fn().mockImplementation((encoded: string) =>
+    Promise.resolve(JSON.parse(encoded.replace(/^ENC:/, ''))),
+  ),
 }));
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -38,11 +50,14 @@ const PROFILE: PersonalProfile = {
   safeword:   'ananas',
 };
 
-const PARTNER_SNAPSHOT = {
+const PARTNER_SNAPSHOT: PartnerProfile = {
   tenderness: { kisses: 2 },
   intensity:  { bondage: 3 },
   trust:      { openness: 1 },
 };
+
+// Représentation "chiffrée" stockée dans PocketBase
+const PARTNER_SNAPSHOT_ENC = { _enc: 'ENC:' + JSON.stringify(PARTNER_SNAPSHOT) };
 
 // ─── createDuoSession ─────────────────────────────────────────────────────────
 
@@ -66,22 +81,25 @@ describe('createDuoSession', () => {
     expect(code).toBe(code.toUpperCase());
   });
 
-  it('envoie le bon payload à create', async () => {
+  it('le payload contient le profil chiffré (sentinel _enc)', async () => {
     mockCreate.mockResolvedValue({ id: 'session-001' });
 
     await createDuoSession(PROFILE, USER_ID);
 
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        initiator: USER_ID,
-        initiator_profile: {
-          tenderness: PROFILE.tenderness,
-          intensity:  PROFILE.intensity,
-          trust:      PROFILE.trust,
-        },
-        step: 'waiting_partner',
-      }),
-    );
+    const [payload] = mockCreate.mock.calls[0] as [Record<string, unknown>];
+    expect((payload.initiator_profile as { _enc: string })._enc).toBeDefined();
+    expect(payload.initiator).toBe(USER_ID);
+    expect(payload.step).toBe('waiting_partner');
+  });
+
+  it("le profil en clair n'est jamais envoyé à PocketBase", async () => {
+    mockCreate.mockResolvedValue({ id: 'session-001' });
+
+    await createDuoSession(PROFILE, USER_ID);
+
+    const [payload] = mockCreate.mock.calls[0] as [Record<string, unknown>];
+    // initiator_profile doit être un objet {_enc} et non le snapshot nu
+    expect(payload.initiator_profile).not.toHaveProperty('tenderness');
   });
 
   it("expires_at est à ~24h dans le futur (±60s)", async () => {
@@ -90,12 +108,12 @@ describe('createDuoSession', () => {
 
     await createDuoSession(PROFILE, USER_ID);
 
-    const payload = mockCreate.mock.calls[0][0] as { expires_at: string };
+    const [payload] = mockCreate.mock.calls[0] as [{ expires_at: string }];
     const expiresAt = new Date(payload.expires_at).getTime();
-    const expectedMs = before + 24 * 60 * 60 * 1000;
+    const expected  = before + 24 * 60 * 60 * 1000;
 
-    expect(expiresAt).toBeGreaterThanOrEqual(expectedMs - 60_000);
-    expect(expiresAt).toBeLessThanOrEqual(expectedMs + 60_000);
+    expect(expiresAt).toBeGreaterThanOrEqual(expected - 60_000);
+    expect(expiresAt).toBeLessThanOrEqual(expected + 60_000);
   });
 });
 
@@ -104,21 +122,18 @@ describe('createDuoSession', () => {
 describe('joinDuoSession', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('retourne sessionId et initiatorProfile depuis le record', async () => {
-    mockGetFirst.mockResolvedValue({
-      id: 'session-002',
-      initiator_profile: PARTNER_SNAPSHOT,
-    });
+  it('retourne sessionId et initiatorProfile déchiffré', async () => {
+    mockGetFirst.mockResolvedValue({ id: 'session-002', initiator_profile: PARTNER_SNAPSHOT_ENC });
     mockUpdate.mockResolvedValue({});
 
-    const result = await joinDuoSession('abc123', PROFILE, USER_ID);
+    const { sessionId, initiatorProfile } = await joinDuoSession('ABC123', PROFILE, USER_ID);
 
-    expect(result.sessionId).toBe('session-002');
-    expect(result.initiatorProfile).toEqual(PARTNER_SNAPSHOT);
+    expect(sessionId).toBe('session-002');
+    expect(initiatorProfile).toEqual(PARTNER_SNAPSHOT);
   });
 
   it('convertit le code en majuscules avant la recherche', async () => {
-    mockGetFirst.mockResolvedValue({ id: 's', initiator_profile: PARTNER_SNAPSHOT });
+    mockGetFirst.mockResolvedValue({ id: 's', initiator_profile: PARTNER_SNAPSHOT_ENC });
     mockUpdate.mockResolvedValue({});
 
     await joinDuoSession('abc123', PROFILE, USER_ID);
@@ -126,24 +141,16 @@ describe('joinDuoSession', () => {
     expect(mockGetFirst).toHaveBeenCalledWith('code="ABC123"');
   });
 
-  it('met à jour le record avec le profil partenaire et le step', async () => {
-    mockGetFirst.mockResolvedValue({ id: 'session-002', initiator_profile: PARTNER_SNAPSHOT });
+  it('envoie le profil partenaire chiffré (sentinel _enc)', async () => {
+    mockGetFirst.mockResolvedValue({ id: 'session-002', initiator_profile: PARTNER_SNAPSHOT_ENC });
     mockUpdate.mockResolvedValue({});
 
     await joinDuoSession('XYZ999', PROFILE, USER_ID);
 
-    expect(mockUpdate).toHaveBeenCalledWith(
-      'session-002',
-      expect.objectContaining({
-        partner: USER_ID,
-        partner_profile: {
-          tenderness: PROFILE.tenderness,
-          intensity:  PROFILE.intensity,
-          trust:      PROFILE.trust,
-        },
-        step: 'connected',
-      }),
-    );
+    const [, payload] = mockUpdate.mock.calls[0] as [string, Record<string, unknown>];
+    expect((payload.partner_profile as { _enc: string })._enc).toBeDefined();
+    expect(payload.partner_profile).not.toHaveProperty('tenderness');
+    expect(payload.step).toBe('connected');
   });
 });
 
@@ -152,27 +159,38 @@ describe('joinDuoSession', () => {
 describe('subscribeToSession', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('appelle onChange uniquement pour les events "update"', () => {
-    let capturedCb: ((e: { action: string; record: unknown }) => void) | null = null;
-    mockSubscribe.mockImplementation((_id: string, cb: typeof capturedCb) => {
-      capturedCb = cb;
-    });
+  it('déchiffre partner_profile et appelle onChange pour "update"', async () => {
+    let capturedCb: ((e: { action: string; record: unknown }) => Promise<void>) | null = null;
+    mockSubscribe.mockImplementation((_id: string, cb: typeof capturedCb) => { capturedCb = cb; });
 
     const onChange = vi.fn();
-    subscribeToSession('session-003', onChange);
+    subscribeToSession('session-003', 'ABCDEF', onChange);
 
-    capturedCb!({ action: 'update', record: PARTNER_SNAPSHOT });
-    capturedCb!({ action: 'create', record: PARTNER_SNAPSHOT });
-    capturedCb!({ action: 'delete', record: PARTNER_SNAPSHOT });
+    await capturedCb!({ action: 'update', record: { partner_profile: PARTNER_SNAPSHOT_ENC } });
 
     expect(onChange).toHaveBeenCalledOnce();
-    expect(onChange).toHaveBeenCalledWith(PARTNER_SNAPSHOT);
+    // Le profil reçu doit être déchiffré
+    const received = onChange.mock.calls[0][0] as { partner_profile: PartnerProfile };
+    expect(received.partner_profile).toEqual(PARTNER_SNAPSHOT);
+  });
+
+  it("n'appelle pas onChange pour les events non-update", async () => {
+    let capturedCb: ((e: { action: string; record: unknown }) => Promise<void>) | null = null;
+    mockSubscribe.mockImplementation((_id: string, cb: typeof capturedCb) => { capturedCb = cb; });
+
+    const onChange = vi.fn();
+    subscribeToSession('session-003', 'ABCDEF', onChange);
+
+    await capturedCb!({ action: 'create', record: {} });
+    await capturedCb!({ action: 'delete', record: {} });
+
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it('retourne une fonction de désabonnement qui appelle unsubscribe', () => {
     mockSubscribe.mockImplementation(() => {});
 
-    const unsubscribe = subscribeToSession('session-003', vi.fn());
+    const unsubscribe = subscribeToSession('session-003', 'ABCDEF', vi.fn());
     unsubscribe();
 
     expect(mockUnsubscribe).toHaveBeenCalledWith('session-003');

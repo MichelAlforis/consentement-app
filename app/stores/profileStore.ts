@@ -20,16 +20,16 @@ interface ProfileStore {
 function syncToServer(profile: PersonalProfile) {
   // Import dynamique pour éviter la circularité authStore ↔ profileStore
   void import('./authStore').then(async ({ useAuthStore }) => {
-    const { pbUserId, pbToken } = useAuthStore.getState();
+    const { pbUserId, pbToken, deviceId } = useAuthStore.getState();
     if (!pbUserId) return;
     const [{ pb }, { pushProfile }] = await Promise.all([
       import('../lib/pb'),
       import('../lib/sync/profileSync'),
     ]);
     if (pbToken && !pb.authStore.isValid) {
-      pb.authStore.save(pbToken, { id: pbUserId });
+      pb.authStore.save(pbToken, { id: pbUserId } as Parameters<typeof pb.authStore.save>[1]);
     }
-    await pushProfile(profile, pbUserId).catch(() => {
+    await pushProfile(profile, pbUserId, deviceId).catch(() => {
       // Offline ou droits serveur indisponibles : la version locale reste la source immédiate.
     });
   });
@@ -59,10 +59,10 @@ export const useProfileStore = create<ProfileStore>()(
 
       syncFromServer: async () => {
         const { useAuthStore } = await import('./authStore');
-        const { pbUserId } = useAuthStore.getState();
+        const { pbUserId, deviceId } = useAuthStore.getState();
         if (!pbUserId) return;
         const { pullProfile } = await import('../lib/sync/profileSync');
-        const remote = await pullProfile(pbUserId);
+        const remote = await pullProfile(pbUserId, deviceId);
         if (remote) {
           set({ personalProfile: remote });
         }

@@ -1,4 +1,5 @@
 import { pb } from '../pb';
+import { deriveDuoKey, encryptJSON, decryptJSON } from '../crypto';
 import type { PersonalProfile, PartnerProfile } from '../../types';
 
 function generateCode(): string {
@@ -16,25 +17,33 @@ export interface DuoSessionRecord {
   expires_at: string;
 }
 
+interface EncryptedDuoRecord extends Omit<DuoSessionRecord, 'initiator_profile' | 'partner_profile'> {
+  initiator_profile: { _enc: string } | null;
+  partner_profile:   { _enc: string } | null;
+}
+
+function snapshot(profile: PersonalProfile): PartnerProfile {
+  return {
+    tenderness: profile.tenderness,
+    intensity:  profile.intensity,
+    trust:      profile.trust,
+  };
+}
+
 export async function createDuoSession(
   profile: PersonalProfile,
   pbUserId: string,
 ): Promise<{ code: string; sessionId: string }> {
   const code = generateCode();
+  const key = await deriveDuoKey(code);
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-  const snapshot: PartnerProfile = {
-    tenderness: profile.tenderness,
-    intensity: profile.intensity,
-    trust: profile.trust,
-  };
 
   const record = await pb.collection('duo_sessions').create({
     code,
-    initiator: pbUserId,
-    initiator_profile: snapshot,
-    step: 'waiting_partner',
-    expires_at: expiresAt,
+    initiator:         pbUserId,
+    initiator_profile: { _enc: await encryptJSON(snapshot(profile), key) },
+    step:              'waiting_partner',
+    expires_at:        expiresAt,
   });
 
   return { code, sessionId: record.id };
@@ -45,35 +54,46 @@ export async function joinDuoSession(
   profile: PersonalProfile,
   pbUserId: string,
 ): Promise<{ sessionId: string; initiatorProfile: PartnerProfile }> {
+  const upperCode = code.toUpperCase();
   const record = await pb
     .collection('duo_sessions')
-    .getFirstListItem<DuoSessionRecord>(`code="${code.toUpperCase()}"`);
+    .getFirstListItem<EncryptedDuoRecord>(`code="${upperCode}"`);
 
-  const snapshot: PartnerProfile = {
-    tenderness: profile.tenderness,
-    intensity: profile.intensity,
-    trust: profile.trust,
-  };
+  const key = await deriveDuoKey(upperCode);
+
+  const initiatorProfile = await decryptJSON<PartnerProfile>(
+    record.initiator_profile!._enc,
+    key,
+  );
 
   await pb.collection('duo_sessions').update(record.id, {
-    partner: pbUserId,
-    partner_profile: snapshot,
-    step: 'connected',
+    partner:         pbUserId,
+    partner_profile: { _enc: await encryptJSON(snapshot(profile), key) },
+    step:            'connected',
   });
 
-  return {
-    sessionId: record.id,
-    initiatorProfile: record.initiator_profile,
-  };
+  return { sessionId: record.id, initiatorProfile };
 }
 
 export function subscribeToSession(
   sessionId: string,
+  code: string,
   onChange: (record: DuoSessionRecord) => void,
 ): () => void {
-  pb.collection('duo_sessions').subscribe<DuoSessionRecord>(sessionId, (e) => {
-    if (e.action === 'update') onChange(e.record);
+  pb.collection('duo_sessions').subscribe<EncryptedDuoRecord>(sessionId, async (e) => {
+    if (e.action !== 'update') return;
+
+    const raw = e.record;
+    let partnerProfile: PartnerProfile | null = null;
+
+    if (raw.partner_profile?._enc) {
+      const key = await deriveDuoKey(code);
+      partnerProfile = await decryptJSON<PartnerProfile>(raw.partner_profile._enc, key);
+    }
+
+    onChange({ ...raw, partner_profile: partnerProfile } as unknown as DuoSessionRecord);
   });
+
   return () => pb.collection('duo_sessions').unsubscribe(sessionId);
 }
 
