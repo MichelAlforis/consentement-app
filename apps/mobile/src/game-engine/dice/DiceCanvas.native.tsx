@@ -1,8 +1,6 @@
-import { useEffect, useRef, useMemo, Suspense } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { View } from 'react-native';
-import { Asset } from 'expo-asset';
 import { Canvas, useFrame } from '@react-three/fiber/native';
-import { useTexture, ContactShadows } from '@react-three/drei/native';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
 
@@ -50,85 +48,122 @@ function cubicBezier(t: number): number {
   return ((ay * x + by) * x + cy) * x;
 }
 
-// ─── Assets PNG pré-générés (build time via packages/textures/scripts/generate.ts) ──
-
-// require() statiques obligatoires pour le bundler Metro (pas de require dynamique)
-const NUMERIC_FACE_REQUIRES = [
-  require('@ouiclair/textures/assets/dice/face-1.png'),
-  require('@ouiclair/textures/assets/dice/face-2.png'),
-  require('@ouiclair/textures/assets/dice/face-3.png'),
-  require('@ouiclair/textures/assets/dice/face-4.png'),
-  require('@ouiclair/textures/assets/dice/face-5.png'),
-  require('@ouiclair/textures/assets/dice/face-6.png'),
-] as const;
-
-const NUMERIC_FACE_URIS = NUMERIC_FACE_REQUIRES.map((assetModule) => Asset.fromModule(assetModule).uri);
-
-// ─── Texture catégorie — fallback couleur unie (DataTexture, 1×1 px) ─────────
-// Canvas 2D API indisponible sur RN — génération dynamique de gradient/texte impossible.
-// TODO: générer des PNG catégorie au build dans packages/textures/scripts/generate.ts
-//       pour remplacer ce fallback (paramètres : label, gradient, couleur par face)
-function hexToRgb(hex: string): [number, number, number] {
-  const h = hex.replace('#', '');
-  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-}
-
-function makeCategoryDataTexture(face: DiceFace): THREE.DataTexture {
-  const stops = face.gradient.match(/#[0-9a-fA-F]{6}/g) ?? [face.color ?? '#444444'];
-  const [r1, g1, b1] = hexToRgb(stops[0]);
-  const [r2, g2, b2] = stops[1] ? hexToRgb(stops[1]) : [r1, g1, b1];
-  // 2×2 dégradé interpolé — visible face au carré, distinct entre catégories
-  const data = new Uint8Array([
-    r1, g1, b1, 255,  r1, g1, b1, 255,
-    r2, g2, b2, 255,  r2, g2, b2, 255,
-  ]);
-  const tex = new THREE.DataTexture(data, 2, 2, THREE.RGBAFormat);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.needsUpdate = true;
-  return tex;
-}
-
 // ─── Cube animé ───────────────────────────────────────────────────────────────
 
 // three-stdlib RoundedBoxGeometry étend BoxGeometry → 6 groupes identiques.
-// matArray[materialIndex] : +X=group0=face2=tex[1], -X=group1=face5=tex[4]
-//   +Y=group2=face3=tex[2], -Y=group3=face4=tex[3], +Z=group4=face1=tex[0], -Z=group5=face6=tex[5]
+// Points dessinés en géométrie 3D : zéro texture, zéro asset, zéro pixelStorei EXGL.
 
-function AnimatedCube({
-  faces,
-  targetFaceId,
-  isRolling,
-  onRollComplete,
-  mode = 'category',
-}: {
+type PipKey = 'c' | 'tl' | 'tr' | 'ml' | 'mr' | 'bl' | 'br';
+
+const PIP_COORDS: Record<PipKey, [number, number]> = {
+  c: [0, 0],
+  tl: [-0.18, 0.18],
+  tr: [0.18, 0.18],
+  ml: [-0.18, 0],
+  mr: [0.18, 0],
+  bl: [-0.18, -0.18],
+  br: [0.18, -0.18],
+};
+
+const PIP_LAYOUTS: Record<number, PipKey[]> = {
+  1: ['c'],
+  2: ['tl', 'br'],
+  3: ['tl', 'c', 'br'],
+  4: ['tl', 'tr', 'bl', 'br'],
+  5: ['tl', 'tr', 'c', 'bl', 'br'],
+  6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'],
+};
+
+const FACE_OFFSET = 0.512;
+const PIP_RADIUS = 0.055;
+const DICE_SCALE = 0.72;
+
+function getPipTransform(face: number, pip: PipKey): {
+  position: [number, number, number];
+  rotation: [number, number, number];
+} {
+  const [u, v] = PIP_COORDS[pip];
+
+  switch (face) {
+    case 2: // +X
+      return { position: [FACE_OFFSET, v, -u], rotation: [0, Math.PI / 2, 0] };
+    case 3: // +Y
+      return { position: [u, FACE_OFFSET, -v], rotation: [-Math.PI / 2, 0, 0] };
+    case 4: // -Y
+      return { position: [u, -FACE_OFFSET, v], rotation: [Math.PI / 2, 0, 0] };
+    case 5: // -X
+      return { position: [-FACE_OFFSET, v, u], rotation: [0, -Math.PI / 2, 0] };
+    case 6: // -Z
+      return { position: [-u, v, -FACE_OFFSET], rotation: [0, Math.PI, 0] };
+    case 1:
+    default:
+      return { position: [u, v, FACE_OFFSET], rotation: [0, 0, 0] };
+  }
+}
+
+function DicePips() {
+  const pipGeometry = useMemo(() => new THREE.CircleGeometry(PIP_RADIUS, 24), []);
+  const pipMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#18181b' }), []);
+
+  return (
+    <>
+      {[1, 2, 3, 4, 5, 6].flatMap((face) =>
+        PIP_LAYOUTS[face].map((pip) => {
+          const { position, rotation } = getPipTransform(face, pip);
+          return (
+            <mesh
+              key={`${face}-${pip}`}
+              geometry={pipGeometry}
+              material={pipMaterial}
+              position={position}
+              rotation={rotation}
+            />
+          );
+        }),
+      )}
+    </>
+  );
+}
+
+type AnimatedCubeProps = {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
   mode?: 'category' | 'numeric';
-}) {
+};
+
+function FrameProbe() {
+  const logged = useRef(false);
+
+  useFrame((_, delta) => {
+    if (!logged.current) {
+      logged.current = true;
+      console.log('[DiceCanvas] R3F frame loop OK', { delta });
+    }
+  });
+
+  return null;
+}
+
+function AnimatedCube({
+  mode: _mode = 'category',
+  ...props
+}: AnimatedCubeProps) {
+  return <AnimatedCubeInner {...props} />;
+}
+
+function AnimatedCubeInner({
+  targetFaceId,
+  isRolling,
+  onRollComplete,
+}: Omit<AnimatedCubeProps, 'mode' | 'faces'>) {
   const groupRef = useRef<THREE.Group>(null);
   const frameLogged = useRef(false);
-
-  // Toujours chargées (règle des hooks) — utilisées uniquement si mode === 'numeric'
-  // TODO: tester fps sur device physique (seuil go = 45fps)
-  const numericTextures = useTexture(NUMERIC_FACE_URIS) as THREE.Texture[];
-
-  const categoryTextures = useMemo(() => faces.map(makeCategoryDataTexture), [faces]);
-
-  const textures = mode === 'numeric' ? numericTextures : categoryTextures;
+  const onRollCompleteRef = useRef(onRollComplete);
 
   // RoundedBoxGeometry de three-stdlib : coins arrondis + 6 groupes BoxGeometry
   const geometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 2, 0.08), []);
-
-  // MeshLambertMaterial : pas besoin d'envMap (MeshPhysicalMaterial → noir sans IBL sur expo-gl)
-  const matArray = useMemo(() => {
-    const mat = (texIdx: number) =>
-      new THREE.MeshLambertMaterial({
-        map: textures[texIdx],
-      });
-    return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
-  }, [textures]);
 
   const anim = useRef({
     rolling: false,
@@ -137,6 +172,10 @@ function AnimatedCube({
     elapsed: 0,
     duration: 1.7,
     done: false,
+    settling: false,
+    settleStartX: 0,
+    settleStartY: 0,
+    settleStartZ: 0,
     onComplete: undefined as (() => void) | undefined,
     wobbleAmplitude: 0,
     wobbleFreq: 0,
@@ -147,7 +186,11 @@ function AnimatedCube({
   const idle = useRef({ t: 0 });
 
   useEffect(() => {
-    console.log('[DiceCanvas] roll effect', { isRolling, hasRef: !!groupRef.current });
+    onRollCompleteRef.current = onRollComplete;
+  }, [onRollComplete]);
+
+  useEffect(() => {
+    console.log('[DiceCanvas] roll effect', { isRolling, hasRef: !!groupRef.current, targetFaceId });
     if (!isRolling || !groupRef.current) return;
 
     // Resync cumulative avec la rotation réelle (qui inclut l'offset idle)
@@ -167,16 +210,21 @@ function AnimatedCube({
       targetX: finalX,
       targetY: finalY,
       elapsed: 0,
-      duration: 1.7,
+      duration: 2.2,
       done: false,
-      onComplete: onRollComplete,
+      settling: false,
+      settleStartX: 0,
+      settleStartY: 0,
+      settleStartZ: 0,
+      onComplete: onRollCompleteRef.current,
       wobbleAmplitude: (Math.random() - 0.5) * 0.18,
       wobbleFreq: 8 + Math.random() * 4,
     };
-  }, [isRolling, targetFaceId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isRolling, targetFaceId]);
 
   // TODO: tester fps sur device physique (seuil go = 45fps)
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     // DIAG: log premier frame — si absent → render loop expo-gl ne tourne pas
     if (!frameLogged.current) {
       frameLogged.current = true;
@@ -186,14 +234,31 @@ function AnimatedCube({
     const group = groupRef.current;
     if (!group || !a.rolling || a.done) return;
 
-    a.elapsed = Math.min(a.elapsed + delta, a.duration);
+    a.elapsed = Math.min(a.elapsed + step, a.duration);
     const t = a.elapsed / a.duration;
-    const eased = cubicBezier(t);
+    const spinEnd = 0.7;
 
-    group.rotation.x = a.startX + (a.targetX - a.startX) * eased;
-    group.rotation.y = a.startY + (a.targetY - a.startY) * eased;
-    group.rotation.z = a.wobbleAmplitude * Math.sin(a.wobbleFreq * t * Math.PI) * (1 - t);
-    group.position.y = Math.sin(Math.PI * t) * 0.38;
+    if (t < spinEnd) {
+      const p = t / spinEnd;
+      group.rotation.x = a.startX + p * Math.PI * 2 * 4.25;
+      group.rotation.y = a.startY + p * Math.PI * 2 * 5.5;
+      group.rotation.z = 0.28 * Math.sin(p * Math.PI * 8);
+      group.position.y = 0.16 + Math.sin(p * Math.PI * 6) * 0.18;
+    } else {
+      if (!a.settling) {
+        a.settling = true;
+        a.settleStartX = group.rotation.x;
+        a.settleStartY = group.rotation.y;
+        a.settleStartZ = group.rotation.z;
+      }
+
+      const settleT = (t - spinEnd) / (1 - spinEnd);
+      const eased = cubicBezier(settleT);
+      group.rotation.x = a.settleStartX + (a.targetX - a.settleStartX) * eased;
+      group.rotation.y = a.settleStartY + (a.targetY - a.settleStartY) * eased;
+      group.rotation.z = a.settleStartZ * (1 - eased);
+      group.position.y = Math.sin(Math.PI * settleT) * 0.22;
+    }
 
     if (t >= 1 && !a.done) {
       a.done = true;
@@ -207,10 +272,11 @@ function AnimatedCube({
 
   // Bump à l'atterrissage — squash + rebond position
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     const b = bounce.current;
     const group = groupRef.current;
     if (!group || !b.active) return;
-    b.elapsed = Math.min(b.elapsed + delta, 0.44);
+    b.elapsed = Math.min(b.elapsed + step, 0.44);
     const t = b.elapsed / 0.44;
     const sy =
       t < 0.22 ? 1 - 0.32 * (t / 0.22)
@@ -230,12 +296,13 @@ function AnimatedCube({
 
   // Animation idle : flottement + oscillation douce quand le dé est au repos
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     const group = groupRef.current;
     const a = anim.current;
     const b = bounce.current;
     if (!group || a.rolling || b.active) return;
     if (idle.current.t === 0) console.log('[DiceCanvas] useFrame idle — premier tick ✓');
-    idle.current.t += delta;
+    idle.current.t += step;
     const t = idle.current.t;
     // Oscillation Y (±26°) + tilt X (±8°) + flottement vertical (±0.12)
     group.rotation.y = cumulative.current.y + Math.sin(t * 0.9) * 0.45;
@@ -244,8 +311,11 @@ function AnimatedCube({
   });
 
   return (
-    <group ref={groupRef}>
-      <mesh geometry={geometry} material={matArray} />
+    <group ref={groupRef} scale={DICE_SCALE}>
+      <mesh geometry={geometry}>
+        <meshBasicMaterial color="#f8f6f0" />
+      </mesh>
+      <DicePips />
     </group>
   );
 }
@@ -268,31 +338,24 @@ function DiceScene({
   return (
     <>
       {/* Environment preset supprimé : charge HDR externe → échec silencieux → Suspense fallback=null */}
+      <FrameProbe />
       <ambientLight intensity={0.8} />
       <directionalLight position={[3, 4, 4]} intensity={1.0} />
       <directionalLight position={[-3, -2, 1]} intensity={0.4} />
-      <Suspense fallback={null}>
-        <group position={[0, 0, 0]}>
-          <AnimatedCube
-            faces={faces}
-            targetFaceId={targetFaceId}
-            isRolling={isRolling}
-            onRollComplete={onRollComplete}
-            mode={mode}
-          />
-          {/* TODO: mesurer impact ContactShadows sur GPU mobile avant activation en prod
-                  — si < 45 fps, désactiver ou réduire resolution à 128 */}
-          <ContactShadows
-            position={[0, -0.62, 0]}
-            opacity={0.55}
-            blur={2.5}
-            far={2}
-            scale={3}
-            frames={1}
-            resolution={256}
-          />
-        </group>
-      </Suspense>
+      <group position={[0, 0, 0]}>
+        <AnimatedCube
+          faces={faces}
+          targetFaceId={targetFaceId}
+          isRolling={isRolling}
+          onRollComplete={onRollComplete}
+          mode={mode}
+        />
+        {/*
+          ContactShadows reste désactivé pendant le diagnostic render-loop.
+          Le réactiver après validation fps/device si nécessaire :
+          <ContactShadows position={[0, -0.62, 0]} opacity={0.55} blur={2.5} far={2} scale={3} frames={1} resolution={256} />
+        */}
+      </group>
     </>
   );
 }
@@ -323,7 +386,7 @@ export function DiceCanvas({
     <View style={{ width: size, height: size }}>
       <Canvas
         frameloop="always"
-        camera={{ position: [0, 0, 2.5], fov: 45 }}
+        camera={{ position: [0, 0, 4.2], fov: 38 }}
         shadows
         onCreated={() => {
           // DIAG: log GL context — si absent → expo-gl n'initialise pas
