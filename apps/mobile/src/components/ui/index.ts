@@ -1,5 +1,3 @@
-/* eslint-disable -- barrel re-exports: tous les exports sont consommés par les écrans, pas dans ce fichier */
-
 // Composants portés sessions précédentes
 export { ComfortSlider } from './ComfortSlider';
 export { Card } from './Card';
