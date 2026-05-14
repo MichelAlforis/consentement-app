@@ -649,6 +649,11 @@ Pas de `detect-gpu`. Stratégie V4 :
 2. `02_module_to_hall.yaml` — module éducatif → carte gagnée → HallOfCards
 3. `03_dice_game.yaml` — tab jeux → lancer dé → résultat → quitter
 
+⚠️ **Dette Maestro — testIDs manquants** : les boutons interactifs utilisent `optional: true` + fallback texte → faux positifs possibles. Ajouter `testID` sur :
+- Boutons "Continuer" / "Commencer" dans `OnboardingWizard.tsx`
+- Bouton "Lancer le dé" dans `DiceGameScreen.tsx`
+- CTA module dans `ApprendreScreen.tsx`
+
 ### EAS Build ✅ (commit 7f095a9)
 
 `eas.json` configuré : profils `development` / `device` / `preview` / `production`
