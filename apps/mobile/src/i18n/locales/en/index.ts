@@ -45,6 +45,22 @@ export const en = {
   premium: {
     gateMessage: 'This content is reserved for Premium members',
     unlockCta: 'Unlock Premium',
+    title: 'Go Premium',
+    subtitle: 'Access all exclusive content, without limits.',
+    cta: 'Start — €4.99 / month',
+    purchasing: 'Processing…',
+    restore: 'Restore purchases',
+    restoring: 'Restoring…',
+    errorTitle: 'Purchase failed',
+    errorMessage: 'The purchase could not be completed. Check your connection or try again.',
+    restoreErrorTitle: 'Restore failed',
+    restoreErrorMessage: 'No purchases found for this account.',
+    features: [
+      { label: 'Explicit content unlocked' },
+      { label: 'All Kamasutra positions' },
+      { label: 'Premium games without restriction' },
+      { label: 'New cards every month' },
+    ],
   },
 };
 

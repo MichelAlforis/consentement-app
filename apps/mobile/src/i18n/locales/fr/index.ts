@@ -45,6 +45,22 @@ export const fr = {
   premium: {
     gateMessage: 'Ce contenu est réservé aux membres Premium',
     unlockCta: 'Débloquer Premium',
+    title: 'Passer à Premium',
+    subtitle: 'Accédez à tout le contenu exclusif, sans limites.',
+    cta: 'Commencer — 4,99 € / mois',
+    purchasing: 'Traitement en cours…',
+    restore: 'Restaurer mes achats',
+    restoring: 'Restauration…',
+    errorTitle: 'Achat impossible',
+    errorMessage: "L'achat n'a pas pu aboutir. Vérifie ta connexion ou réessaie.",
+    restoreErrorTitle: 'Restauration impossible',
+    restoreErrorMessage: 'Aucun achat trouvé pour ce compte.',
+    features: [
+      { label: 'Contenu explicite débloqué' },
+      { label: 'Toutes les positions Kamasutra' },
+      { label: 'Jeux premium sans restriction' },
+      { label: 'Nouvelles cartes chaque mois' },
+    ],
   },
 };
 
