@@ -87,6 +87,8 @@ export interface PartnerProfile {
   tenderness: Record<string, number>;
   intensity: Record<string, number>;
   trust: Record<string, number>;
+  /** Réponses préférences chiffrées — transmises via PocketBase, jamais exposées directement */
+  preferences?: Record<string, string>;
 }
 
 export interface CommonGroundItem {

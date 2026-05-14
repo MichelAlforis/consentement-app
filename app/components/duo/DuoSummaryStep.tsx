@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine } from 'lucide-react';
+import { ShieldAlert, MessageCircle, AlertTriangle, ChevronDown, ChevronUp, Check, PenLine, Sparkles } from 'lucide-react';
 import { AppLogo } from '../ui';
 import { Card } from '../ui';
 import { comfortCategories } from '../../data';
@@ -11,11 +11,20 @@ import { CommonGround, PersonalProfile } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
 
+const PREF_TOPIC_LABELS: Record<string, string> = {
+  'topic-fellation':             'duo.summary.pref_fellation',
+  'topic-cunnilingus':           'duo.summary.pref_cunnilingus',
+  'topic-masturbation-mutuelle': 'duo.summary.pref_masturbation_mutuelle',
+  'topic-penetration':           'duo.summary.pref_penetration',
+  'topic-sodomie':               'duo.summary.pref_sodomie',
+};
+
 interface DuoSummaryStepProps {
   commonGround: CommonGround;
   personalProfile: PersonalProfile;
   partnerName: string;
   partnerSafeword: string;
+  preferenceMatches?: string[];
 }
 
 type CategoryKey = 'tenderness' | 'intensity' | 'trust';
@@ -26,6 +35,7 @@ export function DuoSummaryStep({
   personalProfile,
   partnerName,
   partnerSafeword,
+  preferenceMatches = [],
 }: DuoSummaryStepProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -144,6 +154,45 @@ export function DuoSummaryStep({
           );
         })}
       </div>
+
+      {preferenceMatches.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-6"
+        >
+          <Card variant="default" padding="lg">
+            <h3 className="font-semibold mb-3 flex items-center gap-2" style={{ color: colors.textPrimary }}>
+              <Sparkles size={18} style={{ color: colors.accent }} />
+              {t('duo.summary.prefMatches_title')}
+            </h3>
+            <p className="text-xs mb-3" style={{ color: colors.textMuted }}>
+              {t('duo.summary.prefMatches_subtitle')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {preferenceMatches.map((topicId) => {
+                const labelKey = PREF_TOPIC_LABELS[topicId];
+                const label = labelKey ? t(labelKey as Parameters<typeof t>[0]) : topicId;
+                return (
+                  <span
+                    key={topicId}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
+                    style={{
+                      background: `${colors.accent}18`,
+                      border: `1px solid ${colors.accent}40`,
+                      color: colors.accent,
+                    }}
+                  >
+                    <Check size={12} />
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+          </Card>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -1,6 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { SectionLabel } from './WhySection';
+
+const IMG_TEENS =
+  '/lordenargent_two_teenagers_having_a_serious_conversation_on_a_f3a495f3-80c4-48e8-88e3-0392a05db285_0.png';
+const VIDEO_DUO =
+  '/lordenargent_httpss.mj.runC0vg1EqosqY_--ar_256193_--video_1_-_bcefa01d-ee9b-43b4-a4b4-090e729c30f8_1.mp4';
 
 export default function AudienceSection() {
   return (
@@ -21,6 +27,7 @@ export default function AudienceSection() {
   );
 }
 
+/* ── Card ados ───────────────────────────────────────────────────────────────── */
 function TeensCard() {
   return (
     <div className="grad-border-violet rounded-3xl">
@@ -28,17 +35,11 @@ function TeensCard() {
         className="grad-inner rounded-[calc(1.5rem-1px)] p-8 lg:p-12 overflow-hidden relative"
         style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.06) 0%, #1a1128 50%)' }}
       >
-        {/* Glow haut-droit */}
-        <div
-          className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none blur-[80px]"
-          style={{ background: 'rgba(139,92,246,0.07)' }}
-          aria-hidden
-        />
-
         <div className="relative grid lg:grid-cols-2 gap-12 items-center">
-          {/* Texte */}
+          {/* Texte gauche */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 text-[10px] font-bold uppercase tracking-widest"
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 text-[10px] font-bold uppercase tracking-widest"
               style={{ background: 'rgba(139,92,246,0.1)', color: '#a78bfa', border: '1px solid rgba(139,92,246,0.2)' }}
             >
               Ados — 13 à 17 ans
@@ -73,24 +74,52 @@ function TeensCard() {
             </ul>
           </div>
 
-          {/* Cartes scénario */}
-          <div className="space-y-3.5">
-            <ScenarioCard
-              tag="Scénario réel"
-              tagColor="rgba(139,92,246,0.15)"
-              tagText="#a78bfa"
-              accentLine="rgba(139,92,246,0.3)"
-              question={"Mon pote dit que le silence = oui. C'est vrai ?"}
-              answer={"Non. Le silence n'est pas un consentement. Le consentement doit être clair, libre et enthousiaste."}
+          {/* Colonne droite — image Midjourney + cards flottantes */}
+          <div className="relative rounded-2xl overflow-hidden min-h-[340px]">
+            {/* Image illustration */}
+            <Image
+              src={IMG_TEENS}
+              alt="Deux ados en conversation"
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            <ScenarioCard
-              tag="Quiz droit"
-              tagColor="rgba(139,92,246,0.15)"
-              tagText="#a78bfa"
-              accentLine="rgba(139,92,246,0.3)"
-              question="À quel âge peut-on légalement avoir une relation sexuelle ?"
-              answer={"En France, l'âge légal du consentement est 15 ans. En dessous, c'est une infraction pénale même sans violence."}
+            {/* Overlay gradient bas pour lisibilité des cards */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(to top, rgba(13,7,20,0.92) 0%, rgba(13,7,20,0.45) 45%, rgba(13,7,20,0.08) 100%)',
+              }}
             />
+            {/* Overlay côté gauche pour fusion avec le fond de la card */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(to right, rgba(26,17,40,0.6) 0%, transparent 40%)',
+              }}
+            />
+
+            {/* Cards scénario superposées en bas */}
+            <div className="absolute bottom-0 left-0 right-0 p-5 space-y-3">
+              <ScenarioCard
+                tag="Scénario réel"
+                tagColor="rgba(139,92,246,0.2)"
+                tagText="#a78bfa"
+                accentLine="rgba(139,92,246,0.35)"
+                question={"Mon pote dit que le silence = oui. C'est vrai ?"}
+                answer={"Non. Le silence n'est pas un consentement. Il doit être clair, libre et enthousiaste."}
+              />
+              <ScenarioCard
+                tag="Quiz droit"
+                tagColor="rgba(139,92,246,0.2)"
+                tagText="#a78bfa"
+                accentLine="rgba(139,92,246,0.35)"
+                question="À quel âge peut-on légalement avoir une relation sexuelle ?"
+                answer={"En France, l'âge légal est 15 ans. En dessous, c'est une infraction pénale."}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -98,24 +127,32 @@ function TeensCard() {
   );
 }
 
+/* ── Card couples ────────────────────────────────────────────────────────────── */
 function CouplesCard() {
   return (
     <div className="grad-border-pink rounded-3xl">
       <div
-        className="grad-inner rounded-[calc(1.5rem-1px)] p-8 lg:p-12 overflow-hidden relative"
+        className="grad-inner rounded-[calc(1.5rem-1px)] overflow-hidden relative"
         style={{ background: 'linear-gradient(135deg, rgba(236,72,153,0.06) 0%, #1a1128 50%)' }}
       >
-        {/* Glow haut-droit */}
-        <div
-          className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none blur-[80px]"
-          style={{ background: 'rgba(236,72,153,0.06)' }}
+        {/* Vidéo Midjourney en fond ambiant */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 0.12, mixBlendMode: 'screen' }}
           aria-hidden
-        />
+        >
+          <source src={VIDEO_DUO} type="video/mp4" />
+        </video>
 
-        <div className="relative grid lg:grid-cols-2 gap-12 items-center">
-          {/* Texte */}
+        <div className="relative p-8 lg:p-12 grid lg:grid-cols-2 gap-12 items-center">
+          {/* Texte gauche */}
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 text-[10px] font-bold uppercase tracking-widest"
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 text-[10px] font-bold uppercase tracking-widest"
               style={{ background: 'rgba(236,72,153,0.1)', color: '#f472b6', border: '1px solid rgba(236,72,153,0.2)' }}
             >
               Jeunes adultes &amp; couples
@@ -150,7 +187,7 @@ function CouplesCard() {
             </ul>
           </div>
 
-          {/* Grille de jeux */}
+          {/* Grille de jeux droite */}
           <div className="grid grid-cols-2 gap-3">
             {[
               { emoji: '🎲', label: 'Jeu du dé', desc: 'Sessions de 10 min', color: 'from-amber-500 to-orange-500' },
@@ -161,7 +198,7 @@ function CouplesCard() {
               <div
                 key={card.label}
                 className="p-4 rounded-2xl flex flex-col gap-3 transition-all duration-200 hover:scale-[1.02]"
-                style={{ background: 'rgba(26,17,40,0.8)', border: '1px solid rgba(255,255,255,0.05)' }}
+                style={{ background: 'rgba(13,7,20,0.7)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(8px)' }}
               >
                 <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center text-xl`}>
                   {card.emoji}
@@ -179,6 +216,7 @@ function CouplesCard() {
   );
 }
 
+/* ── ScenarioCard ────────────────────────────────────────────────────────────── */
 function ScenarioCard({
   tag, tagColor, tagText, accentLine, question, answer,
 }: {
@@ -187,11 +225,11 @@ function ScenarioCard({
 }) {
   return (
     <div
-      className="p-5 rounded-2xl space-y-3"
-      style={{ background: 'rgba(13,7,20,0.8)', border: '1px solid rgba(255,255,255,0.06)' }}
+      className="p-4 rounded-2xl space-y-2.5"
+      style={{ background: 'rgba(13,7,20,0.85)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}
     >
       <div
-        className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+        className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
         style={{ background: tagColor, color: tagText }}
       >
         {tag}

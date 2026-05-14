@@ -64,7 +64,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
     [available],
   );
 
-  const { ownedCards, incrementSessionCount } = useUnlockStore();
+  const { ownedCards, incrementSessionCount, drawFromPool } = useUnlockStore();
   const [previewCard, setPreviewCard] = useState<GainedCard | null>(null);
   const [showCardPreview, setShowCardPreview] = useState(false);
 
@@ -105,7 +105,11 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
   };
 
   const handleQuit = () => {
-    if (rollCount > 0) incrementSessionCount();
+    if (rollCount > 0) {
+      incrementSessionCount();
+      const drawn = drawFromPool();
+      if (drawn) { onNavigate('hall-of-cards'); return; }
+    }
     onNavigate('jeux');
   };
 

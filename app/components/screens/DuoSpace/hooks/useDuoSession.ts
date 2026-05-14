@@ -4,6 +4,7 @@ import { PARTNER_NAMES, PARTNER_SAFEWORDS } from '../utils';
 import { useProfileStore } from '../../../../stores/profileStore';
 import { useAuthStore } from '../../../../stores/authStore';
 import { useDuoStore } from '../../../../stores/duoStore';
+import { usePreferencesStore } from '../../../../stores/preferencesStore';
 
 export type ConnectionMode = 'choice' | 'generate' | 'scan' | 'manual';
 
@@ -52,6 +53,7 @@ export function useDuoSession(): DuoSession {
   const personalProfile = useProfileStore((s) => s.personalProfile);
   const pbUserId = useAuthStore((s) => s.pbUserId);
   const { setPartnerProfile: storeDuoPartner, saveCachedResult } = useDuoStore();
+  const preferencesAnswers = usePreferencesStore((s) => s.answers);
 
   const [partnerName] = useState(
     () => PARTNER_NAMES[Math.floor(Math.random() * PARTNER_NAMES.length)]
@@ -67,7 +69,7 @@ export function useDuoSession(): DuoSession {
     let cancelled = false;
     import('../../../../lib/sync/duoSync').then(({ createDuoSession, subscribeToSession }) => {
       if (cancelled) return;
-      createDuoSession(personalProfile, pbUserId).then(({ code, sessionId }) => {
+      createDuoSession(personalProfile, pbUserId, preferencesAnswers as Record<string, string>).then(({ code, sessionId }) => {
         if (cancelled) return;
         setGeneratedCode(code);
         // Écoute l'arrivée du partenaire
@@ -104,7 +106,7 @@ export function useDuoSession(): DuoSession {
     setConnectionError(null);
 
     import('../../../../lib/sync/duoSync').then(({ joinDuoSession }) => {
-      joinDuoSession(inputCode, personalProfile, pbUserId)
+      joinDuoSession(inputCode, personalProfile, pbUserId, preferencesAnswers as Record<string, string>)
         .then(({ sessionId, initiatorProfile }) => {
           setPartnerProfile(initiatorProfile);
           storeDuoPartner(initiatorProfile, sessionId);
@@ -113,7 +115,7 @@ export function useDuoSession(): DuoSession {
         .catch(() => setConnectionError('Code invalide ou expiré.'))
         .finally(() => setIsConnecting(false));
     });
-  }, [inputCode, personalProfile, pbUserId, storeDuoPartner]);
+  }, [inputCode, personalProfile, pbUserId, preferencesAnswers, storeDuoPartner]);
 
   const handleBumpSuccess = useCallback(() => {
     // Bump = même flow que connexion manuelle mais code vient du NFC/BLE
@@ -138,12 +140,11 @@ export function useDuoSession(): DuoSession {
   }, []);
 
   const handleRevealComplete = useCallback(() => {
-    // Sauvegarder le résultat en cache pour l'offline
     if (partnerProfile) {
-      saveCachedResult(partnerProfile, personalProfile);
+      saveCachedResult(partnerProfile, personalProfile, preferencesAnswers);
     }
     setDuoStep('summary');
-  }, [partnerProfile, personalProfile, saveCachedResult]);
+  }, [partnerProfile, personalProfile, preferencesAnswers, saveCachedResult]);
 
   const handleGoToStep = useCallback(
     (step: DuoStep) => {

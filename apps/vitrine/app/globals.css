@@ -113,6 +113,30 @@ body::after {
   100% { width: 2%; }
 }
 
+/* ── Background blob drift ───────────────────────────────────────────────────── */
+.blob-drift-1 { animation: blob-drift-1 18s ease-in-out infinite; }
+.blob-drift-2 { animation: blob-drift-2 22s ease-in-out infinite; animation-delay: -9s; }
+
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0px,   0px); }
+  33%      { transform: translate(40px, -25px); }
+  66%      { transform: translate(-20px, 35px); }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0px,  0px); }
+  40%      { transform: translate(-35px, 28px); }
+  70%      { transform: translate(28px, -18px); }
+}
+
+/* ── Logo heartbeat ──────────────────────────────────────────────────────────── */
+.logo-pulse { animation: logo-pulse 3s ease-in-out infinite; }
+
+@keyframes logo-pulse {
+  0%, 100% { transform: scale(1.5);  opacity: 0.3; }
+  50%      { transform: scale(1.72); opacity: 0.52; }
+}
+
 /* ── Dot grid background ─────────────────────────────────────────────────────── */
 .dot-grid {
   background-image: radial-gradient(circle, rgba(139,92,246,0.12) 1px, transparent 1px);

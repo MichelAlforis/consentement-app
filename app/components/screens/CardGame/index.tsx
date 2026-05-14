@@ -14,7 +14,7 @@ import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
 import { CollectorCardCanvas } from '../../../game-engine/cards/CollectorCardCanvas';
 import { computeGainedCards } from '../../../lib/computeGainedCards';
 import type { GainedCard } from '../../../lib/computeGainedCards';
-import { collectorCards } from '../../../data/cards-collector';
+import { collectorCards, getCollectorCardById } from '../../../data/cards-collector';
 import { useUnlockStore } from '../../../stores/unlockStore';
 import type { Screen } from '../../../types';
 
@@ -113,7 +113,7 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
   const { t } = useTranslation();
   const s = useCardSession(isAdult);
 
-  const { ownedCards, sessionCount, unlockCards, incrementSessionCount } = useUnlockStore();
+  const { ownedCards, sessionCount, unlockCards, incrementSessionCount, drawFromPool } = useUnlockStore();
   const [gainedCards, setGainedCards] = useState<GainedCard[]>([]);
 
   const handleGoToEnd = useCallback(() => {
@@ -134,9 +134,22 @@ export function CardGameScreen({ isPremium, isAdult, onNavigate }: CardGameScree
 
     if (newOwned.length > 0) unlockCards(newOwned);
 
+    // Tirage pool lexique : ajoute une carte gagnée via unlock de terme
+    const drawn = drawFromPool();
+    if (drawn) {
+      const card = getCollectorCardById(drawn.id);
+      if (card) {
+        gained.push({
+          id: card.id, text: card.text, theme: card.theme,
+          rarity: card.rarity, gradient: card.visual.gradient,
+          iconName: card.visual.iconName, border: card.visual.border,
+        });
+      }
+    }
+
     setGainedCards(gained);
     s.goToEnd();
-  }, [ownedCards, sessionCount, incrementSessionCount, s, unlockCards, isPremium]);
+  }, [ownedCards, sessionCount, incrementSessionCount, s, unlockCards, isPremium, drawFromPool]);
 
   const deckRemaining = s.sessionMode === 'seance'
     ? Math.max(0, s.seanceSize - s.cardCount)

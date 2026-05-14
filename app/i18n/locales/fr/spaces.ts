@@ -153,6 +153,13 @@ export const spaces = {
       },
       message: 'Ceci est un début de conversation, pas une fin.',
       reminder: "Rappel : le consentement est révocable à tout moment. Cette comparaison n'est pas un engagement.",
+      prefMatches_title:    'Ce que vous aimez tous les deux',
+      prefMatches_subtitle: 'Vous avez tous les deux exprimé de l\'intérêt pour ces pratiques',
+      pref_fellation:              'Fellation',
+      pref_cunnilingus:            'Cunnilingus',
+      pref_masturbation_mutuelle:  'Masturbation mutuelle',
+      pref_penetration:            'Pénétration',
+      pref_sodomie:                'Sodomie',
     },
   },
 } as const;

@@ -27,7 +27,7 @@ export default function DownloadCTA() {
         {/* Logo OuiClair */}
         <div className="relative inline-block mb-10">
           <div
-            className="absolute inset-0 rounded-full blur-3xl scale-150 opacity-30"
+            className="absolute inset-0 rounded-full blur-3xl logo-pulse"
             style={{ background: 'linear-gradient(135deg, #8b5cf6, #ec4899)' }}
             aria-hidden
           />

@@ -318,26 +318,39 @@ function SecondPhone() {
 }
 
 /* ── Background ──────────────────────────────────────────────────────────────── */
+const VIDEO_HERO =
+  '/lordenargent_httpss.mj.runaqlJMUtEzAo_--ar_256143_--video_1_-_187f6509-1abc-4f8c-ba74-9996f71954b2_3.mp4';
+
 function HeroBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+      {/* Vidéo Midjourney en loop — ambiance atmosphérique */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ opacity: 0.28, mixBlendMode: 'screen' }}
+      >
+        <source src={VIDEO_HERO} type="video/mp4" />
+      </video>
+      {/* Overlay gradient pour lisibilité */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(13,7,20,0.3) 0%, rgba(13,7,20,0.1) 40%, rgba(13,7,20,0.5) 100%)',
+        }}
+      />
       {/* Grille de points */}
       <div
-        className="absolute inset-0 opacity-[0.35]"
+        className="absolute inset-0 opacity-[0.22]"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(139,92,246,0.25) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, rgba(139,92,246,0.3) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
           maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)',
         }}
-      />
-      {/* Glows */}
-      <div
-        className="absolute rounded-full blur-[120px]"
-        style={{ top: '15%', left: '5%', width: 500, height: 500, background: 'rgba(139,92,246,0.1)' }}
-      />
-      <div
-        className="absolute rounded-full blur-[100px]"
-        style={{ top: '30%', right: '10%', width: 380, height: 380, background: 'rgba(236,72,153,0.07)' }}
       />
     </div>
   );

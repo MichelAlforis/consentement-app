@@ -5,10 +5,13 @@ import { persist } from 'zustand/middleware';
 import { PartnerProfile, CommonGround, PersonalProfile } from '../types';
 import { comfortCategories } from '../data';
 import { STORAGE_KEYS } from './storageKeys';
+import { computePreferenceMatches } from '../lib/computePreferenceMatches';
+import type { PreferenceAnswer, TopicId } from '../data/topicRegistry';
 
 export interface DuoCachedResult {
   partnerProfile: PartnerProfile;
   commonGround: CommonGround;
+  preferenceMatches: TopicId[];
   syncedAt: string; // ISO date
 }
 
@@ -27,7 +30,11 @@ interface DuoStore {
   updateDuoCode: (code: string) => void;
   setShowComparison: (show: boolean) => void;
   setPartnerProfile: (profile: PartnerProfile, sessionId?: string) => void;
-  saveCachedResult: (partnerProfile: PartnerProfile, personalProfile: PersonalProfile) => void;
+  saveCachedResult: (
+    partnerProfile: PartnerProfile,
+    personalProfile: PersonalProfile,
+    myAnswers: Record<string, PreferenceAnswer>,
+  ) => void;
   getCommonGround: (personalProfile: PersonalProfile) => CommonGround | null;
   reset: () => void;
 }
@@ -55,7 +62,7 @@ export const useDuoStore = create<DuoStore>()(
       setPartnerProfile: (profile, sessionId) =>
         set({ partnerProfile: profile, duoConnected: true, sessionId: sessionId ?? null }),
 
-      saveCachedResult: (partnerProfile, personalProfile) => {
+      saveCachedResult: (partnerProfile, personalProfile, myAnswers) => {
         const common: CommonGround = { tenderness: {}, intensity: {}, trust: {} };
         (Object.keys(comfortCategories) as Array<keyof typeof comfortCategories>).forEach((cat) => {
           comfortCategories[cat].items.forEach((item) => {
@@ -67,7 +74,15 @@ export const useDuoStore = create<DuoStore>()(
             };
           });
         });
-        set({ cachedResult: { partnerProfile, commonGround: common, syncedAt: new Date().toISOString() } });
+        const preferenceMatches = computePreferenceMatches(myAnswers, partnerProfile.preferences);
+        set({
+          cachedResult: {
+            partnerProfile,
+            commonGround: common,
+            preferenceMatches,
+            syncedAt: new Date().toISOString(),
+          },
+        });
       },
 
       getCommonGround: (personalProfile) => {

@@ -15,6 +15,7 @@ import {
   DuoRevealStep,
   DuoSummaryStep,
 } from '../../duo';
+import { useDuoStore } from '../../../stores/duoStore';
 import { PersonalProfile } from '../../../types';
 import { useTranslation } from '../../../i18n';
 import { calculateCommonGround } from './utils';
@@ -40,6 +41,7 @@ export function DuoSpaceScreen({
   const { t } = useTranslation();
   const complete = useModuleComplete();
   const session = useDuoSession();
+  const preferenceMatches = useDuoStore((s) => s.cachedResult?.preferenceMatches ?? []);
 
   const commonGround = session.partnerProfile
     ? calculateCommonGround(personalProfile, session.partnerProfile)
@@ -127,6 +129,7 @@ export function DuoSpaceScreen({
               personalProfile={personalProfile}
               partnerName={session.partnerName}
               partnerSafeword={session.partnerSafeword}
+              preferenceMatches={preferenceMatches}
             />
             <div className="px-5 pb-6 space-y-3">
               {onComplete && (

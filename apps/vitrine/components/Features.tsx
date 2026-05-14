@@ -1,6 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { SectionLabel } from './WhySection';
+
+const IMG_CARD_BG =
+  '/lordenargent_minimal_dark_UI_card_with_a_glowing_violet_borde_dca4efb9-0266-4361-874e-44ced8c35752_2.png';
 
 /* 2 featured cards + 7 secondary */
 const FEATURED = [
@@ -37,6 +41,17 @@ export default function Features() {
       className="py-28 px-6 relative"
       style={{ background: 'linear-gradient(to bottom, #0d0714, rgba(26,17,40,0.5), #0d0714)' }}
     >
+      {/* Image décorative Midjourney — fond flou droite */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[480px] h-[480px] pointer-events-none overflow-hidden" aria-hidden>
+        <Image
+          src={IMG_CARD_BG}
+          alt=""
+          fill
+          className="object-cover"
+          style={{ opacity: 0.18, maskImage: 'radial-gradient(ellipse 60% 80% at 80% 50%, black 30%, transparent 75%)' }}
+        />
+      </div>
+
       {/* Glow central */}
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-[160px]"

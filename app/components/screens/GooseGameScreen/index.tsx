@@ -23,6 +23,7 @@ import { ActivityOverlay } from './overlays/ActivityOverlay';
 import { ChanceOverlay } from './overlays/ChanceOverlay';
 import { AccordFlow } from './overlays/AccordFlow';
 
+import { useUnlockStore } from '../../../stores/unlockStore';
 import type { Screen } from '../../../types';
 
 // ─── Orientation hook ─────────────────────────────────────────────────────────
@@ -81,6 +82,14 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
   const { t } = useTranslation();
   const isLandscape = useIsLandscape();
   const game = useGooseGame({ isAdult });
+  const { incrementSessionCount, drawFromPool } = useUnlockStore();
+
+  const handleQuit = () => {
+    incrementSessionCount();
+    const drawn = drawFromPool();
+    if (drawn) { onNavigate('hall-of-cards'); return; }
+    onNavigate('jeux');
+  };
 
   const {
     phase, setPhase,
@@ -144,7 +153,7 @@ function GooseGameInner({ isAdult, onNavigate }: { isAdult: boolean; onNavigate:
         player2={player2}
         accordsCount={accordsCount}
         onReplay={resetToIntro}
-        onQuit={() => onNavigate('jeux')}
+        onQuit={handleQuit}
       />
     );
   }

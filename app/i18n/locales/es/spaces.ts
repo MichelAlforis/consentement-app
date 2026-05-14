@@ -153,6 +153,13 @@ export const spaces = {
       },
       message: 'Este es el inicio de una conversación, no el final.',
       reminder: "Recordatorio: el consentimiento es revocable en cualquier momento. Esta comparación no es un compromiso.",
+      prefMatches_title:    'Lo que os gusta a los dos',
+      prefMatches_subtitle: 'Ambos habéis expresado interés en estas prácticas',
+      pref_fellation:              'Felación',
+      pref_cunnilingus:            'Cunnilingus',
+      pref_masturbation_mutuelle:  'Masturbación mutua',
+      pref_penetration:            'Penetración',
+      pref_sodomie:                'Sexo anal',
     },
   },
 } as const;

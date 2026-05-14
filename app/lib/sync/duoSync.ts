@@ -22,17 +22,22 @@ interface EncryptedDuoRecord extends Omit<DuoSessionRecord, 'initiator_profile' 
   partner_profile:   { _enc: string } | null;
 }
 
-function snapshot(profile: PersonalProfile): PartnerProfile {
+function snapshot(
+  profile: PersonalProfile,
+  preferences?: Record<string, string>,
+): PartnerProfile {
   return {
     tenderness: profile.tenderness,
     intensity:  profile.intensity,
     trust:      profile.trust,
+    ...(preferences && Object.keys(preferences).length > 0 && { preferences }),
   };
 }
 
 export async function createDuoSession(
   profile: PersonalProfile,
   pbUserId: string,
+  preferences?: Record<string, string>,
 ): Promise<{ code: string; sessionId: string }> {
   const code = generateCode();
   const key = await deriveDuoKey(code);
@@ -41,7 +46,7 @@ export async function createDuoSession(
   const record = await pb.collection('duo_sessions').create({
     code,
     initiator:         pbUserId,
-    initiator_profile: { _enc: await encryptJSON(snapshot(profile), key) },
+    initiator_profile: { _enc: await encryptJSON(snapshot(profile, preferences), key) },
     step:              'waiting_partner',
     expires_at:        expiresAt,
   });
@@ -53,6 +58,7 @@ export async function joinDuoSession(
   code: string,
   profile: PersonalProfile,
   pbUserId: string,
+  preferences?: Record<string, string>,
 ): Promise<{ sessionId: string; initiatorProfile: PartnerProfile }> {
   const upperCode = code.toUpperCase();
   const record = await pb
@@ -68,7 +74,7 @@ export async function joinDuoSession(
 
   await pb.collection('duo_sessions').update(record.id, {
     partner:         pbUserId,
-    partner_profile: { _enc: await encryptJSON(snapshot(profile), key) },
+    partner_profile: { _enc: await encryptJSON(snapshot(profile, preferences), key) },
     step:            'connected',
   });
 
