@@ -545,6 +545,19 @@ Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évit
 ## Phase 7 — Jeux R3F
 **Durée : 20–30 jours**
 
+### ⚠️ PROBLÈME R3F CONSTATÉ EN TEST DEVICE (2026-05-14)
+
+Le rendu R3F (`@react-three/fiber/native` + expo-gl) n'est pas concluant sur device physique.
+**Phase 7 incomplète — les jeux fonctionnent côté logique mais le rendu 3D est à revoir.**
+
+Options à évaluer :
+- **A) Fallback 2D pur** : remplacer DiceCanvas R3F par un rendu RN natif (SVG + Reanimated). Déjà possible via le mode `FlatTile` existant dans DiceRenderer.
+- **B) Expo Three.js GL** : investiguer les problèmes précis (crash ? fps ? artefacts ?) et corriger ciblés.
+- **C) Skia** : `@shopify/react-native-skia` — alternative R3F, meilleure intégration RN, supporte shaders + filtres. Implique réécriture des 3 Canvas.
+- **D) Abandon R3F** : version 1.0 sans jeux 3D → game-engine stub + upgrade ultérieur.
+
+**→ Décision à prendre avant de relancer Phase 7. Pas de travail R3F tant que le problème n'est pas diagnostiqué.**
+
 ### Ordre (du plus simple au plus complexe)
 
 **1. DiceGame** ✅ (commit 265872d)
