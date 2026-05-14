@@ -1,3 +1,5 @@
+// V4 divergence: props activeTab/onSwitchTab supprimées — state consommé directement
+// depuis useNavigationStore (@ouiclair/core). Réduction du couplage par rapport à la V3.
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Home, BookOpen, Gamepad2, User } from 'lucide-react-native';
 import { MotiView } from 'moti';

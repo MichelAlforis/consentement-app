@@ -1,3 +1,4 @@
+// V4 divergence: onClick (V3 web) renommé onPress (convention RN).
 import { View, Text, Pressable, StyleSheet, type ViewStyle } from 'react-native';
 import { MotiView } from 'moti';
 import { ChevronRight, Sparkles } from 'lucide-react-native';
@@ -30,6 +31,7 @@ export function GameMenuCard({
   const { colors } = useTheme();
   const isPremium = variant === 'premium';
 
+  // TODO Phase 5b: remplacer par expo-linear-gradient (premiumGradient)
   const cardStyle: ViewStyle = isPremium
     ? { backgroundColor: colors.premium, padding: 20, borderRadius: 24 }
     : { backgroundColor: colors.bgCard, borderWidth: 1.5, borderColor: colors.border, padding: 16, borderRadius: 16 };

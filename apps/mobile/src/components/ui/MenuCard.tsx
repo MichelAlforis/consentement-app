@@ -1,3 +1,4 @@
+// V4 divergence: onClick (V3 web) renommé onPress (convention RN).
 import { View, Text, Pressable, StyleSheet, type ViewStyle } from 'react-native';
 import { MotiView } from 'moti';
 import { ChevronRight } from 'lucide-react-native';
@@ -26,6 +27,7 @@ export function MenuCard({
   const { colors } = useTheme();
   const isColored = variant !== 'default';
 
+  // TODO Phase 5b: remplacer par expo-linear-gradient (accentGradient, secondaryGradient, etc.)
   const getCardStyle = (): ViewStyle => {
     switch (variant) {
       case 'accent':
