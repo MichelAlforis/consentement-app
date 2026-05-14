@@ -144,10 +144,10 @@ ouiclair-monorepo/
 | 5C | 10 écrans Ressources/Info | — | **✅ Fait** (commit 86402ec) | — | help, quiz, premium, annuaire… |
 | 5D | Sprint contenu — données i18n réelles | 3–5 j | **✅ Fait** (commit 8bc5d72) | — | 14 modules FR + EN stubs, i18n réel |
 | 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
-| 6 | Collection + Social | 8–12 j | **🔜 Prochaine** | — | HallOfCards, DuoSpace |
+| 6A | HallOfCardsScreen | — | 🔄 En cours | 6B | carousel + gyroscope + tilt |
+| 6B | DuoSpace + PersonalSpace | — | **✅ Fait** (commit 8bb909b) | 6A | realtime stub + profil comfort |
 | 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
 | 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
-| 5D | Sprint contenu (blocker stores) | 3–5 j | Après Phase 7 | — | i18n réel + validation pédagogique |
 | 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
@@ -529,12 +529,14 @@ Ces features n'ont aucune dépendance sur Phase 5 — les faire maintenant évit
 - `mipmapBlur: true` → tester d'abord, toggle A/B visuel sur device avant de décider de passer à `false`
 - Gyroscope → `expo-sensors` DeviceMotion remplace `window.addEventListener('deviceorientation')`
 
-**DuoSpace** :
-- PocketBase realtime via react-native-sse (IRealtimeAdapter, branché en Phase 1)
-- `useDuoSession` hook : logique dans @ouiclair/core, hook React dans apps/mobile
-- AccordFlow overlay avec CollectorCardCanvas
+**DuoSpace** ✅ (commit 8bb909b) :
+- EventSource polyfillé via react-native-sse dans App.tsx ✅
+- useDuoStore branché (connectDuo, reset, duoConnected)
+- Realtime PocketBase (createDuoSession/joinDuoSession) → TODO Phase 7
+- AccordFlow overlay avec CollectorCardCanvas → TODO Phase 7
+- ⚠️ **DIVERGENCE à corriger Phase 7** : `useDuoStore.updateDuoCode()` applique `.replace(/\D/g, '')` (strip non-digits) — incompatible avec les codes alphanumériques de `duoSync.generateCode()`. DuoSpace contourne via local state pour sessionCode. Aligner le store lors du sprint realtime Phase 7.
 
-**PersonalSpace** : port direct, pas de R3F.
+**PersonalSpace** ✅ (commit 8bb909b) : feature folder, useProfileStore branché, ComfortSlider + ExplicitModeToggle.
 
 ---
 
