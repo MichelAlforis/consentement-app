@@ -20,6 +20,7 @@ config.resolver.nodeModulesPaths = [
 config.resolver.extraNodeModules = {
   react: path.resolve(projectRoot, 'node_modules/react'),
   'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+  three: path.resolve(projectRoot, 'node_modules/three'),
 };
 
 // PNG + standard assets
