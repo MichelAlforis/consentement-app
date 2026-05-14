@@ -1,1 +1,55 @@
-export const contentNonConsenti = { contentNonConsenti: { fiches: { title: 'Non-consensual content' } } };
+export const contentNonConsenti = {
+  contentNonConsenti: {
+    fiches: {
+      title: 'Non-consensual content',
+      subtitle: 'Intimate images & videos shared without agreement.',
+      sectionDef: 'The principle',
+      sectionConsent: 'What you need to know',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'What the law covers',
+        definition: 'Non-consensual sharing of intimate images (revenge porn) has been a criminal offence in France since 2016.',
+        consentement: 'The law punishes anyone who distributes, publishes, transmits or makes accessible a sexual image of an identifiable person without their agreement — whether it is a photo, video, screenshot or GIF.',
+        loi: 'In France, sharing an intimate image without agreement is punishable by 2 years in prison and a €60,000 fine (art. 226-2-1 CP) — even if the image was originally sent voluntarily.',
+        question: 'Do I understand that sharing an intimate image without explicit agreement is an offence, regardless of how the image was originally obtained?',
+      },
+      1: {
+        titre: 'How the image was obtained',
+        definition: 'The non-consensual sharing offence applies regardless of how the image was obtained.',
+        consentement: 'Whether the image was stolen (hacking), taken without the person\'s knowledge, or freely sent in a context of trust — sharing without agreement remains illegal. "They sent it to me" is not a defence.',
+        loi: 'Art. 226-2-1 CP makes no distinction based on the method of obtaining the image. The only question is: did the sharing take place without the consent of the person concerned?',
+        question: 'Do I understand that even an image someone sent me voluntarily does not belong to me to the point of being able to share it without agreement?',
+      },
+      2: {
+        titre: 'Aggravating circumstances',
+        definition: 'Certain circumstances increase the penalties for non-consensual sharing of intimate images.',
+        consentement: 'If the image was obtained by fraudulent means (espionage, account hacking), if the victim is a minor, or if the sharing reached a large number of people, the penalties are significantly increased.',
+        loi: 'Aggravating circumstances can increase the penalty to 5 years of imprisonment and a €150,000 fine. The minority of the victim is always an aggravating circumstance in French criminal law.',
+        question: 'Did I obtain intimate images of someone through indirect means? If so, am I aware of the legal risks associated with merely possessing them?',
+      },
+      3: {
+        titre: 'Getting an image removed',
+        definition: 'Procedures exist to quickly have an intimate image shared without agreement removed from online platforms.',
+        consentement: 'Most platforms (Instagram, Twitter/X, Snapchat, OnlyFans) have an accelerated reporting procedure for non-consensual intimate content. These procedures can be resolved in under 24 hours.',
+        loi: 'In France, the CNIL can intervene if a platform does not respond. The cybermalveillance.gouv.fr portal helps to build the case and initiate official proceedings.',
+        question: 'Do I know the emergency procedures of platforms for reporting and having non-consensual intimate content removed?',
+      },
+      4: {
+        titre: 'Cybermalveillance.gouv.fr',
+        definition: 'The reference government portal for victims of digital violence, including intimate images shared without agreement.',
+        consentement: 'This portal offers concrete help: having content removed, identifying judicial remedies, being referred to specialist associations. Available 24/7, anonymously, with no obligation to file a complaint.',
+        loi: 'Reporting on this portal leaves an official trace usable in court. It can accelerate platform cooperation and trigger judicial investigations in serious cases.',
+        question: 'Do I know that I can get concrete and anonymous help on cybermalveillance.gouv.fr without having to file a complaint immediately?',
+      },
+      5: {
+        titre: 'Do not contact the perpetrator directly',
+        definition: 'Why contacting the perpetrator of a non-consensual share directly can make the situation worse.',
+        consentement: 'Threatening to file a complaint in an attempt to recover images can worsen the situation if the perpetrator shares more in retaliation. Going through platforms and authorities is more effective and offers better protection.',
+        loi: 'By contacting the perpetrator directly, the victim risks providing additional elements (new messages, numbers) that can be exploited. Authorities have legal tools that the victim alone does not have.',
+        question: 'If I am a victim, do I know that it is better to act through platforms and authorities rather than contacting the perpetrator directly?',
+      },
+    },
+  },
+};

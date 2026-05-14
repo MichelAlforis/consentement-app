@@ -1,1 +1,55 @@
-export const alcoolConsent = { alcoolConsent: { fiches: { title: 'Alcohol & consent' } } };
+export const alcoolConsent = {
+  alcoolConsent: {
+    fiches: {
+      title: 'Alcohol & consent',
+      subtitle: 'What alcohol really changes.',
+      sectionDef: 'The situation',
+      sectionConsent: 'What you need to know',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'Is a "yes" under alcohol valid?',
+        definition: 'Someone has been drinking and says "yes". Is this consent valid?',
+        consentement: 'No — an intoxicated person cannot give valid consent. Consent must be free and informed. Under the influence of alcohol, judgement is impaired, even if the person seems lucid and says yes.',
+        loi: 'The Penal Code recognises that intoxication can prevent valid consent. Taking advantage of a person\'s state of intoxication is an aggravating circumstance for sexual offences (art. 222-22-1 CP).',
+        question: 'Am I making sure the person I am with is in a state to consent freely at this precise moment?',
+      },
+      1: {
+        titre: 'Regretting after a night out',
+        definition: "You were drinking, and you regret what happened. Could there have been assault, even if you seemed to consent at the time?",
+        consentement: "Yes — if you were not in a state to consent freely, an assault may have occurred. Regret alone is not sufficient to characterise an offence, but incapacity to consent is.",
+        loi: 'Taking advantage of a person\'s state of intoxication is a recognised aggravating circumstance in French criminal law. Having sex with a heavily intoxicated person can constitute rape (art. 222-23 CP).',
+        question: 'If you have experienced a situation of this type, do you know that resources exist to talk about it without obligation to file a complaint immediately?',
+      },
+      2: {
+        titre: 'Checking in during the evening',
+        definition: 'Your evening starts well. Your partner drinks a lot. What should you do in this context?',
+        consentement: 'Checking verbally ("Are you ok? Do you want to continue?") is best practice — not paranoid, just respectful. Vigilance is a shared responsibility.',
+        loi: 'Active vigilance is protection for both people. Not checking the state of a partner who is drinking and continuing anyway exposes one to criminal liability if their state did not allow them to consent.',
+        question: 'Am I in the habit of verbally checking consent when alcohol is present, even in an established relationship?',
+      },
+      3: {
+        titre: "The person is barely responding",
+        definition: 'A person is barely responding, eyes half-closed. They said "yeah" 20 minutes ago.',
+        consentement: 'Stop. They are clearly not in a state to consent now. Consent must be active and present at the time of the act. A "yes" said 20 minutes ago does not cover what is happening now.',
+        loi: 'Consent is continuous — it does not persist over time. Continuing a sexual act with a person whose state has evolved towards incapacity constitutes rape or assault (art. 222-22 and 222-23 CP).',
+        question: 'Do I stop immediately if the other person\'s state changes, even if they had consented earlier?',
+      },
+      4: {
+        titre: 'Talking after a hazy night',
+        definition: "After an evening, you're not sure the other person was really ok. What should you do?",
+        consentement: 'Talk about it openly, even if it is uncomfortable. "Were you ok last night?" is a difficult but necessary question. It can change a great deal for the other person.',
+        loi: 'After-the-fact conversations do not imply self-incrimination. They help clarify the situation and can prevent far more serious consequences. Not talking about it does not make the situation disappear.',
+        question: 'Do I dare to ask the question after an uncertain evening, even if the answer may be uncomfortable?',
+      },
+      5: {
+        titre: 'Giving alcohol to "make things easier"',
+        definition: 'Serving alcohol to someone to make them more "available" or more "relaxed".',
+        consentement: 'This is a form of manipulation that can constitute assault. Deliberately altering a person\'s decision-making capacity to obtain agreement is a technique contrary to every principle of consent.',
+        loi: 'Voluntarily administering a substance to alter consent is an offence in French law, even if the person "agrees" to drink. The intent to take advantage of their state is what is punished (art. 222-22 CP).',
+        question: 'Am I making sure that alcohol or substances present are never used to influence the other person\'s decision?',
+      },
+    },
+  },
+};

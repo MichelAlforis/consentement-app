@@ -1,1 +1,55 @@
-export const ruptureHarcele = { ruptureHarcele: { fiches: { title: 'Break-up & harassment' } } };
+export const ruptureHarcele = {
+  ruptureHarcele: {
+    fiches: {
+      title: 'Break-up & harassment',
+      subtitle: 'What the law protects after a relationship.',
+      sectionDef: 'The context',
+      sectionConsent: 'What you need to know',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'Moral harassment: the legal definition',
+        definition: 'After a break-up, certain behaviours — repeated messages, persistent calls, surveillance — are classified as moral harassment.',
+        consentement: 'The end of a relationship does not authorise any pressure to renew contact. The person who ended the relationship has the right to silence and distance, without having to justify it.',
+        loi: 'Sending repeated messages, calling persistently or surveilling a person after a break-up constitutes moral harassment (art. 222-33-2 CP), punishable by 2 years in prison and a €30,000 fine.',
+        question: 'Do I respect the silence or refusal of contact from my ex, without trying to re-engage them?',
+      },
+      1: {
+        titre: 'Post-break-up cyberstalking',
+        definition: "Harassing someone via social media, messages, or by asking mutual friends to contact the ex.",
+        consentement: 'Harassment by proxy — asking your circle to contact the ex — is just as illegal as direct contact. Physical or digital distance does not change the nature of the act.',
+        loi: 'Since 2018, harassment via social media or by proxy is explicitly targeted by law. It is punishable by 2 years of imprisonment and a €30,000 fine (art. 222-33-2-2 CP).',
+        question: 'Am I using third parties (friends, family, colleagues) to maintain contact that the other person has refused?',
+      },
+      2: {
+        titre: 'The protection order',
+        definition: 'In the face of a proven danger situation, rapid judicial protection can be obtained to keep a harasser away.',
+        consentement: 'The protection order is accessible even without a prior complaint. It protects effectively — but you need to know it exists and not hesitate to request it.',
+        loi: 'A family court judge can issue a protection order within 6 days. It can prohibit the harasser from approaching the victim, accessing their home or contacting them (law of 9 July 2010).',
+        question: 'Do I know the judicial remedies available if my safety is threatened by an ex?',
+      },
+      3: {
+        titre: 'Sextortion and image threats',
+        definition: 'Threatening to publish intimate photos or videos to force someone to come back or as revenge after a break-up.',
+        consentement: 'Any threat to share intimate images — even if never carried out — is in itself an offence. The victim has no obligation to give in to this blackmail.',
+        loi: 'Sextortion is punishable by up to 5 years of imprisonment and a €75,000 fine (art. 312-10 CP). Carrying out the threat also constitutes the offence of non-consensual image distribution (art. 226-2-1 CP).',
+        question: 'Have I received threats to share intimate images? If so, do I know I can file a complaint immediately?',
+      },
+      4: {
+        titre: 'Building a evidence file',
+        definition: 'Keeping messages, missed calls and emails received after a break-up, in case of an eventual complaint.',
+        consentement: 'Keeping evidence does not require acting immediately. But well-preserved evidence (timestamped screenshots, messaging exports) considerably strengthens the victim\'s position in the event of prosecution.',
+        loi: 'Timestamped screenshots, emails and platform reporting records are admissible as evidence in court. Reporting on cybermalveillance.gouv.fr also leaves an official trace.',
+        question: 'Have I kept evidence of unwanted contact received after the break-up, even if I have not yet decided to act?',
+      },
+      5: {
+        titre: 'Where to get help',
+        definition: 'Resources available in France for victims of post-break-up harassment.',
+        consentement: "Contacting an association or a listening service does not mean committing to filing a complaint. These services help you understand your situation, your rights, and the options available — without pressure.",
+        loi: '3919 (Violences Femmes Info, 24/7, free, anonymous) · Victim assistance committee of your local court · France Victimes: 116 006 · Online: arretonslesviolences.gouv.fr.',
+        question: 'Do I know that free and anonymous resources are available if I am experiencing post-break-up harassment?',
+      },
+    },
+  },
+};

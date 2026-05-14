@@ -1,1 +1,55 @@
-export const pratiquesExplicit = { pratiquesExplicit: { fiches: { title: 'Explicit practices & communication' } } };
+export const pratiquesExplicit = {
+  pratiquesExplicit: {
+    fiches: {
+      title: 'Explicit practices & communication',
+      subtitle: 'Talking about what we do — really.',
+      sectionDef: 'Definition',
+      sectionConsent: 'Consent',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'Proposing a new practice',
+        definition: 'When you want to try something new, the moment and the way you propose it make all the difference to the quality of the consent you receive.',
+        consentement: 'Proposing in a neutral moment — not just before or during — gives the other person space to think and respond freely, without the pressure of the moment or the mood.',
+        loi: 'No practice can be imposed without prior agreement. In-the-moment enthusiasm or intimate context does not constitute consent to a new practice.',
+        question: 'Did I propose this practice in a calm moment, without creating implicit pressure?',
+      },
+      1: {
+        titre: 'Performative consent',
+        definition: 'A "yes" given to please, to avoid conflict or to get it over with faster is not real consent. It is possible to say yes without genuinely wanting to.',
+        consentement: 'Openly checking whether the other person is truly comfortable — "Are you really ok with this?" — is an act of respect, not suspicion. Non-verbal discomfort (silence, passive body) is a signal to take seriously.',
+        loi: "Consent must be free. An agreement given under implicit pressure or out of fear of the other's reaction is not legally valid.",
+        question: 'Did my partner genuinely say yes, or am I settling for an absence of refusal?',
+      },
+      2: {
+        titre: 'Safe word and role play',
+        definition: 'In role play, partners may agree to ignore certain usual words. But a real distress signal must always be taken seriously, whatever the framework.',
+        consentement: 'If no distinct safe word has been defined in advance, any distress signal (tone of voice, "stop", physical tension) must lead to stopping and checking immediately.',
+        loi: 'The fictional framework of a role play does not remove the right to withdraw consent at any time. Continuing despite a real distress signal constitutes assault (art. 222-22 CP).',
+        question: 'Have we established a distinct safe word before starting this role play?',
+      },
+      3: {
+        titre: 'Communication afterwards',
+        definition: 'Talking after an intimate encounter is as important as talking before. Expressing what you would have liked done differently improves the relationship — it does not criticise it.',
+        consentement: '"I would have liked us to do X differently" is a healthy conversation. It normalises ongoing dialogue about desires and limits, in both directions.',
+        loi: 'There is no legal obligation to talk, but unresolved misunderstandings can evolve into more serious situations. Post-encounter communication protects both partners.',
+        question: 'Have I expressed what I would have liked differently, or am I keeping it to myself?',
+      },
+      4: {
+        titre: 'Respecting a limit you do not understand',
+        definition: 'A limit does not need to be understood to be respected. Trying to convince or obtain explanations, even gently, is a form of pressure.',
+        consentement: "Respecting a limit without fully understanding it is a sign of genuine respect. Any attempt at negotiation — even well-meaning — calls into question the other person's right to set their limits.",
+        loi: "Insisting after a refusal, including through arguments or repeated questions, can constitute pressure under criminal law if it leads to non-free consent.",
+        question: "Have I accepted the other person's limit without trying to understand, discuss or work around it?",
+      },
+      5: {
+        titre: 'Renewing consent',
+        definition: 'Even in an established relationship with habitual practices, consent is not a given once and for all. It is renewed each time.',
+        consentement: 'A glance, a short question, a non-verbal signal of wellbeing are enough. Checking in remains a sign of respect, even in a long and trusting relationship.',
+        loi: 'Habit or the length of a relationship do not constitute permanent consent. Implied consent linked to a relationship is regularly challenged in court.',
+        question: 'Do I regularly check that the other person is still comfortable, even when it has become routine?',
+      },
+    },
+  },
+};

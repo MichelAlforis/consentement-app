@@ -1,1 +1,55 @@
-export const pressionManip = { pressionManip: { fiches: { title: 'Pressure & manipulation' } } };
+export const pressionManip = {
+  pressionManip: {
+    fiches: {
+      title: 'Pressure & manipulation',
+      subtitle: "Recognising what looks like consent but isn't.",
+      sectionDef: 'The situation',
+      sectionConsent: 'What it really is',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: '"If you loved me, you\'d do it"',
+        definition: '"If you really loved me, you\'d do it." This phrase is presented as a love test or a romantic request.',
+        consentement: 'This is a classic form of emotional manipulation that invalidates refusal. Conditioning love on a sexual act is a manipulation technique. A partner who loves you accepts your refusal without questioning it.',
+        loi: 'Emotional manipulation to obtain consent legally invalidates that consent. It can constitute coercion under criminal law if it leads to a coerced sexual act.',
+        question: 'Has someone ever conditioned their affection or presence on a sexual act in my current relationship?',
+      },
+      1: {
+        titre: 'Gentle insistence',
+        definition: 'You say no. The other person keeps insisting, gently but relentlessly, repeating the same request or variations of it.',
+        consentement: 'This is harassment, even if the tone is gentle. Repeated insistence after a refusal is a form of pressure that denies your "no". The gentleness of the tone does not change the nature of the act.',
+        loi: 'Repeated insistence after a refusal can constitute harassment (art. 222-33 CP) if it causes an impairment to health or wellbeing. Persistence is not romantic perseverance.',
+        question: 'Is my refusal respected at first expression, or do I have to repeat it several times for it to be taken into account?',
+      },
+      2: {
+        titre: 'Emotional blackmail',
+        definition: '"Anyway, you have no choice if you want us to stay together." Or any implicit threat linked to the relationship.',
+        consentement: 'This is a threat that invalidates any consent given afterwards. Consent given under threat is not free — that is the very definition of vitiated consent. The gentleness or implicitness of the threat changes nothing.',
+        loi: 'Emotional blackmail linked to a relationship can constitute psychological violence (art. 222-14-3 CP) if repeated and harmful to health. Consent vitiated by coercion is void under criminal law.',
+        question: 'Was my decision influenced by fear of the consequences for the relationship rather than by my real desire?',
+      },
+      3: {
+        titre: 'Interpreting hesitation as a yes',
+        definition: 'You hesitate. The other person says "I knew you\'d eventually say yes" and continues — interpreting your hesitation as agreement.',
+        consentement: 'Hesitation is not a yes. "I don\'t know" or "maybe" mean "wait". Interpreting hesitation as agreement is conscious or unconscious manipulation. Doubt is to be respected, not exploited.',
+        loi: 'Continuing on the basis of interpreted hesitation exposes one to a sexual assault charge if the agreement was not clear. A presumption of consent does not protect the perpetrator.',
+        question: 'Do I ask clearly for an explicit "yes" rather than interpreting silence or hesitation as permission?',
+      },
+      4: {
+        titre: 'Changing your mind under emotional pressure',
+        definition: 'After a refusal, the other person sulks, gives you the silent treatment, or cries. You change your mind to avoid their distress or resentment.',
+        consentement: "This is consent given under emotional pressure — not truly free. Using one's own sadness or anger to make the other person give in is a form of manipulation. This change of mind is not free consent.",
+        loi: 'Consent obtained by exploiting an emotional reaction can be contested. Emotional manipulation can constitute coercion under art. 222-22 CP if it leads to a sexual act.',
+        question: "Am I changing my mind because I genuinely want to, or because I cannot bear the other person's reaction to my refusal?",
+      },
+      5: {
+        titre: 'Body and non-verbal language',
+        definition: "Someone says yes, but their body language clearly says no: tense body, averted gaze, physical tension, absence of participation.",
+        consentement: 'Consent is also read in the body. A tense face, physical tension, avoidance of eye contact are warning signals. Stopping and asking openly is always the right response, whatever the context.',
+        loi: 'A verbal "yes" accompanied by non-verbal distress signals does not constitute free consent under the law. Stopping and checking protects both partners legally and humanly.',
+        question: 'Do I take into account all signals — verbal AND non-verbal — to assess the other person\'s consent?',
+      },
+    },
+  },
+};

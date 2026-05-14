@@ -1,1 +1,62 @@
-export const bdsmConsent = { bdsmConsent: { fiches: { title: 'BDSM & consent' } } };
+export const bdsmConsent = {
+  bdsmConsent: {
+    fiches: {
+      title: 'BDSM & consent',
+      subtitle: 'Separating myths from real practices.',
+      sectionDef: 'Common myth',
+      sectionConsent: 'The reality',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'BDSM and consent',
+        definition: 'In BDSM, consent is not needed since the pain is wanted.',
+        consentement: 'BDSM is the sexual practice that requires the most explicit consent. The framework is built on prior negotiation, jointly defined limits, and safe words.',
+        loi: 'Without clear and informed consent, a BDSM practice becomes assault — regardless of what the person "seemed to want". Offences are classified identically outside a BDSM context.',
+        question: 'Have we explicitly negotiated limits, permitted practices and the safe word before this session?',
+      },
+      1: {
+        titre: 'Safe words — for beginners?',
+        definition: "Having a safe word is for beginners. Experienced practitioners don't need one.",
+        consentement: 'Safe words are used by experienced practitioners precisely because they understand their importance. Even in a long-standing relationship of trust, emotions and limits evolve.',
+        loi: 'A safe word is not an admission of inexperience — it is an essential communication tool that must always be respected immediately. Ignoring it can constitute assault (art. 222-22 CP).',
+        question: 'Do I honour the safe word — including when its use surprises or interrupts me?',
+      },
+      2: {
+        titre: 'The BDSM contract',
+        definition: 'If someone has signed a BDSM "contract", they can no longer say no.',
+        consentement: 'A BDSM contract is a communication tool about desires and limits — not a legally binding document. Consent can be withdrawn at any time, even mid-scene.',
+        loi: 'No contract can remove the right to withdraw consent. Ignoring a safe word or forcing despite refusal is assault, contract or not (art. 222-22 CP).',
+        question: 'Do I understand that a prior agreement does not remove the right to change your mind at any time?',
+      },
+      3: {
+        titre: 'Power of the submissive',
+        definition: 'The submissive has no power in the relationship.',
+        consentement: 'In an ethical BDSM relationship, the submissive holds real power — the power to stop the scene. Domination is granted, not imposed. The submissive defines the limits and can withdraw them.',
+        loi: 'The concept of "consensual power exchange" is central to ethical BDSM. Ignoring the power of the submissive is to confuse fantasy with real assault.',
+        question: 'Does the person in a submissive position genuinely understand and exercise their power to stop the scene?',
+      },
+      4: {
+        titre: 'Marks prove consent',
+        definition: 'Physical marks prove that consent was present.',
+        consentement: 'Marks prove nothing about consent — they can even be evidence of assault. Consent is documented before, not after an interaction.',
+        loi: 'Physical traces without prior documented negotiation constitute evidence of assault, not consent. It is the prior agreement that counts legally, not the physical outcome.',
+        question: 'Do I document our prior agreements rather than assuming visible outcomes speak for themselves?',
+      },
+      5: {
+        titre: 'BDSM outside the scene',
+        definition: 'BDSM justifies behaviours outside the scene (constant control, isolation).',
+        consentement: 'Healthy BDSM dynamics remain within negotiated limits. Outside the scene, both people have equal rights. Using a D/s dynamic as an excuse to control someone in all aspects of their life is domestic abuse.',
+        loi: 'Domestic abuse is punishable by 3 years of imprisonment and a €45,000 fine (art. 222-14 CP), aggravated where the victim is particularly vulnerable. A BDSM context is not a mitigating circumstance.',
+        question: 'Is the BDSM dynamic clearly bounded in time and space, or does it spill into everyday life?',
+      },
+      6: {
+        titre: 'Intensity and legitimacy',
+        definition: 'If no one bleeds or cries, it is "failed" real BDSM.',
+        consentement: 'BDSM covers a vast spectrum — from light role play to intense practices. No practice is more "real" than another. What matters is that both people negotiated, consented, and have the tools to stop.',
+        loi: 'The intensity of a practice does not validate it. Very intense practices can be legal with clear consent. Light practices can be assault without it.',
+        question: 'Am I trying to validate a practice by its intensity rather than by the quality of consent?',
+      },
+    },
+  },
+};

@@ -1,1 +1,55 @@
-export const zonesGrises = { zonesGrises: { fiches: { title: 'Grey areas' } } };
+export const zonesGrises = {
+  zonesGrises: {
+    fiches: {
+      title: 'Grey areas',
+      subtitle: "Situations where the answer isn't obvious.",
+      sectionDef: 'The situation',
+      sectionConsent: 'The right response',
+      sectionLoi: 'The legal context',
+      sectionQuestion: 'Question to remember',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'When both have been drinking',
+        definition: "You've both been drinking. You both seem to agree. Does alcohol really blur consent in these cases?",
+        consentement: 'Waiting until sober to make this decision — or at least verifying soberly — is the only responsible option. Postponing is always valid. Two drunk people can both be incapable of giving valid consent.',
+        loi: '"We were both the same" does not resolve the issue — it doubles it. Particular vulnerability linked to intoxication is a recognised aggravating circumstance (art. 222-22-1 CP), regardless of the situation of both parties.',
+        question: 'Am I in a state to decide freely and clearly at this precise moment, or should I postpone this decision?',
+      },
+      1: {
+        titre: 'Habit and changing your mind',
+        definition: "You've said yes to this practice with this person before, but tonight you don't feel like it. Is it \"unfair\" to say no now?",
+        consentement: 'Consent is never acquired by habit. Each situation is a new decision. Saying no tonight after saying yes other times is perfectly legitimate — no explanation required.',
+        loi: 'In law, no habit creates an obligation of future consent. Implied consent linked to a relationship or a habitual practice is regularly contested and rejected by the courts.',
+        question: 'Is my "no" tonight respected in the same way as if it were the first time?',
+      },
+      2: {
+        titre: '"Whatever you want"',
+        definition: 'The other person says "whatever you want" in a neutral tone. Is that sufficient consent to continue?',
+        consentement: '"Whatever you want" often signals an absence of desire, not an absence of objection. The difference between "no refusal" and "real desire" is at the heart of enthusiastic consent. Stopping and asking the question directly is the right response.',
+        loi: 'The legal standard for consent requires a free and unequivocal agreement. "Whatever you want" is ambiguous and does not constitute clear agreement. In the event of dispute, this ambiguity works against the person who acted.',
+        question: 'Am I seeking a clear and enthusiastic "yes", or am I settling for an absence of objection?',
+      },
+      3: {
+        titre: 'Realising afterwards',
+        definition: "You realise afterwards that the other person may not have been truly comfortable with what happened.",
+        consentement: 'Checking with the other person, even if uncomfortable, can change a great deal for them. "Were you really ok the other night?" is a question that shows you are taking things seriously.',
+        loi: 'Re-opening the conversation afterwards is not self-incrimination — it is taking responsibility. It can also help clarify an ambiguous situation and prevent it from happening again.',
+        question: 'Have I dared to ask the question afterwards, even if the answer could be uncomfortable?',
+      },
+      4: {
+        titre: 'Tears after the act',
+        definition: "The person didn't say no, but they cried afterwards. What does this reaction mean?",
+        consentement: "Tears after intimacy can mean many things, including genuine distress. Not dramatising ≠ ignoring. Taking care of the other person and asking how they are is always the right response.",
+        loi: "Post-intimacy tears are a serious signal to take into account, not to minimise. If genuine distress is ignored and the acts are repeated, this can aggravate the legal classification of an already problematic situation.",
+        question: 'Have I taken the time to check how the other person was doing after the act, without minimising their emotions?',
+      },
+      5: {
+        titre: 'Changing your mind without saying so',
+        definition: 'You were both in agreement at the start, but one of you changed their mind mid-way without saying so — out of fear, dissociation or discomfort.',
+        consentement: "Both dimensions matter without blaming anyone: one person may find it hard to speak (dissociation, fear of conflict), the other may not have checked in regularly. Communication is a shared responsibility.",
+        loi: 'Dissociation or shock (frozen state) can prevent someone from expressing withdrawal of consent. This physiological block does not mean the act was consented to. The law recognises this state.',
+        question: 'Do I regularly check that the other person is still comfortable during the act, without waiting for a refusal signal?',
+      },
+    },
+  },
+};

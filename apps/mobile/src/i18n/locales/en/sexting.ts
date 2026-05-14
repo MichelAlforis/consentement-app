@@ -1,1 +1,69 @@
-export const sexting = { sexting: { fiches: { title: 'Sexting & intimate images' } } };
+export const sexting = {
+  sexting: {
+    fiches: {
+      title: 'Sexting & intimate images',
+      subtitle: 'What you think vs what actually happens.',
+      sectionDef: 'Common myth',
+      sectionConsent: 'The reality',
+      sectionLoi: 'What the law says',
+      sectionQuestion: 'Question to ask yourself',
+      markRead: "I've read it — Get my card",
+      0: {
+        titre: 'Trust and loss of control',
+        definition: 'Sending a photo to someone you love is risk-free.',
+        consentement: 'Once sent, you lose control of the image. Forever. Even in a trusting relationship, an image can be shared without your consent — after a break-up, by accident, or under pressure.',
+        loi: 'Non-consensual sharing of intimate images is a criminal offence in France (art. 226-2-1 CP), punishable by 2 years in prison and a €60,000 fine — even if the image was originally sent voluntarily.',
+        question: 'Am I prepared to face the consequences if this image ever circulates without my agreement?',
+      },
+      1: {
+        titre: 'Insistence = pressure',
+        definition: 'If someone insists a lot, it means they really care about you.',
+        consentement: 'Insistence is pressure. Pressure nullifies consent. A partner who respects your refusal stops at the first negative response. Insisting after a "no" or silence is a form of manipulation.',
+        loi: 'Repeated insistence to obtain images can constitute harassment (art. 222-33 CP), punishable by 2 years of imprisonment and a €30,000 fine, if it causes an impairment to health.',
+        question: 'Would I have sent this image without the pressure or insistence of the other person?',
+      },
+      2: {
+        titre: 'Minors and intimate images',
+        definition: "Sending a nude photo to someone who is 17 is ok if you're the same age.",
+        consentement: 'Even between minors, it is illegal to produce or possess these images. French law prohibits the production, distribution and possession of images of a sexual nature involving minors.',
+        loi: 'Producing or possessing such images is punishable by 5 years of imprisonment and a €75,000 fine (art. 227-23 CP) — regardless of the relationship between the parties and regardless of the age of the perpetrator.',
+        question: 'Is the person involved a legal adult and in a state to fully consent to the creation and sending of this image?',
+      },
+      3: {
+        titre: 'Partial identification',
+        definition: 'Blurring your face protects you if the image is shared.',
+        consentement: 'A tattoo, a mark, a background, or GPS metadata in the file can be enough to identify someone even without a visible face. The anonymity of an image is far harder to guarantee than most people think.',
+        loi: 'The law makes no distinction between an image with or without a recognisable face. The offence is established as soon as the person can be identified by a close third party (art. 226-2-1 CP).',
+        question: 'Have I checked that no identifying element (tattoo, jewellery, background, metadata) appears in this image?',
+      },
+      4: {
+        titre: 'Each send is independent',
+        definition: "If you've sent once, you can no longer refuse to send again.",
+        consentement: 'Consent is continuous and revocable. Having shared an image in the past creates no obligation for the future. Using a past send to force a new one is a form of blackmail.',
+        loi: 'Blackmail based on intimate images is punishable by up to 5 years of imprisonment and a €75,000 fine (art. 312-10 CP) — even if the image was originally sent voluntarily.',
+        question: 'Do I understand that each send is a new and independent decision that I have the right to refuse?',
+      },
+      5: {
+        titre: 'Getting an image removed',
+        definition: "If an image is circulating, it's too late — nothing can be done.",
+        consentement: 'The cybermalveillance.gouv.fr portal and the PHAROS platform allow you to report and have content removed. Major platforms (Instagram, Snapchat, etc.) have emergency procedures for non-consensual content.',
+        loi: 'You can have an image removed within 24 hours in most cases. The CNIL can also intervene if a platform does not cooperate. Not contacting the perpetrator directly is more effective.',
+        question: 'Do I know the resources available if an image of me circulates without my agreement?',
+      },
+      6: {
+        titre: 'Who is responsible?',
+        definition: '"Revenge porn" only happens to careless people.',
+        consentement: 'It can happen to anyone. The fault always lies with the person who shares. The victim is never responsible. Regardless of how the image was obtained, sharing without agreement is an offence.',
+        loi: 'Art. 226-2-1 CP punishes the person who distributes, publishes or makes the image accessible — not the person in it. There is no "carelessness" that justifies sharing or mitigates the perpetrator\'s responsibility.',
+        question: 'Do I understand that the responsibility for sharing rests entirely with the person who shares, never with the victim?',
+      },
+      7: {
+        titre: 'The screenshot',
+        definition: 'Taking a screenshot of a disappearing Snap is harmless.',
+        consentement: 'Snapchat notifies the sender of a screenshot. Legally, capturing an intimate image sent with a time limit without the other person\'s agreement is already a violation.',
+        loi: 'The capture is considered non-consensual sharing under art. 226-2-1 CP. The fact that "it disappears" does not make the capture legal — the intent to preserve the image without agreement is the offence.',
+        question: 'Have I obtained the explicit agreement of the other person before capturing or saving an intimate image received?',
+      },
+    },
+  },
+};
