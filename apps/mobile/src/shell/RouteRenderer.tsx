@@ -53,6 +53,7 @@ const HallOfCardsScreen = lazy(() => import('../components/screens/HallOfCards')
 const PersonalSpaceScreen = lazy(() => import('../components/screens/PersonalSpace').then((m) => ({ default: m.PersonalSpaceScreen })));
 const DuoSpaceScreen = lazy(() => import('../components/screens/DuoSpace').then((m) => ({ default: m.DuoSpaceScreen })));
 const DiceGameScreen = lazy(() => import('../components/screens/DiceGame').then((m) => ({ default: m.DiceGameScreen })));
+const CardGameScreen = lazy(() => import('../components/screens/CardGame').then((m) => ({ default: m.CardGameScreen })));
 const GooseGameScreen = lazy(() => import('../components/screens/GooseGameScreen').then((m) => ({ default: m.GooseGameScreen })));
 const JeuxScreen = lazy(() => import('../components/screens/JeuxScreen').then((m) => ({ default: m.JeuxScreen })));
 
@@ -112,10 +113,11 @@ function RenderScreen({ screen }: { screen: Screen }) {
       return <JeuxScreen onNavigate={navigateTo} />;
     case 'jeu-oie':
       return <GooseGameScreen isAdult={isAdult === true} />;
+    case 'jeu-cartes':
+      return <CardGameScreen />;
     case 'learn':
     case 'scenarios-minor':
     case 'feelings':
-    case 'jeu-cartes':
       return <PlaceholderScreen screen={screen} />;
     case 'hall-of-cards':
       return <HallOfCardsScreen />;

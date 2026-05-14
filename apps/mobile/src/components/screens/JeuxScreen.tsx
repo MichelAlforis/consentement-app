@@ -1,5 +1,4 @@
 // V4 divergence: hub des jeux — écran manquant Phase 4, ajouté Phase 7A
-// CardGame et GooseGame verrouillés jusqu'à Phase 7B/7C
 import { ScrollView, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import { Dices, Layers, MapPin } from 'lucide-react-native';
@@ -52,11 +51,9 @@ export function JeuxScreen({ onNavigate: propNavigate }: JeuxScreenProps) {
           icon={<Layers size={26} color="#fff" />}
           title={t('jeux.cards.title') || 'Jeu de cartes'}
           description={t('jeux.cards.desc') || 'Pioche une carte et explore de nouvelles expériences'}
-          tag={t('jeux.comingSoon') || 'Bientôt'}
-          onPress={() => {}}
-          variant="default"
-          locked
-          lockedLabel={t('jeux.comingSoon') || 'Bientôt disponible'}
+          tag={t('jeux.premium') || 'Premium'}
+          onPress={() => onNavigate('jeu-cartes')}
+          variant="premium"
           delay={1}
         />
 
@@ -64,11 +61,9 @@ export function JeuxScreen({ onNavigate: propNavigate }: JeuxScreenProps) {
           icon={<MapPin size={26} color="#fff" />}
           title={t('jeux.goose.title') || "Jeu de l'oie"}
           description={t('jeux.goose.desc') || 'Un plateau de jeu pour pimenter votre soirée'}
-          tag={t('jeux.comingSoon') || 'Bientôt'}
-          onPress={() => {}}
-          variant="default"
-          locked
-          lockedLabel={t('jeux.comingSoon') || 'Bientôt disponible'}
+          tag={t('jeux.premium') || 'Premium'}
+          onPress={() => onNavigate('jeu-oie')}
+          variant="premium"
           delay={2}
         />
       </View>

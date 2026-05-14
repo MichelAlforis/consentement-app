@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import {
   View, Text, Pressable, ScrollView, StyleSheet,
 } from 'react-native';
-import { MotiView, AnimatePresence } from 'moti';
+import { MotiView } from 'moti';
 import {
   RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy,
   User, Users,
@@ -160,15 +160,14 @@ export function CardGameScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <AnimatePresence>
-
+      {/* Pas d'AnimatePresence : moti viole Rules of Hooks avec plusieurs enfants conditionnels simultanés */}
+      <>
         {/* ── PICK ─────────────────────────────────────────── */}
         {s.step === 'pick' && (
           <MotiView
             key="pick"
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
-            exit={{ opacity: 0, translateY: -16 }}
             style={{ flex: 1 }}
           >
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -179,7 +178,7 @@ export function CardGameScreen() {
                   animate={{ opacity: 1, scale: 1 }}
                   style={styles.emptyContainer}
                 >
-                  <View style={[styles.emptyIcon, { backgroundColor: colors.premiumGradient as unknown as string }]}>
+                  <View style={[styles.emptyIcon, { backgroundColor: colors.premium }]}>
                     <Sparkles size={36} color="#fff" />
                   </View>
                   <View>
@@ -379,13 +378,12 @@ export function CardGameScreen() {
             key="playing"
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             style={{ flex: 1 }}
           >
             <ScrollView contentContainerStyle={styles.scrollContent}>
               {/* Header */}
               <View style={styles.playingHeader}>
-                <View style={[styles.catBadge, { backgroundColor: s.cat.gradient as unknown as string }]}>
+                <View style={[styles.catBadge, { backgroundColor: s.cat.border }]}>
                   <Text style={styles.catBadgeText}>{s.cat.name}</Text>
                 </View>
                 <Text style={[styles.countText, { color: colors.textMuted }]}>
@@ -421,34 +419,30 @@ export function CardGameScreen() {
 
               {/* PlayingCard */}
               <View style={styles.cardContainer}>
-                <AnimatePresence>
-                  <MotiView
-                    key={s.currentCard.id}
-                    from={{ opacity: 0, translateY: 22 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: 'timing', duration: 350 }}
-                    style={{ width: '100%', alignItems: 'center' }}
-                  >
-                    <PlayingCard
-                      card={s.currentCard}
-                      cat={s.cat}
-                      isRevealed={s.isRevealed}
-                      isAnimating={s.isAnimating}
-                      deckRemaining={deckRemaining}
-                      onDraw={s.isSeanceDone ? handleGoToEnd : s.drawNewCard}
-                    />
-                  </MotiView>
-                </AnimatePresence>
+                <MotiView
+                  key={s.currentCard.id}
+                  from={{ opacity: 0, translateY: 22 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ type: 'timing', duration: 350 }}
+                  style={{ width: '100%', alignItems: 'center' }}
+                >
+                  <PlayingCard
+                    card={s.currentCard}
+                    cat={s.cat}
+                    isRevealed={s.isRevealed}
+                    isAnimating={s.isAnimating}
+                    deckRemaining={deckRemaining}
+                    onDraw={s.isSeanceDone ? handleGoToEnd : s.drawNewCard}
+                  />
+                </MotiView>
               </View>
 
               {/* Actions post-révélation */}
-              <AnimatePresence>
-                {s.isRevealed && (
+              {s.isRevealed && (
                   <MotiView
                     key="actions"
                     from={{ opacity: 0, translateY: 8 }}
                     animate={{ opacity: 1, translateY: 0 }}
-                    exit={{ opacity: 0 }}
                     transition={{ delay: 200, type: 'timing', duration: 300 }}
                     style={styles.actionsContainer}
                   >
@@ -502,8 +496,7 @@ export function CardGameScreen() {
                       </Text>
                     </Pressable>
                   </MotiView>
-                )}
-              </AnimatePresence>
+              )}
             </ScrollView>
           </MotiView>
         )}
@@ -514,7 +507,6 @@ export function CardGameScreen() {
             key="end"
             from={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
             style={{ flex: 1 }}
           >
             <GameEndCinematic primaryColor={colors.accent} secondaryColor={colors.accentLight} intensity="medium" darkOverlay />
@@ -607,7 +599,7 @@ export function CardGameScreen() {
           </MotiView>
         )}
 
-      </AnimatePresence>
+      </>
     </View>
   );
 }
