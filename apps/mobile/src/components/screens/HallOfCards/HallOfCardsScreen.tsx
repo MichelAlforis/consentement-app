@@ -6,11 +6,11 @@ import {
   Dimensions,
   FlatList,
   Pressable,
-  SafeAreaView,
   Text,
   View,
   type ListRenderItemInfo,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -174,6 +174,7 @@ function CardBack({
 export function HallOfCardsScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const ownedCards = useUnlockStore((s) => s.ownedCards);
   const pendingIds = useRevealStore((s) => s.pendingIds);
@@ -247,7 +248,9 @@ export function HallOfCardsScreen() {
           backgroundColor: colors.bgPrimary,
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 32,
+          paddingTop: insets.top + 32,
+          paddingHorizontal: 32,
+          paddingBottom: insets.bottom + 32,
           gap: 16,
         }}
       >
@@ -291,12 +294,12 @@ export function HallOfCardsScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bgPrimary }}>
+    <View style={{ flex: 1, backgroundColor: colors.bgPrimary }}>
       {/* Header */}
       <View
         style={{
           paddingHorizontal: 20,
-          paddingTop: 16,
+          paddingTop: insets.top + 16,
           paddingBottom: 12,
           gap: 4,
         }}
@@ -343,6 +346,6 @@ export function HallOfCardsScreen() {
       {pendingCards.length > 0 && (
         <FlipRevealOverlay cards={pendingCards} onDone={clearPending} />
       )}
-    </SafeAreaView>
+    </View>
   );
 }

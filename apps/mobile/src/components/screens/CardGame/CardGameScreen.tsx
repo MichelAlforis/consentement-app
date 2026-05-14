@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import {
   View, Text, Pressable, ScrollView, StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
 import {
   RotateCcw, Shuffle, ChevronRight, Sparkles, Heart, Trophy,
@@ -103,6 +104,7 @@ function CardUnlockReveal({ cards }: { cards: GainedCard[] }) {
 export function CardGameScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const navigateTo = useNavigationStore((s) => s.navigateTo);
   const isAdult   = useAuthStore((s) => s.isAdult) ?? false;
   const isPremium = usePremiumStore((s) => s.isPremium);
@@ -159,7 +161,7 @@ export function CardGameScreen() {
       : t('cardGame.insight3');
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top }}>
       {/* Pas d'AnimatePresence : moti viole Rules of Hooks avec plusieurs enfants conditionnels simultanés */}
       <>
         {/* ── PICK ─────────────────────────────────────────── */}

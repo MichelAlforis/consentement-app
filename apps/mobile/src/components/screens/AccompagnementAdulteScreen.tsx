@@ -19,7 +19,7 @@ export function AccompagnementAdulteScreen() {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.bgPrimary, paddingTop: insets.top }}>
+    <View style={{ flex: 1, backgroundColor: colors.bgPrimary, paddingTop: insets.top + 16 }}>
       <MotiView
         from={{ opacity: 0, translateY: -8 }}
         animate={{ opacity: 1, translateY: 0 }}

@@ -1,12 +1,13 @@
 // V4 divergence: navigation via useNavigationStore (pas de Next.js router)
 // framer-motion → MotiView/AnimatePresence, className → StyleSheet RN
-import { useState, useMemo } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   View,
   Text,
   Pressable,
   StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
 import {
   Dices,
@@ -97,6 +98,7 @@ export interface DiceGameScreenProps {
 export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const explicitMode = useSettingsStore((s) => s.explicitMode);
   const { ownedCards } = useUnlockStore();
 
@@ -125,8 +127,16 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
   const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
+  const showDice = mode === 'pick' || mode === 'rolling' || mode === 'practice';
 
   const samplePreviewCard = (faceId: number) => sampleCardByFace(faceId, ownedCards);
+
+  const handleRollComplete = useCallback(() => {
+    onRollComplete();
+    setMode('practice');
+    const card = samplePreviewCard(currentFace?.id ?? 0);
+    setPreviewCard(card);
+  }, [currentFace?.id, onRollComplete, ownedCards]);
 
   const pickRoll = (solo: boolean) => {
     setIsSolo(solo);
@@ -172,7 +182,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
       <MotiView
         from={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        style={[styles.container, { backgroundColor: colors.bgPrimary }]}
+        style={[styles.container, { backgroundColor: colors.bgPrimary, paddingTop: insets.top }]}
       >
         {/* Header */}
         <View style={styles.header}>
@@ -188,6 +198,54 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
         {/* Pas d'AnimatePresence : moti viole Rules of Hooks avec plusieurs enfants conditionnels simultanés.
             MotiView + key unique = enter animation sans exit, pattern stable. */}
         <>
+          {showDice && (
+            <View style={mode === 'pick' ? styles.diceCenter : styles.diceArea}>
+              <DiceRenderer
+                config={DICE_CONFIG}
+                currentFace={mode === 'pick' ? null : currentFace}
+                isRolling={mode !== 'pick' && isRolling}
+                onRollComplete={handleRollComplete}
+                renderer="webgl"
+                mode="numeric"
+                size={mode === 'pick' ? 180 : 240}
+              />
+
+              {mode === 'rolling' && (
+                <MotiView
+                  key="rolling-label"
+                  from={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <Text style={[styles.rollingLabel, { color: colors.textMuted }]}>{t('diceGame.rolling')}</Text>
+                </MotiView>
+              )}
+
+              {mode === 'practice' && currentCat && (
+                <MotiView
+                  key="category-title"
+                  from={{ opacity: 0, translateY: -40, scale: 1.2 }}
+                  animate={{ opacity: 1, translateY: 0, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 50 }}
+                  style={styles.categoryBadge}
+                >
+                  <DiceCategoryIcon faceId={currentItem?.faceId ?? 1} size={24} />
+                  <Text style={styles.categoryBadgeText}>{currentCatName}</Text>
+                  <Text style={styles.categoryBadgeCount}>#{rollCount}</Text>
+                </MotiView>
+              )}
+
+              {mode === 'practice' && previewCard && (
+                <Pressable
+                  onPress={() => setShowCardPreview(true)}
+                  style={[styles.cardPreviewBtn, { backgroundColor: previewCard.border }]}
+                >
+                  <View style={styles.cardPreviewDot} />
+                  <Text style={styles.cardPreviewText} numberOfLines={1}>{previewCard.text}</Text>
+                  <ChevronRight size={14} color="rgba(255,255,255,0.7)" />
+                </Pressable>
+              )}
+            </View>
+          )}
 
           {/* PICK */}
           {mode === 'pick' && (
@@ -197,10 +255,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               animate={{ opacity: 1, translateY: 0 }}
               style={styles.flex1}
             >
-              <View style={styles.diceCenter}>
-                <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" mode="numeric" size={180} />
-              </View>
-
               <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>{t('diceGame.howToPlay')}</Text>
 
               <View style={styles.modeList}>
@@ -247,58 +301,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               animate={{ opacity: 1, scale: 1 }}
               style={styles.flex1}
             >
-              <View style={styles.diceArea}>
-                <DiceRenderer
-                  config={DICE_CONFIG}
-                  currentFace={currentFace}
-                  isRolling={isRolling}
-                  onRollComplete={() => {
-                    onRollComplete();
-                    setMode('practice');
-                    const card = samplePreviewCard(currentItem?.faceId ?? 0);
-                    setPreviewCard(card);
-                  }}
-                  renderer="webgl"
-                  mode="numeric"
-                  size={240}
-                />
-
-                {mode === 'rolling' && (
-                  <MotiView
-                    key="rolling-label"
-                    from={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    <Text style={[styles.rollingLabel, { color: colors.textMuted }]}>{t('diceGame.rolling')}</Text>
-                  </MotiView>
-                )}
-
-                {mode === 'practice' && currentCat && (
-                  <MotiView
-                    key="category-title"
-                    from={{ opacity: 0, translateY: -40, scale: 1.2 }}
-                    animate={{ opacity: 1, translateY: 0, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 50 }}
-                    style={styles.categoryBadge}
-                  >
-                    <DiceCategoryIcon faceId={currentItem?.faceId ?? 1} size={24} />
-                    <Text style={styles.categoryBadgeText}>{currentCatName}</Text>
-                    <Text style={styles.categoryBadgeCount}>#{rollCount}</Text>
-                  </MotiView>
-                )}
-
-                {mode === 'practice' && previewCard && (
-                  <Pressable
-                    onPress={() => setShowCardPreview(true)}
-                    style={[styles.cardPreviewBtn, { backgroundColor: previewCard.border }]}
-                  >
-                    <View style={styles.cardPreviewDot} />
-                    <Text style={styles.cardPreviewText} numberOfLines={1}>{previewCard.text}</Text>
-                    <ChevronRight size={14} color="rgba(255,255,255,0.7)" />
-                  </Pressable>
-                )}
-              </View>
-
               {mode === 'practice' && currentItem && currentCat && (
                 <MotiView
                   key="practice-content"

@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView, AnimatePresence } from 'moti';
 import { Lock, Handshake, Sparkles } from 'lucide-react-native';
 import { Zap, Leaf, Wind, Moon, Star, Dices } from 'lucide-react-native';
@@ -35,10 +36,11 @@ export function GooseGameScreen({ isAdult }: GooseGameScreenProps) {
   const isPremium = usePremiumStore((s) => s.isPremium);
   const { t } = useTranslation();
   const navigateTo = useNavigationStore((s) => s.navigateTo);
+  const insets = useSafeAreaInsets();
 
   if (!isPremium) {
     return (
-      <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} style={styles.gateContainer}>
+      <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} style={[styles.gateContainer, { paddingTop: insets.top }]}>
         <Lock size={48} color="rgba(255,255,255,0.6)" />
         <View>
           <Text style={styles.gateTitle}>{t('gooseGame.premium')}</Text>
@@ -60,6 +62,7 @@ export function GooseGameScreen({ isAdult }: GooseGameScreenProps) {
 function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const isLandscape = width > height;
   const navigateTo = useNavigationStore((s) => s.navigateTo);
 
@@ -94,17 +97,19 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'intro') {
     return (
-      <IntroScreen
-        savedGame={savedGame}
-        onNew={() => { setSavedGame(null); setPhase('setup-p1'); }}
-        onResume={resumeGame}
-      />
+      <View style={{ flex: 1, paddingTop: insets.top }}>
+        <IntroScreen
+          savedGame={savedGame}
+          onNew={() => { setSavedGame(null); setPhase('setup-p1'); }}
+          onResume={resumeGame}
+        />
+      </View>
     );
   }
 
   if (phase === 'setup-p1') {
     return (
-      <View style={[styles.phaseWrapper, { backgroundColor: '#7c3aed' }]}>
+      <View style={[styles.phaseWrapper, { backgroundColor: '#7c3aed', paddingTop: insets.top }]}>
         <SetupPlayer playerIndex={0} otherPawn={undefined} onConfirm={handleP1Confirm} />
       </View>
     );
@@ -112,7 +117,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'setup-p2') {
     return (
-      <View style={[styles.phaseWrapper, { backgroundColor: '#0369a1' }]}>
+      <View style={[styles.phaseWrapper, { backgroundColor: '#0369a1', paddingTop: insets.top }]}>
         <SetupPlayer playerIndex={1} otherPawn={p1?.pawn} onConfirm={handleP2Confirm} />
       </View>
     );
@@ -120,7 +125,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'pacte') {
     return (
-      <View style={[styles.phaseWrapper, { backgroundColor: '#0f172a' }]}>
+      <View style={[styles.phaseWrapper, { backgroundColor: '#0f172a', paddingTop: insets.top }]}>
         <PacteScreen player1={player1} player2={player2} onStart={startNewGame} />
       </View>
     );
@@ -128,13 +133,15 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   if (phase === 'end') {
     return (
-      <EndScreen
-        player1={player1}
-        player2={player2}
-        accordsCount={accordsCount}
-        onReplay={resetToIntro}
-        onQuit={handleQuit}
-      />
+      <View style={{ flex: 1, paddingTop: insets.top }}>
+        <EndScreen
+          player1={player1}
+          player2={player2}
+          accordsCount={accordsCount}
+          onReplay={resetToIntro}
+          onQuit={handleQuit}
+        />
+      </View>
     );
   }
 
@@ -145,7 +152,7 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 
   const PawnIcon = ICON_MAP[activePawn] as LucideIcon | undefined;
   return (
-    <View style={[styles.playContainer, { backgroundColor: ZONE_COLORS[zoneIndex] }]}>
+    <View style={[styles.playContainer, { backgroundColor: ZONE_COLORS[zoneIndex], paddingTop: insets.top }]}>
       {showConfetti && <ConfettiParticles id={confettiKey} />}
 
       <View style={[styles.inner, isLandscape ? styles.innerLandscape : styles.innerPortrait]}>

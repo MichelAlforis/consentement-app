@@ -1,5 +1,6 @@
 // V4 divergence: hub des jeux — écran manquant Phase 4, ajouté Phase 7A
 import { ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
 import { Dices, Layers, MapPin } from 'lucide-react-native';
 import { useNavigationStore, type Screen } from '@ouiclair/core';
@@ -16,11 +17,12 @@ export function JeuxScreen({ onNavigate: propNavigate }: JeuxScreenProps) {
   const { t } = useTranslation();
   const navigateTo = useNavigationStore((s) => s.navigateTo);
   const onNavigate = propNavigate ?? navigateTo;
+  const insets = useSafeAreaInsets();
 
   return (
     <ScrollView
       testID="screen-jeux"
-      contentContainerStyle={{ padding: 20, paddingBottom: 32 }}
+      contentContainerStyle={{ padding: 20, paddingTop: insets.top + 20, paddingBottom: 32 }}
       showsVerticalScrollIndicator={false}
     >
       <MotiView
