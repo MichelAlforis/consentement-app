@@ -142,7 +142,7 @@ ouiclair-monorepo/
 | 5A | FichePratiqueScreen + 7 modules batch A | — | **✅ Fait** | — | composant base + 7 modules |
 | 5B | 7 modules batch B | — | **✅ Fait** (commit fd47ea5, fixes 433f7be) | — | 7 modules |
 | 5C | 10 écrans Ressources/Info | — | **✅ Fait** (commit 86402ec) | — | help, quiz, premium, annuaire… |
-| 5D | Sprint contenu — données i18n réelles | 3–5 j | **⏸ Reportée après Phase 7** | — | brancher vraies données pédagogiques |
+| 5D | Sprint contenu — données i18n réelles | 3–5 j | **✅ Fait** (commit 8bc5d72) | — | 14 modules FR + EN stubs, i18n réel |
 | 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
 | 6 | Collection + Social | 8–12 j | **🔜 Prochaine** | — | HallOfCards, DuoSpace |
 | 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
@@ -493,17 +493,15 @@ Même pattern FichePratiqueScreen, items stubs.
 
 Écrans hétérogènes (accordéon FAQ, quiz stateful, annuaire, pitch abonnement).
 
-### Phase 5D ⏸ Reportée après Phase 7 — Sprint contenu
+### Phase 5D ✅ — Sprint contenu (commit 8bc5d72)
 
-**Décision 2026-05-14 :** `VraiFauxItem` (V3) est structurellement incompatible avec `FichePratiqueItem` (V4).
-Ce n'est pas une migration technique — c'est un **sprint éditorial** :
-- Reformatage manuel ou supervisé des données par module
-- Création des clés i18n par module et par langue
-- Validation pédagogique (contenu sensible : BDSM, sexting, harcèlement)
+14 fichiers FR créés avec contenu pédagogique réel (4–10 fiches par module).
+14 fichiers EN : 2 traductions complètes (pratiquesAvancees, lgbtqConsent depuis V3), 12 stubs.
+Mapping V3 → V4 appliqué : fiches (direct), vraiFaux, quiz, loi, scenarios, lexique.
+`fiches-pratiques.ts` : stubs 3-items remplacés par vrais tableaux.
+`apps/mobile/src/i18n/index.ts` : résolveur dot-notation réel, multi-locale fr/en.
 
-**5D est un blocker stores, pas un blocker technique.** Les écrans fonctionnent avec des stubs jusqu'à la publication.
-
-**Ordre révisé :** 5A ✅ → 5B ✅ → 5C → 5b → Phase 6 → Phase 7 → **5D** → Phase 8 → Phase 9
+**Reste :** 12 modules EN à traduire complètement — non-bloquant pour la soumission FR.
 
 ### Phase 5b — Features natives critiques (après 5C)
 
