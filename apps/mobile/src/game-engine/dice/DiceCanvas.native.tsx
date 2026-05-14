@@ -318,6 +318,7 @@ export function DiceCanvas({
     // TODO: tester fps sur device physique (seuil go = 45fps)
     <View style={{ width: size, height: size }}>
       <Canvas
+        frameloop="always"
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
 
