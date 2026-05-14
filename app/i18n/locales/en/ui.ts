@@ -149,5 +149,9 @@ export const ui = {
     annuaireDesc: 'Find a professional — in person or teleconsultation',
     heatTitle:    'My Barometer',
     heatDesc:     '{pts} pts · Level {level} of 5',
+    heatNudge_safeword: 'Set a safeword',
+    heatNudge_pronouns: 'Add my pronouns',
+    heatNudge_comfort:  'Comfort zones ({n}/3)',
+    heatNudge_pts:      '+{n} pts',
   },
 } as const;

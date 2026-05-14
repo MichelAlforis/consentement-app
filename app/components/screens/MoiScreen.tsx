@@ -5,7 +5,7 @@ import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHear
 import { AppLogo, HeatThermometer } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuthStore, usePremiumStore } from '../../stores';
+import { useAuthStore, usePremiumStore, useProfileStore } from '../../stores';
 import { useTranslation } from '../../i18n';
 import { useHeat } from '../../context/HeatContext';
 
@@ -66,8 +66,15 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const userName = useAuthStore((s) => s.userName);
+  const pronouns = useAuthStore((s) => s.pronouns);
   const { isPremium } = usePremiumStore();
   const { points, level: heatLevel } = useHeat();
+  const personalProfile = useProfileStore((s) => s.personalProfile);
+
+  const comfortFilled = [personalProfile.tenderness, personalProfile.intensity, personalProfile.trust]
+    .filter((cat) => Object.keys(cat).length > 0).length;
+  const safewordSet = personalProfile.safeword.trim() !== '';
+  const pronounsSet = pronouns !== null && pronouns.trim() !== '';
 
   let cardIndex = 0;
 
@@ -116,6 +123,38 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
             {t('moi.heatDesc', { pts: String(points), level: String(heatLevel) })}
           </p>
+          {/* Nudges profil — bonuses non encore réclamés */}
+          {(!safewordSet || !pronounsSet || comfortFilled < 3) && isAdult && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {!safewordSet && (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: '#f9731615', color: '#f97316', border: '1px solid #f9731630' }}
+                >
+                  {t('moi.heatNudge_safeword')}
+                  <span style={{ opacity: 0.8 }}>{t('moi.heatNudge_pts', { n: '3' })}</span>
+                </span>
+              )}
+              {!pronounsSet && (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: '#f9731615', color: '#f97316', border: '1px solid #f9731630' }}
+                >
+                  {t('moi.heatNudge_pronouns')}
+                  <span style={{ opacity: 0.8 }}>{t('moi.heatNudge_pts', { n: '2' })}</span>
+                </span>
+              )}
+              {comfortFilled < 3 && (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                  style={{ background: '#f9731615', color: '#f97316', border: '1px solid #f9731630' }}
+                >
+                  {t('moi.heatNudge_comfort', { n: String(comfortFilled) })}
+                  <span style={{ opacity: 0.8 }}>{t('moi.heatNudge_pts', { n: String(3 - comfortFilled) })}</span>
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </motion.div>
 

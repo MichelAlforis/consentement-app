@@ -149,5 +149,9 @@ export const ui = {
     annuaireDesc: 'Encontrar un·a profesional — presencial o teleconsulta',
     heatTitle:    'Mi Barómetro',
     heatDesc:     '{pts} pts · Nivel {level} de 5',
+    heatNudge_safeword: 'Definir una palabra de seguridad',
+    heatNudge_pronouns: 'Añadir mis pronombres',
+    heatNudge_comfort:  'Zonas de confort ({n}/3)',
+    heatNudge_pts:      '+{n} pts',
   },
 } as const;
