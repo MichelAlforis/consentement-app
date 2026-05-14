@@ -200,6 +200,8 @@ sans exposer `window`, `localStorage`, `document` ni `navigator` complet.
 
 ## R7 — Chaque sous-dossier a un index.ts avec re-exports explicites
 
+S'applique à `packages/core/src/` **ET** `apps/mobile/src/`.
+
 Pas de `export * from './*'` générique. Chaque index.ts liste explicitement
 ce qu'il expose.
 
@@ -215,6 +217,15 @@ export * from './heatLevel';   // trop permissif, cache les conflits de noms
 L'export `*` permissif est la cause directe des doublons silencieux détectés
 en audit (ex : `Rarity` re-déclarée dans `data/` malgré son existence dans
 `types/`). Aucune exception.
+
+**Règle supplémentaire pour les barrels mobiles** (`apps/mobile/src/components/ui/index.ts`,
+`apps/mobile/src/i18n/index.ts`, etc.) :
+- Ne jamais supprimer un export existant lors d'un lint pass — les re-exports
+  `export { Foo } from './Foo'` ne sont PAS des variables "unused" (R7 protect).
+- Ne jamais convertir en glob `export * from` même si ESLint ne signale rien.
+- Ne jamais retirer le commentaire de garde `// BARREL` en tête de fichier.
+- En cas de commentaire `/* eslint-disable */` jugé "inutile" : le laisser ou
+  le remplacer par la ligne de garde — ne pas supprimer.
 
 ---
 

@@ -1,3 +1,5 @@
+// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
+//     useHomeProps() résout isAdult/userName/onNavigate depuis stores.
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

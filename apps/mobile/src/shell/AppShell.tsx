@@ -1,3 +1,5 @@
+// V4: shell RN. Providers ThemeContext + ToastContext via AppProviders,
+//     ErrorBoundary dans ScreenFrame, HeatContext en hook pur.
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { TabBar, Toast } from '../components/ui';

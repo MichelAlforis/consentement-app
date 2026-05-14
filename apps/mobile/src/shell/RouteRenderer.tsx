@@ -1,3 +1,5 @@
+// V4: routing string-based via useNavigationStore. 11 routes Phase 4 +
+//     PlaceholderScreen fallback. Lazy-loading + Suspense.
 import { Suspense, lazy } from 'react';
 import { Text, View } from 'react-native';
 import {

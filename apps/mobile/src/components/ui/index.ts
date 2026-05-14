@@ -1,3 +1,7 @@
+// BARREL — exports nominatifs uniquement. NE PAS convertir en "export * from".
+// NE PAS supprimer d'exports existants. Seulement ajouter en fin de section.
+// Règle R7 : chaque export doit être listé explicitement (voir docs/CONVENTIONS.md).
+
 // Composants portés sessions précédentes
 export { ComfortSlider } from './ComfortSlider';
 export { Card } from './Card';

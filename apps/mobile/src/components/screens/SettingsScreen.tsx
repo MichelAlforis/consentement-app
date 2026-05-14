@@ -1,3 +1,5 @@
+// V4: ports V3 → RN. Divergences: styles inline (pas NativeWind), Moti animations,
+//     useSettingsStore/useAuthStore au lieu de props, Modal RN natif.
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -339,6 +341,7 @@ export function SettingsScreen({ isPremium: propPremium, isAdult: propAdult, onN
           title={isPremium ? t('settings.premiumActive.title') : t('settings.premium.title')}
           desc={isPremium ? t('settings.premiumActive.desc') : t('settings.premium.desc')}
           accent={isPremium ? colors.unique : colors.textMuted}
+          // TODO Phase 5: gate premium — comportement complet quand IAP branché
           onPress={isPremium ? undefined : () => onNavigate('premium')}
           right={isPremium ? <CheckCircle2 size={18} color={colors.unique} /> : undefined}
         />
