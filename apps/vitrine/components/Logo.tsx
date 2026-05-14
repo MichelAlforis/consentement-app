@@ -11,7 +11,7 @@ export default function Logo({ variant = 'default' }: { variant?: 'default' | 'f
         alt=""
         width={size}
         height={size}
-        className="flex-shrink-0 rounded-xl"
+        className="flex-shrink-0 object-contain"
         priority
       />
 
