@@ -68,7 +68,7 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const userName = useAuthStore((s) => s.userName);
   const pronouns = useAuthStore((s) => s.pronouns);
   const { isPremium } = usePremiumStore();
-  const { points, level: heatLevel } = useHeat();
+  const { points, level: heatLevel, breakdown } = useHeat();
   const personalProfile = useProfileStore((s) => s.personalProfile);
 
   const comfortFilled = [personalProfile.tenderness, personalProfile.intensity, personalProfile.trust]
@@ -123,6 +123,25 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
           <p className="text-xs mt-0.5" style={{ color: colors.textMuted }}>
             {t('moi.heatDesc', { pts: String(points), level: String(heatLevel) })}
           </p>
+          {/* Breakdown des sources de points */}
+          {points > 0 && (
+            <div className="flex gap-3 mt-2 flex-wrap">
+              {([
+                ['moi.heatBreak_modules', breakdown.modules, '📚'],
+                ['moi.heatBreak_cards', breakdown.cards, '🃏'],
+                ['moi.heatBreak_sessions', breakdown.sessions, '🎲'],
+                ['moi.heatBreak_profile', breakdown.profile, '👤'],
+              ] as const).filter(([, n]) => n > 0).map(([key, n, emoji]) => (
+                <span key={key} className="flex items-center gap-1 text-[10px]" style={{ color: colors.textMuted }}>
+                  <span>{emoji}</span>
+                  <span>{t(key)}</span>
+                  <span className="font-bold" style={{ color: colors.textSecondary }}>
+                    {t('moi.heatBreak_pts', { n: String(n) })}
+                  </span>
+                </span>
+              ))}
+            </div>
+          )}
           {/* Nudges profil — bonuses non encore réclamés */}
           {(!safewordSet || !pronounsSet || comfortFilled < 3) && isAdult && (
             <div className="flex flex-wrap gap-1 mt-2">

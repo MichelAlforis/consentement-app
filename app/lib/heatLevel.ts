@@ -51,21 +51,35 @@ export const HEAT_THRESHOLDS: Record<HeatLevel, number> = {
   5: 130,
 };
 
-export function computeHeatPoints(input: HeatInput): number {
-  const modulePoints = input.completedModules.reduce((sum, id) => {
+export interface HeatBreakdown {
+  modules: number;
+  cards: number;
+  sessions: number;
+  profile: number;
+}
+
+export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
+  const modules = input.completedModules.reduce((sum, id) => {
     return sum + (MODULE_POINTS[id as EffectiveModuleId] ?? 0);
   }, 0);
 
-  const cardPoints = input.ownedCards.reduce((sum, card) => {
+  const cards = input.ownedCards.reduce((sum, card) => {
     return sum + (CARD_POINTS[card.rarity] ?? 0);
   }, 0);
 
-  const sessionPoints = input.sessionCount;
-  const profilePoints = (input.profileComfortCategories ?? 0); // 1pt par catégorie renseignée
-  const safewordPoints = input.safewordDefined ? 3 : 0;
-  const pronounsPoints = input.pronounsDefined ? 2 : 0;
+  const sessions = input.sessionCount;
 
-  return modulePoints + cardPoints + sessionPoints + profilePoints + safewordPoints + pronounsPoints;
+  const profile =
+    (input.profileComfortCategories ?? 0) +
+    (input.safewordDefined ? 3 : 0) +
+    (input.pronounsDefined ? 2 : 0);
+
+  return { modules, cards, sessions, profile };
+}
+
+export function computeHeatPoints(input: HeatInput): number {
+  const { modules, cards, sessions, profile } = computeHeatBreakdown(input);
+  return modules + cards + sessions + profile;
 }
 
 export function getHeatLevel(points: number): HeatLevel {

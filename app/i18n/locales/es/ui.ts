@@ -153,5 +153,10 @@ export const ui = {
     heatNudge_pronouns: 'Añadir mis pronombres',
     heatNudge_comfort:  'Zonas de confort ({n}/3)',
     heatNudge_pts:      '+{n} pts',
+    heatBreak_modules:  'Módulos',
+    heatBreak_cards:    'Cartas',
+    heatBreak_sessions: 'Sesiones',
+    heatBreak_profile:  'Perfil',
+    heatBreak_pts:      '{n} pts',
   },
 } as const;
