@@ -12,23 +12,28 @@
       "resizeMode": "contain",
       "backgroundColor": "#0d0d0d"
     },
+    "scheme": "ouiclair",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "fr.consentement.app",
+      "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSMotionUsageDescription": "Utilisé pour l'effet gyroscope des cartes"
+        "NSMotionUsageDescription": "Utilisé pour l'effet gyroscope des cartes",
+        "NSCameraUsageDescription": "Utilisé pour scanner les QR codes partenaire"
       }
     },
     "android": {
       "package": "fr.consentement.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0d0d0d"
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "com.google.android.gms.permission.AD_ID"
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.CAMERA"
       ]
     },
     "plugins": [

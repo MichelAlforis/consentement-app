@@ -1,0 +1,72 @@
+# Flow 03 — Tab Jeux → Dé des positions → Lancer → Résultat → Quitter
+# Textes réels issus de : DiceGameScreen.tsx + i18n/locales/fr/games.ts
+# testIDs : screen-jeux (JeuxScreen.tsx l.24)
+# appId iOS : fr.consentement.app
+
+appId: fr.consentement.app
+
+---
+
+- launchApp:
+    clearState: false
+
+# S'assurer que l'onboarding est passé (ou __DEV__ = jeux direct)
+- waitForAnimationToEnd
+
+# Naviguer vers l'onglet Jeux via la TabBar
+# Le label est t('tab.jeux') — clé non traduite → affiche 'tab.jeux'
+- tapOn:
+    text: "tab.jeux"
+    optional: true
+- tapOn:
+    text: "Jeux"
+    optional: true
+
+# Écran Jeux visible (testID="screen-jeux" — JeuxScreen.tsx l.24)
+- assertVisible:
+    testID: screen-jeux
+    timeout: 3000
+
+# Ouvrir le jeu du Dé — titre affiché : t('diceGame.title') = 'Le Dé du Consentement'
+# Dans JeuxScreen il y a un bouton/card vers le dé
+- tapOn:
+    text: "Le Dé du Consentement"
+    timeout: 3000
+
+# ─── Mode pick ─────────────────────────────────────────────────────────────────
+# L'écran affiche "Comment tu veux jouer ?" (t('diceGame.howToPlay'))
+- assertVisible:
+    text: "Comment tu veux jouer ?"
+    timeout: 3000
+
+# Sélectionner le mode Solo (t('diceGame.solo.title') = 'Solo')
+- tapOn:
+    text: "Solo"
+
+# ─── Le dé se lance automatiquement après sélection du mode ──────────────────
+# Pendant le lancer : t('diceGame.rolling') = 'Le destin décide…'
+- waitForAnimationToEnd
+
+# ─── Mode practice : résultat affiché ────────────────────────────────────────
+# Après le lancer, une carte de pratique est affichée avec les boutons :
+# t('diceGame.newRoll') = 'Nouveau tirage'
+# t('diceGame.changeMode') = 'Changer de mode'
+# t('diceGame.quit') = 'Retour aux jeux'
+- assertVisible:
+    text: "Nouveau tirage"
+    timeout: 5000
+
+# Faire un nouveau tirage pour tester la relance
+- tapOn:
+    text: "Nouveau tirage"
+
+- waitForAnimationToEnd
+
+# Quitter et retourner aux jeux (t('diceGame.quit') = 'Retour aux jeux')
+- tapOn:
+    text: "Retour aux jeux"
+
+# Vérification : on est de retour sur l'écran Jeux
+- assertVisible:
+    testID: screen-jeux
+    timeout: 3000

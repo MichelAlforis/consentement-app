@@ -264,6 +264,9 @@ importers:
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.5
+        version: 4.1.6(@types/node@20.19.41)(jsdom@29.1.1(canvas@3.2.3))(vite@8.0.12(@types/node@20.19.41)(esbuild@0.27.7)(jiti@1.21.7)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0))
 
   apps/vitrine:
     dependencies:

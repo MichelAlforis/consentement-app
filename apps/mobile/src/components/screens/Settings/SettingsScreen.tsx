@@ -37,6 +37,7 @@ import {
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
 import { Button, ExplicitModeToggle, Header } from '../../ui';
+import { secureTokenStore } from '../../../storage/secureTokenStore';
 
 interface SettingsScreenProps {
   isPremium?: boolean;
@@ -54,6 +55,7 @@ function resetAllMobileData() {
   useModuleProgressStore.getState().reset();
   useLexiqueStore.getState().reset();
   usePreferencesStore.getState().reset();
+  void secureTokenStore.clear();
 }
 
 function SectionTitle({ label }: { label: string }) {

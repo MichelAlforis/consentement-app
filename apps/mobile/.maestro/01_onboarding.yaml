@@ -1,0 +1,61 @@
+# Flow 01 — Onboarding 4 étapes → home visible
+# Textes réels issus de OnboardingWizard.tsx + i18n/locales/fr/
+# testID racine : screen-onboarding (OnboardingWizard.tsx l.508)
+# testID home   : screen-home       (HomeScreen.tsx l.1)
+# appId iOS : fr.consentement.app  (app.json)
+
+appId: fr.consentement.app
+
+---
+
+# Étape 0 — Lancement : l'app démarre sur l'onboarding (fullscreenStack: ['onboarding'])
+- launchApp:
+    clearState: true
+
+# L'écran onboarding doit être visible
+- assertVisible:
+    testID: screen-onboarding
+
+# ─── Étape 1 : Langue ─────────────────────────────────────────────────────────
+# LanguageStep affiche les drapeaux + noms natifs (LANGUAGES array)
+- tapOn:
+    text: "Français"
+
+# ─── Étape 2 : WelcomeAge ─────────────────────────────────────────────────────
+# WelcomeAgeStep affiche t('ageCheck.adult.title') = 'ageCheck.adult.title' (clé non encore traduite)
+# On utilise le texte de la Card adulte issu de l'écran
+- tapOn:
+    text: "18 ans et plus"
+    optional: true
+- tapOn:
+    text: "ageCheck.adult.title"
+    optional: true
+
+# ─── Étape 3 : ThemeSelect ────────────────────────────────────────────────────
+# ThemeSelectStep affiche les noms des thèmes depuis themes[mode].name
+# On sélectionne "Chaleureux" (warm theme)
+- tapOn:
+    text: "Chaleureux"
+    optional: true
+# Fallback: premier élément visible de la liste de thèmes
+- tapOn:
+    text: "themeSelect.title"
+    optional: true
+
+# ─── Étape 4 : Auth ───────────────────────────────────────────────────────────
+# AuthStep : saisie du prénom, puis bouton "Continuer"
+- tapOn:
+    testID: RCTScrollView
+    optional: true
+- inputText: "Alex"
+- tapOn:
+    text: "auth.btnContinue"
+    optional: true
+- tapOn:
+    text: "Continuer"
+    optional: true
+
+# ─── Résultat : home visible ──────────────────────────────────────────────────
+- assertVisible:
+    testID: screen-home
+    timeout: 5000

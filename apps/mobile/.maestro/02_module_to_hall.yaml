@@ -1,0 +1,85 @@
+# Flow 02 — Home → module éducatif → lecture → hall-of-cards
+# Requiert : onboarding déjà complété (state persisté) ou __DEV__ = true (tab jeux direct)
+# testIDs : screen-home, screen-apprendre
+# Textes issus de : ApprendreScreen.tsx + i18n/locales/fr/moduleDeBase.ts
+# appId iOS : fr.consentement.app
+
+appId: fr.consentement.app
+
+---
+
+- launchApp:
+    clearState: false
+
+# S'assurer d'être sur home (tab home actif après onboarding)
+- assertVisible:
+    testID: screen-home
+    timeout: 5000
+
+# Naviguer vers l'onglet Apprendre via la TabBar
+# Le label est t('tabs.learn') — clé non traduite → affiche 'tabs.learn'
+# On touche à la zone de la TabBar correspondant à l'onglet Apprendre (icône BookOpen)
+- tapOn:
+    text: "tabs.learn"
+    optional: true
+- tapOn:
+    text: "Apprendre"
+    optional: true
+
+# Écran Apprendre visible
+- assertVisible:
+    testID: screen-apprendre
+    timeout: 3000
+
+# Ouvrir le premier module disponible : "Qu'est-ce que le consentement ?"
+# titre issu de moduleDeBase.ts → modules[0].titre
+- tapOn:
+    text: "Qu'est-ce que le consentement ?"
+    optional: true
+# Fallback : premier pressable de la liste de modules
+- tapOn:
+    text: "Module de base"
+    optional: true
+
+# Lire la première fiche — bouton "J'ai lu — Voir ma carte"
+# Texte issu de moduleDeBase.ts → fiches.markRead
+- waitForAnimationToEnd
+- tapOn:
+    text: "J'ai lu — Voir ma carte"
+    timeout: 5000
+    optional: true
+- tapOn:
+    text: "Suivant"
+    optional: true
+
+# Retour à l'écran Apprendre
+- tapOn:
+    text: "Terminer"
+    optional: true
+- back
+
+# Naviguer vers Hall of Cards via la TabBar Moi ou via navigateTo('hall-of-cards')
+# La TabBar n'a pas de tab direct hall-of-cards — on passe par le tab Moi
+- tapOn:
+    text: "tabs.moi"
+    optional: true
+- tapOn:
+    text: "Moi"
+    optional: true
+
+- assertVisible:
+    testID: screen-moi
+    timeout: 3000
+
+# Depuis l'écran Moi, naviguer vers HallOfCards
+- tapOn:
+    text: "hallOfCards.emptyCta"
+    optional: true
+- tapOn:
+    text: "Voir mes cartes"
+    optional: true
+
+# Vérification : le titre du Hall of Cards est affiché
+- assertVisible:
+    text: "hallOfCards.title"
+    timeout: 3000

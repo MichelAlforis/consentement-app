@@ -20,10 +20,13 @@ config.resolver.unstable_enableSymlinks = true;
 
 // Force React + React Native to always resolve from the app — prevents dual-instance
 // hook crashes when packages/core or its deps (zustand) import React indirectly.
+// react-native-purchases listed explicitly because pnpm symlinks aren't always followed
+// by Metro's initial resolver (unstable_enableSymlinks covers watching, not cold resolution).
 config.resolver.extraNodeModules = {
   react: path.resolve(projectRoot, 'node_modules/react'),
   'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
   three: path.resolve(projectRoot, 'node_modules/three'),
+  'react-native-purchases': path.resolve(projectRoot, 'node_modules/react-native-purchases'),
 };
 
 // PNG + standard assets
