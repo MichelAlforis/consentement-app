@@ -143,19 +143,20 @@ ouiclair-monorepo/
 | 5B | 7 modules batch B | — | **✅ Fait** (commit fd47ea5, fixes 433f7be) | — | 7 modules |
 | 5C | 10 écrans Ressources/Info | — | **✅ Fait** (commit 86402ec) | — | help, quiz, premium, annuaire… |
 | 5D | Sprint contenu — données i18n réelles | 3–5 j | **✅ Fait** (commit 8bc5d72) | — | 14 modules FR + EN stubs, i18n réel |
-| 5b | Features natives critiques | 8–10 j | 🔜 Prochaine (après Phase 6) | — | secure-store + IAP + deep links |
+| 5b | Features natives critiques | 8–10 j | **✅ Fait** — secure-store + IAP + deep links | — | expo-secure-store + RevenueCat + deep links |
 | 6A | HallOfCardsScreen | — | **✅ Fait** (commit a66f058) | 6B | carousel + gyroscope + tilt |
 | 6B | DuoSpace + PersonalSpace | — | **✅ Fait** (8bb909b, fixes 3d5a079) | 6A | realtime stub + profil comfort |
-| 7A | DiceGame | — | **✅ Fait** (commit 265872d) — test device 45fps prérequis 7B | — | DiceCanvas + useDiceEngine + GameEndCinematic |
-| 7B | CardGame | — | **🔜 Prochaine** (après test device DiceGame) | — | CollectorCardCanvas.native + CardGame screen |
-| 7C | GooseGame | — | À faire (après 7B) — ⚠️ MMKV requis avant lancement | — | BoardRenderer.native + GooseGame screen |
-| 8 | Polish + ATT + Sentry | 4–6 j | À faire — 🔴 safe area audit obligatoire | — | app prête stores |
-| 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
+| 7A | DiceGame | — | **✅ Fait** (commit 265872d) — ⚠️ animation R3F non validée device | — | DiceCanvas + useDiceEngine + GameEndCinematic |
+| 7B | CardGame | — | **✅ Fait** — CollectorCardCanvas.native + PlayingCard + CardGameScreen | — | CollectorCardCanvas.native + CardGame screen |
+| 7C | GooseGame | — | **✅ Fait** — GooseGameScreen + insets sur 7 branches | — | BoardRenderer.native + GooseGame screen |
+| 8 | Polish + ATT + Sentry + IAP | 4–6 j | **✅ Fait** — safe areas, ATT, Sentry DSN réel, RevenueCat, SecureStore | — | app prête stores |
+| 9 | Tests + Publication | 8–12 j | **✅ Fait** — Maestro 3 flows, EAS Build, store metadata, deep links | — | EAS build, soumission |
+| 🔴 | **Sprint R3F** | — | **En cours** — animation dé statique sur device, décision FlatTile/Skia/R3F | — | dé animé validé device |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
 ---
 
-## État d'avancement — 2026-05-14
+## État d'avancement — 2026-05-15
 
 ### Phase 0 — ✅ Fait
 
@@ -243,9 +244,53 @@ ouiclair-monorepo/
 
 **Artefact nettoyé :** `apps/mobile/src/components/screens/Home/` (dossier non tracké créé par erreur par l'agent, supprimé — 0 import).
 
-### Non démarré
+### Phase 5b — ✅ Fait (2026-05-15)
 
-- Phase 5 et suivantes.
+Features natives critiques complétées :
+
+| Feature | Lib | Commit | État |
+|---------|-----|--------|------|
+| Auth token sécurisé | `expo-secure-store` | 7f095a9 | ✅ SecureStore → pbToken hors MMKV (156b0c2) |
+| IAP | RevenueCat `react-native-purchases` | 7f095a9 | ✅ iapService.ts — clés placeholder à remplacer |
+| Deep links | `expo-linking` scheme `ouiclair://` | 7f095a9 | ✅ deepLinkHandler.ts — ROUTE_MAP |
+| Haptics | `expo-haptics` | intégré 7A | ✅ useHaptics unifié |
+
+**pbToken cleanup (commit 156b0c2) :** `pbToken` retiré du `partialize` Zustand (plus en MMKV). AppProviders subscribe aux changements → sync SecureStore automatique.
+
+### Phase 7B/7C — ✅ Fait (2026-05-15)
+
+**7B — CardGame :** CollectorCardCanvas.native.tsx (Bloom + Vignette + gyroscope), PlayingCard.tsx (flip + swipe), CardGameScreen, CardRenderer — committé avec fixes ESLint orphelins (Phases 6A/7A).
+
+**7C — GooseGame :** GooseGameScreen finalisé — `useSafeAreaInsets` sur les 7 branches (gate/intro/setup-p1/setup-p2/pacte/end/play). JeuxScreen : CardGame + GooseGame déverrouillés.
+
+⚠️ **WARN R3F persistant :** dé visible (Lambert + lumières directes) mais animation statique sur device. Sprint dédié en cours.
+
+### Phase 8 — ✅ Fait (2026-05-15)
+
+**8A — Safe areas :** `useSafeAreaInsets` sur tous les écrans principaux (JeuxScreen, DiceGameScreen, GooseGameScreen, CardGameScreen, HallOfCards, AuthScreen, OnboardingWizard).
+
+**8B — ATT + Sentry :**
+- `expo-tracking-transparency` avec guard `Platform.OS === 'ios'` dans AppProviders
+- `@sentry/react-native` : DSN réel injecté (`App.tsx`), `enabled: !__DEV__`, source maps via `getSentryExpoConfig` (metro.config.js), plugin EAS (app.json — org `alforis-y3`, project `react-native`)
+
+**8C — IAP RevenueCat :** `react-native-purchases` — `initRevenueCat()`, `checkPremiumEntitlement()`, `purchasePremium()`, `restorePurchases()`. PremiumScreen branché. Alertes d'erreur FR/EN.
+
+**8D — expo-secure-store :** `secureTokenStore.ts` (save/load/clear tous avec try/catch). `resetAllMobileData()` efface SecureStore. Double source of truth pbToken éliminée (commit 156b0c2).
+
+### Phase 9 — ✅ Fait (2026-05-15)
+
+**9A — Tests :** `__DEV__` polyfillé (`global.d.ts` + vitest `define`). `mmkvStorage.test.ts`. 198 tests core OK.
+
+**9B — Maestro flows :**
+1. `01_onboarding.yaml` — 4 étapes onboarding → HomeScreen
+2. `02_module_to_hall.yaml` — module → carte → HallOfCards
+3. `03_dice_game.yaml` — tab Jeux → Solo → résultat → quitter
+
+**testIDs corrigés (commit 156b0c2) :** `btn-age-adult/minor`, `btn-theme-{mode}`, `btn-onboarding-continue`, `btn-dice-mode-solo/duo`, `btn-dice-reroll/quit`, `module-card-{id}`. Plus de `optional: true` sur les éléments navigables. Button + Card : prop `testID` ajoutée.
+
+**9C — Store metadata :** `docs/store/` — App Store FR/EN + Google Play FR/EN + screenshots-spec.md.
+
+**9D — i18n onboarding (commit cfc722c) :** 380 lignes ajoutées dans locales FR/EN — `welcome`, `ageCheck`, `themeSelect`, `auth`, `language`, `tabs`, `headers`, `settings`, `moi`, `homeAdult`, `homeMinor`, `homeV3`, `apprendre`, `heat`. Plus aucune clé brute visible dans les screens principaux.
 
 ## Phase 0 — Monorepo étendu
 **Durée : 2–3 jours**
@@ -608,82 +653,76 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 ---
 
-## Phase 8 — Polish + ATT + Crash reporting
-**Durée : 4–6 jours**
+## Phase 8 — Polish + ATT + Crash reporting ✅
+**Durée : 4–6 jours — Fait le 2026-05-15**
 
-| Tâche | Lib | Effort |
-|-------|-----|--------|
-| 🔴 **Safe areas audit — titres sous caméra** | `react-native-safe-area-context` | 1 j |
-| ATT framework iOS (App Tracking Transparency) | `expo-tracking-transparency` | 1 j |
-| Crash reporting | `@sentry/react-native` | 1 j |
-| Notifications push (si prévu) | `expo-notifications` | 2–3 j |
+| Tâche | Lib | État |
+|-------|-----|------|
+| Safe areas audit — titres sous Dynamic Island | `react-native-safe-area-context` | ✅ appliqué sur tous les écrans principaux |
+| ATT framework iOS | `expo-tracking-transparency` | ✅ guard `Platform.OS === 'ios'` dans AppProviders |
+| Crash reporting | `@sentry/react-native` | ✅ DSN réel, `enabled: !__DEV__`, source maps |
+| IAP | RevenueCat `react-native-purchases` | ✅ iapService.ts — clés placeholder |
+| Auth token sécurisé | `expo-secure-store` | ✅ SecureStore, pbToken hors MMKV |
 
-### 🔴 Safe areas — problème constaté (2026-05-14)
-
-**Symptôme :** les titres/headers tombent sous la Dynamic Island / notch sur iPhone — constaté sur tous les layouts.
-
-**Cause :** les écrans qui n'utilisent pas `useSafeAreaInsets()` n'ont pas de `paddingTop` suffisant. Seuls HomeScreen et ApprendreScreen appliquent correctement `insets.top + 16`.
-
-**Fix systématique à appliquer en Phase 8 :**
-- Audit de tous les écrans avec ScrollView ou header visible
-- Pattern correct : `contentContainerStyle={{ paddingTop: insets.top + 16 }}` sur ScrollView
-- Ou : wrapping dans `<SafeAreaView>` si l'écran n'est pas un ScrollView
-- Écrans prioritaires : tous les modules FichePratiqueScreen, JeuxScreen, HallOfCards, ressources/info
-- Référence : HomeScreen.tsx (`paddingTop: insets.top + 16`) et ApprendreScreen.tsx (même pattern)
+**Pattern safe areas appliqué :** `contentContainerStyle={{ paddingTop: insets.top + 16 }}` sur ScrollView, ou `paddingTop: insets.top + N` sur header View.
 
 ---
 
-## Phase 9 — Tests + Publication
-**Durée : 8–12 jours**
+## Phase 9 — Tests + Publication ✅
+**Durée : 8–12 jours — Fait le 2026-05-15**
 
-### Tests ✅ (commit 7f095a9)
+### Tests ✅
 
-**packages/core** → Vitest : `__DEV__` polyfillé dans vitest.config.ts, 198 tests OK
+**packages/core** → Vitest : `__DEV__` polyfillé (`global.d.ts` + vitest `define`), 198 tests OK
 
-**apps/mobile** :
-- `mmkvStorage.test.ts` : roundtrip set/get, removeItem, clé absente → null
-- `vitest.config.ts` créé
+**apps/mobile** : `mmkvStorage.test.ts` roundtrip OK
 
-**Flows Maestro ✅** (`.maestro/`) :
+### Flows Maestro ✅ (commit 156b0c2)
+
 1. `01_onboarding.yaml` — launch → 4 étapes → HomeScreen
 2. `02_module_to_hall.yaml` — module éducatif → carte gagnée → HallOfCards
-3. `03_dice_game.yaml` — tab jeux → lancer dé → résultat → quitter
+3. `03_dice_game.yaml` — tab jeux → Solo → résultat → quitter
 
-⚠️ **Dette Maestro — testIDs manquants** : les boutons interactifs utilisent `optional: true` + fallback texte → faux positifs possibles. Ajouter `testID` sur :
-- Boutons "Continuer" / "Commencer" dans `OnboardingWizard.tsx`
-- Bouton "Lancer le dé" dans `DiceGameScreen.tsx`
-- CTA module dans `ApprendreScreen.tsx`
+**testIDs corrigés — plus de faux positifs :**
+- `btn-age-adult/minor` (Card WelcomeAgeStep)
+- `btn-theme-{warm|calm|youth}` (Pressable ThemeSelectStep)
+- `btn-onboarding-continue` (Button AuthStep)
+- `btn-dice-mode-solo/duo` (Pressable mode selection)
+- `btn-dice-reroll` / `btn-dice-quit` (Button résultat)
+- `module-card-{id}` (Pressable ApprendreScreen)
+- `Button` + `Card` : prop `testID` passée au Pressable sous-jacent
 
-### EAS Build ✅ (commit 7f095a9)
+### EAS Build ✅
 
-`eas.json` configuré : profils `development` / `device` / `preview` / `production`
-`app.json` complet : scheme `ouiclair`, buildNumber/versionCode, permissions caméra
+`eas.json` : profils `development` / `device` / `preview` / `production`
+`app.json` : scheme `ouiclair`, buildNumber/versionCode, permissions caméra, plugins Sentry
 
-### Store metadata ✅ (commits 4f5fb32 + d440c10)
+### Store metadata ✅
 
-Fichiers dans `docs/store/` :
-- `app-store-fr.md` + `app-store-en.md` — titre, sous-titre, description, mots-clés, notes review Apple
-- `google-play-fr.md` + `google-play-en.md` — titre (≤30 car.), descriptions
-- `screenshots-spec.md` — résolutions iPhone 6.9" (16 Pro Max) + 6.7" (16 Plus) + Android
+`docs/store/` : App Store FR/EN + Google Play FR/EN + screenshots-spec.md (résolutions 6.9" + 6.7" + Pixel 8)
 
-### Deep links ✅ (commit 7f095a9)
+### Deep links ✅
 
 `deepLinkHandler.ts` — scheme `ouiclair://` → navigateTo (premium, hall-of-cards, jeux)
+
+### i18n onboarding ✅ (commit cfc722c)
+
+380 lignes ajoutées dans locales FR + EN : `welcome`, `ageCheck`, `themeSelect`, `auth`, `language`, `onboarding`, `tabs`, `headers`, `settings`, `moi`, `homeAdult`, `homeMinor`, `homeV3`, `apprendre`, `heat`. Portées depuis V3 sans modification sémantique. Plus aucune clé brute visible dans les screens du parcours principal.
 
 ---
 
 ### 🔴 Checklist avant soumission — tâches manuelles
 
-| # | Tâche | Fichier |
-|---|-------|---------|
-| 1 | Remplacer `REVENUECAT_IOS_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` |
-| 2 | Remplacer `REVENUECAT_ANDROID_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` |
-| 3 | Remplacer `ouiclair_premium_monthly` (ID produit IAP réel) | `src/iap/iapService.ts` + App Store Connect + Play Console |
-| 4 | Remplacer `SENTRY_DSN_PLACEHOLDER` | `App.tsx` |
-| 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` |
-| 6 | Déposer `google-service-account.json` | racine `apps/mobile/` (ne pas committer — ajouter à .gitignore) |
-| 7 | Screenshots device (iPhone 16 Pro Max + Pixel 8) | Xcode Simulator + Android Studio |
-| 8 | **Sprint R3F** : décider FlatTile / Skia / continuer R3F | voir section Phase 7 |
+| # | Tâche | Fichier | État |
+|---|-------|---------|------|
+| 1 | Remplacer `REVENUECAT_IOS_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` | ⏳ |
+| 2 | Remplacer `REVENUECAT_ANDROID_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` | ⏳ |
+| 3 | Remplacer `ouiclair_premium_monthly` (ID produit IAP réel) | `src/iap/iapService.ts` + App Store Connect + Play Console | ⏳ |
+| 4 | ~~Remplacer `SENTRY_DSN_PLACEHOLDER`~~ | `App.tsx` | ✅ DSN réel configuré (commit 793c12f) |
+| 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` | ⏳ |
+| 6 | Déposer `google-service-account.json` | racine `apps/mobile/` (ne pas committer — déjà dans .gitignore) | ⏳ |
+| 7 | Screenshots device (iPhone 16 Pro Max 1320×2868 + 6.7" 1290×2796 + Pixel 8) | Xcode Simulator + Android Studio | ⏳ |
+| 8 | **Sprint R3F** : décider FlatTile / Skia / continuer R3F | voir section Phase 7 — en cours | 🔄 |
 
 ### Publication (à faire après checklist)
 
