@@ -6,6 +6,7 @@
   "exclude": [
     "node_modules",
     ".next",
-    "out"
+    "out",
+    "apps/vitrine"
   ]
 }
