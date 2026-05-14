@@ -149,7 +149,7 @@ ouiclair-monorepo/
 | 7A | DiceGame | — | **✅ Fait** (commit 265872d) — test device 45fps prérequis 7B | — | DiceCanvas + useDiceEngine + GameEndCinematic |
 | 7B | CardGame | — | **🔜 Prochaine** (après test device DiceGame) | — | CollectorCardCanvas.native + CardGame screen |
 | 7C | GooseGame | — | À faire (après 7B) — ⚠️ MMKV requis avant lancement | — | BoardRenderer.native + GooseGame screen |
-| 8 | Polish + ATT + Sentry | 4–6 j | À faire | — | app prête stores |
+| 8 | Polish + ATT + Sentry | 4–6 j | À faire — 🔴 safe area audit obligatoire | — | app prête stores |
 | 9 | Tests + Publication | 8–12 j | À faire | — | EAS build, soumission |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
@@ -593,10 +593,23 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 | Tâche | Lib | Effort |
 |-------|-----|--------|
+| 🔴 **Safe areas audit — titres sous caméra** | `react-native-safe-area-context` | 1 j |
 | ATT framework iOS (App Tracking Transparency) | `expo-tracking-transparency` | 1 j |
 | Crash reporting | `@sentry/react-native` | 1 j |
-| Safe areas audit final | `react-native-safe-area-context` | 1 j |
 | Notifications push (si prévu) | `expo-notifications` | 2–3 j |
+
+### 🔴 Safe areas — problème constaté (2026-05-14)
+
+**Symptôme :** les titres/headers tombent sous la Dynamic Island / notch sur iPhone — constaté sur tous les layouts.
+
+**Cause :** les écrans qui n'utilisent pas `useSafeAreaInsets()` n'ont pas de `paddingTop` suffisant. Seuls HomeScreen et ApprendreScreen appliquent correctement `insets.top + 16`.
+
+**Fix systématique à appliquer en Phase 8 :**
+- Audit de tous les écrans avec ScrollView ou header visible
+- Pattern correct : `contentContainerStyle={{ paddingTop: insets.top + 16 }}` sur ScrollView
+- Ou : wrapping dans `<SafeAreaView>` si l'écran n'est pas un ScrollView
+- Écrans prioritaires : tous les modules FichePratiqueScreen, JeuxScreen, HallOfCards, ressources/info
+- Référence : HomeScreen.tsx (`paddingTop: insets.top + 16`) et ApprendreScreen.tsx (même pattern)
 
 ---
 

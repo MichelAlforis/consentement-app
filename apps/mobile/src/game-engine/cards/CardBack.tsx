@@ -1,0 +1,131 @@
+import { useId } from 'react';
+import Svg, {
+  Defs, LinearGradient, RadialGradient, Stop, ClipPath, Filter,
+  FeTurbulence, FeColorMatrix, Rect, Polygon, Pattern, Text as SvgText, Path,
+} from 'react-native-svg';
+
+export interface CardBackProps {
+  width?: number;
+  height?: number;
+}
+
+// Symbole "deux silhouettes en étreinte formant un cœur" — tracé vectoriel MJ
+// prettier-ignore
+const SYMBOL_PATH =
+  'm133 0 2 2q3 0 3 3 0 2 1 1h1q2 3 4 2 3-1 2 2 0 2 1 1 3 0 1 1h-2l-2 1-3 1-4 7q1 2 3-2 0-3 2-3 3 0 2 2h-1v-1l-2 3-3 3q-2 0-1 4 1 2-4 2l-2 2q0 3 2 2l3-1-5 3q-5 1-5 3 1 3-2 2-1-3 4-6 3 0 1-1c-2-1-7 2-6 3v4l-2 5q-2 5 1 3 2 0 1-2l2-2q6-3 1 1l-2 4-3 1-2 1-1 1q-3 0-1 2c1 1-3 6-5 5-1-1-7 8-8 11l-1 3-1-1v-1l-2 1-3 1-1 1 1 1-1 1-4 1q-2 0 0 0 2 3-3 5-2 0-2 3l-2 2-2 1q1 2-2 4l-2 4q0 3-2 3l-1 2q1 2-1 3-3 2-3 6v4l-1 1v2q3-1 0 3v3l1 2-6 6-7 6-4 5q-5 4-10 13a90 90 0 0 0-13 26l-5 21-1 12-2 6v1q4 0 1 2v7l-2 1v1l1 1-2 1c-2 0-3-8-1-9q3-2-1-2-2 0-2-3l1-4q1-1-1-1l-1-1 1-5-1 1a174 174 0 0 0-1 40v2q2 3-1 5l-1 2h1l3 3v4l-2 1-1 1h2q5-1 1 3-3 2 0 2t0 2l-1 2h1l2 1-3 2q-3 1-4-3l-1-3v-5q1-2-1-2l-3-2v-4l-1-2q0-2-2-2l-1-1 1-4q2-3-2-2-4-1-3 4l1 3 1 1-1 1-1 1 2 6a221 221 0 0 0 13 54l1 2 2 5 2 5 1 2 3 6 2 7 1 2 2 2v3l1 2q2 2 1 3l1 1 1 2 1 2 1 3q0 2 2 2 2-1 2 2l2 2q2 0 1 2l1 2q2 0 1 3 0 3 2 3l2 1h1q3-1-1 2-2 3 1 1 4 1 2 4l2 1v2l2 2 1 1q3-2 2 4 0 2 3 2 2 1 1 2l1 2 2 1q0 2 1 1 2 0 1 1-1 2 2 2l2 3 2 3q4 1 1 2-3 3 3 2 2 0 1 1l1 2v1l1 2 1 1q0 3 1 0l2-1v1c0 1 2 6 3 5l1 1 2 2 3 1c1 3 6 9 8 9q2 0 1 1l2 2c2 1 6 5 4 5l1 2 3 2h1c-1 1 1 5 2 4h1l-2 1-3 1q-2 3 1 1 4-1 0 3-4 3-2 0 0-2-1-1l-2 4q0 8-3 8-4 0-5 7-1 3-4 3l-2 2h2l2 1q2 1 0 0l-2 1v3l-7 3h3l3 1-3 1q-4 0 0 2v1l-2 1-3 1h-2q1-1-1-1h-2q1 3 4 3l1 1q0 2-2 1l-1 1-3 2v-3l-3 2-1 3q-3-1-3 1l1 2v-1l1-2 1 2q1 2-1 2-4 3 1 2t1 3-3 0q1-1-1-1l-6 3 1 3 1 1 2-1c0-2 5-2 7-1l1 2q-5-1-6 2l-1 2-3 1h-2l-2 1q-1 2-3 1l-1 1 1 1 2 1-3 1q-3-1-3 2l-1 1-1 1q0 3 4-1l1-2h2q3-2 2-3l1-2q2 0 1 1-1 2 3-1 1-3 1 0-2 4-6 6l-1 1h2q3 0 0 3h-1q2-1-2-1-4 1-3 4 0 3-2 3v2l-1 2-2 1h2q3-2 3 1l-6 2v2l3 2q2 0 0 0l-1 1-3 2-3 2-1 1q0 3 1 1l3-1q3-1 0 2l-3 1-1 1q0 2-3 2l-3 1q0 2 2 1l3-1-1 1q-2 2 1 3l-2 1q-6 3 0 2 3 0 0 1-4 3-1 6 2 1-1 2t-1 2v1l-2 1h1l2 1-2 1-2 2-2 3-1 2v6q2 0-1 3-4 4-2 4h3l2 1-2 1-2 1-2 2-1 1-2 2-1 2q0 3 1 0l3-1v2l-2 3 3 1q6-2 8-8l1-2q3 0 1 2-5 8-10 10-9 3-7 5l4-2q4-5 3 0-2 3 1 2l3-1 2-1 3-1q2 2-6 5-6 1-7 6-1 4-5 4l-3 1h2l2 1v1l-1 1-1 1q-2 0-1 1 1 3 3 0l3-2q3 0 1 1v2q2 1 2-3l1 1q3 3 3 0-2-1 1-1 3 1-3 4-7 4-6 1 0-3-4 0t0 2q3-3 3-1l-3 3q-3 2-1 3l2-1 1-1 2-2h1l-1 3q-2 2 2 1 3-1 2-3l1-3 1 1 2 1v1q-2-1-2 2 0 2-1 1l-6 5q1 1 3-1l5-2h2l-2 2-2 4-3 5q-4 4-2 4l2 1 1 1q2 0 2 2 0 3-2 3l-1-2q1-1-1-1-4 0 1 4 3 2 1 2l-2 1q-1 1 1 1 3-2 0 1l-3 2-2 2q-3 3-1 3l2-2 2-1v3h-1l-1 1-2 1h-2q0 3 4 1 7-3 1 1l-3 2q1 2-2 2-5 3 1 1 5 0 2 2l-4 1-1 1 1 1q4-1 4 2h-1l-3-1-1 2h2l1 1-3 1-2 1 1 1h7v3q-3 4 0 4t1 1h-2l-1-1-1 1v2q-3 3 2 1h2l-1 1-3 2q-2 5 1 3 3-1 0 3-4 3-2 0 1-3 0 0l-2 2-2 3q-3 2 0 0c2 0 7 1 5 2h-1l-2 1v5l1 2v6l-2 2 2-1q7-3 3 1l-1 3-1 3q-4 8 0 2 5-4 3 0 0 3-2 3l-1 1 1 2q3 0 0 3v3h1q2-2 3 1 0 2-2 1l-1 1 2 2q2 0 0 0l-1 2q0 2 1 1 2 0 1 1l1 3 1 2c-1 2 1 16 2 16v6l1 5 2 5 1 6 1 4 1 3 1 3q2 2-1 3l-1 1h2l2 3 1 5 1 4q1 7 4 9l1 3 1 3 1 1 1 2v1l1 2v2q-2 1 1 1 3-1 2 2v2l3 5 2 4 1 2q-1 2 1 2l2 1-2 1-1 1h2q2-1 2 2l1 2q3 1-1 5h1q4-1 6 5l3 4 1 2 1 2q2 0 2 2l3 3 2 2 2 3 2 2 2 2 1 2q-1 1 1 3l2 3 3 4 2 3 1 2v2l1 3 4 8 2 2 2 3 1 2 2 2 2 4q2 2 1 4l2 1q2 0 1 3l1 2 3 4 4 5 1 2 2 3 6 7 5 6q3 1-3-6l-4-6-3-4-3-5-3-5-6-10-5-8-2-3q1-2-1-2l-1-1v-2l-3-6-2-5q-2-1 1-1 2 0-2-3l-3-4-2-5-1-2-7-17-1-5-1-3-2-6-2-6-2-5-2-6-4-11-2-8-2-8-7-38a1027 1027 0 0 1 3-125l2-6v-5l2-7 3-10 1-7 2-4v-3l1-3 1-1v-4l3-9 2-7 1-3 8-19 3-9 6-13 2-7 2-3 3-7 7-13 5-9 6-10 1-2 4-8 6-10 3-3q2 0 1-2l4-7 7-9 4-5 1-1 4-6 3-4 2 2 4 2 1 1 1 1 3 1 2 2 1 1q-2 2 1 1l3 1 2 1 2 1q0 3 1 1 1-3 1 0l1 2q2 0 1 1 0 2 1 1l1 1 1-1q3-3 2 1 0 3 1 1l1-1 1 1v1q4 1 4 3 0 3 2 1h3v2l-2 2 2-1q5-3 5 2 0 4 2 1 2-2 5 1l2 3h2l2 1 3 2 5 3 4 1 1 1 2 1 2 2 2 2q2 0 1 1h1l2 1h2l3 2q2 3 3 2 2 0 1 1 0 2 3 2l4 2 2 1 3 1 2 2 3 1q5 4 6 3l4 2 6 3 5 3 6 3 2 2 1 1 7 2q10 5 6 1l-5-1-1-2-2-1-1-1-2-1q-6-2-8-5v-1q-5 0-5-2h-4 1l1-2h-1l-2-1-1-1q-2 1-3-1l-3-1h-1l-4-3-3-2q1-3-1-5-3-1-2-3-2-2-5 1t-7 0l-2-2q-1 1-2-1 0-3 2-1t4 1v1l1 2q3 2 1-1 0-2 1 0l1 1q1-3-1-4h-1l-2-1-1-1-2-1h-2q2-3-4-4-3 1-2-1l-1-1-2-1-3-2-6-1q-4-1-2-4 1-3-2-2-3 2-1-1 2-1-1-2h-3l-2-1q1-1-1-1-1 2-1-1 1-1-1-1l-1-2-1-1-1 1-1 1v-2l-2-1-4-2-3-2h-1q2-2-1-2l-2-1q0-2-4-1l-1-2-1-2-4-1h1q2 0 1-1l-4-1q-2 0-1-1l-1-1-2-2-3-2q-3 0-3-2l-2-1-1-1-1-1-5-5-1-1 3-5 39-49 5-5 3-4 20-23c0-1 6-10 13-17l16-19 7-9 3-5 2-4c3-3 14-25 16-31l5-32c0-7-3-22-5-26l-1-2q1-1-1-1v-2l-1-1-5-2-5-1-3-3-8-17-2-2q-3 0-3-2l-1-2q-3 0-1-2 1-4-2-1l-1 1-3-4-2-4-3-1h-2l-2-1q-4 1-1-2 1-1-1-2l-2 1v-1l-3-1h-1l-1-1c-1 1-3-3-2-4l-8-1h-1l1-1 2-1q-1-3-4 0h-1q1-3-2 0h-1l1-2q1-1-2-1h-2l-11-3q-1 1-2-1l-1-2-2 2v-2q0-2-1-1h-2l6-3q2 1 1-2l2-2h1l-2-1h-1l2-2q2 0 1-2 0-3 3 0 1 2 1-1l-3-2q-4 2-2-7l1-1 1 2q0 2 1 1 2-3-1-5l-1-2h5q3-2-1-2-3 1-2-1l1-1 1-1 2-5v4l2-2 1-3 2-3-2 2-2 2v-2l-1-2h-1l-3 6v-2q2-3-1-1-4-1-1-3l1 1 1 1c1 0 5-4 4-5l-2 1q-4 3-3 1h-2q-7 2-2-1l7-2q6 0 4 1 0 3 2 0l3-2 1-1-1-1-7 1-7 1h-2l4-2 4-2q0-3-3 0l-4 1-4 1q-1 1-1-1l2-1 6-2 3-2-1-1 1-1 2-1q1-3-4 0l-1 2-1 1c-2 2-8 2-7 0l3-1q4-2 5-5 0-2-2 1l-4 2q-2 0 1-2l2-2h-2q-3-1-3 2l-1 2-1-3v-1h-2q0-2 4-2 1 0 0 0l-2-1-1-1q1-1-1-3l-3-3 3 1h2l-2-2q-5-1 0-3l4 1v-1l1-4v-1l-2 2q-1 4-2-2l-1-5q-1-3 3-3l2-1q2-4-1-1h-2v-2q4-2 0-3t-1-2l2-1 2-1-2-1q-2 1-3-1 0-2-2-2h-2q0-2 8-2 4 1-1-2-7-2-11 1h-3c-4 1-13 6-17 10q-9 10-10 22l1 10q2 2-1 7l-3 5q-4 3-3 8c0 2 6 5 8 5q3 0 1 5-1 7 2 8v2q-2 7 1 8t0 8q-5 10 7 10a147 147 0 0 1 36 9c1-1 11 6 14 8l2 2c1-1 12 11 13 15l4 4 1 4 1 2 1 2 1 2 1 3 1 2 1 1q-1 10 2 10v6l1 2h1l-2 11-1 10-1 3-2 2-3 1h3q3 0-2 5l-4 5v1l-1-2-1-1q-3 1-5 6l-3 3q-3 1-1 3 3 2 0 2l-4 2-1 1h2l2 1-3 1q-5 1-6 4l-1 1-1 1q1 1 0 0l-6 4v2l2-2 4-2q6 0 1 1-7 3-8 6 0 3-1 2-1-2-3 1v2q3 0 0 2l-3 2 1-1 1-2-2 1-1 2q1 1-2 3t-4 5q1 2 3-1 1-3 2 0c0 2-6 5-7 3h2c0-3-4-2-4 0l-2 1-2 3q0 4-3 6-2 3-2 1 1-3-2 1v3q-2 3 3 0l3-2c0 1-6 7-8 7l-2 1-3 1-1 3-2 2-1 1-3 2h-1l-2 6q-4 1-3 3l-1 2v1l2 1-1 1c-2 0-7 6-7 7l-1 2-3 1h-2l1 1v1h-3v1l3 1 2 1-3 1-1 2q0 3-4 3-2 0 0 2c2 1-2 4-4 3l-1 1-3 3-3 1 3 1q3 0 0 1-5 0-5 2l-4 5-3 4-1 2-1-2q-1-3-2 0h-2l-2-1h-2l3-1q4-1 1-1-3-1-1-2l1-1-1-1q-4 2-4-1v-3q-2-3-3-1-3 3-2 0l2-3 2-1 2-2 1-1q-2 0-2-3 2-3 0 0l-1 3-2 1q-6 0-1-4v-1q-4 1 0-2v-1l-4-1-4-2-1-1 1-1q3-2-1-3-2 0-2-5l1-3q3 1 3-1l-3-1h-2q1-3-2 0l-1-1 1-2q2 0 2-3-1-3-4-1h-2l2-2q3-4-1-4-2 0 1-2t0-2l-2 1h-2q-3-1-1-4v-1h-2l2-1q2 0 1-2l-2-1q-2 1-2-2-1-3 3-2h2l-4-1q-4 1-2-2 4-5 5-2l-2 1-1 1h4v-6l2-1q-1-3-5 1-1 3-4 2-2-1 1-2 3 0 3-2 1-4-2-1-1 1-1-2 0-2 2-2l2-1-2-1q-2 1 1-2 2-1-1-1l-2 1-2 2q-3-1 0-7 3-3 1-3v-1q3 0 0-1h-4l-2 2q-2-1 1-6 2-1-1-1h-3l5-2 3 1h1v-2l-2-1h-1q0-5-2-5-3 4-6 3l2-2q5-2 6-6l-2 1q-6 5-7 3l1-2 2-2 1-2h1q2-1-3-1h-3l2-1 2-2-2-1h-6q-4 1 0-2c1-1 7-1 10 1h1q1-2-3-2-3 0-3-2l4-1 4-1c2-2-7-1-9 1q-6 4-1-3 5-6 1-4h-3q-2-1 1-2l2-2h-2l-1-1q1-5-3 1l-1 3 1-3q0-3 3-7l2-3-2 2-4 1-1-1h-1l3-1 2-1-2-1-2-2-1-2-1 1v1l-1-2-2-1h-1l4-1q6 1 4-3v-3h-1l-2 1-2 2h-2v-3h1q2 1 2-1-1-1 2-3l2-2-2 1q-3 1-2-1l-1-1-1-1 1-1 2-2q1-3-4 1t-3 1v-2l1-2 1-1-3 1q-1 1-1-2l1-2 1-2-2-1q-1 1 0 0 3-4 2-6l-3 1-2 1q-3-1-1-1l1-3 1-3h1v2c0 1 6-2 6-4v-1h-1l-1 1v1q-1 1-1-1l-1-2q-3 3-3 0l1-1 1-3q-1-3-1-1l-3 3-2 1q1-1-2-2h-3 3q3 0 4-3l5-2 2-1-6-1q-6 0-5 2l-1 2-1-2q1-3-1-2l-2-2 4-1 3-1q2-2-1-1-3 0-2-2l1-5q0-2 2-2v-2q-3-1-1-2l1-2-2 1-1 3q0 3-3 3h-3l2-3q4-3 1-2-2-1 1-3 2 0-1-2l-1-1-1-2v-5l-3 2-2 3v-2q2-1 1-3h1q2-1-3-4l-2-1 2-2q-1-1 2-3 3-4 1-4l-2 2-2 2q-3 1 0-3 3-3 1-3-1-1 1-6l3-5q-1-3 10-18c5-7 15-14 18-14l2-1 2-2h3l1 1 2 1 1 1v-2q0-2 3-3l3-3 1 1q3 2 2-1 1-3 17-4h5l9-1 19-2c15-2 15-2 11-10l-2-8-1-1c-2 0 0-6 2-8v-1q-4-1 0-3l1-1 3-4 4-6 2-3 2-3 1-3 1-3 1-7c1-6 2-14 1-15l-1-3-1-2-1-3-1-3v-2l-1-1v-2l-1-1q-2 0-2-3-1-4-12-13c-6-5-17-10-17-8';
+
+export function CardBack({ width = 240, height = 340 }: CardBackProps) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '_');
+  const W = width;
+  const H = height;
+  const DS = W * 0.088;
+
+  return (
+    <Svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+      <Defs>
+        <LinearGradient id={`${uid}bg`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="#010007" />
+          <Stop offset="45%" stopColor="#0c0920" />
+          <Stop offset="100%" stopColor="#3b1f85" />
+        </LinearGradient>
+        <RadialGradient id={`${uid}halo`} cx="50%" cy="50%" r="44%">
+          <Stop offset="0%" stopColor="#7c3aed" stopOpacity="0.48" />
+          <Stop offset="55%" stopColor="#4c1d95" stopOpacity="0.18" />
+          <Stop offset="100%" stopColor="#4c1d95" stopOpacity="0" />
+        </RadialGradient>
+        <RadialGradient id={`${uid}vig`} cx="50%" cy="50%" r="70%">
+          <Stop offset="25%" stopColor="black" stopOpacity="0" />
+          <Stop offset="100%" stopColor="black" stopOpacity="0.72" />
+        </RadialGradient>
+        <RadialGradient id={`${uid}spec`} cx="24%" cy="14%" r="38%">
+          <Stop offset="0%" stopColor="white" stopOpacity="0.14" />
+          <Stop offset="100%" stopColor="white" stopOpacity="0" />
+        </RadialGradient>
+        <LinearGradient id={`${uid}shim`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="white" stopOpacity="0" />
+          <Stop offset="48%" stopColor="white" stopOpacity="0.055" />
+          <Stop offset="52%" stopColor="white" stopOpacity="0.09" />
+          <Stop offset="100%" stopColor="white" stopOpacity="0" />
+        </LinearGradient>
+        <LinearGradient id={`${uid}brd`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <Stop offset="0%" stopColor="white" stopOpacity="0.55" />
+          <Stop offset="50%" stopColor="white" stopOpacity="0.18" />
+          <Stop offset="100%" stopColor="white" stopOpacity="0.55" />
+        </LinearGradient>
+        <Filter id={`${uid}grain`} x="0%" y="0%" width="100%" height="100%">
+          <FeTurbulence type="fractalNoise" baseFrequency="0.80" numOctaves={4} stitchTiles="stitch" result="noise" />
+          <FeColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.032 0" in="noise" />
+        </Filter>
+        <ClipPath id={`${uid}clip`}>
+          <Rect x="0" y="0" width={W} height={H} rx="14" ry="14" />
+        </ClipPath>
+        <Pattern id={`${uid}dia`} x="0" y="0" width={DS} height={DS} patternUnits="userSpaceOnUse">
+          <Polygon
+            points={`${DS / 2},0 ${DS},${DS / 2} ${DS / 2},${DS} 0,${DS / 2}`}
+            fill="none"
+            stroke="rgba(255,255,255,0.07)"
+            strokeWidth="0.8"
+          />
+        </Pattern>
+        <LinearGradient id={`${uid}sym`} x1="0" y1="0" x2="0" y2="1044" gradientUnits="userSpaceOnUse">
+          <Stop offset="0%" stopColor="#ddd6fe" />
+          <Stop offset="45%" stopColor="#a78bfa" />
+          <Stop offset="100%" stopColor="#6d28d9" />
+        </LinearGradient>
+      </Defs>
+
+      {/* Fond */}
+      <Rect x="0" y="0" width={W} height={H} rx="14" ry="14" fill={`url(#${uid}bg)`} />
+      {/* Grille de diamants */}
+      <Rect x="0" y="0" width={W} height={H} fill={`url(#${uid}dia)`} clipPath={`url(#${uid}clip)`} />
+      {/* Vignette */}
+      <Rect x="0" y="0" width={W} height={H} rx="14" ry="14" fill={`url(#${uid}vig)`} />
+      {/* Halo violet central */}
+      <Rect x="0" y="0" width={W} height={H} fill={`url(#${uid}halo)`} clipPath={`url(#${uid}clip)`} />
+      {/* Highlight spéculaire haut-gauche */}
+      <Rect x="0" y="0" width={W} height={H} fill={`url(#${uid}spec)`} clipPath={`url(#${uid}clip)`} />
+      {/* Shimmer diagonal */}
+      <Rect x="0" y="0" width={W} height={H} fill={`url(#${uid}shim)`} clipPath={`url(#${uid}clip)`} />
+      {/* Grain */}
+      <Rect x="0" y="0" width={W} height={H} rx="14" ry="14" filter={`url(#${uid}grain)`} clipPath={`url(#${uid}clip)`} />
+
+      {/* Symbole */}
+      <Svg
+        x={W * 0.1}
+        y={H * 0.04}
+        width={W * 0.8}
+        height={H * 0.88}
+        viewBox="0 0 336 1044"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <Path d={SYMBOL_PATH} fill={`url(#${uid}sym)`} fillRule="evenodd" opacity={0.78} />
+      </Svg>
+
+      {/* Signature app */}
+      <SvgText
+        x={W / 2}
+        y={H * 0.78}
+        textAnchor="middle"
+        fontSize={W * 0.052}
+        fontWeight="800"
+        fill="rgba(255,255,255,0.28)"
+        letterSpacing={W * 0.008}
+      >
+        CONSENTEMENT
+      </SvgText>
+
+      {/* Bordure lumineuse fine */}
+      <Rect
+        x="8"
+        y="8"
+        width={W - 16}
+        height={H - 16}
+        rx="11"
+        ry="11"
+        fill="none"
+        stroke={`url(#${uid}brd)`}
+        strokeWidth="1.5"
+      />
+    </Svg>
+  );
+}

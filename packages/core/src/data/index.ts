@@ -475,3 +475,11 @@ export const loiPoints: LoiPoint[] = [
     important: false,
   },
 ];
+
+// Données du Jeu de l'Oie — importées depuis le fichier dédié
+// Note: goose-game.ts importe diePractices/DICE_CATEGORIES depuis ce fichier (dep circulaire
+// tolérée par Metro/CommonJS : les valeurs sont définies avant cette re-export)
+export * from './goose-game';
+
+// Cartes collector (CardGame)
+export * from './cards-collector';

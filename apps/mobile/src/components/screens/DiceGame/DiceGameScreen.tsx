@@ -7,7 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native';
-import { MotiView, AnimatePresence } from 'moti';
+import { MotiView } from 'moti';
 import {
   Dices,
   User,
@@ -185,7 +185,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
           </View>
         </View>
 
-        <AnimatePresence>
+        {/* Pas d'AnimatePresence : moti viole Rules of Hooks avec plusieurs enfants conditionnels simultanés.
+            MotiView + key unique = enter animation sans exit, pattern stable. */}
+        <>
 
           {/* PICK */}
           {mode === 'pick' && (
@@ -193,7 +195,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="pick"
               from={{ opacity: 0, translateY: 16 }}
               animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: -16 }}
               style={styles.flex1}
             >
               <View style={styles.diceCenter}>
@@ -244,7 +245,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="dice-view"
               from={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
               style={styles.flex1}
             >
               <View style={styles.diceArea}>
@@ -262,54 +262,50 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                   size={240}
                 />
 
-                <AnimatePresence>
-                  {mode === 'rolling' && (
-                    <MotiView
-                      key="rolling-label"
-                      from={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      <Text style={[styles.rollingLabel, { color: colors.textMuted }]}>{t('diceGame.rolling')}</Text>
-                    </MotiView>
-                  )}
+                {mode === 'rolling' && (
+                  <MotiView
+                    key="rolling-label"
+                    from={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <Text style={[styles.rollingLabel, { color: colors.textMuted }]}>{t('diceGame.rolling')}</Text>
+                  </MotiView>
+                )}
 
-                  {mode === 'practice' && currentCat && (
-                    <MotiView
-                      key="category-title"
-                      from={{ opacity: 0, translateY: -40, rotate: '-6deg', scale: 1.2 }}
-                      animate={{ opacity: 1, translateY: 0, rotate: '0deg', scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 50 }}
-                      style={[styles.categoryBadge]}
-                    >
-                      <DiceCategoryIcon faceId={currentItem?.faceId ?? 1} size={24} />
-                      <Text style={styles.categoryBadgeText}>{currentCatName}</Text>
-                      <Text style={styles.categoryBadgeCount}>#{rollCount}</Text>
-                    </MotiView>
-                  )}
+                {mode === 'practice' && currentCat && (
+                  <MotiView
+                    key="category-title"
+                    from={{ opacity: 0, translateY: -40, scale: 1.2 }}
+                    animate={{ opacity: 1, translateY: 0, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 50 }}
+                    style={styles.categoryBadge}
+                  >
+                    <DiceCategoryIcon faceId={currentItem?.faceId ?? 1} size={24} />
+                    <Text style={styles.categoryBadgeText}>{currentCatName}</Text>
+                    <Text style={styles.categoryBadgeCount}>#{rollCount}</Text>
+                  </MotiView>
+                )}
 
-                  {mode === 'practice' && previewCard && (
-                    <Pressable
-                      key="card-label"
-                      onPress={() => setShowCardPreview(true)}
-                      style={[styles.cardPreviewBtn, { backgroundColor: previewCard.gradient as unknown as string }]}
-                    >
-                      <View style={styles.cardPreviewDot} />
-                      <Text style={styles.cardPreviewText} numberOfLines={1}>{previewCard.text}</Text>
-                      <ChevronRight size={14} color="rgba(255,255,255,0.7)" />
-                    </Pressable>
-                  )}
-                </AnimatePresence>
+                {mode === 'practice' && previewCard && (
+                  <Pressable
+                    onPress={() => setShowCardPreview(true)}
+                    style={[styles.cardPreviewBtn, { backgroundColor: previewCard.border }]}
+                  >
+                    <View style={styles.cardPreviewDot} />
+                    <Text style={styles.cardPreviewText} numberOfLines={1}>{previewCard.text}</Text>
+                    <ChevronRight size={14} color="rgba(255,255,255,0.7)" />
+                  </Pressable>
+                )}
               </View>
 
-              <AnimatePresence>
-                {mode === 'practice' && currentItem && currentCat && (
-                  <MotiView
-                    from={{ opacity: 0, translateY: 20 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ delay: 300 }}
-                    style={styles.flex1}
-                  >
+              {mode === 'practice' && currentItem && currentCat && (
+                <MotiView
+                  key="practice-content"
+                  from={{ opacity: 0, translateY: 20 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ delay: 300 }}
+                  style={styles.flex1}
+                >
                     <View style={[styles.practiceCard, { borderColor: currentCat.border }]}>
                       <Text style={[styles.practiceText, { color: colors.textPrimary }]}>{currentItem.text}</Text>
                     </View>
@@ -328,9 +324,8 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                         </Button>
                       </View>
                     )}
-                  </MotiView>
-                )}
-              </AnimatePresence>
+                </MotiView>
+              )}
             </MotiView>
           )}
 
@@ -340,7 +335,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="duo-p1"
               from={{ opacity: 0, translateX: 30 }}
               animate={{ opacity: 1, translateX: 0 }}
-              exit={{ opacity: 0, translateX: -30 }}
               style={styles.flex1}
             >
               <View style={styles.personHeader}>
@@ -385,7 +379,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="duo-hidden"
               from={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
               style={styles.hiddenScreen}
             >
               <MotiView
@@ -409,7 +402,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="duo-p2"
               from={{ opacity: 0, translateX: 30 }}
               animate={{ opacity: 1, translateX: 0 }}
-              exit={{ opacity: 0, translateX: -30 }}
               style={styles.flex1}
             >
               <View style={styles.personHeader}>
@@ -454,7 +446,6 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               key="duo-reveal"
               from={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
               style={styles.revealContainer}
             >
               <GameEndCinematic
@@ -502,7 +493,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
             </MotiView>
           )}
 
-        </AnimatePresence>
+        </>
       </MotiView>
 
       {showCardPreview && previewCard && (

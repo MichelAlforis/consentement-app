@@ -94,7 +94,7 @@ export function GameEndCinematic({
           <MotiView
             key={i}
             from={{ translateY: -14 }}
-            animate={{ translateY: ['-14', '14', '-14'] as unknown as number[] }}
+            animate={{ translateY: [-14, 14, -14] }}
             transition={{ type: 'timing', duration: (1800 + i * 500), loop: true, delay: i * 450 }}
             style={[
               styles.orb,
