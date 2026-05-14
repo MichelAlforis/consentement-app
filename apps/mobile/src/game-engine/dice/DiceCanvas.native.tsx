@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { View } from 'react-native';
+import { Animated, StyleSheet, Text as RNText, View } from 'react-native';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
+import { Heart, HelpCircle, Layers, MessageCircle, Sparkles, Target } from 'lucide-react-native';
+import type { LucideIcon } from 'lucide-react-native';
+
+const FACE_ICONS: Record<string, LucideIcon> = {
+  Layers,
+  MessageCircle,
+  HelpCircle,
+  Target,
+  Sparkles,
+  Heart,
+};
 
 interface DiceFace {
   id: number;
@@ -30,7 +41,53 @@ const FACE_ROTATIONS: Record<number, [number, number]> = {
 
 const DICE_SCALE = 1.08;
 const FACE_OFFSET = 0.512;
+const FACE_TEXT_OFFSET = FACE_OFFSET + 0.018;
 const PIP_RADIUS = 0.038;
+const MARK_COLOR = 'rgba(255,255,255,0.94)';
+
+// BoxGeometry groups: 0=+X 1=-X 2=+Y 3=-Y 4=+Z 5=-Z
+// Derived from getPipTransform: face1→+Z, face2→+X, face3→+Y, face4→-Y, face5→-X, face6→-Z
+const FACE_TO_MATERIAL_INDEX: Record<number, number> = { 1: 4, 2: 0, 3: 2, 4: 3, 5: 1, 6: 5 };
+
+const FACE_LABELS: Record<number, string> = {
+  1: 'OSEZ',
+  2: 'PARLEZ',
+  3: 'ETSI',
+  4: 'DEFI',
+  5: 'VERITE',
+  6: 'DOUX',
+};
+
+const GRADIENT_VERT = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const GRADIENT_FRAG = `
+  precision mediump float;
+  varying vec2 vUv;
+  uniform vec3 uColor1;
+  uniform vec3 uColor2;
+  void main() {
+    float t = (vUv.x + (1.0 - vUv.y)) * 0.5;
+    gl_FragColor = vec4(mix(uColor1, uColor2, t), 1.0);
+  }
+`;
+
+function hexToVec3(hex: string): THREE.Vector3 {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  return new THREE.Vector3(r, g, b);
+}
+
+function parseGradientColors(gradient: string): [THREE.Vector3, THREE.Vector3] {
+  const stops = gradient.match(/#[0-9a-fA-F]{6}/g) ?? ['#888888', '#444444'];
+  return [hexToVec3(stops[0]), hexToVec3(stops[1] ?? stops[0])];
+}
 
 type PipKey = 'c' | 'tl' | 'tr' | 'ml' | 'mr' | 'bl' | 'br';
 
@@ -88,6 +145,165 @@ function getPipTransform(face: number, pip: PipKey): {
   }
 }
 
+function getFaceTransform(face: number): {
+  position: [number, number, number];
+  rotation: [number, number, number];
+} {
+  switch (face) {
+    case 2:
+      return { position: [FACE_TEXT_OFFSET, 0, 0], rotation: [0, Math.PI / 2, 0] };
+    case 3:
+      return { position: [0, FACE_TEXT_OFFSET, 0], rotation: [-Math.PI / 2, 0, 0] };
+    case 4:
+      return { position: [0, -FACE_TEXT_OFFSET, 0], rotation: [Math.PI / 2, 0, 0] };
+    case 5:
+      return { position: [-FACE_TEXT_OFFSET, 0, 0], rotation: [0, -Math.PI / 2, 0] };
+    case 6:
+      return { position: [0, 0, -FACE_TEXT_OFFSET], rotation: [0, Math.PI, 0] };
+    case 1:
+    default:
+      return { position: [0, 0, FACE_TEXT_OFFSET], rotation: [0, 0, 0] };
+  }
+}
+
+type Stroke = [x: number, y: number, w: number, h: number, rotation?: number];
+
+const LETTER_STROKES: Record<string, Stroke[]> = {
+  A: [[0, 0.045, 0.07, 0.014], [-0.035, 0, 0.014, 0.09], [0.035, 0, 0.014, 0.09], [0, 0, 0.06, 0.014]],
+  D: [[-0.035, 0, 0.014, 0.1], [0, 0.045, 0.06, 0.014], [0, -0.045, 0.06, 0.014], [0.035, 0, 0.014, 0.09]],
+  E: [[0, 0.045, 0.075, 0.014], [-0.035, 0, 0.014, 0.1], [0, 0, 0.064, 0.014], [0, -0.045, 0.075, 0.014]],
+  F: [[0, 0.045, 0.075, 0.014], [-0.035, 0, 0.014, 0.1], [0, 0, 0.064, 0.014]],
+  I: [[0, 0.045, 0.07, 0.014], [0, 0, 0.014, 0.1], [0, -0.045, 0.07, 0.014]],
+  L: [[-0.035, 0, 0.014, 0.1], [0, -0.045, 0.075, 0.014]],
+  O: [[0, 0.045, 0.07, 0.014], [0, -0.045, 0.07, 0.014], [-0.035, 0, 0.014, 0.09], [0.035, 0, 0.014, 0.09]],
+  P: [[0, 0.045, 0.07, 0.014], [-0.035, 0, 0.014, 0.1], [0.035, 0.022, 0.014, 0.045], [0, 0, 0.064, 0.014]],
+  R: [[0, 0.045, 0.07, 0.014], [-0.035, 0, 0.014, 0.1], [0.035, 0.022, 0.014, 0.045], [0, 0, 0.064, 0.014], [0.018, -0.025, 0.014, 0.06, -0.65]],
+  S: [[0, 0.045, 0.075, 0.014], [-0.035, 0.022, 0.014, 0.045], [0, 0, 0.064, 0.014], [0.035, -0.022, 0.014, 0.045], [0, -0.045, 0.075, 0.014]],
+  T: [[0, 0.045, 0.075, 0.014], [0, 0, 0.014, 0.1]],
+  U: [[-0.035, 0.006, 0.014, 0.085], [0.035, 0.006, 0.014, 0.085], [0, -0.045, 0.07, 0.014]],
+  V: [[-0.02, 0, 0.014, 0.105, -0.32], [0.02, 0, 0.014, 0.105, 0.32]],
+  X: [[0, 0, 0.014, 0.112, -0.6], [0, 0, 0.014, 0.112, 0.6]],
+  Z: [[0, 0.045, 0.075, 0.014], [0, 0, 0.014, 0.104, -0.72], [0, -0.045, 0.075, 0.014]],
+};
+
+function StrokeMesh({ stroke, z = 0 }: { stroke: Stroke; z?: number }) {
+  const [x, y, w, h, rotation = 0] = stroke;
+  return (
+    <mesh position={[x, y, z]} rotation={[0, 0, rotation]} scale={[w, h, 1]}>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial color={MARK_COLOR} transparent opacity={0.95} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
+function VectorText({ text, y }: { text: string; y: number }) {
+  const chars = text.toUpperCase().replace(/[^A-Z]/g, '').split('');
+  const charStep = 0.085;
+  const start = -((chars.length - 1) * charStep) / 2;
+
+  return (
+    <group position={[0, y, 0.014]}>
+      {chars.map((char, index) => (
+        <group key={`${char}-${index}`} position={[start + index * charStep, 0, 0]} scale={0.72}>
+          {(LETTER_STROKES[char] ?? LETTER_STROKES.O).map((stroke, strokeIndex) => (
+            <StrokeMesh key={strokeIndex} stroke={stroke} />
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function RingMark({ scale = 1, y = 0 }: { scale?: number | [number, number, number]; y?: number }) {
+  const geometry = useMemo(() => new THREE.RingGeometry(0.085, 0.108, 28), []);
+  const material = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: MARK_COLOR, transparent: true, opacity: 0.96, side: THREE.DoubleSide }),
+    [],
+  );
+
+  return (
+    <mesh geometry={geometry} material={material} position={[0, y, 0.012]} scale={scale} />
+  );
+}
+
+function CircleMark({ position, radius }: { position: [number, number, number]; radius: number }) {
+  const geometry = useMemo(() => new THREE.CircleGeometry(radius, 20), [radius]);
+  const material = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: MARK_COLOR, transparent: true, opacity: 0.96, side: THREE.DoubleSide }),
+    [],
+  );
+
+  return <mesh geometry={geometry} material={material} position={position} />;
+}
+
+function RectOutline({ scale = 1, offset = 0 }: { scale?: number; offset?: number }) {
+  return (
+    <group position={[offset, offset, 0.012]} scale={scale}>
+      <StrokeMesh stroke={[0, 0.08, 0.16, 0.014]} />
+      <StrokeMesh stroke={[0, -0.08, 0.16, 0.014]} />
+      <StrokeMesh stroke={[-0.08, 0, 0.014, 0.16]} />
+      <StrokeMesh stroke={[0.08, 0, 0.014, 0.16]} />
+    </group>
+  );
+}
+
+function CategoryIcon({ faceId }: { faceId: number }) {
+  switch (faceId) {
+    case 1:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <RectOutline scale={0.58} offset={-0.03} />
+          <RectOutline scale={0.58} offset={0.02} />
+          <RectOutline scale={0.58} offset={0.07} />
+        </group>
+      );
+    case 2:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <RingMark scale={[1.02, 0.82, 1]} />
+          <StrokeMesh stroke={[0.075, -0.085, 0.014, 0.06, -0.7]} z={0.012} />
+        </group>
+      );
+    case 3:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <RingMark />
+          <VectorText text="?" y={-0.005} />
+        </group>
+      );
+    case 4:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <RingMark scale={1.08} />
+          <RingMark scale={0.62} />
+          <CircleMark position={[0, 0, 0.014]} radius={0.026} />
+        </group>
+      );
+    case 5:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <StrokeMesh stroke={[0, 0, 0.014, 0.19]} z={0.012} />
+          <StrokeMesh stroke={[0, 0, 0.014, 0.19, Math.PI / 2]} z={0.012} />
+          <StrokeMesh stroke={[0, 0, 0.012, 0.13, Math.PI / 4]} z={0.012} />
+          <StrokeMesh stroke={[0, 0, 0.012, 0.13, -Math.PI / 4]} z={0.012} />
+        </group>
+      );
+    case 6:
+      return (
+        <group position={[0, 0.15, 0]}>
+          <CircleMark position={[-0.04, 0.03, 0.012]} radius={0.055} />
+          <CircleMark position={[0.04, 0.03, 0.012]} radius={0.055} />
+          <mesh position={[0, -0.035, 0.012]} rotation={[0, 0, Math.PI / 4]} scale={[0.095, 0.095, 1]}>
+            <planeGeometry args={[1, 1]} />
+            <meshBasicMaterial color={MARK_COLOR} transparent opacity={0.96} side={THREE.DoubleSide} />
+          </mesh>
+        </group>
+      );
+    default:
+      return null;
+  }
+}
+
 function DicePips() {
   const pipGeometry = useMemo(() => new THREE.SphereGeometry(PIP_RADIUS, 16, 8), []);
   const pipMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#18181b' }), []);
@@ -112,21 +328,61 @@ function DicePips() {
   );
 }
 
+function FaceLabels({ faces }: { faces: DiceFace[] }) {
+  return (
+    <>
+      {faces.map((face) => {
+        const { position, rotation } = getFaceTransform(face.id);
+
+        return (
+          <group key={face.id} position={position} rotation={rotation}>
+            <CategoryIcon faceId={face.id} />
+            <VectorText text={FACE_LABELS[face.id] ?? face.label} y={-0.14} />
+          </group>
+        );
+      })}
+    </>
+  );
+}
+
 function AnimatedCube({
-  faces: _faces,
+  faces,
   targetFaceId,
   isRolling,
   onRollComplete,
+  mode,
 }: {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
+  mode: 'category' | 'numeric';
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const onRollCompleteRef = useRef(onRollComplete);
   const cubeGeometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 4, 0.1), []);
-  const cubeMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#f8f6f0' }), []);
+  const cubeMaterial = useMemo(() => {
+    const defaultColors = parseGradientColors('linear-gradient(135deg, #e0ddd6, #c8c4bb)');
+    const mats = Array.from({ length: 6 }, () =>
+      new THREE.ShaderMaterial({
+        vertexShader: GRADIENT_VERT,
+        fragmentShader: GRADIENT_FRAG,
+        uniforms: {
+          uColor1: { value: defaultColors[0].clone() },
+          uColor2: { value: defaultColors[1].clone() },
+        },
+      }),
+    );
+    for (const face of faces) {
+      const idx = FACE_TO_MATERIAL_INDEX[face.id];
+      if (idx !== undefined) {
+        const [c1, c2] = parseGradientColors(face.gradient);
+        mats[idx].uniforms.uColor1.value = c1;
+        mats[idx].uniforms.uColor2.value = c2;
+      }
+    }
+    return mats;
+  }, [faces]);
 
   const anim = useRef({
     rolling: false,
@@ -245,7 +501,8 @@ function AnimatedCube({
   return (
     <group ref={groupRef} scale={DICE_SCALE}>
       <mesh geometry={cubeGeometry} material={cubeMaterial} />
-      <DicePips />
+      {mode === 'category' && <FaceLabels faces={faces} />}
+      {mode === 'numeric' && <DicePips />}
     </group>
   );
 }
@@ -255,11 +512,13 @@ function DiceScene({
   targetFaceId,
   isRolling,
   onRollComplete,
+  mode,
 }: {
   faces: DiceFace[];
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
+  mode: 'category' | 'numeric';
 }) {
   return (
     <AnimatedCube
@@ -267,6 +526,7 @@ function DiceScene({
       targetFaceId={targetFaceId}
       isRolling={isRolling}
       onRollComplete={onRollComplete}
+      mode={mode}
     />
   );
 }
@@ -286,18 +546,27 @@ export function DiceCanvas({
   isRolling,
   onRollComplete,
   size = 180,
+  mode = 'category',
 }: DiceCanvasProps) {
   const targetFaceId = currentFace?.id ?? 1;
+  const overlayOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (isRolling) {
+      Animated.timing(overlayOpacity, { toValue: 0, duration: 120, useNativeDriver: true }).start();
+    } else if (currentFace) {
+      Animated.timing(overlayOpacity, { toValue: 1, duration: 280, delay: 80, useNativeDriver: true }).start();
+    }
+  }, [isRolling, currentFace, overlayOpacity]);
+
+  const IconComponent = currentFace ? FACE_ICONS[currentFace.iconName] : null;
 
   return (
     <View style={{ width: size, height: size }}>
       <Canvas
         frameloop="always"
         camera={{ position: [0, 0, 4.2], fov: 38 }}
-        gl={{
-          antialias: false,
-          alpha: true,
-        }}
+        gl={{ antialias: false, alpha: true }}
         style={{ flex: 1 }}
       >
         <DiceScene
@@ -305,8 +574,28 @@ export function DiceCanvas({
           targetFaceId={targetFaceId}
           isRolling={isRolling}
           onRollComplete={onRollComplete}
+          mode={mode}
         />
       </Canvas>
+      {mode === 'category' && IconComponent && currentFace && (
+        <Animated.View style={[StyleSheet.absoluteFill, styles.overlay, { opacity: overlayOpacity }]}>
+          <IconComponent size={size * 0.22} color="rgba(255,255,255,0.95)" />
+          <RNText style={[styles.faceLabel, { fontSize: size * 0.09 }]}>{currentFace.label}</RNText>
+        </Animated.View>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  faceLabel: {
+    color: 'rgba(255,255,255,0.92)',
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+});

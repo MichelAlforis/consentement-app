@@ -204,7 +204,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                 isRolling={mode !== 'pick' && isRolling}
                 onRollComplete={handleRollComplete}
                 renderer="webgl"
-                mode="numeric"
+                mode="category"
                 size={mode === 'pick' ? 180 : 240}
               />
 
