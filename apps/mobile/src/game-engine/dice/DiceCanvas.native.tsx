@@ -1,10 +1,8 @@
-import { useEffect, useRef, useMemo, Suspense } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three-stdlib';
 
-// TODO: extraire vers @ouiclair/core quand les types dé seront migrés dans packages/core
 interface DiceFace {
   id: number;
   label: string;
@@ -20,8 +18,6 @@ interface DiceConfig {
   animationDuration?: number;
 }
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
-
 const FACE_ROTATIONS: Record<number, [number, number]> = {
   1: [0, 0],
   2: [0, -Math.PI / 2],
@@ -29,6 +25,31 @@ const FACE_ROTATIONS: Record<number, [number, number]> = {
   4: [-Math.PI / 2, 0],
   5: [0, Math.PI / 2],
   6: [0, Math.PI],
+};
+
+const DICE_SCALE = 1.08;
+const FACE_OFFSET = 0.512;
+const PIP_RADIUS = 0.055;
+
+type PipKey = 'c' | 'tl' | 'tr' | 'ml' | 'mr' | 'bl' | 'br';
+
+const PIP_COORDS: Record<PipKey, [number, number]> = {
+  c: [0, 0],
+  tl: [-0.18, 0.18],
+  tr: [0.18, 0.18],
+  ml: [-0.18, 0],
+  mr: [0.18, 0],
+  bl: [-0.18, -0.18],
+  br: [0.18, -0.18],
+};
+
+const PIP_LAYOUTS: Record<number, PipKey[]> = {
+  1: ['c'],
+  2: ['tl', 'br'],
+  3: ['tl', 'c', 'br'],
+  4: ['tl', 'tr', 'bl', 'br'],
+  5: ['tl', 'tr', 'c', 'bl', 'br'],
+  6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'],
 };
 
 function cubicBezier(t: number): number {
@@ -43,33 +64,55 @@ function cubicBezier(t: number): number {
   return ((ay * x + by) * x + cy) * x;
 }
 
-// ─── Couleurs par face — DataTexture 2×2 ────────────────────────────────────
-// PNG + useTexture → pixelStorei non supporté par expo-gl → textures transparentes.
-// DataTexture : créée en JS pur, aucun appel pixelStorei, garantie visible.
+function getPipTransform(face: number, pip: PipKey): {
+  position: [number, number, number];
+  rotation: [number, number, number];
+} {
+  const [u, v] = PIP_COORDS[pip];
 
-function hexToRgb(hex: string): [number, number, number] {
-  const h = hex.replace('#', '');
-  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  switch (face) {
+    case 2:
+      return { position: [FACE_OFFSET, v, -u], rotation: [0, Math.PI / 2, 0] };
+    case 3:
+      return { position: [u, FACE_OFFSET, -v], rotation: [-Math.PI / 2, 0, 0] };
+    case 4:
+      return { position: [u, -FACE_OFFSET, v], rotation: [Math.PI / 2, 0, 0] };
+    case 5:
+      return { position: [-FACE_OFFSET, v, u], rotation: [0, -Math.PI / 2, 0] };
+    case 6:
+      return { position: [-u, v, -FACE_OFFSET], rotation: [0, Math.PI, 0] };
+    case 1:
+    default:
+      return { position: [u, v, FACE_OFFSET], rotation: [0, 0, 0] };
+  }
 }
 
-function makeFaceTexture(face: DiceFace): THREE.DataTexture {
-  const stops = face.gradient.match(/#[0-9a-fA-F]{6}/g) ?? [face.color ?? '#888888'];
-  const [r1, g1, b1] = hexToRgb(stops[0]);
-  const [r2, g2, b2] = stops[1] ? hexToRgb(stops[1]) : [r1, g1, b1];
-  const data = new Uint8Array([
-    r1, g1, b1, 255,  r1, g1, b1, 255,
-    r2, g2, b2, 255,  r2, g2, b2, 255,
-  ]);
-  const tex = new THREE.DataTexture(data, 2, 2, THREE.RGBAFormat);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.needsUpdate = true;
-  return tex;
-}
+function DicePips() {
+  const pipGeometry = useMemo(() => new THREE.CircleGeometry(PIP_RADIUS, 24), []);
+  const pipMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#18181b' }), []);
 
-// ─── Cube animé ───────────────────────────────────────────────────────────────
+  return (
+    <>
+      {[1, 2, 3, 4, 5, 6].flatMap((face) =>
+        PIP_LAYOUTS[face].map((pip) => {
+          const { position, rotation } = getPipTransform(face, pip);
+          return (
+            <mesh
+              key={`${face}-${pip}`}
+              geometry={pipGeometry}
+              material={pipMaterial}
+              position={position}
+              rotation={rotation}
+            />
+          );
+        }),
+      )}
+    </>
+  );
+}
 
 function AnimatedCube({
-  faces,
+  faces: _faces,
   targetFaceId,
   isRolling,
   onRollComplete,
@@ -80,16 +123,16 @@ function AnimatedCube({
   onRollComplete?: () => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-
-  const geometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 2, 0.08), []);
-
-  // DataTextures créées une fois, distinctes par face
-  const textures = useMemo(() => faces.map(makeFaceTexture), [faces]);
+  const onRollCompleteRef = useRef(onRollComplete);
+  const cubeGeometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
+  const cubeMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#f8f6f0' }), []);
 
   const anim = useRef({
     rolling: false,
-    startX: 0, startY: 0,
-    targetX: 0, targetY: 0,
+    startX: 0,
+    startY: 0,
+    targetX: 0,
+    targetY: 0,
     elapsed: 0,
     duration: 1.7,
     done: false,
@@ -103,10 +146,15 @@ function AnimatedCube({
   const idle = useRef({ t: 0 });
 
   useEffect(() => {
-    if (!isRolling || !groupRef.current) return;
+    onRollCompleteRef.current = onRollComplete;
+  }, [onRollComplete]);
 
-    const actualY = groupRef.current.rotation.y;
-    const actualX = groupRef.current.rotation.x;
+  useEffect(() => {
+    const group = groupRef.current;
+    if (!isRolling || !group) return;
+
+    const actualY = group.rotation.y;
+    const actualX = group.rotation.x;
     const [tx, ty] = FACE_ROTATIONS[targetFaceId] ?? [0, 0];
     const baseX = Math.round(actualX / (Math.PI * 2)) * Math.PI * 2;
     const baseY = Math.round(actualY / (Math.PI * 2)) * Math.PI * 2;
@@ -123,18 +171,19 @@ function AnimatedCube({
       elapsed: 0,
       duration: 1.7,
       done: false,
-      onComplete: onRollComplete,
+      onComplete: onRollCompleteRef.current,
       wobbleAmplitude: (Math.random() - 0.5) * 0.18,
       wobbleFreq: 8 + Math.random() * 4,
     };
-  }, [isRolling, targetFaceId, onRollComplete]);
+  }, [isRolling, targetFaceId]);
 
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     const a = anim.current;
     const group = groupRef.current;
     if (!group || !a.rolling || a.done) return;
 
-    a.elapsed = Math.min(a.elapsed + delta, a.duration);
+    a.elapsed = Math.min(a.elapsed + step, a.duration);
     const t = a.elapsed / a.duration;
     const eased = cubicBezier(t);
 
@@ -154,10 +203,12 @@ function AnimatedCube({
   });
 
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     const b = bounce.current;
     const group = groupRef.current;
     if (!group || !b.active) return;
-    b.elapsed = Math.min(b.elapsed + delta, 0.44);
+
+    b.elapsed = Math.min(b.elapsed + step, 0.44);
     const t = b.elapsed / 0.44;
     const sy =
       t < 0.22 ? 1 - 0.32 * (t / 0.22)
@@ -167,6 +218,7 @@ function AnimatedCube({
     const py = 0.18 * Math.sin(Math.PI * t * 1.9) * Math.exp(-t * 2.8);
     group.scale.set(1, Math.max(0.5, sy), 1);
     group.position.y = Math.max(0, py);
+
     if (t >= 1) {
       b.active = false;
       group.scale.set(1, 1, 1);
@@ -176,34 +228,26 @@ function AnimatedCube({
   });
 
   useFrame((_, delta) => {
+    const step = Math.min(delta, 1 / 30);
     const group = groupRef.current;
     const a = anim.current;
     const b = bounce.current;
     if (!group || a.rolling || b.active) return;
-    idle.current.t += delta;
+
+    idle.current.t += step;
     const t = idle.current.t;
     group.rotation.y = cumulative.current.y + Math.sin(t * 0.9) * 0.25;
     group.rotation.x = cumulative.current.x + Math.sin(t * 0.55) * 0.10;
     group.position.y = Math.sin(t * 1.1) * 0.06;
   });
 
-  // Mapping groupes BoxGeometry → faces du dé
-  // +X=group0=face2, -X=group1=face5, +Y=group2=face3, -Y=group3=face4, +Z=group4=face1, -Z=group5=face6
   return (
-    <group ref={groupRef}>
-      <mesh geometry={geometry}>
-        <meshBasicMaterial attach="material-0" map={textures[1]} />
-        <meshBasicMaterial attach="material-1" map={textures[4]} />
-        <meshBasicMaterial attach="material-2" map={textures[2]} />
-        <meshBasicMaterial attach="material-3" map={textures[3]} />
-        <meshBasicMaterial attach="material-4" map={textures[0]} />
-        <meshBasicMaterial attach="material-5" map={textures[5]} />
-      </mesh>
+    <group ref={groupRef} scale={DICE_SCALE}>
+      <mesh geometry={cubeGeometry} material={cubeMaterial} />
+      <DicePips />
     </group>
   );
 }
-
-// ─── Scène complète ───────────────────────────────────────────────────────────
 
 function DiceScene({
   faces,
@@ -215,21 +259,16 @@ function DiceScene({
   targetFaceId: number;
   isRolling: boolean;
   onRollComplete?: () => void;
-  mode?: 'category' | 'numeric';
 }) {
   return (
-    <Suspense fallback={null}>
-      <AnimatedCube
-        faces={faces}
-        targetFaceId={targetFaceId}
-        isRolling={isRolling}
-        onRollComplete={onRollComplete}
-      />
-    </Suspense>
+    <AnimatedCube
+      faces={faces}
+      targetFaceId={targetFaceId}
+      isRolling={isRolling}
+      onRollComplete={onRollComplete}
+    />
   );
 }
-
-// ─── Export public ────────────────────────────────────────────────────────────
 
 export interface DiceCanvasProps {
   config: DiceConfig;
@@ -253,14 +292,10 @@ export function DiceCanvas({
     <View style={{ width: size, height: size }}>
       <Canvas
         frameloop="always"
-        camera={{ position: [0, 0, 2.5], fov: 45 }}
+        camera={{ position: [0, 0, 4.2], fov: 38 }}
         gl={{
-          antialias: true,
+          antialias: false,
           alpha: true,
-          powerPreference: 'low-power',
-          toneMapping: THREE.NeutralToneMapping,
-          toneMappingExposure: 1.05,
-          outputColorSpace: THREE.SRGBColorSpace,
         }}
         style={{ flex: 1 }}
       >
