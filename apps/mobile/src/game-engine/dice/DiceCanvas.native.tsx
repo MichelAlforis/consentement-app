@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo, Suspense } from 'react';
 import { View } from 'react-native';
 import { Asset } from 'expo-asset';
 import { Canvas, useFrame } from '@react-three/fiber/native';
-import { useTexture, Environment, ContactShadows } from '@react-three/drei/native';
+import { useTexture, ContactShadows } from '@react-three/drei/native';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three-stdlib';
 
@@ -108,6 +108,7 @@ function AnimatedCube({
   mode?: 'category' | 'numeric';
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const frameLogged = useRef(false);
 
   // Toujours chargées (règle des hooks) — utilisées uniquement si mode === 'numeric'
   // TODO: tester fps sur device physique (seuil go = 45fps)
@@ -179,6 +180,11 @@ function AnimatedCube({
 
   // TODO: tester fps sur device physique (seuil go = 45fps)
   useFrame((_, delta) => {
+    // DIAG: log premier frame — si absent → render loop expo-gl ne tourne pas
+    if (!frameLogged.current) {
+      frameLogged.current = true;
+      console.log('[DiceCanvas] useFrame running — render loop OK', { isRolling });
+    }
     const a = anim.current;
     const group = groupRef.current;
     if (!group || !a.rolling || a.done) return;
@@ -263,12 +269,11 @@ function DiceScene({
 }) {
   return (
     <>
-      <pointLight position={[3, 4, 4]} intensity={0.55} castShadow />
-      <pointLight position={[-3, -2, 1]} intensity={0.18} />
+      {/* Environment preset supprimé : charge HDR externe → échec silencieux → Suspense fallback=null */}
+      <ambientLight intensity={0.6} />
+      <pointLight position={[3, 4, 4]} intensity={1.2} castShadow />
+      <pointLight position={[-3, -2, 1]} intensity={0.4} />
       <Suspense fallback={null}>
-        {/* TODO: vérifier support preset="studio" dans @react-three/drei/native
-                — peut nécessiter un fichier HDR bundlé via expo-asset */}
-        <Environment preset="studio" />
         <group position={[0, 0, 0]}>
           <AnimatedCube
             faces={faces}
@@ -322,7 +327,10 @@ export function DiceCanvas({
         frameloop="always"
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
-
+        onCreated={(state) => {
+          // DIAG: log GL context — si absent → expo-gl n'initialise pas
+          console.log('[DiceCanvas] GL context created', state.gl.getParameter(state.gl.VERSION));
+        }}
         gl={{
           antialias: true,
           alpha: true,
