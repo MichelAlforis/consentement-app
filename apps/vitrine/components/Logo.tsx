@@ -1,19 +1,17 @@
 import Link from 'next/link';
 
 export default function Logo({ variant = 'default' }: { variant?: 'default' | 'footer' }) {
-  const badgeSize = variant === 'footer' ? 30 : 36;
-  const imgSize = Math.round(badgeSize * 1.6);
+  const size = variant === 'footer' ? 30 : 40;
 
   return (
     <Link href="/" className="flex items-center gap-2.5 group">
       <div
-        className="relative flex-shrink-0 rounded-xl"
+        className="relative flex-shrink-0 rounded-xl overflow-hidden"
         style={{
-          width: badgeSize,
-          height: badgeSize,
+          width: size,
+          height: size,
           background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
           boxShadow: '0 0 16px rgba(139,92,246,0.3)',
-          overflow: 'visible',
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -22,14 +20,13 @@ export default function Logo({ variant = 'default' }: { variant?: 'default' | 'f
           alt=""
           style={{
             position: 'absolute',
-            top: '50%',
+            top: 0,
             left: '50%',
-            transform: 'translate(-50%, -10%)',
-            width: imgSize,
+            transform: 'translateX(-50%)',
+            width: '100%',
             height: 'auto',
             filter: 'brightness(0) invert(1)',
             display: 'block',
-            pointerEvents: 'none',
           }}
         />
       </div>
