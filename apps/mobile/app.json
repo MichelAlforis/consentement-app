@@ -45,7 +45,14 @@
           "userTrackingPermission": "Cette app n'utilise pas tes données à des fins publicitaires. Cette demande est requise par iOS."
         }
       ],
-      ["@sentry/react-native/expo"]
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "alforis-y3"
+        }
+      ]
     ],
     "extra": {
       "eas": {
