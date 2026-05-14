@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three-stdlib';
 
 interface DiceFace {
   id: number;
@@ -29,7 +30,7 @@ const FACE_ROTATIONS: Record<number, [number, number]> = {
 
 const DICE_SCALE = 1.08;
 const FACE_OFFSET = 0.512;
-const PIP_RADIUS = 0.055;
+const PIP_RADIUS = 0.038;
 
 type PipKey = 'c' | 'tl' | 'tr' | 'ml' | 'mr' | 'bl' | 'br';
 
@@ -88,7 +89,7 @@ function getPipTransform(face: number, pip: PipKey): {
 }
 
 function DicePips() {
-  const pipGeometry = useMemo(() => new THREE.CircleGeometry(PIP_RADIUS, 24), []);
+  const pipGeometry = useMemo(() => new THREE.SphereGeometry(PIP_RADIUS, 16, 8), []);
   const pipMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#18181b' }), []);
 
   return (
@@ -96,13 +97,13 @@ function DicePips() {
       {[1, 2, 3, 4, 5, 6].flatMap((face) =>
         PIP_LAYOUTS[face].map((pip) => {
           const { position, rotation } = getPipTransform(face, pip);
+          void rotation;
           return (
             <mesh
               key={`${face}-${pip}`}
               geometry={pipGeometry}
               material={pipMaterial}
               position={position}
-              rotation={rotation}
             />
           );
         }),
@@ -124,7 +125,7 @@ function AnimatedCube({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const onRollCompleteRef = useRef(onRollComplete);
-  const cubeGeometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
+  const cubeGeometry = useMemo(() => new RoundedBoxGeometry(1, 1, 1, 4, 0.1), []);
   const cubeMaterial = useMemo(() => new THREE.MeshBasicMaterial({ color: '#f8f6f0' }), []);
 
   const anim = useRef({
