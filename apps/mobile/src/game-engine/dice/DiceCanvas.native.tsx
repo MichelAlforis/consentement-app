@@ -75,9 +75,14 @@ function hexToRgb(hex: string): [number, number, number] {
 
 function makeCategoryDataTexture(face: DiceFace): THREE.DataTexture {
   const stops = face.gradient.match(/#[0-9a-fA-F]{6}/g) ?? [face.color ?? '#444444'];
-  const [r, g, b] = hexToRgb(stops[0]);
-  const data = new Uint8Array([r, g, b, 255]);
-  const tex = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
+  const [r1, g1, b1] = hexToRgb(stops[0]);
+  const [r2, g2, b2] = stops[1] ? hexToRgb(stops[1]) : [r1, g1, b1];
+  // 2×2 dégradé interpolé — visible face au carré, distinct entre catégories
+  const data = new Uint8Array([
+    r1, g1, b1, 255,  r1, g1, b1, 255,
+    r2, g2, b2, 255,  r2, g2, b2, 255,
+  ]);
+  const tex = new THREE.DataTexture(data, 2, 2, THREE.RGBAFormat);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.needsUpdate = true;
   return tex;
@@ -119,11 +124,11 @@ function AnimatedCube({
     const mat = (texIdx: number) =>
       new THREE.MeshPhysicalMaterial({
         map: textures[texIdx],
-        roughness: 0.18,
+        roughness: 0.45,
         metalness: 0,
-        envMapIntensity: 0.9,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.1,
+        envMapIntensity: 0.25,
+        clearcoat: 0.15,
+        clearcoatRoughness: 0.4,
       });
     return [mat(1), mat(4), mat(2), mat(3), mat(0), mat(5)];
   }, [textures]);
