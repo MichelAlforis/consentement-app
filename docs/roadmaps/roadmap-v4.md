@@ -181,11 +181,14 @@ ouiclair-monorepo/
   - `apps/mobile/src/r3f.d.ts` pour JSX intrinsics R3F (`group`, `mesh`, `pointLight`…).
 - `pnpm tsc --noEmit` apps/mobile : **0 erreur** ✅
 - Symlinks pnpm OK : `node_modules/@ouiclair/textures/assets/dice/` → PNG accessibles par Metro.
-- **Reste — go/no-go device physique** :
+- `expo-dev-client ~6.0.21` ajouté (requis pour build de dev New Architecture).
+- EAS project ID branché : `c76ebde9-e454-4b76-a8ec-79dc51f94ea4` (compte lordenargent).
+- `ITSAppUsesNonExemptEncryption: false` + permission AD_ID Android ajoutés dans app.json.
+- **Build de dev en cours** (EAS Free tier, ~10–30 min) : `builds/a7c3801b`
+- **Reste — go/no-go device physique** (dès que le build est installé) :
   1. GL init sans crash (iOS + Android)
   2. Les 6 faces affichent les bons chiffres (Asset.fromModule URI résolu)
   3. Framerate ≥ 45fps lancé actif sur iPhone mid-range + Pixel 6
-  → Lancer : `eas build --profile preview --platform all` puis tester sur device.
 
 ### Non démarré
 

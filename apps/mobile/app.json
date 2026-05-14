@@ -16,7 +16,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "fr.consentement.app",
       "infoPlist": {
-        "NSUserTrackingUsageDescription": "Cette donnée nous aide à améliorer l'application."
+        "NSUserTrackingUsageDescription": "Cette donnée nous aide à améliorer l'application.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -26,7 +27,9 @@
         "backgroundColor": "#0d0d0d"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": []
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "plugins": [
       "expo-secure-store",
