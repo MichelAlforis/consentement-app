@@ -138,8 +138,8 @@ ouiclair-monorepo/
 | 1 | packages/core | 10–15 j | **✅ Fait** — 11 stores, utils, 198 tests OK, tsc clean | — | stores + utils portables, Vitest vert |
 | 2 | POC R3F/native + shell Expo | 5–7 j | **✅ Fait** (test device physique à faire) | — | Dé 3D sur device → go/no-go |
 | 3 | Composants UI | 12–18 j | **✅ Fait** — 26 composants portés, 3 audits GO | — | ~26 composants RN validés |
-| 4 | Onboarding + Nav principale | 10–12 j | 🔜 Prochaine | — | 11 écrans navigables |
-| 5 | Modules + Ressources | 15–20 j | À faire | **Phase 5b** | 24 écrans contenu |
+| 4 | Onboarding + Nav principale | 10–12 j | **✅ Fait** — 11 écrans + AppShell + RouteRenderer | — | 11 écrans navigables |
+| 5 | Modules + Ressources | 15–20 j | 🔜 Prochaine | **Phase 5b** | 24 écrans contenu |
 | 5b | Features natives critiques | 8–10 j | À faire | **Phase 5** | secure-store + IAP + deep links |
 | 6 | Collection + Social | 8–12 j | À faire | — | HallOfCards, DuoSpace |
 | 7 | Jeux R3F | 20–30 j | À faire | — | DiceGame → CardGame → GooseGame |
@@ -219,9 +219,27 @@ ouiclair-monorepo/
 
 > **Note W3 — Protection de `index.ts`** : Le linter (`lint-staged` + eslint autofix) a écrasé les exports des agents à deux reprises. Solution retenue : le fichier `apps/mobile/src/components/ui/index.ts` doit être maintenu manuellement et vérifié en début de chaque session agents. Ajouter une règle dans `.eslintignore` ou utiliser `/* eslint-disable */` ciblé si le problème persiste. À surveiller en Phase 4.
 
+### Phase 4 — ✅ Fait (2026-05-14)
+
+**11 écrans portés** en 2 agents + AppShell + RouteRenderer finalisé. Audit GO (commit `caa0e8d`).
+
+**Agent 1 — Onboarding/Auth (5 écrans)** : `OnboardingWizard` (4 étapes), `AuthScreen`, `AgeCheckScreen`, `ThemeSelectScreen`, `LanguageScreen`
+
+**Agent 2 — Navigation principale (6 écrans + shell)** : `HomeScreen` (3 niveaux progression), `ApprendreScreen`, `MoiScreen`, `SettingsScreen`, `AppShell` (TabBar + Toast overlay), `RouteRenderer` final
+
+**Livraisons techniques :**
+- `AppShell.tsx` : TabBar visible sur tab screens, Toast overlay positionné absolument
+- `RouteRenderer.tsx` : switch complet sur tous les screens Phase 4 + lazy import Suspense
+- `AppProviders.tsx` : `ToastProvider` ajouté
+- `screens/index.ts` : 9 exports nominatifs avec commentaire de garde R7
+- Divergences V3→V4 documentées en tête de chaque fichier
+- `// TODO Phase 5: gate premium` tracé dans SettingsScreen
+
+**Artefact nettoyé :** `apps/mobile/src/components/screens/Home/` (dossier non tracké créé par erreur par l'agent, supprimé — 0 import).
+
 ### Non démarré
 
-- Phase 4 et suivantes.
+- Phase 5 et suivantes.
 
 ## Phase 0 — Monorepo étendu
 **Durée : 2–3 jours**
