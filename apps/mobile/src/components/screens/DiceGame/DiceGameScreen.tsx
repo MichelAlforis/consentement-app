@@ -198,7 +198,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
               style={styles.flex1}
             >
               <View style={styles.diceCenter}>
-                <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" size={180} />
+                <DiceRenderer config={DICE_CONFIG} currentFace={null} isRolling={false} renderer="webgl" mode="numeric" size={180} />
               </View>
 
               <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>{t('diceGame.howToPlay')}</Text>
@@ -259,6 +259,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     setPreviewCard(card);
                   }}
                   renderer="webgl"
+                  mode="numeric"
                   size={240}
                 />
 
