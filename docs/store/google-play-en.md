@@ -1,6 +1,6 @@
 # Google Play — Metadata EN
 
-## Title (50 chars max)
+## Title (30 chars max)
 OuiClair – Consent & Intimacy
 
 ## Short Description (80 chars max)

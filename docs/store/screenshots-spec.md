@@ -2,13 +2,15 @@
 
 ## App Store (obligatoire)
 
-| Format | Résolution | Quantité |
-|---|---|---|
-| iPhone 6.9" (iPhone 15 Pro Max) | 1320×2868 px | 3 min, 10 max |
-| iPhone 6.5" (iPhone 14 Plus) | 1284×2778 px | Si visuels différents du 6.9" |
-| iPad Pro 13" | 2064×2752 px | Recommandé si tablette supportée |
+| Format | Modèle de référence | Résolution | Quantité |
+|---|---|---|---|
+| iPhone 6.9" | iPhone 16 Pro Max | 1320×2868 px | 3 min, 10 max |
+| iPhone 6.7" | iPhone 15 Pro Max / 16 Plus | 1290×2796 px | 3 min, 10 max |
+| iPhone 6.5" | iPhone 14 Plus / 11 Pro Max | 1284×2778 px | Si visuels différents |
+| iPad Pro 13" | iPad Pro M4 | 2064×2752 px | Recommandé si tablette supportée |
 
-> L'iPhone 6.9" est le format principal — il s'affiche en priorité sur la fiche App Store.
+> Les formats 6.9" et 6.7" sont tous deux requis par App Store Connect (2025).
+> Le 6.9" s'affiche en priorité sur la fiche ; le 6.7" est obligatoire si les visuels diffèrent.
 
 ## Google Play (obligatoire)
 
@@ -49,7 +51,8 @@ adb pull /sdcard/screenshot.png ./screenshot-home.png
 
 ## Checklist avant soumission
 
-- [ ] Screenshots iPhone 6.9" réalisés (3 minimum)
+- [ ] Screenshots iPhone 6.9" réalisés (3 minimum) — 1320×2868 px
+- [ ] Screenshots iPhone 6.7" réalisés (3 minimum) — 1290×2796 px
 - [ ] Screenshots Google Play téléphone réalisés (2 minimum)
 - [ ] Feature graphic Google Play créé (1024×500 px)
 - [ ] Aucun contenu explicite visible

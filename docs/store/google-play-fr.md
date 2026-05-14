@@ -1,7 +1,7 @@
 # Google Play — Métadonnées FR
 
-## Titre (50 car. max)
-OuiClair – Consentement & Intimité
+## Titre (30 car. max)
+OuiClair – Intimité & Couple
 
 ## Description courte (80 car. max)
 Modules, jeux et cartes pour explorer l'intimité en couple
