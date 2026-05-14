@@ -1,6 +1,6 @@
-import { EventSource } from 'react-native-sse';
+import EventSource from 'react-native-sse';
 // Polyfill EventSource for PocketBase realtime before any pb import
-(global as any).EventSource = EventSource;
+(global as unknown as Record<string, unknown>).EventSource = EventSource;
 
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

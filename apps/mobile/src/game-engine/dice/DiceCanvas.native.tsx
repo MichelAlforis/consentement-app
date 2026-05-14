@@ -298,7 +298,7 @@ export function DiceCanvas({
       <Canvas
         camera={{ position: [0, 0, 2.5], fov: 45 }}
         shadows
-        dpr={[1, 2]}
+
         gl={{
           antialias: true,
           alpha: true,

@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from '../theme/ThemeContext';
 
 interface Props {
@@ -8,10 +7,8 @@ interface Props {
 
 export function AppProviders({ children }: Props) {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        {children}
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <ThemeProvider>
+      {children}
+    </ThemeProvider>
   );
 }
