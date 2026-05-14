@@ -41,6 +41,9 @@ export function DuoSpaceScreen() {
   const [joinCode, setJoinCode] = useState('');
   const [qrError, setQrError] = useState(false);
 
+  // TODO Phase 7 realtime: useDuoStore.updateDuoCode() applique .replace(/\D/g, '')
+  // → incompatible avec codes alphanumériques de duoSync.generateCode().
+  // sessionCode reste en local state jusqu'à alignement du store (numérique vs alphanumérique).
   const handleCreate = () => {
     setQrError(false);
     setSessionCode(makeSessionCode());
