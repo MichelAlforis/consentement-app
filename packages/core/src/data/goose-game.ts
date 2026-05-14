@@ -1,4 +1,4 @@
-import { diePractices, DICE_CATEGORIES, DiePractice } from './index';
+import { diePractices, DICE_CATEGORIES, type DiePractice } from './dice-shared';
 import type { IconName } from '../types';
 export type SquareType = 'depart' | 'normal' | 'chance' | 'pause' | 'accord' | 'complicite' | 'arrivee';
 
@@ -224,4 +224,3 @@ export function getSquareIconName(square: BoardSquare): IconName {
   }
   return (SQUARE_VISUAL[square.type].iconName || 'Star') as IconName;
 }
-

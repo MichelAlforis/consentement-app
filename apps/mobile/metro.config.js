@@ -15,6 +15,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
+// pnpm uses symlinks — Metro must follow them to reach the virtual store
+config.resolver.unstable_enableSymlinks = true;
+
 // Force React + React Native to always resolve from the app — prevents dual-instance
 // hook crashes when packages/core or its deps (zustand) import React indirectly.
 config.resolver.extraNodeModules = {

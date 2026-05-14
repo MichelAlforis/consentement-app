@@ -16,8 +16,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "fr.consentement.app",
       "infoPlist": {
-        "NSUserTrackingUsageDescription": "Cette donnée nous aide à améliorer l'application.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMotionUsageDescription": "Utilisé pour l'effet gyroscope des cartes"
       }
     },
     "android": {
@@ -33,12 +33,14 @@
     },
     "plugins": [
       "expo-secure-store",
+      "expo-sensors",
       [
         "expo-tracking-transparency",
         {
-          "userTrackingPermission": "Cette donnée nous aide à améliorer l'application."
+          "userTrackingPermission": "Cette app n'utilise pas tes données à des fins publicitaires. Cette demande est requise par iOS."
         }
-      ]
+      ],
+      ["@sentry/react-native/expo"]
     ],
     "extra": {
       "eas": {

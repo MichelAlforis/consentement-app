@@ -1,4 +1,5 @@
 // BARREL — ne jamais transformer en export * glob (R7)
+import { games } from './games';
 import { moduleDeBase } from './moduleDeBase';
 import { pratiquesBase } from './pratiquesBase';
 import { pratiquesAvancees } from './pratiquesAvancees';
@@ -15,6 +16,7 @@ import { lgbtqConsent } from './lgbtqConsent';
 import { alcoolConsent } from './alcoolConsent';
 
 export const en = {
+  ...games,
   ...moduleDeBase,
   ...pratiquesBase,
   ...pratiquesAvancees,
