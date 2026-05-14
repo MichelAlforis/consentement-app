@@ -1,0 +1,62 @@
+export const bdsmConsent = {
+  bdsmConsent: {
+    fiches: {
+      title: 'BDSM y consentimiento',
+      subtitle: 'Desmentir mitos de las prácticas reales.',
+      sectionDef: 'Mito común',
+      sectionConsent: 'La realidad',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'BDSM y consentimiento',
+        definition: 'En el BDSM, no hace falta consentimiento ya que el dolor es deseado.',
+        consentement: 'El BDSM es la práctica sexual que requiere más consentimiento explícito. El marco se basa en la negociación previa, los límites definidos juntos y las palabras de seguridad.',
+        loi: 'Sin consentimiento claro e informado, una práctica BDSM se convierte en una agresión — sin importar lo que la persona "parecía querer". Las infracciones se califican de forma idéntica fuera del contexto BDSM.',
+        question: '¿Hemos negociado explícitamente los límites, las prácticas autorizadas y la palabra de seguridad antes de esta sesión?',
+      },
+      1: {
+        titre: '¿El safeword, para principiantes?',
+        definition: 'Tener una palabra de seguridad es para principiantes. Los practicantes de verdad no la necesitan.',
+        consentement: 'La palabra de seguridad la usan los practicantes experimentados, precisamente porque comprenden su importancia. Incluso en una relación de confianza de larga duración, las emociones y los límites evolucionan.',
+        loi: 'Una palabra de seguridad no es una confesión de inexperiencia — es una herramienta de comunicación esencial que debe respetarse siempre inmediatamente. Ignorarla puede constituir una agresión (art. 222-22 CP).',
+        question: '¿Tengo en cuenta la palabra de seguridad — incluso cuando usarla me sorprende o me interrumpe?',
+      },
+      2: {
+        titre: 'El contrato BDSM',
+        definition: 'Si alguien ha firmado un "contrato" BDSM, ya no puede decir no.',
+        consentement: 'Un contrato BDSM es una herramienta de comunicación sobre los deseos y límites — no un documento legalmente vinculante. El consentimiento puede retirarse en cualquier momento, incluso en plena escena.',
+        loi: 'Ningún contrato puede quitar el derecho a retirar el consentimiento. Ignorar una palabra de seguridad o forzar a pesar de un rechazo es una agresión, con o sin contrato (art. 222-22 CP).',
+        question: '¿Entiendo que un acuerdo previo no suprime el derecho a cambiar de opinión en cualquier momento?',
+      },
+      3: {
+        titre: 'Poder de la persona sumisa',
+        definition: 'La persona sumisa no tiene poder en la relación.',
+        consentement: 'En una relación BDSM ética, la persona sumisa posee un poder real — el de detener la escena. La dominación es concedida, no impuesta. La persona sumisa define los límites y puede retirarlos.',
+        loi: 'El concepto de "poder consentido" (power exchange) es central en el BDSM ético. Ignorar el poder de la persona sumisa es confundir fantasía con agresión real.',
+        question: '¿La persona en posición sumisa comprende y ejerce realmente su poder de detener la escena?',
+      },
+      4: {
+        titre: 'Las marcas prueban el consentimiento',
+        definition: 'Las marcas físicas prueban que el consentimiento estuvo presente.',
+        consentement: 'Las marcas no prueban nada sobre el consentimiento — incluso pueden ser una prueba de agresión. El consentimiento se documenta antes, no después de una interacción.',
+        loi: 'Las huellas físicas sin negociación previa documentada constituyen una prueba de agresión, no de consentimiento. Es el acuerdo previo lo que cuenta legalmente, no el resultado físico.',
+        question: '¿Documento nuestros acuerdos previos en lugar de suponer que los resultados visibles hablan por sí solos?',
+      },
+      5: {
+        titre: 'BDSM fuera de la escena',
+        definition: 'El BDSM justifica comportamientos fuera de la escena (control permanente, aislamiento).',
+        consentement: 'Las dinámicas BDSM sanas permanecen dentro de los límites negociados. Fuera de la escena, ambas personas tienen derechos iguales. Usar una dinámica D/s como excusa para controlar a una persona en todos los aspectos de su vida es violencia conyugal.',
+        loi: 'La violencia conyugal está penada con 3 años de prisión y 45 000 € de multa (art. 222-14 CP), agravada en caso de particular vulnerabilidad de la víctima. El contexto BDSM no es una circunstancia atenuante.',
+        question: '¿La dinámica BDSM está claramente delimitada en el tiempo y en el espacio, o se desborda hacia la vida cotidiana?',
+      },
+      6: {
+        titre: 'Intensidad y legitimidad',
+        definition: 'Si no hay sangre o no hay llanto, es un BDSM "real" fracasado.',
+        consentement: 'El BDSM cubre un espectro inmenso — desde el juego de roles ligero hasta las prácticas intensas. Ninguna práctica es más "real" que otra. Lo que importa es que ambas personas hayan negociado, consentido y tengan las herramientas para detenerse.',
+        loi: 'La intensidad de una práctica no la valida. Las prácticas muy intensas pueden ser legales con un consentimiento claro. Las prácticas ligeras pueden ser una agresión sin ese consentimiento.',
+        question: '¿Trato de validar una práctica por su intensidad en lugar de por la calidad del consentimiento?',
+      },
+    },
+  },
+};

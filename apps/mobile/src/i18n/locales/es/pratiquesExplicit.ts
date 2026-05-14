@@ -1,0 +1,55 @@
+export const pratiquesExplicit = {
+  pratiquesExplicit: {
+    fiches: {
+      title: 'Prácticas explícitas y comunicación',
+      subtitle: 'Hablar de lo que hacemos — de verdad.',
+      sectionDef: 'Definición',
+      sectionConsent: 'Consentimiento',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'Proponer una nueva práctica',
+        definition: 'Cuando queremos probar algo nuevo, el momento y la forma de proponerlo cambian todo en la calidad del consentimiento obtenido.',
+        consentement: 'Proponer en un momento neutro — no justo antes o durante — deja al otro el espacio de reflexionar y responder libremente, sin la presión del momento o del ambiente.',
+        loi: 'Ninguna práctica puede imponerse sin acuerdo previo. El entusiasmo del momento o el contexto íntimo no constituyen consentimiento para una práctica nueva.',
+        question: '¿He propuesto esta práctica en un momento tranquilo, sin crear presión implícita?',
+      },
+      1: {
+        titre: 'El consentimiento de fachada',
+        definition: 'Un "sí" dado para complacer, para evitar un conflicto o para que termine más rápido no es un consentimiento real. Es posible decir sí sin quererlo de verdad.',
+        consentement: 'Verificar abiertamente si el otro está realmente cómodo — "¿Estás realmente bien con esto?" — es un acto de respeto, no de desconfianza. La incomodidad no verbal (silencio, cuerpo pasivo) es una señal que hay que tomar en serio.',
+        loi: 'El consentimiento debe ser libre. Un acuerdo dado bajo presión implícita o por miedo a la reacción del otro no es jurídicamente válido.',
+        question: '¿Mi compañero/a ha dicho realmente sí, o me conformo con una ausencia de negativa?',
+      },
+      2: {
+        titre: 'Palabra de seguridad y juego de roles',
+        definition: 'En un juego de roles, los compañeros pueden acordar ignorar ciertas palabras habituales. Pero una señal de angustia real siempre debe tomarse en serio, independientemente del marco.',
+        consentement: 'Si no se ha definido de antemano ninguna palabra de seguridad distinta, cualquier señal de angustia (tono de voz, "para", tensión física) debe llevar a detenerse y verificar inmediatamente.',
+        loi: 'El marco ficticio de un juego de roles no suprime el derecho a retirar el consentimiento en cualquier momento. Continuar a pesar de una señal de angustia real constituye una agresión (art. 222-22 CP).',
+        question: '¿Hemos establecido una palabra de seguridad distinta antes de comenzar este juego de roles?',
+      },
+      3: {
+        titre: 'La comunicación después',
+        definition: 'Hablar después de una relación íntima es tan importante como hablar antes. Expresar lo que nos hubiera gustado diferente permite mejorar la relación — no criticarla.',
+        consentement: '"Me hubiera gustado que hiciéramos X de otra manera" es una conversación sana. Normaliza el diálogo continuo sobre los deseos y los límites, en ambos sentidos.',
+        loi: 'Ninguna obligación legal de hablar, pero los malentendidos no resueltos pueden evolucionar hacia situaciones más graves. La comunicación después protege a ambos compañeros.',
+        question: '¿He expresado lo que me hubiera gustado diferente, o me lo guardo?',
+      },
+      4: {
+        titre: 'Respetar un límite incomprendido',
+        definition: 'Un límite no necesita ser comprendido para ser respetado. Tratar de convencer u obtener explicaciones, incluso con suavidad, es una forma de presión.',
+        consentement: 'Respetar un límite sin comprenderlo del todo es una señal de respeto real. Cualquier intento de negociación — incluso bienintencionado — pone en cuestión el derecho del otro a establecer sus límites.',
+        loi: 'Insistir después de un rechazo, incluso con argumentos o preguntas repetidas, puede caracterizar una presión en el sentido del derecho penal si conduce a un consentimiento no libre.',
+        question: '¿He aceptado el límite del otro sin tratar de comprenderlo, discutirlo o evitarlo?',
+      },
+      5: {
+        titre: 'Renovar el consentimiento',
+        definition: 'Incluso en una relación establecida con prácticas habituales, el consentimiento no se adquiere de una vez para siempre. Se renueva cada vez.',
+        consentement: 'Una mirada, una pregunta corta, una señal no verbal de bienestar bastan. Verificar sigue siendo una señal de respeto, incluso en una relación larga y de confianza.',
+        loi: 'La costumbre o la duración de una relación no constituyen consentimiento permanente. El consentimiento implícito vinculado a una relación es regularmente contestado ante los tribunales.',
+        question: '¿Verifico regularmente que el otro sigue cómodo, incluso cuando se ha convertido en algo habitual?',
+      },
+    },
+  },
+};

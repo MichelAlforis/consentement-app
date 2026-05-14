@@ -1,0 +1,55 @@
+export const pressionManip = {
+  pressionManip: {
+    fiches: {
+      title: 'Presión y manipulación',
+      subtitle: 'Reconocer lo que parece consentimiento pero no lo es.',
+      sectionDef: 'La situación',
+      sectionConsent: 'Lo que es realmente',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: '"Si me amaras, lo harías"',
+        definition: '"Si de verdad me amaras, lo harías." Esta frase se presenta como una prueba de amor o una petición romántica.',
+        consentement: 'Es una forma de manipulación emocional clásica que invalida el rechazo. Condicionar el amor a un acto sexual es una técnica de manipulación. Un/a compañero/a que te quiere acepta tu rechazo sin ponerlo en duda.',
+        loi: 'La manipulación emocional para obtener consentimiento invalida ese consentimiento legalmente. Puede caracterizar una coacción en el sentido del derecho penal si desemboca en un acto sexual forzado.',
+        question: '¿Alguien ha condicionado alguna vez su afecto o presencia a un acto sexual en mi relación actual?',
+      },
+      1: {
+        titre: 'La insistencia suave',
+        definition: 'Dices que no. El otro sigue insistiendo, amablemente pero sin parar, repitiendo la misma petición o sus variantes.',
+        consentement: 'Es acoso, aunque el tono sea suave. La insistencia repetida después de un rechazo es una forma de presión que niega tu "no". La suavidad del tono no cambia la naturaleza del acto.',
+        loi: 'La insistencia repetida después de un rechazo puede caracterizar acoso (art. 222-33 CP) si causa una alteración de la salud o el bienestar. La persistencia no es perseverancia romántica.',
+        question: '¿Mi rechazo se respeta a la primera expresión, o debo repetirlo varias veces para que se tenga en cuenta?',
+      },
+      2: {
+        titre: 'El chantaje afectivo',
+        definition: '"De todas formas no tienes elección si quieres que sigamos juntos." O cualquier amenaza implícita vinculada a la relación.',
+        consentement: 'Es una amenaza que invalida todo consentimiento dado después. Un consentimiento dado bajo amenaza no es libre — esa es la definición de un consentimiento viciado. La suavidad o lo implícito de la amenaza no cambia nada.',
+        loi: 'El chantaje afectivo vinculado a una relación puede constituir violencias psicológicas (art. 222-14-3 CP) si es repetido y altera la salud. Un consentimiento viciado por coacción es nulo en derecho penal.',
+        question: '¿Mi decisión fue influenciada por el miedo a las consecuencias sobre la relación más que por mi deseo real?',
+      },
+      3: {
+        titre: 'Interpretar la duda como un sí',
+        definition: 'Dudas. El otro dice "sabía que acabarías diciendo sí" y continúa — interpretando tu duda como un acuerdo.',
+        consentement: 'Una duda no es un sí. "No sé" o "quizás" significan "espera". Interpretar una duda como un acuerdo es una manipulación consciente o inconsciente. La duda se respeta, no se explota.',
+        loi: 'Continuar sobre la base de una duda interpretada como acuerdo expone a una calificación de agresión sexual si el acuerdo no estaba claro. La presunción de consentimiento no protege al autor.',
+        question: '¿Pido claramente un "sí" explícito en lugar de interpretar el silencio o la duda como autorización?',
+      },
+      4: {
+        titre: 'Cambiar de opinión bajo presión emocional',
+        definition: 'Después de un rechazo, el otro se sulfa, se enfurruña o llora. Cambias de opinión para evitar su dolor o su resentimiento.',
+        consentement: 'Es un consentimiento dado bajo presión emocional — no realmente libre. Usar la propia tristeza o enfado para hacer ceder al otro es una forma de manipulación. Este cambio de opinión no es consentimiento libre.',
+        loi: 'Un consentimiento obtenido explotando una reacción emocional puede ser contestado. La manipulación emocional puede caracterizar una coacción en el sentido del art. 222-22 CP si desemboca en un acto sexual.',
+        question: '¿Cambio de opinión porque de verdad lo quiero, o porque no puedo soportar la reacción del otro a mi rechazo?',
+      },
+      5: {
+        titre: 'Cuerpo y lenguaje no verbal',
+        definition: 'Alguien dice sí, pero su lenguaje corporal dice claramente no: cuerpo tenso, mirada huidiza, tensión física, ausencia de participación.',
+        consentement: 'El consentimiento también se lee en el cuerpo. Una cara tensa, una tensión física, una mirada esquiva son señales de alarma. Detenerse y preguntar abiertamente es siempre la respuesta correcta, sea cual sea el contexto.',
+        loi: 'Un "sí" verbal acompañado de señales no verbales de angustia no constituye un consentimiento libre en el sentido del derecho. Detenerse y verificar protege a ambos compañeros legal y humanamente.',
+        question: '¿Tengo en cuenta el conjunto de señales — verbales Y no verbales — para evaluar el consentimiento del otro?',
+      },
+    },
+  },
+};

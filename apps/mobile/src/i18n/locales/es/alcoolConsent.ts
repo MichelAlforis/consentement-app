@@ -1,0 +1,55 @@
+export const alcoolConsent = {
+  alcoolConsent: {
+    fiches: {
+      title: 'Alcohol y consentimiento',
+      subtitle: 'Lo que el alcohol cambia — de verdad.',
+      sectionDef: 'La situación',
+      sectionConsent: 'Lo que hay que saber',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: '¿Un "sí" bajo el alcohol es válido?',
+        definition: 'Alguien ha bebido y dice "sí". ¿Es válido ese consentimiento?',
+        consentement: 'No — una persona ebria no puede consentir válidamente. El consentimiento debe ser libre e informado. Bajo la influencia del alcohol, el juicio está alterado, aunque la persona parezca lúcida y diga sí.',
+        loi: 'El Código Penal reconoce que la embriaguez puede impedir un consentimiento válido. Aprovecharse del estado de embriaguez de una persona es una circunstancia agravante de las infracciones sexuales (art. 222-22-1 CP).',
+        question: '¿Me aseguro de que la persona con quien estoy está en condición de consentir libremente en este momento preciso?',
+      },
+      1: {
+        titre: 'Lamentarse después de una noche',
+        definition: 'Has bebido, lamentas lo que pasó. ¿Puede haber habido agresión, aunque parecieras consentir en el momento?',
+        consentement: 'Sí — si no estabas en condición de consentir libremente, puede haber habido una agresión. El arrepentimiento solo no es suficiente para caracterizar una infracción, pero la incapacidad de consentir, sí.',
+        loi: 'Aprovecharse del estado de embriaguez de una persona es una circunstancia agravante reconocida por el derecho penal francés. Mantener relaciones con una persona en estado de embriaguez avanzada puede constituir violación (art. 222-23 CP).',
+        question: 'Si has vivido una situación de este tipo, ¿sabes que existen recursos para hablar de ello sin obligación de denunciar inmediatamente?',
+      },
+      2: {
+        titre: 'Verificar durante la noche',
+        definition: 'Vuestra noche empieza bien. Tu compañero/a bebe mucho. ¿Qué hacer en ese contexto?',
+        consentement: 'Verificar verbalmente ("¿Estás bien? ¿Quieres que continuemos?") es la buena práctica — no es paranoia, solo es respetuoso/a. La vigilancia es una responsabilidad compartida.',
+        loi: 'La vigilancia activa es una protección para ambas personas. No verificar el estado de un/a compañero/a que bebe y continuar de todas formas expone a una calificación penal si su estado no le permitía consentir.',
+        question: '¿Me acostumbro a verificar verbalmente el consentimiento cuando el alcohol está presente, incluso en una relación establecida?',
+      },
+      3: {
+        titre: 'La persona ya no responde realmente',
+        definition: 'Una persona apenas responde, los ojos entrecerrados. Dijo "sí" hace 20 minutos.',
+        consentement: 'Para. Claramente no está en condición de consentir ahora. El consentimiento debe ser activo y presente en el momento del acto. Un "sí" dicho hace 20 minutos no cubre lo que está pasando ahora.',
+        loi: 'El consentimiento es continuo — no se conserva en el tiempo. Continuar un acto sexual con una persona cuyo estado ha evolucionado hacia la incapacidad constituye una violación o una agresión (art. 222-22 y 222-23 CP).',
+        question: '¿Me detengo inmediatamente si el estado del otro cambia, aunque hubiera consentido antes?',
+      },
+      4: {
+        titre: 'Hablar después de una noche borrosa',
+        definition: 'Después de una noche, no estás seguro/a de que el otro estuviera realmente bien. ¿Qué hacer?',
+        consentement: 'Hablarlo con franqueza, aunque sea incómodo. "¿Estabas bien ayer?" es una pregunta difícil pero necesaria. Puede cambiar muchas cosas para el otro.',
+        loi: 'Las conversaciones después no implican una auto-incriminación. Permiten aclarar la situación y pueden evitar consecuencias mucho más graves. No hablar de ello no hace desaparecer la situación.',
+        question: '¿Me atrevo a hacer la pregunta después de una noche incierta, aunque la respuesta pueda ser incómoda?',
+      },
+      5: {
+        titre: 'Hacer beber para "facilitar las cosas"',
+        definition: 'Servir alcohol a alguien para hacerlo/a más "disponible" o más "relajado/a".',
+        consentement: 'Es una forma de manipulación que puede constituir una agresión. Alterar deliberadamente la capacidad de decisión de una persona para obtener un acuerdo es una técnica contraria a todo principio de consentimiento.',
+        loi: 'Administrar voluntariamente una sustancia para alterar el consentimiento es un delito en el derecho francés, aunque la persona "acepte" beber. Lo que se sanciona es la intención de aprovecharse del estado (art. 222-22 CP).',
+        question: '¿Me aseguro de que el alcohol o las sustancias presentes no se utilicen nunca para influir en la decisión del otro?',
+      },
+    },
+  },
+};

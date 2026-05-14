@@ -1,0 +1,62 @@
+export const lgbtqConsent = {
+  lgbtqConsent: {
+    fiches: {
+      title: 'LGBTQ+ y consentimiento',
+      subtitle: 'Desmentir mitos — todas las orientaciones',
+      sectionDef: 'Mito común',
+      sectionConsent: 'La realidad',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'Reglas universales',
+        definition: 'El consentimiento entre personas LGBTQ+ funciona de manera diferente que entre heterosexuales.',
+        consentement: 'Las reglas del consentimiento son universales — independientes de la orientación sexual o el género. Consentimiento libre, informado, explícito y revocable: estos cuatro principios se aplican independientemente de las identidades de las personas.',
+        loi: 'El Código Penal define las infracciones sexuales de forma neutra respecto a la orientación o identidad de género. Ninguna orientación está exenta de estas protecciones ni favorecida respecto a otra.',
+        question: '¿Aplico los mismos estándares de consentimiento independientemente de la orientación o identidad de género de mi compañero/a o compañeros/as?',
+      },
+      1: {
+        titre: 'Roles presupuestos',
+        definition: 'En una pareja del mismo sexo, los roles están fijos y definidos de antemano por la apariencia o la personalidad.',
+        consentement: 'Asumir que alguien juega un papel específico porque es alto/a, bajo/a, suave o seguro/a de sí mismo/a es una proyección, no consentimiento. Cada preferencia se discute explícitamente, cada vez.',
+        loi: 'La presunción de rol es una forma de estereotipo que puede llevar a ignorar los límites reales de una persona. Actuar sobre la base de un rol supuesto sin verificación puede constituir una agresión.',
+        question: '¿Discuto explícitamente las preferencias y los roles con mis compañeros/as, sin suponer nada?',
+      },
+      2: {
+        titre: 'Identidad de género y divulgación',
+        definition: 'Una persona trans está obligada a revelar su identidad de género antes de cualquier relación íntima.',
+        consentement: 'En Francia, ninguna ley exige esta divulgación. Compartir la identidad es un acto de confianza, no una obligación. Presionar a alguien para revelar información médica es una forma de violencia.',
+        loi: 'Las informaciones médicas, incluido el estado transgénero, están protegidas por el secreto médico y el derecho a la vida privada (art. 9 del Código Civil). Obligar a una divulgación puede constituir discriminación (art. 225-1 CP).',
+        question: '¿Respeto el derecho de cada persona a elegir lo que comparte sobre su identidad, sin presión ni condición?',
+      },
+      3: {
+        titre: 'Deseo automático',
+        definition: 'Entre personas del mismo sexo, el deseo es automático — "seguramente quieren lo mismo".',
+        consentement: 'Compartir una orientación sexual no significa compartir los mismos deseos, límites o ritmos. Cada persona tiene sus propias preferencias. La presunción de deseo automático cortocircuita la comunicación y minimiza el rechazo.',
+        loi: 'La presunción de consentimiento basada en la orientación sexual no protege legalmente. Puede incluso agravar la calificación de una infracción, ya que demuestra una ausencia deliberada de verificación.',
+        question: '¿Verifico activamente los deseos y los límites de mis compañeros/as, sin suponer que son idénticos a los míos?',
+      },
+      4: {
+        titre: 'Orientación y trauma',
+        definition: 'Una persona gay o bisexual "se volvió" así a causa de una agresión o un trauma.',
+        consentement: 'La orientación sexual no se causa y no se cambia por un acontecimiento externo, traumático o no. Esta idea errónea es dañina y científicamente infundada. Las agresiones merecen ayuda y acompañamiento — no una interpretación de la orientación.',
+        loi: 'Las terapias de conversión (intentos de cambiar la orientación sexual) están prohibidas en Francia desde 2022 (ley del 26 de enero de 2022), penadas con 2 años de prisión y 30 000 € de multa.',
+        question: '¿Cuestiono los estereotipos sobre los vínculos entre trauma y orientación sexual que he podido interiorizar?',
+      },
+      5: {
+        titre: 'Víctimas masculinas',
+        definition: 'Un hombre gay o bisexual no puede ser violado por otro hombre.',
+        consentement: 'La violación puede afectar a cualquier persona, independientemente de su orientación sexual o identidad de género. La orientación sexual de la víctima nunca es una circunstancia atenuante, ni para la calificación ni para la pena.',
+        loi: 'En Francia, la violación se define por el art. 222-23 CP como todo acto de penetración sin consentimiento — independientemente del sexo u orientación de las personas implicadas. Los hombres representan aproximadamente el 20% de las víctimas declaradas de violación en Francia.',
+        question: '¿Entiendo que cualquier persona puede ser víctima de una agresión sexual, independientemente de su orientación o identidad?',
+      },
+      6: {
+        titre: 'Violencia "correctiva"',
+        definition: 'Una agresión sexual puede "corregir" o "convertir" a una persona LGBTQ+.',
+        consentement: 'No existe ninguna agresión "correctiva" — es un crimen grave, tratado como tal por la ley francesa. Este mito está en el origen de violencias reales, a veces dentro de la familia o la comunidad.',
+        loi: 'Toda agresión sexual — sea cual sea la motivación — está penada con severas penas de prisión (art. 222-22 y siguientes CP). La motivación homófoba o transfóbica es una circunstancia agravante. En caso de peligro: llama al 3114 o al 17.',
+        question: 'Si conozco a alguien que se enfrenta a este tipo de violencia, ¿sé hacia qué recursos orientarlo/a?',
+      },
+    },
+  },
+};

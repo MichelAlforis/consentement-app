@@ -1,0 +1,55 @@
+export const ruptureHarcele = {
+  ruptureHarcele: {
+    fiches: {
+      title: 'Ruptura y acoso',
+      subtitle: 'Lo que la ley protege después de una relación.',
+      sectionDef: 'El contexto',
+      sectionConsent: 'Lo que hay que saber',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'Acoso moral: definición legal',
+        definition: 'Después de una ruptura, ciertos comportamientos — mensajes repetidos, llamadas insistentes, vigilancia — se asimilan al acoso moral.',
+        consentement: 'El fin de una relación no autoriza ninguna presión para reanudar el contacto. La persona que ha roto tiene el derecho al silencio y a la distancia, sin tener que justificarse.',
+        loi: 'Enviar mensajes repetidos, llamar de forma insistente o vigilar a una persona después de una ruptura constituye acoso moral (art. 222-33-2 CP), penado con 2 años de prisión y 30 000 € de multa.',
+        question: '¿Respeto el silencio o el rechazo de contacto de mi ex, sin tratar de retomarlo?',
+      },
+      1: {
+        titre: 'Ciberacoso post-ruptura',
+        definition: 'Acosar a alguien a través de las redes sociales, los mensajes, o pidiéndoles a amigos comunes que contacten al ex.',
+        consentement: 'El acoso por procuración — pedir a personas del entorno que contacten al ex — es también ilegal al igual que el contacto directo. La distancia física o digital no cambia la naturaleza del acto.',
+        loi: 'Desde 2018, el acoso a través de las redes sociales o por procuración está explícitamente contemplado por la ley. Está penado con 2 años de prisión y 30 000 € de multa (art. 222-33-2-2 CP).',
+        question: '¿Utilizo a terceros (amigos, familia, colegas) para mantener un contacto que el otro ha rechazado?',
+      },
+      2: {
+        titre: 'La orden de protección',
+        definition: 'Ante una situación de peligro probado, puede obtenerse una protección judicial rápida para alejar a un acosador.',
+        consentement: 'La orden de protección es accesible incluso sin denuncia previa. Protege eficazmente — pero hay que conocer su existencia y no dudar en solicitarla.',
+        loi: 'Un/a juez de familia puede emitir una orden de protección en 6 días. Puede prohibir al acosador acercarse a la víctima, acceder a su domicilio o contactarla (ley del 9 de julio de 2010).',
+        question: '¿Conozco los recursos judiciales disponibles si mi seguridad está amenazada por un/a ex?',
+      },
+      3: {
+        titre: 'Sextorsión y amenazas de imágenes',
+        definition: 'Amenazar con publicar fotos o videos íntimos para forzar a alguien a volver o para vengarse después de una ruptura.',
+        consentement: 'Toda amenaza de difundir imágenes íntimas — aunque nunca se lleve a cabo — es en sí misma un delito. La víctima no tiene ninguna obligación de ceder a ese chantaje.',
+        loi: 'La sextorsión está penada con hasta 5 años de prisión y 75 000 € de multa (art. 312-10 CP). Ejecutar la amenaza constituye además la infracción de difusión no consentida de imágenes (art. 226-2-1 CP).',
+        question: '¿He recibido amenazas de difusión de imágenes íntimas? Si es así, ¿sé que puedo denunciar inmediatamente?',
+      },
+      4: {
+        titre: 'Reunir pruebas',
+        definition: 'Conservar los mensajes, llamadas perdidas y correos recibidos después de una ruptura, en previsión de una posible denuncia.',
+        consentement: 'Conservar las pruebas no obliga a actuar inmediatamente. Pero las pruebas bien conservadas (capturas con marca de tiempo, importaciones de mensajería) refuerzan considerablemente la posición de la víctima en caso de proceso.',
+        loi: 'Las capturas de pantalla con marca de tiempo, los correos y los informes de denuncia en las plataformas son elementos de prueba admisibles ante la justicia. La denuncia en cybermalveillance.gouv.fr también deja rastro.',
+        question: '¿He conservado las pruebas de los contactos no deseados recibidos después de la ruptura, aunque no haya decidido aún actuar?',
+      },
+      5: {
+        titre: 'Dónde obtener ayuda',
+        definition: 'Los recursos disponibles en Francia para las víctimas de acoso post-ruptura.',
+        consentement: 'Contactar una asociación o un servicio de escucha no significa comprometerse a denunciar. Estos servicios ayudan a entender la situación, los derechos y las opciones disponibles — sin presión.',
+        loi: '3919 (Violences Femmes Info, 24h/24, gratuito, anónimo) · Comisión de ayuda a las víctimas de tu tribunal judicial · France Victimes: 116 006 · En línea: arretonslesviolences.gouv.fr.',
+        question: '¿Sé que existen recursos gratuitos y anónimos disponibles si estoy viviendo una situación de acoso post-ruptura?',
+      },
+    },
+  },
+};

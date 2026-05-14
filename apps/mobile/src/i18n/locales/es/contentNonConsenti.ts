@@ -1,0 +1,55 @@
+export const contentNonConsenti = {
+  contentNonConsenti: {
+    fiches: {
+      title: 'Contenido no consentido',
+      subtitle: 'Imágenes y vídeos íntimos compartidos sin acuerdo.',
+      sectionDef: 'El principio',
+      sectionConsent: 'Lo que hay que saber',
+      sectionLoi: 'Lo que dice la ley',
+      sectionQuestion: 'Pregunta que hacerse',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'Lo que cubre la ley',
+        definition: 'La difusión no consentida de imágenes íntimas (revenge porn) es un delito penal desde 2016 en Francia.',
+        consentement: 'La ley pena a quien difunde, publica, transmite o hace accesible una imagen de carácter sexual de una persona identificable sin su acuerdo — ya sea una foto, vídeo, captura de pantalla o GIF.',
+        loi: 'En Francia, compartir una imagen íntima sin acuerdo está penado con 2 años de prisión y 60 000 € de multa (art. 226-2-1 CP) — aunque la imagen hubiera sido enviada voluntariamente al principio.',
+        question: '¿Entiendo que compartir una imagen íntima sin acuerdo explícito es un delito, independientemente del origen de la imagen?',
+      },
+      1: {
+        titre: 'Cómo se obtuvo la imagen',
+        definition: 'La infracción de difusión no consentida se caracteriza independientemente de la forma en que se obtuvo la imagen.',
+        consentement: 'Tanto si la imagen fue robada (pirateo), tomada sin que la persona lo supiera, o enviada libremente en un contexto de confianza — la difusión sin acuerdo sigue siendo ilegal. "Me la había enviado" no es una defensa.',
+        loi: 'El art. 226-2-1 CP no distingue según el modo de obtención de la imagen. La única pregunta es: ¿tuvo lugar la difusión sin el acuerdo de la persona afectada?',
+        question: '¿Entiendo que incluso una imagen que alguien me envió voluntariamente no me pertenece hasta el punto de poder compartirla sin acuerdo?',
+      },
+      2: {
+        titre: 'Circunstancias agravantes',
+        definition: 'Ciertas circunstancias agravan las penas previstas para la difusión no consentida de imágenes íntimas.',
+        consentement: 'Si la imagen se obtuvo por medios fraudulentos (espionaje, pirateo de cuenta), si la víctima es menor de edad, o si la difusión alcanzó a un gran número de personas, las penas se incrementan significativamente.',
+        loi: 'Las circunstancias agravantes pueden elevar la pena hasta 5 años de prisión y 150 000 € de multa. La minoría de edad de la víctima es siempre una circunstancia agravante en el derecho penal francés.',
+        question: '¿He obtenido imágenes íntimas de alguien por medios indirectos? Si es así, ¿mido los riesgos legales vinculados a su sola posesión?',
+      },
+      3: {
+        titre: 'Hacer retirar una imagen',
+        definition: 'Existen procedimientos para hacer retirar rápidamente una imagen íntima compartida sin acuerdo en las plataformas en línea.',
+        consentement: 'La mayoría de las plataformas (Instagram, Twitter/X, Snapchat, OnlyFans) tienen un procedimiento de denuncia acelerada para los contenidos íntimos no consentidos. Estos procedimientos pueden resolverse en menos de 24h.',
+        loi: 'En Francia, la CNIL puede intervenir si una plataforma no reacciona. El portal cybermalveillance.gouv.fr ayuda a elaborar el expediente e iniciar los trámites oficiales.',
+        question: '¿Conozco los procedimientos de urgencia de las plataformas para denunciar y hacer retirar contenido íntimo no consentido?',
+      },
+      4: {
+        titre: 'Cybermalveillance.gouv.fr',
+        definition: 'El portal gubernamental de referencia para las víctimas de violencia digital, incluidas las imágenes íntimas compartidas sin acuerdo.',
+        consentement: 'Este portal ofrece ayuda concreta: hacer retirar contenido, identificar los recursos judiciales, ser orientado hacia asociaciones especializadas. Disponible 24h/24, de forma anónima, sin obligación de denunciar.',
+        loi: 'La denuncia en este portal deja un rastro oficial utilizable ante la justicia. Puede acelerar la cooperación de las plataformas y desencadenar investigaciones judiciales en los casos graves.',
+        question: '¿Sé que puedo obtener ayuda concreta y anónima en cybermalveillance.gouv.fr sin tener que denunciar inmediatamente?',
+      },
+      5: {
+        titre: 'No contactar directamente al autor',
+        definition: 'Por qué contactar uno mismo al autor de una difusión no consentida puede agravar la situación.',
+        consentement: 'Amenazar con denunciar para tratar de recuperar imágenes puede agravar la situación si el autor difunde más como represalia. Actuar a través de las plataformas y las autoridades es más eficaz y ofrece mejor protección.',
+        loi: 'Al contactar directamente al autor, la víctima se arriesga a proporcionar elementos adicionales (nuevos mensajes, números) que pueden ser utilizados. Las autoridades disponen de herramientas jurídicas que la víctima sola no tiene.',
+        question: 'Si soy víctima, ¿sé que es mejor actuar a través de las plataformas y las autoridades en lugar de contactar directamente al autor?',
+      },
+    },
+  },
+};

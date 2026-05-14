@@ -1,0 +1,55 @@
+export const zonesGrises = {
+  zonesGrises: {
+    fiches: {
+      title: 'Zonas grises',
+      subtitle: 'Las situaciones donde la respuesta no es evidente.',
+      sectionDef: 'La situación',
+      sectionConsent: 'La respuesta correcta',
+      sectionLoi: 'El contexto legal',
+      sectionQuestion: 'Pregunta que retener',
+      markRead: 'Lo he leído — Ver mi carta',
+      0: {
+        titre: 'Cuando los dos han bebido',
+        definition: 'Los dos habéis bebido. Los dos parecéis de acuerdo. ¿El alcohol nubla realmente el consentimiento en estos casos?',
+        consentement: 'Esperar a estar sobrio para tomar esta decisión — o al menos verificarlo sobriamente — es la única opción responsable. Aplazarlo para más tarde siempre es válido. Dos personas ebrias pueden ambas ser incapaces de consentir válidamente.',
+        loi: '"Los dos estábamos igual" no resuelve el problema — lo dobla. La particular vulnerabilidad vinculada a la embriaguez es una circunstancia agravante reconocida (art. 222-22-1 CP), sea cual sea la situación de ambas partes.',
+        question: '¿Estoy en condición de decidir libremente y claramente en este momento preciso, o debería aplazar esta decisión?',
+      },
+      1: {
+        titre: 'Costumbre y cambio de opinión',
+        definition: 'Ya has dicho sí a esta práctica con esta persona, pero esta noche no tienes ganas. ¿Es "injusto" decir no ahora?',
+        consentement: 'El consentimiento nunca se adquiere por costumbre. Cada situación es una nueva decisión. Decir no esta noche después de haber dicho sí otras veces es perfectamente legítimo — sin explicación necesaria.',
+        loi: 'En derecho, ninguna costumbre crea obligación de consentimiento futuro. El consentimiento implícito vinculado a una relación o una práctica habitual es regularmente contestado y rechazado por los tribunales.',
+        question: '¿Mi "no" esta noche se respeta del mismo modo que si fuera la primera vez?',
+      },
+      2: {
+        titre: '"Como quieras"',
+        definition: 'El otro dice "como quieras" con tono neutro. ¿Es un consentimiento suficiente para continuar?',
+        consentement: '"Como quieras" señala a menudo una ausencia de ganas, no una ausencia de objeción. La diferencia entre "sin negativa" y "ganas reales" está en el corazón del consentimiento entusiasta. Detenerse y hacer la pregunta directamente es la respuesta correcta.',
+        loi: 'El estándar legal del consentimiento exige un acuerdo libre e inequívoco. "Como quieras" es ambiguo y no constituye un acuerdo claro. En caso de litigio, esta ambigüedad se vuelve contra quien actuó.',
+        question: '¿Busco un "sí" claro y entusiasta, o me conformo con una ausencia de objeción?',
+      },
+      3: {
+        titre: 'Darse cuenta después',
+        definition: 'Te das cuenta después de que el otro quizás no estaba realmente cómodo durante lo que pasó.',
+        consentement: 'Verificar con el otro, aunque sea incómodo, puede cambiar mucho las cosas para él o ella. "¿Estabas realmente bien la otra noche?" es una pregunta que muestra que te tomas las cosas en serio.',
+        loi: 'Reabrir la conversación después no es una auto-incriminación — es responsabilidad. También puede ayudar a aclarar una situación ambigua y evitar que se repita.',
+        question: '¿Me atreví a hacer la pregunta después, aunque la respuesta pudiera ser incómoda?',
+      },
+      4: {
+        titre: 'Lágrimas después del acto',
+        definition: 'La persona no dijo no, pero lloró después. ¿Qué significa esta reacción?',
+        consentement: 'Las lágrimas después de una relación pueden significar muchas cosas, incluida una angustia real. No dramatizar ≠ ignorar. Cuidar al otro y preguntar cómo está es siempre la respuesta correcta.',
+        loi: 'El llanto post-relación es una señal seria que hay que tener en cuenta, no minimizar. Si la angustia real se ignora y los actos se repiten, esto puede agravar la calificación legal de una situación ya problemática.',
+        question: '¿Me tomé el tiempo de verificar cómo estaba el otro después del acto, sin minimizar sus emociones?',
+      },
+      5: {
+        titre: 'Cambiar de opinión sin decirlo',
+        definition: 'Los dos estabais de acuerdo al principio, pero uno de vosotros cambió de opinión en el camino sin decirlo — por miedo, disociación o incomodidad.',
+        consentement: 'Ambas dimensiones cuentan sin culpabilizar a nadie: uno puede tener dificultad para hablar (disociación, miedo al conflicto), el otro puede no haber verificado regularmente. La comunicación es una responsabilidad compartida.',
+        loi: 'La disociación o la paralización (estado de shock) pueden impedir a alguien expresar una retirada del consentimiento. Este bloqueo fisiológico no significa que el acto fuera consentido. La ley reconoce este estado.',
+        question: '¿Verifico regularmente que el otro sigue cómodo durante el acto, sin esperar una señal de rechazo?',
+      },
+    },
+  },
+};
