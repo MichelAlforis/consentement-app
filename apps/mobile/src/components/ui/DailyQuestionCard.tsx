@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { MotiView } from 'moti';
 import { MessageCircle, ArrowRight } from 'lucide-react-native';
 import { useMemo } from 'react';
@@ -53,7 +53,7 @@ export function DailyQuestionCard({ onPress, delay = 0 }: DailyQuestionCardProps
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   card: {
     borderRadius: 16,
     padding: 16,
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     marginTop: 2,
   },
-});
+} as const;

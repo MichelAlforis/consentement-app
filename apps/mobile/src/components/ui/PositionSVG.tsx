@@ -1,18 +1,12 @@
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { Svg, Path, Circle, Ellipse, G, Line } from 'react-native-svg';
+import type { PositionKey as CorePK } from '@ouiclair/core';
 
 // Pictogrammes SVG minimalistes pour les cartes Deck B.
+// API divergence vs V3 : positionKey/color (RN) au lieu de position/className (web). Documenté Phase 3.
 
-export type PositionKey =
-  | 'missionnaire' | 'levrette' | 'cuillere' | 'cowgirl' | 'andromaque'
-  | 'papillon' | 'equerre' | '69' | 'debout' | 'cowgirl-inv'
-  | 'lotus' | 'amazone' | 'balancier' | 'mur' | 'jambes-epaules'
-  | 'cuillere-jambe' | 'assis-face' | 'vague' | 'chaise-longue' | 'arc'
-  | 'oral' | 'anal' | 'sextoy' | 'bondage-leger'
-  | 'creation' | 'premiers' | 'miroir' | 'marathon' | 'intention';
-
-interface PositionSVGProps {
-  positionKey: PositionKey;
+export interface PositionSVGProps {
+  positionKey: CorePK;
   size?: number;
   color?: string;
 }
@@ -397,7 +391,7 @@ const intention = (
 
 // ── Registre complet ──────────────────────────────────────────────────────────
 
-const POSITIONS: Record<PositionKey, ReactElement> = {
+const POSITIONS: Record<string, ReactElement> = {
   missionnaire,
   levrette,
   cuillere,

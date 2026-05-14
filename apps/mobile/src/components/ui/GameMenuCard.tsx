@@ -96,7 +96,7 @@ export function GameMenuCard({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -180,4 +180,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
-});
+} as const;

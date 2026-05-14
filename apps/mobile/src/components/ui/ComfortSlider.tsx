@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import { useTheme } from '../../theme/ThemeContext';
 import { useTranslation } from '../../i18n';
@@ -26,8 +26,8 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
   const currentColor = colors[currentIndex] ?? theme.colors.accent;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.track}>
+    <View className="py-2">
+      <View className="flex-row gap-1.5">
         {LEVEL_KEYS.map((level, index) => {
           const active = currentIndex >= index;
           const selected = currentIndex === index;
@@ -40,7 +40,7 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
               accessibilityState={{ disabled, selected }}
               disabled={disabled}
               onPress={() => onChange(index)}
-              style={styles.segmentPressable}
+              className="flex-1"
             >
               {({ pressed }) => (
                 <MotiView
@@ -50,7 +50,7 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
                     backgroundColor,
                   }}
                   transition={{ type: 'timing', duration: 180 }}
-                  style={styles.segment}
+                  className="h-11 items-center justify-center overflow-hidden rounded-xl"
                 >
                   {selected ? (
                     <MotiView
@@ -58,7 +58,7 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: 'spring', damping: 14, stiffness: 220 }}
                     >
-                      <Text style={styles.iconText}>{LEVEL_ICONS[index]}</Text>
+                      <Text className="text-xs font-extrabold text-white">{LEVEL_ICONS[index]}</Text>
                     </MotiView>
                   ) : null}
                 </MotiView>
@@ -68,15 +68,13 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
         })}
       </View>
 
-      <MotiView animate={{ opacity: 1 }} style={styles.labelRow}>
+      <MotiView animate={{ opacity: 1 }} className="mt-2 items-end">
         <Text
-          style={[
-            styles.label,
-            {
-              color: currentColor,
-              backgroundColor: `${currentColor}20`,
-            },
-          ]}
+          className="overflow-hidden rounded-full px-2 py-1 text-xs font-semibold"
+          style={{
+            color: currentColor,
+            backgroundColor: `${currentColor}20`,
+          }}
         >
           {t(`levels.${currentIndex}`)}
         </Text>
@@ -84,40 +82,3 @@ export function ComfortSlider({ value = 0, onChange, disabled = false }: Comfort
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 8,
-  },
-  track: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  segmentPressable: {
-    flex: 1,
-  },
-  segment: {
-    height: 44,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  iconText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  labelRow: {
-    alignItems: 'flex-end',
-    marginTop: 8,
-  },
-  label: {
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: '600',
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-});

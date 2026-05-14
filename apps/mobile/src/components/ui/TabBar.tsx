@@ -60,7 +60,7 @@ export function TabBar() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flexDirection: 'row',
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
     height: 2,
     borderRadius: 1,
   },
-});
+} as const;

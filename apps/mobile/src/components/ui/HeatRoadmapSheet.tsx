@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { MotiView } from 'moti';
 import { HEAT_THRESHOLDS, type HeatLevel } from '@ouiclair/core';
@@ -42,23 +42,32 @@ export function HeatRoadmapSheet({ currentLevel, currentPoints, onClose }: HeatR
 
   return (
     <Modal transparent visible animationType="none" onRequestClose={onClose}>
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <BlurView intensity={10} tint="dark" style={StyleSheet.absoluteFill} />
+      <Pressable className="flex-1 justify-end bg-black/70 p-4 pb-10" onPress={onClose}>
+        <BlurView intensity={10} tint="dark" className="absolute inset-0" />
         <MotiView
           from={{ translateY: 80, opacity: 0, scale: 0.96 }}
           animate={{ translateY: 0, opacity: 1, scale: 1 }}
           transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-          style={[styles.sheet, { backgroundColor: theme.colors.bgCard, borderColor: theme.colors.border }]}
+          className="w-full max-w-[390px] self-center rounded-3xl border p-5"
+          style={{ backgroundColor: theme.colors.bgCard, borderColor: theme.colors.border }}
         >
           <Pressable>
-            <View style={styles.header}>
-              <Text style={[styles.title, { color: theme.colors.textPrimary }]}>{t('heat.roadmap.title')}</Text>
-              <Pressable onPress={onClose} style={[styles.closeButton, { backgroundColor: theme.colors.bgSecondary }]}>
-                <Text style={[styles.closeText, { color: theme.colors.textMuted }]}>X</Text>
+            <View className="mb-5 flex-row items-center justify-between">
+              <Text className="flex-1 text-base font-bold" style={{ color: theme.colors.textPrimary }}>
+                {t('heat.roadmap.title')}
+              </Text>
+              <Pressable
+                onPress={onClose}
+                className="h-7 w-7 items-center justify-center rounded-full"
+                style={{ backgroundColor: theme.colors.bgSecondary }}
+              >
+                <Text className="text-[13px] font-bold" style={{ color: theme.colors.textMuted }}>
+                  X
+                </Text>
               </Pressable>
             </View>
 
-            <View style={styles.levels}>
+            <View className="gap-2">
               {LEVELS.map((level) => {
                 const isCurrent = level === currentLevel;
                 const isUnlocked = level < currentLevel;
@@ -72,42 +81,41 @@ export function HeatRoadmapSheet({ currentLevel, currentPoints, onClose }: HeatR
                     from={{ opacity: 0, translateX: -8 }}
                     animate={{ opacity: isLocked ? 0.5 : 1, translateX: 0 }}
                     transition={{ type: 'timing', delay: (level - 1) * 50, duration: 220 }}
-                    style={[
-                      styles.levelRow,
-                      {
-                        backgroundColor: isCurrent ? `${color}18` : theme.colors.bgSecondary,
-                        borderColor: isCurrent ? `${color}50` : 'transparent',
-                      },
-                    ]}
+                    className="flex-row items-center gap-3 rounded-2xl border p-3"
+                    style={{
+                      backgroundColor: isCurrent ? `${color}18` : theme.colors.bgSecondary,
+                      borderColor: isCurrent ? `${color}50` : 'transparent',
+                    }}
                   >
-                    <View style={[styles.indicator, { backgroundColor: isLocked ? theme.colors.border : color }]}>
-                      <Text style={[styles.indicatorText, { color: isLocked ? theme.colors.textMuted : '#fff' }]}>
+                    <View
+                      className="h-8 w-8 items-center justify-center rounded-full"
+                      style={{ backgroundColor: isLocked ? theme.colors.border : color }}
+                    >
+                      <Text className="text-xs font-extrabold" style={{ color: isLocked ? theme.colors.textMuted : '#fff' }}>
                         {isUnlocked ? '✓' : isLocked ? 'L' : level}
                       </Text>
                     </View>
 
-                    <View style={styles.levelContent}>
-                      <View style={styles.levelTitleRow}>
+                    <View className="min-w-0 flex-1">
+                      <View className="mb-0.5 flex-row flex-wrap items-center gap-2">
                         <Text
-                          style={[
-                            styles.levelTitle,
-                            { color: isLocked ? theme.colors.textMuted : theme.colors.textPrimary },
-                          ]}
+                          className="text-sm font-bold"
+                          style={{ color: isLocked ? theme.colors.textMuted : theme.colors.textPrimary }}
                         >
                           {t(LEVEL_NAME_KEYS[level])}
                         </Text>
                         {isCurrent ? (
-                          <Text style={[styles.currentBadge, { backgroundColor: color }]}>
+                          <Text className="overflow-hidden rounded-full px-1.5 py-0.5 text-[10px] font-extrabold text-white" style={{ backgroundColor: color }}>
                             {t('heat.roadmap.current')}
                           </Text>
                         ) : null}
                         {isUnlocked ? (
-                          <Text style={[styles.unlocked, { color: theme.colors.textMuted }]}>
+                          <Text className="text-[10px]" style={{ color: theme.colors.textMuted }}>
                             {t('heat.roadmap.unlocked')}
                           </Text>
                         ) : null}
                       </View>
-                      <Text style={[styles.description, { color: theme.colors.textMuted }]}>
+                      <Text className="text-xs leading-[17px]" style={{ color: theme.colors.textMuted }}>
                         {level === 1
                           ? `${t('heat.roadmap.start')} · ${t(LEVEL_DESC_KEYS[level])}`
                           : `${t('heat.roadmap.pts')} ${threshold} · ${t(LEVEL_DESC_KEYS[level])}`}
@@ -118,12 +126,14 @@ export function HeatRoadmapSheet({ currentLevel, currentPoints, onClose }: HeatR
               })}
             </View>
 
-            <View style={[styles.footer, { borderTopColor: theme.colors.divider }]}>
-              <Text style={[styles.footerText, { color: theme.colors.textMuted }]}>
+            <View className="mt-4 flex-row items-center justify-between border-t pt-4" style={{ borderTopColor: theme.colors.divider }}>
+              <Text className="text-xs" style={{ color: theme.colors.textMuted }}>
                 {t('heat.roadmap.accumulated')} {currentPoints}
               </Text>
               {currentLevel === 5 ? (
-                <Text style={[styles.maxText, { color: levelColors[5] }]}>{t('heat.roadmap.max')}</Text>
+                <Text className="text-xs font-bold" style={{ color: levelColors[5] }}>
+                  {t('heat.roadmap.max')}
+                </Text>
               ) : null}
             </View>
           </Pressable>
@@ -132,111 +142,3 @@ export function HeatRoadmapSheet({ currentLevel, currentPoints, onClose }: HeatR
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    padding: 16,
-    paddingBottom: 40,
-  },
-  sheet: {
-    width: '100%',
-    maxWidth: 390,
-    alignSelf: 'center',
-    borderRadius: 24,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  title: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  closeButton: {
-    alignItems: 'center',
-    borderRadius: 999,
-    height: 28,
-    justifyContent: 'center',
-    width: 28,
-  },
-  closeText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  levels: {
-    gap: 8,
-  },
-  levelRow: {
-    alignItems: 'center',
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    gap: 12,
-    padding: 12,
-  },
-  indicator: {
-    alignItems: 'center',
-    borderRadius: 999,
-    height: 32,
-    justifyContent: 'center',
-    width: 32,
-  },
-  indicatorText: {
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  levelContent: {
-    flex: 1,
-    minWidth: 0,
-  },
-  levelTitleRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 2,
-  },
-  levelTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  currentBadge: {
-    borderRadius: 999,
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '800',
-    overflow: 'hidden',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  unlocked: {
-    fontSize: 10,
-  },
-  description: {
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  footer: {
-    alignItems: 'center',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-    paddingTop: 16,
-  },
-  footerText: {
-    fontSize: 12,
-  },
-  maxText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-});

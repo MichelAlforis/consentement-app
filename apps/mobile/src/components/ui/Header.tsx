@@ -40,7 +40,7 @@ export function Header({ title, subtitle, showBack = false, onBack, theme }: Hea
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     paddingHorizontal: 20,
     paddingBottom: 16,
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
-});
+} as const;

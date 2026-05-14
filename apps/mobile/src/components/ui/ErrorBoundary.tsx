@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 
 interface Props {
   children: ReactNode;
@@ -45,7 +45,7 @@ function DefaultFallback({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     alignItems: 'center',
@@ -69,4 +69,4 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14,
   },
-});
+} as const;

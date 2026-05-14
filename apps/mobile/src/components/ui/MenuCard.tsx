@@ -1,5 +1,5 @@
 // V4 divergence: onClick (V3 web) renommé onPress (convention RN).
-import { View, Text, Pressable, StyleSheet, type ViewStyle } from 'react-native';
+import { View, Text, Pressable, type ViewStyle } from 'react-native';
 import { MotiView } from 'moti';
 import { ChevronRight } from 'lucide-react-native';
 import type { ReactNode } from 'react';
@@ -84,7 +84,7 @@ export function MenuCard({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   card: {
     borderRadius: 24,
     padding: 20,
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
-});
+} as const;

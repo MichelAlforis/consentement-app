@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { MotiView, AnimatePresence } from 'moti';
 import { CheckCircle, XCircle, Info } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -59,7 +59,7 @@ export function Toast() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     position: 'absolute',
     left: 16,
@@ -100,4 +100,4 @@ const styles = StyleSheet.create({
     height: 2,
     transformOrigin: 'left',
   },
-});
+} as const;

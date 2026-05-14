@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { MotiView } from 'moti';
 import { useTheme } from '../../theme/ThemeContext';
@@ -14,43 +14,53 @@ export function LegalCredentialSheet({ onClose }: LegalCredentialSheetProps) {
 
   return (
     <Modal transparent visible animationType="none" onRequestClose={onClose}>
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <BlurView intensity={10} tint="dark" style={StyleSheet.absoluteFill} />
+      <Pressable className="flex-1 justify-end bg-black/70 p-4 pb-10" onPress={onClose}>
+        <BlurView intensity={10} tint="dark" className="absolute inset-0" />
         <MotiView
           from={{ translateY: 80, opacity: 0, scale: 0.96 }}
           animate={{ translateY: 0, opacity: 1, scale: 1 }}
           transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-          style={[styles.sheet, { backgroundColor: theme.colors.bgCard, borderColor: theme.colors.border }]}
+          className="w-full max-w-[390px] self-center rounded-3xl border p-5"
+          style={{ backgroundColor: theme.colors.bgCard, borderColor: theme.colors.border }}
         >
           <Pressable>
-            <View style={styles.header}>
-              <Text style={[styles.title, { color: theme.colors.textPrimary }]}>{t('welcome.legalSheet.title')}</Text>
+            <View className="mb-5 flex-row items-center justify-between">
+              <Text className="flex-1 text-base font-bold" style={{ color: theme.colors.textPrimary }}>
+                {t('welcome.legalSheet.title')}
+              </Text>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t('welcome.legalSheet.close')}
                 onPress={onClose}
-                style={[styles.closeButton, { backgroundColor: theme.colors.bgSecondary }]}
+                className="h-7 w-7 items-center justify-center rounded-full"
+                style={{ backgroundColor: theme.colors.bgSecondary }}
               >
-                <Text style={[styles.closeText, { color: theme.colors.textMuted }]}>X</Text>
+                <Text className="text-[13px] font-bold" style={{ color: theme.colors.textMuted }}>
+                  X
+                </Text>
               </Pressable>
             </View>
 
-            <View style={[styles.profile, { backgroundColor: theme.colors.bgSecondary }]}>
-              <View style={[styles.badge, { backgroundColor: theme.colors.premium }]}>
-                <Text style={styles.badgeText}>§</Text>
+            <View className="mb-4 flex-row items-center gap-4 rounded-2xl p-4" style={{ backgroundColor: theme.colors.bgSecondary }}>
+              <View className="h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: theme.colors.premium }}>
+                <Text className="text-[22px] font-extrabold text-white">§</Text>
               </View>
-              <View style={styles.profileText}>
-                <Text style={[styles.profileTitle, { color: theme.colors.textPrimary }]}>
+              <View className="flex-1">
+                <Text className="text-sm font-bold" style={{ color: theme.colors.textPrimary }}>
                   {t('welcome.legalSheet.title')}
                 </Text>
-                <Text style={[styles.role, { color: theme.colors.textMuted }]}>{t('welcome.legalSheet.role')}</Text>
+                <Text className="mt-0.5 text-xs" style={{ color: theme.colors.textMuted }}>
+                  {t('welcome.legalSheet.role')}
+                </Text>
               </View>
             </View>
 
-            <Text style={[styles.bio, { color: theme.colors.textSecondary }]}>{t('welcome.legalSheet.bio')}</Text>
+            <Text className="mb-5 text-sm leading-[21px]" style={{ color: theme.colors.textSecondary }}>
+              {t('welcome.legalSheet.bio')}
+            </Text>
 
-            <Pressable onPress={onClose} style={[styles.cta, { backgroundColor: theme.colors.premium }]}>
-              <Text style={styles.ctaText}>{t('welcome.legalSheet.close')}</Text>
+            <Pressable onPress={onClose} className="items-center rounded-2xl py-3.5" style={{ backgroundColor: theme.colors.premium }}>
+              <Text className="text-sm font-bold text-white">{t('welcome.legalSheet.close')}</Text>
             </Pressable>
           </Pressable>
         </MotiView>
@@ -58,89 +68,3 @@ export function LegalCredentialSheet({ onClose }: LegalCredentialSheetProps) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    padding: 16,
-    paddingBottom: 40,
-  },
-  sheet: {
-    width: '100%',
-    maxWidth: 390,
-    alignSelf: 'center',
-    borderRadius: 24,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  title: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  closeButton: {
-    alignItems: 'center',
-    borderRadius: 999,
-    height: 28,
-    justifyContent: 'center',
-    width: 28,
-  },
-  closeText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  profile: {
-    alignItems: 'center',
-    borderRadius: 16,
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 16,
-    padding: 16,
-  },
-  badge: {
-    alignItems: 'center',
-    borderRadius: 16,
-    height: 48,
-    justifyContent: 'center',
-    width: 48,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  profileText: {
-    flex: 1,
-  },
-  profileTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  role: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  bio: {
-    fontSize: 14,
-    lineHeight: 21,
-    marginBottom: 20,
-  },
-  cta: {
-    alignItems: 'center',
-    borderRadius: 16,
-    paddingVertical: 14,
-  },
-  ctaText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});

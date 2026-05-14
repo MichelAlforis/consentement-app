@@ -1,5 +1,5 @@
 interface AdBannerProps {
-  onGoPremium?: () => void;
+  onGoPremium: () => void;
 }
 
 export function AdBanner(_props: AdBannerProps) {

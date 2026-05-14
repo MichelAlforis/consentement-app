@@ -1,9 +1,10 @@
 import { type ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { MotiView } from 'moti';
 import { useTheme } from '../../theme/ThemeContext';
 
+// API divergence vs V3: blur/blurIntensity expose BlurView natif mobile.
 interface CardProps {
   children: ReactNode;
   onClick?: () => void;
@@ -21,8 +22,8 @@ interface CardProps {
     | 'danger';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   radius?: 'xl' | '2xl' | '3xl';
+  className?: string;
   delay?: number;
-  style?: ViewStyle;
   blur?: boolean;
   blurIntensity?: number;
 }
@@ -46,8 +47,8 @@ export function Card({
   variant = 'default',
   padding = 'md',
   radius = '2xl',
+  className = '',
   delay = 0,
-  style,
   blur = false,
   blurIntensity = 18,
 }: CardProps) {
@@ -60,20 +61,19 @@ export function Card({
       from={{ opacity: 0, translateY: 20 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ type: 'timing', delay: delay * 100, duration: 400 }}
+      className={`overflow-hidden border ${className}`}
       style={[
-        styles.card,
         cardStyle,
         {
           borderRadius,
           padding: PADDING[padding],
         },
-        style,
       ]}
     >
       {blur ? (
-        <BlurView intensity={blurIntensity} tint="dark" style={[StyleSheet.absoluteFill, { borderRadius }]} />
+        <BlurView intensity={blurIntensity} tint="dark" className="absolute inset-0" style={{ borderRadius }} />
       ) : null}
-      <View style={styles.content}>{children}</View>
+      <View className="relative">{children}</View>
     </MotiView>
   );
 
@@ -135,13 +135,3 @@ function getVariantStyle(
       return { backgroundColor: colors.bgCard, borderColor: colors.border };
   }
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
-  },
-  content: {
-    position: 'relative',
-  },
-});

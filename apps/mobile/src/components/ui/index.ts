@@ -19,3 +19,13 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { DailyQuestionCard } from './DailyQuestionCard';
 export { MenuCard } from './MenuCard';
 export { GameMenuCard } from './GameMenuCard';
+
+// Phase 3 Agent 2 — composants moyens + overlays
+export { CollectorCardFace, CardBack } from './CollectorCardFace';
+export { GrainOverlay, ShimmerLayer, PreviewShimmer } from './ThemeEffects';
+export { ExplicitModeToggle } from './ExplicitModeToggle';
+export { HeatThermometer } from './HeatThermometer';
+export { FlipRevealOverlay } from './FlipRevealOverlay';
+export { PalierUpOverlay } from './PalierUpOverlay';
+export { CardFullscreenOverlay } from './CardFullscreenOverlay';
+export type { CardFullscreenOverlayProps } from './CardFullscreenOverlay';
