@@ -41,16 +41,29 @@ export const screenMeta: Record<Screen, ScreenMeta> = {
   'jeu-cartes': {},
   'hall-of-cards': {},
   'module-de-base': {},
+  'pratiques-base': {},
+  'lexique-consent': {},
+  'scenarios-quotidiens': {},
   premium: {},
   'theme-select': {},
 
   // ── Fullscreen / onboarding (managed by fullscreenStack) ──────────────────
   onboarding: {},
-  language: {},
-  welcome: {},
-  'age-check': {},
-  auth: {},
-  'personal-intro': {},
+  language: {
+    legacy: { replacement: 'onboarding', reason: 'Écran autonome remplacé par le wizard onboarding canonique.' },
+  },
+  welcome: {
+    legacy: { replacement: 'onboarding', reason: 'Écran autonome remplacé par le wizard onboarding canonique.' },
+  },
+  'age-check': {
+    legacy: { replacement: 'onboarding', reason: 'Écran autonome remplacé par le wizard onboarding canonique.' },
+  },
+  auth: {
+    legacy: { replacement: 'onboarding', reason: 'Écran autonome remplacé par le wizard onboarding canonique.' },
+  },
+  'personal-intro': {
+    legacy: { replacement: 'onboarding', reason: 'Écran autonome remplacé par le wizard onboarding canonique.' },
+  },
 
   // ── Legacy routes ──────────────────────────────────────────────────────────
   learn: {

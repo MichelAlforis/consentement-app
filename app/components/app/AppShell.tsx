@@ -9,8 +9,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { logger } from '../../lib/logger';
 import { getPlatform, isCapacitor } from '../../lib/platform';
 import { isAdultApp } from '../../lib/appVariant';
-import { getRoute } from '../../routes';
 import { screenMeta } from '../../config/screenMeta';
+import { safeScreenForAccess } from '../../lib/accessControl';
 import {
   useAuthStore,
   useNavigationStore,
@@ -135,8 +135,9 @@ export function AppShell() {
       replaceWith(legacyReplacement);
       return;
     }
-    if (isAdult === false && getRoute(currentScreen).requiresAdult) {
-      replaceWith('home');
+    const safeScreen = safeScreenForAccess(currentScreen, { isAdult });
+    if (safeScreen !== currentScreen) {
+      replaceWith(safeScreen);
     }
   }, [currentScreen, isAdult, replaceWith]);
 

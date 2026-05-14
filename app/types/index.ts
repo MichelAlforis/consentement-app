@@ -39,7 +39,11 @@ export type Screen =
   | 'personal-intro'
   // Premium
   | 'premium'
-  | 'theme-select';
+  | 'theme-select'
+  // Modules formats avancés
+  | 'pratiques-base'
+  | 'lexique-consent'
+  | 'scenarios-quotidiens';
 
 export type Language = 'fr' | 'en' | 'es';
 

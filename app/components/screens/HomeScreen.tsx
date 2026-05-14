@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Lock, GalleryHorizontal, ChevronRight, BookOpen, ArrowRight, Star, Sparkles, Users } from 'lucide-react';
-import { AppLogo } from '../ui';
+import { AppLogo, IconBox } from '../ui';
 import { ExplicitModeToggle } from '../ui/ExplicitModeToggle';
 import { HeatThermometer } from '../ui/HeatThermometer';
 import { Screen } from '../../types';
@@ -90,10 +90,9 @@ function CollectionButton({ ownedCount, onNavigate }: { ownedCount: number; onNa
       className="w-full rounded-2xl p-3.5 flex items-center gap-3 text-left"
       style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
     >
-      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-        style={{ background: colors.bgSecondary }}>
+      <IconBox size="sm" style={{ background: colors.bgSecondary }}>
         <GalleryHorizontal size={18} style={{ color: colors.accent }} />
-      </div>
+      </IconBox>
       <div className="flex-1 min-w-0">
         <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
           {t('homeAdult.collection.title')}
@@ -125,10 +124,9 @@ function HeatGatedExplicitMode({ delay }: { delay: number }) {
       className="flex items-center gap-3 p-3.5 rounded-2xl"
       style={{ background: colors.bgCard, border: `1px solid ${colors.border}`, opacity: 0.65 }}
     >
-      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-        style={{ background: '#ef444412' }}>
+      <IconBox size="sm" style={{ background: '#ef444412' }}>
         <span style={{ fontSize: 18 }}>🔒</span>
-      </div>
+      </IconBox>
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
           {t('settings.explicit.title')}
@@ -194,9 +192,9 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         className="w-full rounded-3xl p-5 mb-3 flex items-center gap-4"
         style={{ background: colors.accentGradient }}
       >
-        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+        <IconBox size="xl" rounded="2xl" className="bg-white/20">
           <BookOpen size={24} className="text-white" />
-        </div>
+        </IconBox>
         <div className="flex-1 text-left">
           <span className="font-bold text-base text-white block mb-0.5">
             {isAdult ? t('homeV3.discovery.ctaAdult') : t('homeV3.discovery.ctaMinor')}
@@ -216,10 +214,9 @@ function DiscoveryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         className="rounded-2xl p-4 flex items-center gap-3"
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-          style={{ background: colors.bgSecondary }}>
+        <IconBox style={{ background: colors.bgSecondary }}>
           <Lock size={18} style={{ color: colors.textMuted }} />
-        </div>
+        </IconBox>
         <div className="flex-1 min-w-0">
           <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
             {t('homeV3.discovery.fomoTitle')}
@@ -306,10 +303,9 @@ function LearningHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
             border: `1px solid ${colors.accent}40`,
           }}
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: colors.accentGradient }}>
+          <IconBox style={{ background: colors.accentGradient }}>
             <Star size={18} className="text-white" />
-          </div>
+          </IconBox>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
               style={{ color: colors.accent }}>{t('homeV3.learning.nextModuleLabel')}</p>
@@ -365,10 +361,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
         style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
       >
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: colors.accentGradient }}>
+          <IconBox style={{ background: colors.accentGradient }}>
             <GalleryHorizontal size={18} className="text-white" />
-          </div>
+          </IconBox>
           <div>
             <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
               {ownedCards.length === 1
@@ -401,10 +396,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
             border: '1px solid rgba(236,72,153,0.25)',
           }}
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
+          <IconBox style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}>
             <Users size={18} className="text-white" />
-          </div>
+          </IconBox>
           <div className="flex-1 min-w-0">
             <span className="font-semibold text-sm block" style={{ color: colors.textPrimary }}>
               {t('homeV3.mastery.duoTitle')}
@@ -428,10 +422,9 @@ function MasteryHome({ isAdult, userName, onNavigate }: HomeScreenProps) {
           className="w-full rounded-2xl p-3.5 mb-3 flex items-center gap-3 text-left"
           style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
         >
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: colors.bgSecondary }}>
+          <IconBox size="sm" style={{ background: colors.bgSecondary }}>
             <Sparkles size={16} style={{ color: colors.accent }} />
-          </div>
+          </IconBox>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-wide mb-0.5"
               style={{ color: colors.accent }}>{t('homeV3.mastery.goFurther')}</p>

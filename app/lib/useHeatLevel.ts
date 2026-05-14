@@ -5,14 +5,20 @@ import { useModuleProgressStore } from '../stores/moduleProgressStore';
 import { useUnlockStore } from '../stores/unlockStore';
 import { useProfileStore } from '../stores/profileStore';
 import { useAuthStore } from '../stores/authStore';
+import { useLexiqueStore } from '../stores/lexiqueStore';
 import {
   computeHeatBreakdown,
-  computeHeatPoints,
   getHeatLevel,
   heatLevelProgress,
   pointsToNextLevel,
 } from './heatLevel';
 import type { HeatBreakdown, HeatLevel } from './heatLevel';
+
+export interface HeatProfileDetails {
+  comfortFilled: number; // 0–3
+  safewordSet: boolean;
+  pronounsSet: boolean;
+}
 
 export interface HeatState {
   points: number;
@@ -23,6 +29,8 @@ export interface HeatState {
   toNext: number | null;
   /** Détail des sources de points */
   breakdown: HeatBreakdown;
+  /** Statut brut des champs profil — pour les nudges sans re-lire les stores */
+  profileDetails: HeatProfileDetails;
 }
 
 export function useHeatLevel(): HeatState {
@@ -31,18 +39,27 @@ export function useHeatLevel(): HeatState {
   const sessionCount = useUnlockStore((s) => s.sessionCount);
   const personalProfile = useProfileStore((s) => s.personalProfile);
   const pronouns = useAuthStore((s) => s.pronouns);
+  const lexiqueWords = useLexiqueStore((s) => s.unlockedIds.length);
 
-  const profileComfortCategories = useMemo(() => {
-    const { tenderness, intensity, trust } = personalProfile;
-    return [tenderness, intensity, trust].filter((cat) => Object.keys(cat).length > 0).length;
-  }, [personalProfile]);
-
-  const safewordDefined = personalProfile.safeword.trim() !== '';
-  const pronounsDefined = pronouns !== null && pronouns.trim() !== '';
+  // Toutes les dérivations profil dans un seul useMemo — zéro recalcul parasite
+  const profileDetails = useMemo<HeatProfileDetails>(() => {
+    const { tenderness, intensity, trust, safeword } = personalProfile;
+    return {
+      comfortFilled: [tenderness, intensity, trust]
+        .filter((cat) => Object.keys(cat).length > 0).length,
+      safewordSet: safeword.trim() !== '',
+      pronounsSet: pronouns !== null && pronouns.trim() !== '',
+    };
+  }, [personalProfile, pronouns]);
 
   const input = useMemo(
-    () => ({ completedModules, ownedCards, sessionCount, profileComfortCategories, safewordDefined, pronounsDefined }),
-    [completedModules, ownedCards, sessionCount, profileComfortCategories, safewordDefined, pronounsDefined]
+    () => ({
+      completedModules, ownedCards, sessionCount, lexiqueWords,
+      profileComfortCategories: profileDetails.comfortFilled,
+      safewordDefined: profileDetails.safewordSet,
+      pronounsDefined: profileDetails.pronounsSet,
+    }),
+    [completedModules, ownedCards, sessionCount, profileDetails, lexiqueWords]
   );
 
   const breakdown = useMemo(() => computeHeatBreakdown(input), [input]);
@@ -54,5 +71,6 @@ export function useHeatLevel(): HeatState {
     progress: heatLevelProgress(points),
     toNext: pointsToNextLevel(points),
     breakdown,
-  }), [points, breakdown]);
+    profileDetails,
+  }), [points, breakdown, profileDetails]);
 }

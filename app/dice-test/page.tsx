@@ -58,6 +58,8 @@ export default function DiceTestPage() {
     setTimeout(() => { cat.roll(); num.roll(); }, 300);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (process.env.NODE_ENV !== 'development') return null;
+
   return (
     <div style={{
       minHeight: '100dvh',

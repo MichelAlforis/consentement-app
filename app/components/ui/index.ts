@@ -13,3 +13,4 @@ export { AppLogo } from './AppLogo';
 export type { LogoVariant } from './AppLogo';
 export { HeatThermometer } from './HeatThermometer';
 export { PalierUpOverlay } from './PalierUpOverlay';
+export { IconBox } from './IconBox';

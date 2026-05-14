@@ -32,6 +32,9 @@ export const GooseGameScreen = lazy(() => import('./components/screens/GooseGame
 export const CardGameScreen = lazy(() => import('./components/screens/CardGame').then(m => ({ default: m.CardGameScreen })));
 export const HallOfCardsScreen = lazy(() => import('./components/screens/HallOfCardsScreen').then(m => ({ default: m.HallOfCardsScreen })));
 export const ModuleDeBaseScreen = lazy(() => import('./components/screens/ModuleDeBaseScreen').then(m => ({ default: m.ModuleDeBaseScreen })));
+export const FichePratiqueScreen = lazy(() => import('./components/screens/FichePratiqueScreen').then(m => ({ default: m.FichePratiqueScreen })));
+export const LexiqueScreen = lazy(() => import('./components/screens/LexiqueScreen').then(m => ({ default: m.LexiqueScreen })));
+export const ScenarioScreen = lazy(() => import('./components/screens/ScenarioScreen').then(m => ({ default: m.ScenarioScreen })));
 export const OnboardingWizard = lazy(() => import('./components/screens/OnboardingWizard').then(m => ({ default: m.OnboardingWizard })));
 export const ThemeSelectScreen = lazy(() => import('./components/screens/ThemeSelectScreen').then(m => ({ default: m.ThemeSelectScreen })));
 export const PremiumScreen = lazy(() => import('./components/screens/PremiumScreen').then(m => ({ default: m.PremiumScreen })));
@@ -85,6 +88,9 @@ export const ROUTES = {
   apprendre: baseRoute(ApprendreScreen, { titleKey: 'tabs.learn' }),
   moi: baseRoute(MoiScreen, { titleKey: 'tabs.me' }),
   'module-de-base': baseRoute(ModuleDeBaseScreen),
+  'pratiques-base': baseRoute(FichePratiqueScreen, { titleKey: 'apprendre.pratiquesBase.title', requiresAdult: true, showAd: true }),
+  'lexique-consent': baseRoute(LexiqueScreen, { titleKey: 'apprendre.lexique.title', showAd: true }),
+  'scenarios-quotidiens': baseRoute(ScenarioScreen, { titleKey: 'apprendre.scenariosQuotidiens.title', showAd: true }),
   language: baseRoute(LanguageScreen),
   onboarding: baseRoute(OnboardingWizard),
   'personal-intro': baseRoute(PersonalIntroScreen),

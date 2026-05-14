@@ -35,7 +35,13 @@ import {
   MoiScreen,
   LanguageScreen,
   PersonalIntroScreen,
+  FichePratiqueScreen,
+  ScenarioScreen,
+  LexiqueScreen,
 } from '../../routes';
+import { pratiquesBaseItems } from '../../data/pratiquesBase';
+import { lexiqueConsentEntries } from '../../data/lexiqueConsent';
+import { scenariosQuotidiensItems } from '../../data/scenariosQuotidiens';
 import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
 
@@ -204,6 +210,33 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
 
   'module-de-base': (ctx) =>
     <ModuleDeBaseScreen isAdult={ctx.isAdult} onNavigate={ctx.navigateTo} />,
+
+  'pratiques-base': (ctx) => (
+    <FichePratiqueScreen
+      namespace="pratiquesBase"
+      items={pratiquesBaseItems}
+      moduleId="pratiques-base"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'lexique-consent': (ctx) => (
+    <LexiqueScreen
+      namespace="lexiqueConsent"
+      entries={lexiqueConsentEntries}
+      moduleId="lexique-consent"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'scenarios-quotidiens': (ctx) => (
+    <ScenarioScreen
+      namespace="scenariosQuotidiens"
+      scenarios={scenariosQuotidiensItems}
+      moduleId="scenarios-quotidiens"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
 
   premium: (ctx) => (
     <PremiumScreen

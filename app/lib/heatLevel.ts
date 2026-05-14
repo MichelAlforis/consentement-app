@@ -105,7 +105,8 @@ export function computeHeatBreakdown(input: HeatInput): HeatBreakdown {
   const profile =
     (input.profileComfortCategories ?? 0) +
     (input.safewordDefined ? 3 : 0) +
-    (input.pronounsDefined ? 2 : 0);
+    (input.pronounsDefined ? 2 : 0) +
+    (input.lexiqueWords ?? 0);
 
   return { modules, cards, sessions, profile };
 }

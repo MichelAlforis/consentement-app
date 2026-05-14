@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, X } from 'lucide-react';
 import { useSettingsStore } from '../../stores/settingsStore';
+import { useAuthStore } from '../../stores/authStore';
 import { useTranslation } from '../../i18n';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeat } from '../../context/HeatContext';
-import { isHeatUnlocked } from '../../lib/heatGate';
+import { canAccessFeature } from '../../lib/accessControl';
 
 const EXPLICIT_RED = '#ef4444';
 
@@ -42,8 +43,9 @@ export function ExplicitModeToggle({ pillOnly = false, delay = 0 }: ExplicitMode
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const isAdult = useAuthStore((s) => s.isAdult);
   const { level } = useHeat();
-  const locked = !isHeatUnlocked('explicit', level);
+  const locked = !canAccessFeature('explicit', { isAdult, heatLevel: level });
 
   const handleToggle = () => {
     if (locked && !explicitMode) return;

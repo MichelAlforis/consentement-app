@@ -13,7 +13,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useHaptics } from '../../game-engine/shared/useHaptics';
 import { AppLogo } from '../ui/AppLogo';
-import { Button, Card } from '../ui';
+import { Button, Card, IconBox } from '../ui';
 import { themes, type ThemeMode } from '../../types/theme';
 import type { Language, Screen } from '../../types';
 
@@ -101,9 +101,9 @@ function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
       <div className="space-y-3">
         <Card onClick={() => { vibrate('light'); onSetAge(false); onSelectTheme('youth'); onNext(); }} variant="elevated" delay={1}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center shrink-0">
+            <IconBox size="xl" rounded="2xl" className="bg-gradient-to-br from-green-100 to-emerald-200">
               <Sprout size={24} className="text-emerald-600" />
-            </div>
+            </IconBox>
             <div>
               <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.minor.title')}</h3>
               <p className="text-sm mt-0.5" style={{ color: colors.textMuted }}>{t('ageCheck.minor.desc')}</p>
@@ -112,9 +112,9 @@ function WelcomeAgeStep({ onNext, onSetAge, onSelectTheme }: StepProps & {
         </Card>
         <Card onClick={() => { vibrate('light'); onSetAge(true); onNext(); }} variant="elevated" delay={2}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-200 flex items-center justify-center shrink-0">
+            <IconBox size="xl" rounded="2xl" className="bg-gradient-to-br from-violet-100 to-purple-200">
               <TreeDeciduous size={24} className="text-purple-600" />
-            </div>
+            </IconBox>
             <div>
               <h3 className="font-semibold" style={{ color: colors.textPrimary }}>{t('ageCheck.adult.title')}</h3>
               <p className="text-sm mt-0.5" style={{ color: colors.textMuted }}>{t('ageCheck.adult.desc')}</p>
@@ -179,20 +179,20 @@ function ThemeSelectStep({ onNext, onSelectTheme, isAdult, isPremium, onGoPremiu
               initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }} whileTap={{ scale: 0.98 }}
               onClick={() => { vibrate('light'); onSelectTheme(mode); onNext(); }}
-              className="relative overflow-hidden rounded-3xl p-5 text-left w-full"
+              className="relative overflow-hidden rounded-2xl p-4 text-left w-full"
               style={{
                 background: themeGradients[mode],
-                boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.07)',
                 outline: isSelected ? `2px solid ${theme.colors.accent}` : '2px solid transparent',
                 outlineOffset: '2px',
               }}>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden grid grid-cols-2 gap-px p-px shrink-0"
+                <IconBox size="xl" rounded="2xl" className="overflow-hidden grid grid-cols-2 gap-px p-px"
                   style={{ background: theme.colors.accentGradient }}>
                   {themePreviewColors[mode].map((c) => (
                     <div key={c} className="rounded-[3px]" style={{ backgroundColor: c }} />
                   ))}
-                </div>
+                </IconBox>
                 <div className="flex-1">
                   <h3 className="font-bold text-base" style={{ color: theme.colors.textPrimary }}>{theme.name}</h3>
                   <p className="text-sm" style={{ color: theme.colors.textSecondary }}>{theme.description}</p>

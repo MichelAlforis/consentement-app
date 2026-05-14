@@ -5,7 +5,7 @@ import { User, Users, HelpCircle, Settings, Crown, ChevronRight, Heart, HandHear
 import { AppLogo, HeatThermometer } from '../ui';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuthStore, usePremiumStore, useProfileStore } from '../../stores';
+import { useAuthStore, usePremiumStore } from '../../stores';
 import { useTranslation } from '../../i18n';
 import { useHeat } from '../../context/HeatContext';
 
@@ -66,15 +66,9 @@ export function MoiScreen({ isAdult, onNavigate }: MoiScreenProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const userName = useAuthStore((s) => s.userName);
-  const pronouns = useAuthStore((s) => s.pronouns);
   const { isPremium } = usePremiumStore();
-  const { points, level: heatLevel, breakdown } = useHeat();
-  const personalProfile = useProfileStore((s) => s.personalProfile);
-
-  const comfortFilled = [personalProfile.tenderness, personalProfile.intensity, personalProfile.trust]
-    .filter((cat) => Object.keys(cat).length > 0).length;
-  const safewordSet = personalProfile.safeword.trim() !== '';
-  const pronounsSet = pronouns !== null && pronouns.trim() !== '';
+  const { points, level: heatLevel, breakdown, profileDetails } = useHeat();
+  const { comfortFilled, safewordSet, pronounsSet } = profileDetails;
 
   let cardIndex = 0;
 

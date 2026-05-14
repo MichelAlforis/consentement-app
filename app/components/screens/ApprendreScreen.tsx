@@ -13,14 +13,18 @@ import {
   HeartHandshake,
   Users,
   PartyPopper,
+  Flame,
+  Lightbulb,
+  MessageCircle,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Screen } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
+import { IconBox } from '../ui/IconBox';
 import { useModuleProgressStore } from '../../stores/moduleProgressStore';
 import { useTranslation } from '../../i18n';
 import { isModuleCompleted } from '../../lib/moduleIds';
-import { MODULES, moduleAudience } from '../../modules';
+import { getVisibleLearningModules, moduleAudience } from '../../modules';
 import { useHeat } from '../../context/HeatContext';
 import { MODULE_POINTS, HEAT_THRESHOLDS } from '../../lib/heatLevel';
 import type { EffectiveModuleId } from '../../modules';
@@ -54,6 +58,9 @@ const MODULE_ICONS: Record<string, ReactNode> = {
   'module-pratiques-adultes': <Sparkles size={20} className="text-white" />,
   'accompagnement-mineur': <HeartHandshake size={20} className="text-white" />,
   'duo-flow': <Users size={20} className="text-white" />,
+  'pratiques-base': <Flame size={20} className="text-white" />,
+  'lexique-consent': <Lightbulb size={20} className="text-white" />,
+  'scenarios-quotidiens': <MessageCircle size={20} className="text-white" />,
 };
 
 function ModuleCard({
@@ -107,21 +114,17 @@ function ModuleCard({
         opacity: module.available || heatLocked ? 1 : 0.55,
       }}
     >
-      <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-        style={{
-          background:
-            completed || !module.available
-              ? r.iconBg
-              : `color-mix(in srgb, ${colors.locked} 20%, transparent)`,
-        }}
-      >
+      <IconBox size="lg" style={{
+        background: completed || !module.available
+          ? r.iconBg
+          : `color-mix(in srgb, ${colors.locked} 20%, transparent)`,
+      }}>
         {module.icon}
-      </div>
+      </IconBox>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-          <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap min-w-0">
+          <span className="font-semibold text-sm min-w-0 truncate" style={{ color: colors.textPrimary }}>
             {module.title}
           </span>
           <span
@@ -178,13 +181,7 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
   const { completedModules } = useModuleProgressStore();
   const { level: heatLevel } = useHeat();
   const audience = moduleAudience(isAdult);
-  const modules: ModuleMeta[] = MODULES.filter(
-    (module) =>
-      module.id !== 'module-de-base' &&
-      module.screen !== null &&
-      module.available[audience]
-  )
-    .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99))
+  const modules: ModuleMeta[] = getVisibleLearningModules(isAdult)
     .map((module) => {
       const effectiveId = module.effectiveId[audience];
       const pts = MODULE_POINTS[effectiveId as EffectiveModuleId] ?? 0;
@@ -289,18 +286,15 @@ export function ApprendreScreen({ isAdult, onNavigate }: ApprendreScreenProps) {
           className="w-full mt-3 rounded-2xl p-4 flex items-center gap-3 text-left"
           style={{ background: colors.bgCard, border: `1px solid ${colors.border}` }}
         >
-          <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
-          >
+          <IconBox size="lg" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}>
             <Brain size={20} className="text-white" />
-          </div>
+          </IconBox>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-              <span className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap min-w-0">
+              <span className="font-semibold text-sm min-w-0 truncate" style={{ color: colors.textPrimary }}>
                 {t('quizMl.ui.hubTitle')}
               </span>
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ background: '#3b82f622', color: '#3b82f6' }}>
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0" style={{ background: '#3b82f622', color: '#3b82f6' }}>
                 9 quiz
               </span>
             </div>

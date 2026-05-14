@@ -1,4 +1,3 @@
-import type { IconName } from '../utils/iconFromName';
 
 export interface QuizQuestion {
   id: string;

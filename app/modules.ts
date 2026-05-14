@@ -9,6 +9,9 @@ export type ModuleId =
   | 'duo-flow'
   | 'module-pratiques-adultes'
   | 'accompagnement-mineur'
+  | 'pratiques-base'
+  | 'lexique-consent'
+  | 'scenarios-quotidiens'
   // Quiz multi-niveaux
   | 'quiz-d1' | 'quiz-d2' | 'quiz-d3'
   | 'quiz-i1' | 'quiz-i2' | 'quiz-i3'
@@ -19,7 +22,9 @@ export type EffectiveModuleId =
   | 'module-de-base-mineur'
   | 'quiz-consentement-mineur'
   | 'porno-vs-realite-mineur'
-  | 'loi-consentement-mineur';
+  | 'loi-consentement-mineur'
+  | 'lexique-consent-mineur'
+  | 'scenarios-quotidiens-mineur';
 
 type AudienceValue<T> = {
   adult: T;
@@ -127,6 +132,42 @@ export const MODULES = [
     sequence: { adult: null, minor: 4 },
     available: { adult: false, minor: true },
   },
+  {
+    id: 'pratiques-base',
+    effectiveId: { adult: 'pratiques-base', minor: 'pratiques-base' },
+    screen: 'pratiques-base',
+    titleKey: 'apprendre.pratiquesBase.title',
+    descriptionKey: 'apprendre.pratiquesBase.desc',
+    reward: { rarity: 'rare', count: 1 },
+    rewardKey: 'apprendre.rewardRare',
+    deck: { adult: 'A', minor: 'A' },
+    sequence: { adult: 5, minor: null },
+    available: { adult: true, minor: false },
+  },
+  {
+    id: 'lexique-consent',
+    effectiveId: { adult: 'lexique-consent', minor: 'lexique-consent-mineur' },
+    screen: 'lexique-consent',
+    titleKey: 'apprendre.lexique.title',
+    descriptionKey: 'apprendre.lexique.desc',
+    reward: { rarity: 'common', count: 1 },
+    rewardKey: 'apprendre.rewardCommon',
+    deck: { adult: 'A', minor: 'M' },
+    sequence: { adult: 6, minor: 5 },
+    available: { adult: true, minor: true },
+  },
+  {
+    id: 'scenarios-quotidiens',
+    effectiveId: { adult: 'scenarios-quotidiens', minor: 'scenarios-quotidiens-mineur' },
+    screen: 'scenarios-quotidiens',
+    titleKey: 'apprendre.scenariosQuotidiens.title',
+    descriptionKey: 'apprendre.scenariosQuotidiens.desc',
+    reward: { rarity: 'rare', count: 1 },
+    rewardKey: 'apprendre.rewardRare',
+    deck: { adult: 'A', minor: 'M' },
+    sequence: { adult: 7, minor: 6 },
+    available: { adult: true, minor: true },
+  },
   // ── Quiz multi-niveaux ────────────────────────────────────────────────────
   { id: 'quiz-d1', effectiveId: { adult: 'quiz-d1', minor: 'quiz-d1' }, screen: null, titleKey: 'quizMl.d.v1.title', reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
   { id: 'quiz-d2', effectiveId: { adult: 'quiz-d2', minor: 'quiz-d2' }, screen: null, titleKey: 'quizMl.d.v2.title', reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
@@ -162,6 +203,15 @@ export function getModuleSequence(isAdult: boolean | null): ModuleConfig[] {
   return MODULES
     .filter((mod) => mod.sequence[audience] !== null && mod.available[audience])
     .sort((a, b) => (a.sequence[audience] ?? 0) - (b.sequence[audience] ?? 0));
+}
+
+export function getVisibleLearningModules(isAdult: boolean | null): ModuleConfig[] {
+  const audience = moduleAudience(isAdult);
+  return MODULES
+    .filter((mod) => mod.id !== 'module-de-base')
+    .filter((mod) => mod.screen !== null)
+    .filter((mod) => mod.available[audience])
+    .sort((a, b) => (a.sequence[audience] ?? 99) - (b.sequence[audience] ?? 99));
 }
 
 export function getModuleReward(effectiveId: string): (ModuleReward & { deck: 'A' | 'M' }) | null {

@@ -84,6 +84,8 @@ export default function CardCollectorTestPage() {
     if (window.location.search.includes('renderer=css')) setUseFallback(true);
   }, []);
 
+  if (process.env.NODE_ENV !== 'development') return null;
+
   const toggle = (id: string) => setFlipped(f => ({ ...f, [id]: !f[id] }));
   const flipAll = () => {
     const allFlipped = CARDS.every(c => flipped[c.id]);

@@ -21,6 +21,8 @@ interface CardProps {
     | 'unique'
     | 'danger';
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** Rayon des coins. '2xl' par défaut ; '3xl' pour les grandes cartes héro. */
+  radius?: 'xl' | '2xl' | '3xl';
   className?: string;
   delay?: number;
 }
@@ -32,11 +34,18 @@ const paddingStyles = {
   lg: 'p-6',
 };
 
+const radiusClass: Record<NonNullable<CardProps['radius']>, string> = {
+  xl:   'rounded-xl',
+  '2xl': 'rounded-2xl',
+  '3xl': 'rounded-3xl',
+};
+
 export function Card({
   children,
   onClick,
   variant = 'default',
   padding = 'md',
+  radius = '2xl',
   className = '',
   delay = 0,
 }: CardProps) {
@@ -99,7 +108,7 @@ export function Card({
       className={`
         relative overflow-hidden
         ${paddingStyles[padding]}
-        rounded-3xl
+        ${radiusClass[radius]}
         ${onClick ? 'cursor-pointer active:brightness-95' : ''}
         transition-all duration-300
         ${className}
