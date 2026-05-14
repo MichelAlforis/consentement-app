@@ -53,9 +53,14 @@ export const useAuthStore = create<AuthStore>()(
 
       authenticateWithPocketBase: async () => {
         const { pb } = await import('../lib/pb');
-        const { deviceId } = get();
+        const { deviceId, pbUserId, pbToken } = get();
         const email = `${deviceId}@device.local`;
         const password = deviceId;
+
+        if (pbUserId && pbToken && !pb.authStore.isValid) {
+          pb.authStore.save(pbToken, { id: pbUserId });
+        }
+
         try {
           // Tente le login d'abord (device déjà connu du serveur)
           const auth = await pb.collection('users').authWithPassword(email, password);

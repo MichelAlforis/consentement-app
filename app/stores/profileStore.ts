@@ -19,11 +19,18 @@ interface ProfileStore {
 
 function syncToServer(profile: PersonalProfile) {
   // Import dynamique pour éviter la circularité authStore ↔ profileStore
-  import('./authStore').then(({ useAuthStore }) => {
-    const { pbUserId } = useAuthStore.getState();
+  void import('./authStore').then(async ({ useAuthStore }) => {
+    const { pbUserId, pbToken } = useAuthStore.getState();
     if (!pbUserId) return;
-    import('../lib/sync/profileSync').then(({ pushProfile }) => {
-      void pushProfile(profile, pbUserId);
+    const [{ pb }, { pushProfile }] = await Promise.all([
+      import('../lib/pb'),
+      import('../lib/sync/profileSync'),
+    ]);
+    if (pbToken && !pb.authStore.isValid) {
+      pb.authStore.save(pbToken, { id: pbUserId });
+    }
+    await pushProfile(profile, pbUserId).catch(() => {
+      // Offline ou droits serveur indisponibles : la version locale reste la source immédiate.
     });
   });
 }

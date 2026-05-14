@@ -53,4 +53,6 @@ export function resetAllData() {
     STORAGE_KEYS.MODULES,
     STORAGE_KEYS.LEXIQUE,
   ].forEach((key) => localStorage.removeItem(key));
+
+  void import('../lib/pb').then(({ pb }) => pb.authStore.clear());
 }
