@@ -25,6 +25,20 @@ const AgeCheckScreen = lazy(() => import('../components/screens/AgeCheckScreen')
 const AuthScreen = lazy(() => import('../components/screens/AuthScreen').then((module) => ({ default: module.AuthScreen })));
 const ThemeSelectScreen = lazy(() => import('../components/screens/ThemeSelectScreen').then((module) => ({ default: module.ThemeSelectScreen })));
 const LanguageScreen = lazy(() => import('../components/screens/LanguageScreen').then((module) => ({ default: module.LanguageScreen })));
+const ModuleDeBaseScreen = lazy(() => import('../components/screens/ModuleDeBase').then((m) => ({ default: m.ModuleDeBaseScreen })));
+const PratiquesBaseScreen = lazy(() => import('../components/screens/PratiquesBase').then((m) => ({ default: m.PratiquesBaseScreen })));
+const PratiquesAvanceesScreen = lazy(() => import('../components/screens/PratiquesAvancees').then((m) => ({ default: m.PratiquesAvanceesScreen })));
+const PratiquesExplicitScreen = lazy(() => import('../components/screens/PratiquesExplicit').then((m) => ({ default: m.PratiquesExplicitScreen })));
+const LexiqueConsentScreen = lazy(() => import('../components/screens/LexiqueConsent').then((m) => ({ default: m.LexiqueConsentScreen })));
+const ScenariosQuotidiensScreen = lazy(() => import('../components/screens/ScenariosQuotidiens').then((m) => ({ default: m.ScenariosQuotidiensScreen })));
+const BdsmConsentScreen = lazy(() => import('../components/screens/BdsmConsent').then((m) => ({ default: m.BdsmConsentScreen })));
+const SextingScreen = lazy(() => import('../components/screens/Sexting').then((m) => ({ default: m.SextingScreen })));
+const PressionManipScreen = lazy(() => import('../components/screens/PressionManip').then((m) => ({ default: m.PressionManipScreen })));
+const RuptureHarceleScreen = lazy(() => import('../components/screens/RuptureHarcele').then((m) => ({ default: m.RuptureHarceleScreen })));
+const ContentNonConsentiScreen = lazy(() => import('../components/screens/ContentNonConsenti').then((m) => ({ default: m.ContentNonConsentiScreen })));
+const ZonesGrisesScreen = lazy(() => import('../components/screens/ZonesGrises').then((m) => ({ default: m.ZonesGrisesScreen })));
+const LgbtqConsentScreen = lazy(() => import('../components/screens/LgbtqConsent').then((m) => ({ default: m.LgbtqConsentScreen })));
+const AlcoolConsentScreen = lazy(() => import('../components/screens/AlcoolConsent').then((m) => ({ default: m.AlcoolConsentScreen })));
 
 const TAB_SCREENS = new Set<Screen>(['home', 'apprendre', 'moi', 'jeux']);
 const FULLSCREEN_ONBOARDING = new Set<Screen>(['welcome', 'onboarding', 'age-check', 'auth', 'theme-select', 'language']);
@@ -91,21 +105,36 @@ function RenderScreen({ screen }: { screen: Screen }) {
     case 'jeu-oie':
     case 'jeu-cartes':
     case 'hall-of-cards':
+      return <PlaceholderScreen screen={screen} />;
     case 'module-de-base':
-    case 'premium':
+      return <ModuleDeBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
     case 'pratiques-base':
-    case 'lexique-consent':
-    case 'scenarios-quotidiens':
-    case 'alcool-consent':
-    case 'bdsm-consent':
-    case 'sexting':
-    case 'pression-manip':
-    case 'rupture-harcele':
-    case 'content-non-consenti':
-    case 'pratiques-explicit':
-    case 'zones-grises':
-    case 'lgbtq-consent':
+      return <PratiquesBaseScreen isAdult={isAdult} onNavigate={navigateTo} />;
     case 'pratiques-avancees':
+      return <PratiquesAvanceesScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'pratiques-explicit':
+      return <PratiquesExplicitScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'lexique-consent':
+      return <LexiqueConsentScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'scenarios-quotidiens':
+      return <ScenariosQuotidiensScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'bdsm-consent':
+      return <BdsmConsentScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'sexting':
+      return <SextingScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'pression-manip':
+      return <PressionManipScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'rupture-harcele':
+      return <RuptureHarceleScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'content-non-consenti':
+      return <ContentNonConsentiScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'zones-grises':
+      return <ZonesGrisesScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'lgbtq-consent':
+      return <LgbtqConsentScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'alcool-consent':
+      return <AlcoolConsentScreen isAdult={isAdult} onNavigate={navigateTo} />;
+    case 'premium':
     case 'scenario-game':
       return <PlaceholderScreen screen={screen} />;
   }
