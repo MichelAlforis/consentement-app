@@ -7,7 +7,7 @@ const PLAY_STORE_URL = '#';
 
 export default function DownloadCTA() {
   return (
-    <section id="download" className="py-32 px-6 relative overflow-hidden">
+    <section id="download" className="py-20 sm:py-32 px-6 relative overflow-hidden">
       {/* Background radial */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -43,7 +43,7 @@ export default function DownloadCTA() {
         </div>
 
         {/* Titre */}
-        <h2 className="text-5xl lg:text-6xl font-black text-oui-text leading-[1.02] mb-5">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-oui-text leading-[1.02] mb-5">
           Télécharge
           <br />
           <span className="text-gradient-main">OuiClair.</span>

@@ -51,6 +51,20 @@ export const education = {
     source1: 'Contenido validado por nuestro cofundador, abogado en derecho penal.',
     source2: 'Código Penal francés — Artículos 222-22 y siguientes',
     markRead: 'Lo he leído — Ver mi carta',
+    doneTitle: '¡Módulo completado!',
+    doneSub: 'Has revisado todos los puntos legales.',
+    seeCard: 'Ver mi carta',
+  },
+
+  vraiFauxScreen: {
+    progress: 'Idea {current} de {total}',
+    reveal: 'Descubrir la realidad',
+    explainLabel: 'Por qué',
+    next: 'Siguiente',
+    finish: 'Terminar',
+    restart: 'Reiniciar',
+    seeCard: 'Ver mi carta',
+    done: '¡Módulo completado!',
   },
 
   quizScreen: {

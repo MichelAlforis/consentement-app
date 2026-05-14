@@ -10,10 +10,10 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       <HeroBackground />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 w-full py-24">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 w-full py-16 sm:py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <HeroContent />
-          <PhoneMockup />
+          <div className="hidden lg:block"><PhoneMockup /></div>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ function HeroContent() {
       </div>
 
       {/* Titre */}
-      <h1 className="text-[3.5rem] lg:text-[4.25rem] font-black leading-[1.02] tracking-tight">
+      <h1 className="text-[2.4rem] sm:text-[3rem] lg:text-[4.25rem] font-black leading-[1.05] lg:leading-[1.02] tracking-tight">
         <span className="text-oui-text">Parle de sexe.</span>
         <br />
         <span className="text-gradient-main">Sans gêne.</span>
@@ -52,13 +52,13 @@ function HeroContent() {
       </p>
 
       {/* Boutons stores */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3">
         <StoreButton href={APP_STORE_URL} icon={<AppleIcon />} label="App Store" sub="Télécharger sur" dark />
         <StoreButton href={PLAY_STORE_URL} icon={<PlayIcon />} label="Google Play" sub="Disponible sur" />
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-8 pt-1">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-1">
         <Stat value="Gratuit" label="pour toujours" />
         <Divider />
         <Stat value="13+" label="ans minimum" />
@@ -330,6 +330,7 @@ function HeroBackground() {
         muted
         loop
         playsInline
+        preload="none"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ opacity: 0.28, mixBlendMode: 'screen' }}
       >

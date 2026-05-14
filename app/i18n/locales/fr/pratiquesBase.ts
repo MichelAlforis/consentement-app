@@ -31,10 +31,17 @@ export const pratiquesBase = {
       },
       3: {
         titre: 'Pénétration vaginale',
-        definition: 'Introduction du pénis ou d\'un accessoire dans le vagin. Pratique centrale dans beaucoup de relations hétérosexuelles et certaines relations lesbiennes.',
+        definition: "Introduction du pénis ou d'un accessoire dans le vagin. Pratique centrale dans beaucoup de relations hétérosexuelles et certaines relations lesbiennes.",
         consentement: 'Le consentement doit être clairement donné avant et maintenu pendant. Vérifier régulièrement que l\'autre est toujours à l\'aise est normal et sain. La douleur doit être signalée et entendue immédiatement.',
         loi: 'La pénétration sans consentement est un viol (art. 222-23 CP), puni de 15 ans de réclusion. Si la victime a moins de 15 ans, la peine monte à 20 ans de réclusion.',
         question: 'Avons-nous parlé de contraception et de protection avant de commencer ?',
+      },
+      4: {
+        titre: 'Sodomie',
+        definition: "Pénétration anale par le pénis ou un accessoire. Pratique présente dans toutes les orientations sexuelles. La zone anale ne produit pas de lubrification naturelle.",
+        consentement: "Le consentement doit être explicite, préparé et maintenu à chaque étape. Un arrêt demandé doit être respecté immédiatement. La douleur n'est pas normale — elle signale que quelque chose ne va pas et nécessite une pause ou un arrêt.",
+        loi: "La pénétration anale sans consentement est un viol (art. 222-23 CP), puni de 15 ans de réclusion criminelle. Aucune pratique sexuelle n'est 'moins grave' parce qu'elle est non-vaginale.",
+        question: 'Avons-nous discuté de la préparation, du rythme et des mots pour dire stop avant de commencer ?',
       },
     },
   },

@@ -51,6 +51,9 @@ export const education = {
     source1: 'Contenu validé par notre co-fondateur juriste en droit pénal.',
     source2: 'Code pénal français — Articles 222-22 et suivants',
     markRead: "J'ai lu — Voir ma carte",
+    doneTitle: 'Module complété !',
+    doneSub: 'Tu as parcouru tous les points juridiques.',
+    seeCard: 'Voir ma carte',
   },
 
   quizScreen: {
@@ -71,6 +74,17 @@ export const education = {
       notBad: 'Pas mal',
       retry: 'À retravailler',
     },
+  },
+
+  vraiFauxScreen: {
+    progress: 'Idée {current} sur {total}',
+    reveal: 'Découvrir la réalité',
+    explainLabel: 'Pourquoi',
+    next: 'Suivant',
+    finish: 'Terminer',
+    restart: 'Recommencer',
+    seeCard: 'Voir ma carte',
+    done: 'Module complété !',
   },
 
   accompagnementAdulte: {

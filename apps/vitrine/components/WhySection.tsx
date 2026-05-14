@@ -32,7 +32,7 @@ const WHY_CARDS = [
 
 export default function WhySection() {
   return (
-    <section id="pourquoi" className="py-28 px-6 relative overflow-hidden">
+    <section id="pourquoi" className="py-16 sm:py-28 px-6 relative overflow-hidden">
       {/* Fond avec dot grid atténué */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -46,7 +46,7 @@ export default function WhySection() {
 
       <div className="relative max-w-6xl mx-auto">
         <SectionLabel>Pourquoi OuiClair ?</SectionLabel>
-        <h2 className="text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-5 leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-5 leading-tight">
           L&apos;éducation sexuelle
           <br />
           <span className="text-gradient-static">qu&apos;on aurait dû t&apos;enseigner.</span>

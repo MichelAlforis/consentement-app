@@ -42,6 +42,10 @@ export const ApprendreScreen = lazy(() => import('./components/screens/Apprendre
 export const MoiScreen = lazy(() => import('./components/screens/MoiScreen').then(m => ({ default: m.MoiScreen })));
 export const LanguageScreen = lazy(() => import('./components/screens/LanguageScreen').then(m => ({ default: m.LanguageScreen })));
 export const PersonalIntroScreen = lazy(() => import('./components/screens/PersonalIntroScreen').then(m => ({ default: m.PersonalIntroScreen })));
+export const QuizModuleScreen = lazy(() => import('./components/screens/QuizModuleScreen').then(m => ({ default: m.QuizModuleScreen })));
+export const VraiFauxModuleScreen = lazy(() => import('./components/screens/VraiFauxModuleScreen').then(m => ({ default: m.VraiFauxModuleScreen })));
+export const LoiModuleScreen = lazy(() => import('./components/screens/LoiModuleScreen').then(m => ({ default: m.LoiModuleScreen })));
+export const AlcoolConsentScreen = lazy(() => import('./components/screens/AlcoolConsentScreen').then(m => ({ default: m.AlcoolConsentScreen })));
 
 const baseRoute = (
   component: unknown,
@@ -91,6 +95,14 @@ export const ROUTES = {
   'pratiques-base': baseRoute(FichePratiqueScreen, { titleKey: 'apprendre.pratiquesBase.title', requiresAdult: true, showAd: true }),
   'lexique-consent': baseRoute(LexiqueScreen, { titleKey: 'apprendre.lexique.title', showAd: true }),
   'scenarios-quotidiens': baseRoute(ScenarioScreen, { titleKey: 'apprendre.scenariosQuotidiens.title', showAd: true }),
+  'alcool-consent': baseRoute(AlcoolConsentScreen, { titleKey: 'apprendre.alcoolConsent.title', requiresAdult: true, showAd: true }),
+  'bdsm-consent': baseRoute(VraiFauxModuleScreen, { titleKey: 'apprendre.bdsmConsent.title', requiresAdult: true, showAd: true }),
+  sexting: baseRoute(VraiFauxModuleScreen, { titleKey: 'apprendre.sexting.title', showAd: true }),
+  'pression-manip': baseRoute(QuizModuleScreen, { titleKey: 'apprendre.pressionManip.title', requiresAdult: true, showAd: true }),
+  'rupture-harcele': baseRoute(LoiModuleScreen, { titleKey: 'apprendre.ruptureHarcele.title', requiresAdult: true, showAd: true }),
+  'content-non-consenti': baseRoute(LoiModuleScreen, { titleKey: 'apprendre.contentNonConsenti.title', requiresAdult: true, showAd: true }),
+  'pratiques-explicit': baseRoute(QuizModuleScreen, { titleKey: 'apprendre.pratiquesExplicit.title', requiresAdult: true, showAd: true }),
+  'zones-grises': baseRoute(QuizModuleScreen, { titleKey: 'apprendre.zonesGrises.title', requiresAdult: true, showAd: true }),
   language: baseRoute(LanguageScreen),
   onboarding: baseRoute(OnboardingWizard),
   'personal-intro': baseRoute(PersonalIntroScreen),

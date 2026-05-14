@@ -10,10 +10,10 @@ const VIDEO_DUO =
 
 export default function AudienceSection() {
   return (
-    <section id="audience" className="py-28 px-6">
+    <section id="audience" className="py-16 sm:py-28 px-6">
       <div className="max-w-6xl mx-auto">
         <SectionLabel>Pour qui ?</SectionLabel>
-        <h2 className="text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-14 leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-8 sm:mb-14 leading-tight">
           Deux publics.{' '}
           <span className="text-gradient-static">Un seul but.</span>
         </h2>
@@ -35,7 +35,7 @@ function TeensCard() {
         className="grad-inner rounded-[calc(1.5rem-1px)] p-8 lg:p-12 overflow-hidden relative"
         style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.06) 0%, #1a1128 50%)' }}
       >
-        <div className="relative grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Texte gauche */}
           <div>
             <div
@@ -44,7 +44,7 @@ function TeensCard() {
             >
               Ados — 13 à 17 ans
             </div>
-            <h3 className="text-3xl lg:text-4xl font-black text-oui-text mb-5 leading-tight">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-oui-text mb-5 leading-tight">
               T&apos;as des questions.
               <br />
               <span className="text-gradient-static">OuiClair y répond.</span>
@@ -75,7 +75,7 @@ function TeensCard() {
           </div>
 
           {/* Colonne droite — image Midjourney + cards flottantes */}
-          <div className="relative rounded-2xl overflow-hidden min-h-[340px]">
+          <div className="relative rounded-2xl overflow-hidden min-h-[260px] sm:min-h-[340px]">
             {/* Image illustration */}
             <Image
               src={IMG_TEENS}
@@ -141,6 +141,7 @@ function CouplesCard() {
           muted
           loop
           playsInline
+          preload="none"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: 0.12, mixBlendMode: 'screen' }}
           aria-hidden
@@ -148,7 +149,7 @@ function CouplesCard() {
           <source src={VIDEO_DUO} type="video/mp4" />
         </video>
 
-        <div className="relative p-8 lg:p-12 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative p-6 sm:p-8 lg:p-12 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Texte gauche */}
           <div>
             <div
@@ -157,7 +158,7 @@ function CouplesCard() {
             >
               Jeunes adultes &amp; couples
             </div>
-            <h3 className="text-3xl lg:text-4xl font-black text-oui-text mb-5 leading-tight">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-oui-text mb-5 leading-tight">
               Explorez ensemble.
               <br />
               <span className="text-oui-pink">À votre rythme.</span>

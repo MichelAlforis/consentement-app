@@ -51,6 +51,20 @@ export const education = {
     source1: 'Content validated by our co-founder, a criminal law attorney.',
     source2: 'French Penal Code — Articles 222-22 et seq.',
     markRead: "I've read it — See my card",
+    doneTitle: 'Module completed!',
+    doneSub: "You've reviewed all the legal points.",
+    seeCard: 'See my card',
+  },
+
+  vraiFauxScreen: {
+    progress: 'Idea {current} of {total}',
+    reveal: 'Reveal the reality',
+    explainLabel: 'Why',
+    next: 'Next',
+    finish: 'Finish',
+    restart: 'Restart',
+    seeCard: 'See my card',
+    done: 'Module completed!',
   },
 
   quizScreen: {

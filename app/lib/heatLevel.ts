@@ -46,6 +46,17 @@ export const MODULE_POINTS: Partial<Record<EffectiveModuleId, number>> = {
   'quiz-d1': 2, 'quiz-d2': 2, 'quiz-d3': 2,
   'quiz-i1': 4, 'quiz-i2': 4, 'quiz-i3': 4,
   'quiz-e1': 8, 'quiz-e2': 8, 'quiz-e3': 8,
+  'pratiques-base': 4,
+  'lexique-consent': 2, 'lexique-consent-mineur': 2,
+  'scenarios-quotidiens': 4, 'scenarios-quotidiens-mineur': 4,
+  'alcool-consent': 5,
+  'bdsm-consent': 4,
+  'sexting': 3,
+  'pression-manip': 4,
+  'rupture-harcele': 5,
+  'content-non-consenti': 5,
+  'pratiques-explicit': 6,
+  'zones-grises': 4,
 };
 
 // Points par rareté de carte (s'accumulent séparément des MODULE_POINTS)

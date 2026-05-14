@@ -43,7 +43,16 @@ export type Screen =
   // Modules formats avancés
   | 'pratiques-base'
   | 'lexique-consent'
-  | 'scenarios-quotidiens';
+  | 'scenarios-quotidiens'
+  // Nouveaux modules contenus
+  | 'alcool-consent'
+  | 'bdsm-consent'
+  | 'sexting'
+  | 'pression-manip'
+  | 'rupture-harcele'
+  | 'content-non-consenti'
+  | 'pratiques-explicit'
+  | 'zones-grises';
 
 export type Language = 'fr' | 'en' | 'es';
 

@@ -27,8 +27,8 @@ export default function Logo({ variant = 'default' }: { variant?: 'default' | 'f
         />
       </div>
 
-      <span className={`font-black tracking-tight group-hover:opacity-80 transition-opacity ${variant === 'footer' ? 'text-base' : 'text-lg'} text-oui-text`}>
-        Oui<span className="text-oui-violet-light">Clair</span>
+      <span className={`font-black tracking-tight group-hover:opacity-80 transition-opacity ${variant === 'footer' ? 'text-base text-oui-muted' : 'text-lg text-white'}`}>
+        OuiClair
       </span>
     </Link>
   );

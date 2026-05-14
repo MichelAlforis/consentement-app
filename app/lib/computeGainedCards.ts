@@ -2,6 +2,7 @@ import { THEME_CATEGORIES } from '../data/cards-collector';
 import type { CollectorCard, Rarity, CardTheme } from '../data/cards-collector';
 import type { OwnedCard } from '../stores/unlockStore';
 import type { IconName } from '../utils/iconFromName';
+import type { PositionKey } from '../components/ui/PositionSVG';
 
 // ---------------------------------------------------------------------------
 // Types publics
@@ -16,6 +17,7 @@ export interface GainedCard {
   gradient: string;
   iconName: IconName;
   border: string;
+  positionKey?: PositionKey;
 }
 
 export interface ComputeParams {
@@ -43,6 +45,7 @@ function toGainedCard(card: CollectorCard): GainedCard {
     gradient: card.visual.gradient,
     iconName: card.visual.iconName,
     border: card.visual.border,
+    positionKey: card.positionKey,
   };
 }
 

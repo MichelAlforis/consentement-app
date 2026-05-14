@@ -54,7 +54,7 @@ export default function Features() {
     <section
       ref={sectionRef}
       id="features"
-      className={`py-28 px-6 relative${revealed ? ' features-revealed' : ''}`}
+      className={`py-16 sm:py-28 px-6 relative${revealed ? ' features-revealed' : ''}`}
       style={{ background: 'linear-gradient(to bottom, #0d0714, rgba(26,17,40,0.5), #0d0714)' }}
     >
       {/* Image décorative Midjourney — fond flou droite */}
@@ -77,7 +77,7 @@ export default function Features() {
 
       <div className="relative max-w-6xl mx-auto">
         <SectionLabel>Fonctionnalités</SectionLabel>
-        <h2 className="text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-3 leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-oui-text mt-4 mb-3 leading-tight">
           Tout ce dont t&apos;as besoin.
         </h2>
         <p className="text-oui-muted text-[1.05rem] mb-14">

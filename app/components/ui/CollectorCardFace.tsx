@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import { DynamicIcon } from '../../utils/iconFromName';
 import type { GainedCard } from '../../lib/computeGainedCards';
+import { PositionSVG } from './PositionSVG';
 import s from './CollectorCardFace.module.css';
 
 type CollectorCardFaceSize = 'mini' | 'compact' | 'full';
@@ -150,7 +151,11 @@ export function CollectorCardFace({
       )}
 
       <span className={s.iconBox}>
-        <DynamicIcon name={card.iconName} size={Number(v.icon)} color="white" />
+        {card.positionKey ? (
+          <PositionSVG position={card.positionKey} size={Number(v.icon) * 1.6} />
+        ) : (
+          <DynamicIcon name={card.iconName} size={Number(v.icon)} color="white" />
+        )}
       </span>
 
       <p className={s.textPanel}>

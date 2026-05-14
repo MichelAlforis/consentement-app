@@ -9,6 +9,14 @@ import { quizMultiLevel } from './quizMultiLevel';
 import { pratiquesBase } from './pratiquesBase';
 import { lexiqueConsent } from './lexiqueConsent';
 import { scenariosQuotidiens } from './scenariosQuotidiens';
+import { alcoolConsent } from './alcoolConsent';
+import { bdsmConsent } from './bdsmConsent';
+import { sexting } from './sexting';
+import { pressionManip } from './pressionManip';
+import { ruptureHarcele } from './ruptureHarcele';
+import { contentNonConsenti } from './contentNonConsenti';
+import { pratiquesExplicit } from './pratiquesExplicit';
+import { zonesGrises } from './zonesGrises';
 
-export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data, ...quizMultiLevel, ...pratiquesBase, ...lexiqueConsent, ...scenariosQuotidiens };
+export const fr = { ...ui, ...onboarding, ...home, ...spaces, ...education, ...games, ...data, ...quizMultiLevel, ...pratiquesBase, ...lexiqueConsent, ...scenariosQuotidiens, ...alcoolConsent, ...bdsmConsent, ...sexting, ...pressionManip, ...ruptureHarcele, ...contentNonConsenti, ...pratiquesExplicit, ...zonesGrises };
 export type Translations = typeof fr;

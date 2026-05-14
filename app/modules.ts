@@ -15,7 +15,16 @@ export type ModuleId =
   // Quiz multi-niveaux
   | 'quiz-d1' | 'quiz-d2' | 'quiz-d3'
   | 'quiz-i1' | 'quiz-i2' | 'quiz-i3'
-  | 'quiz-e1' | 'quiz-e2' | 'quiz-e3';
+  | 'quiz-e1' | 'quiz-e2' | 'quiz-e3'
+  // Nouveaux modules contenus
+  | 'alcool-consent'
+  | 'bdsm-consent'
+  | 'sexting'
+  | 'pression-manip'
+  | 'rupture-harcele'
+  | 'content-non-consenti'
+  | 'pratiques-explicit'
+  | 'zones-grises';
 
 export type EffectiveModuleId =
   | ModuleId
@@ -24,7 +33,15 @@ export type EffectiveModuleId =
   | 'porno-vs-realite-mineur'
   | 'loi-consentement-mineur'
   | 'lexique-consent-mineur'
-  | 'scenarios-quotidiens-mineur';
+  | 'scenarios-quotidiens-mineur'
+  | 'alcool-consent'
+  | 'bdsm-consent'
+  | 'sexting'
+  | 'pression-manip'
+  | 'rupture-harcele'
+  | 'content-non-consenti'
+  | 'pratiques-explicit'
+  | 'zones-grises';
 
 type AudienceValue<T> = {
   adult: T;
@@ -178,6 +195,15 @@ export const MODULES = [
   { id: 'quiz-e1', effectiveId: { adult: 'quiz-e1', minor: 'quiz-e1' }, screen: null, titleKey: 'quizMl.e.v1.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
   { id: 'quiz-e2', effectiveId: { adult: 'quiz-e2', minor: 'quiz-e2' }, screen: null, titleKey: 'quizMl.e.v2.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
   { id: 'quiz-e3', effectiveId: { adult: 'quiz-e3', minor: 'quiz-e3' }, screen: null, titleKey: 'quizMl.e.v3.title', reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: null, minor: null }, available: { adult: true, minor: false } },
+  // ── Nouveaux modules contenus ─────────────────────────────────────────────
+  { id: 'alcool-consent',       effectiveId: { adult: 'alcool-consent',       minor: 'alcool-consent'       }, screen: 'alcool-consent',       titleKey: 'apprendre.alcoolConsent.title',      descriptionKey: 'apprendre.alcoolConsent.desc',      reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 8,    minor: null }, available: { adult: true, minor: false } },
+  { id: 'bdsm-consent',         effectiveId: { adult: 'bdsm-consent',         minor: 'bdsm-consent'         }, screen: 'bdsm-consent',         titleKey: 'apprendre.bdsmConsent.title',        descriptionKey: 'apprendre.bdsmConsent.desc',        reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 9,    minor: null }, available: { adult: true, minor: false } },
+  { id: 'sexting',               effectiveId: { adult: 'sexting',               minor: 'sexting'               }, screen: 'sexting',               titleKey: 'apprendre.sexting.title',            descriptionKey: 'apprendre.sexting.desc',            reward: { rarity: 'common', count: 1 }, rewardKey: 'apprendre.rewardCommon', deck: { adult: 'A', minor: 'M' }, sequence: { adult: 10,   minor: 7  }, available: { adult: true, minor: true  } },
+  { id: 'pression-manip',       effectiveId: { adult: 'pression-manip',       minor: 'pression-manip'       }, screen: 'pression-manip',       titleKey: 'apprendre.pressionManip.title',      descriptionKey: 'apprendre.pressionManip.desc',      reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 11,   minor: null }, available: { adult: true, minor: false } },
+  { id: 'rupture-harcele',      effectiveId: { adult: 'rupture-harcele',      minor: 'rupture-harcele'      }, screen: 'rupture-harcele',      titleKey: 'apprendre.ruptureHarcele.title',     descriptionKey: 'apprendre.ruptureHarcele.desc',     reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 12,   minor: null }, available: { adult: true, minor: false } },
+  { id: 'content-non-consenti', effectiveId: { adult: 'content-non-consenti', minor: 'content-non-consenti' }, screen: 'content-non-consenti', titleKey: 'apprendre.contentNonConsenti.title',  descriptionKey: 'apprendre.contentNonConsenti.desc', reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 13,   minor: null }, available: { adult: true, minor: false } },
+  { id: 'pratiques-explicit',   effectiveId: { adult: 'pratiques-explicit',   minor: 'pratiques-explicit'   }, screen: 'pratiques-explicit',   titleKey: 'apprendre.pratiquesExplicit.title',  descriptionKey: 'apprendre.pratiquesExplicit.desc',  reward: { rarity: 'unique', count: 1 }, rewardKey: 'apprendre.rewardUnique', deck: { adult: 'A', minor: 'A' }, sequence: { adult: 14,   minor: null }, available: { adult: true, minor: false } },
+  { id: 'zones-grises',         effectiveId: { adult: 'zones-grises',         minor: 'zones-grises'         }, screen: 'zones-grises',         titleKey: 'apprendre.zonesGrises.title',        descriptionKey: 'apprendre.zonesGrises.desc',        reward: { rarity: 'rare',   count: 1 }, rewardKey: 'apprendre.rewardRare',   deck: { adult: 'A', minor: 'A' }, sequence: { adult: 15,   minor: null }, available: { adult: true, minor: false } },
 ] as const satisfies readonly ModuleConfig[];
 
 export const MODULE_BY_ID = Object.fromEntries(MODULES.map((mod) => [mod.id, mod])) as Record<ModuleId, ModuleConfig>;

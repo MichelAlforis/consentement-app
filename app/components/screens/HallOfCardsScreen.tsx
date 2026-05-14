@@ -26,6 +26,7 @@ function toGainedCard(card: CollectorCard): GainedCard {
     gradient: card.visual.gradient,
     iconName: card.visual.iconName,
     border: card.visual.border,
+    positionKey: card.positionKey,
   };
 }
 

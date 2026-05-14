@@ -61,6 +61,14 @@ const MODULE_ICONS: Record<string, ReactNode> = {
   'pratiques-base': <Flame size={20} className="text-white" />,
   'lexique-consent': <Lightbulb size={20} className="text-white" />,
   'scenarios-quotidiens': <MessageCircle size={20} className="text-white" />,
+  'alcool-consent': <PartyPopper size={20} className="text-white" />,
+  'bdsm-consent': <Scale size={20} className="text-white" />,
+  sexting: <MessageCircle size={20} className="text-white" />,
+  'pression-manip': <Brain size={20} className="text-white" />,
+  'rupture-harcele': <HeartHandshake size={20} className="text-white" />,
+  'content-non-consenti': <Film size={20} className="text-white" />,
+  'pratiques-explicit': <Flame size={20} className="text-white" />,
+  'zones-grises': <Lightbulb size={20} className="text-white" />,
 };
 
 function ModuleCard({

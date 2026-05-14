@@ -38,10 +38,21 @@ import {
   FichePratiqueScreen,
   ScenarioScreen,
   LexiqueScreen,
+  QuizModuleScreen,
+  VraiFauxModuleScreen,
+  LoiModuleScreen,
+  AlcoolConsentScreen,
 } from '../../routes';
 import { pratiquesBaseItems } from '../../data/pratiquesBase';
 import { lexiqueConsentEntries } from '../../data/lexiqueConsent';
 import { scenariosQuotidiensItems } from '../../data/scenariosQuotidiens';
+import { bdsmConsentItems } from '../../data/bdsmConsent';
+import { sextingItems } from '../../data/sexting';
+import { pressionManipQuiz } from '../../data/pressionManip';
+import { ruptureHarceleLoiPoints } from '../../data/ruptureHarcele';
+import { contentNonConsentLoiPoints } from '../../data/contentNonConsenti';
+import { pratiquesExplicitQuiz } from '../../data/pratiquesExplicit';
+import { zonesGrisesQuiz } from '../../data/zonesGrises';
 import type { Theme, ThemeMode } from '../../types/theme';
 import type { PersonalProfile } from '../../types';
 
@@ -234,6 +245,76 @@ const SCREEN_RENDERS: Record<Screen, (ctx: ShellCtx) => ReactNode> = {
       namespace="scenariosQuotidiens"
       scenarios={scenariosQuotidiensItems}
       moduleId="scenarios-quotidiens"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'alcool-consent': (ctx) => (
+    <AlcoolConsentScreen
+      moduleId="alcool-consent"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'bdsm-consent': (ctx) => (
+    <VraiFauxModuleScreen
+      items={bdsmConsentItems}
+      namespace="bdsmConsent.vraiFaux"
+      moduleId="bdsm-consent"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  sexting: (ctx) => (
+    <VraiFauxModuleScreen
+      items={sextingItems}
+      namespace="sexting.vraiFaux"
+      moduleId="sexting"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'pression-manip': (ctx) => (
+    <QuizModuleScreen
+      questions={pressionManipQuiz}
+      namespace="pressionManip.quiz"
+      moduleId="pression-manip"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'rupture-harcele': (ctx) => (
+    <LoiModuleScreen
+      items={ruptureHarceleLoiPoints}
+      namespace="ruptureHarcele.loi"
+      moduleId="rupture-harcele"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'content-non-consenti': (ctx) => (
+    <LoiModuleScreen
+      items={contentNonConsentLoiPoints}
+      namespace="contentNonConsenti.loi"
+      moduleId="content-non-consenti"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'pratiques-explicit': (ctx) => (
+    <QuizModuleScreen
+      questions={pratiquesExplicitQuiz}
+      namespace="pratiquesExplicit.quiz"
+      moduleId="pratiques-explicit"
+      onComplete={() => ctx.navigateTo('hall-of-cards')}
+    />
+  ),
+
+  'zones-grises': (ctx) => (
+    <QuizModuleScreen
+      questions={zonesGrisesQuiz}
+      namespace="zonesGrises.quiz"
+      moduleId="zones-grises"
       onComplete={() => ctx.navigateTo('hall-of-cards')}
     />
   ),

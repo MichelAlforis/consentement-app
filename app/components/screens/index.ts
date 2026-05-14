@@ -18,3 +18,7 @@ export { DiceGameScreen } from './DiceGame';
 export { GooseGameScreen } from './GooseGameScreen';
 export { CardGameScreen } from './CardGame';
 export { PremiumScreen } from './PremiumScreen';
+export { QuizModuleScreen } from './QuizModuleScreen';
+export { VraiFauxModuleScreen } from './VraiFauxModuleScreen';
+export { LoiModuleScreen } from './LoiModuleScreen';
+export { AlcoolConsentScreen } from './AlcoolConsentScreen';
