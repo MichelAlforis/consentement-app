@@ -253,10 +253,12 @@ export const en = {
     title: 'Help & Emergencies',
     subtitle: 'Free, confidential numbers, available 24/7',
     resources: {
-      domestic:    { name: 'National Domestic Abuse Helpline', desc: 'Domestic and sexual violence — 24/7, free, confidential' },
-      samaritans:  { name: 'Samaritans',                       desc: 'Emotional support and crisis — 24/7, free' },
-      'rape-crisis':{ name: 'Rape Crisis',                     desc: 'Sexual violence support — free helpline' },
-      childline:   { name: 'Childline',                        desc: 'For children and young people — free, 24/7' },
+      domestic:      { name: 'National Domestic Abuse Helpline', desc: 'Women experiencing domestic or sexual violence — 24/7, free, confidential' },
+      'mens-advice': { name: "Men's Advice Line",                desc: 'Men experiencing domestic abuse — free, confidential' },
+      samaritans:    { name: 'Samaritans',                       desc: 'Emotional support, suicidal crisis — 24/7, free' },
+      'rape-crisis': { name: 'Rape Crisis',                      desc: 'Sexual violence support — free helpline' },
+      nspcc:         { name: 'NSPCC',                            desc: 'Child protection and abuse — 24/7, free' },
+      childline:     { name: 'Childline',                        desc: 'For children and young people under 19 — free, 24/7' },
     },
     emergency: {
       title: 'Emergency numbers',

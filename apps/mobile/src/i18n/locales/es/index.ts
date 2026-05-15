@@ -256,10 +256,12 @@ export const es = {
     title: 'Ayuda y Urgencias',
     subtitle: 'Números gratuitos, anónimos, disponibles 24h/24',
     resources: {
-      genero:  { name: 'Violencia de Género',          desc: 'Violencia de género y sexual — 24h, gratuito, anónimo' },
-      suicidio:{ name: 'Atención Conducta Suicida',    desc: 'Crisis psicológica y suicidio — 24h, gratuito' },
-      anar:    { name: 'Fundación ANAR',               desc: 'Niños y adolescentes en peligro — 24h, gratuito' },
-      sexual:  { name: 'Violencia Sexual',             desc: 'Víctimas de violencia sexual — gratuito, confidencial' },
+      genero:    { name: 'Violencia de Género',         desc: 'Mujeres víctimas de violencia de pareja o sexual — 24h, gratuito, anónimo' },
+      victimas:  { name: 'Atención a Víctimas',         desc: 'Hombres y todas las víctimas de violencia — gratuito, confidencial' },
+      suicidio:  { name: 'Atención Conducta Suicida',   desc: 'Crisis psicológica y riesgo de suicidio — 24h, gratuito' },
+      anar:      { name: 'Fundación ANAR',              desc: 'Niños y adolescentes en peligro — 24h, gratuito' },
+      sexual:    { name: 'Violencia Sexual',            desc: 'Víctimas de violencia sexual — gratuito, confidencial' },
+      ciberacoso: { name: 'INCIBE — Ciberacoso',        desc: 'Acoso e incidentes de seguridad en internet — gratuito' },
     },
     emergency: {
       title: 'Números de emergencia',

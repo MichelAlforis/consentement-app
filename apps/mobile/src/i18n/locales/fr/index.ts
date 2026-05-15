@@ -259,11 +259,13 @@ export const fr = {
     title: 'Aide & Urgences',
     subtitle: 'Numéros gratuits, anonymes, disponibles 24h/24',
     resources: {
-      violences:  { name: 'Violences Femmes Info',           desc: 'Violences conjugales et sexuelles — 24h/24, anonyme' },
-      suicide:    { name: 'Prévention Suicide',              desc: 'Détresse psychologique — 24h/24, 7j/7' },
-      'fil-sante':{ name: 'Fil Santé Jeunes',               desc: 'Santé, sexualité, bien-être — gratuit, anonyme' },
-      planning:   { name: 'Planning Familial',               desc: 'Sexualité, contraception, écoute' },
-      enfance:    { name: 'Enfance en Danger',               desc: 'Enfants et adolescents — gratuit, 7j/7' },
+      'violences-femmes': { name: 'Violences Femmes Info',  desc: 'Femmes victimes de violences conjugales ou sexuelles — 24h/24, anonyme' },
+      victimes:           { name: 'France Victimes',        desc: 'Toutes victimes — hommes, femmes, enfants — 7j/7, gratuit' },
+      suicide:            { name: 'Prévention Suicide',     desc: 'Détresse psychologique, crise suicidaire — 24h/24, 7j/7' },
+      enfance:            { name: 'Enfance en Danger',      desc: 'Enfants et adolescents victimes — gratuit, 7j/7, 24h/24' },
+      'fil-sante':        { name: 'Fil Santé Jeunes',       desc: 'Santé, sexualité, bien-être pour les jeunes — gratuit, anonyme' },
+      'net-ecoute':       { name: 'Net Écoute',             desc: 'Cyberharcèlement et violences en ligne — gratuit, anonyme' },
+      planning:           { name: 'Planning Familial',      desc: 'Sexualité, contraception, écoute — gratuit' },
     },
     emergency: {
       title: 'Numéros d\'urgence',
