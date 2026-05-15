@@ -358,6 +358,104 @@ export const fr = {
       timeoutSub: 'Pas de souci, essayons le QR code.',
     },
   },
+
+  levels: {
+    '0': 'Non',
+    '1': 'Attends',
+    '2': 'Curieux·se',
+    '3': 'OK',
+    '4': "J'adore",
+  } as Record<string, string>,
+
+  loiConsentement: {
+    title: 'La loi & le consentement',
+    intro: "En France, le droit pénal protège toute personne contre les atteintes sexuelles non consenties. Voici les points essentiels à connaître.",
+    article0: {
+      titre: "Âge légal du consentement",
+      texte: "En France, l'âge légal du consentement est 15 ans. Tout acte sexuel avec un·e mineur·e de moins de 15 ans par un adulte est un crime, quelle que soit la réponse du ou de la mineur·e.",
+    },
+    article1: {
+      titre: "Ce qu'est le consentement",
+      texte: "Le consentement doit être libre, éclairé et révocable à tout moment. Un oui donné sous pression, sous l'emprise de l'alcool ou par peur n'est pas un consentement valide.",
+    },
+    article2: {
+      titre: "Les sanctions encourues",
+      texte: "Un viol est puni de 15 ans de réclusion (20 ans si la victime a moins de 15 ans). Une agression sexuelle est punie de 7 ans d'emprisonnement (10 ans sur mineur·e de moins de 15 ans).",
+    },
+  },
+
+  pornoVsRealite: {
+    title: 'Sexe vs. Réalité',
+    intro: "Les films pour adultes sont des fictions tournées avec des acteurs. Ce que tu vois n'est pas représentatif d'une vraie relation — ni sur le plan du consentement, ni sur celui de la communication.",
+    section0: {
+      title: 'La mise en scène',
+      body: "Les productions pornographiques utilisent des scripts, des éclairages et des montages. Rien n'est spontané. Imiter ce qu'on voit peut être dangereux ou irréaliste.",
+    },
+    section1: {
+      title: 'Le consentement invisible',
+      body: "Dans ces films, la négociation du consentement n'est jamais montrée. Dans la réalité, parler de ses envies et de ses limites est essentiel — et tout à fait normal.",
+    },
+    section2: {
+      title: 'Corps et standards',
+      body: "Les corps montrés dans ces films sont souvent très éloignés de la réalité. Chaque corps est différent. Se comparer n'aide pas — et n'a aucun sens.",
+    },
+  },
+
+  accompagnementMineur: {
+    title: 'Soutien & ressources',
+    subtitle: "Tu n'es pas seul·e. Des professionnels formés sont là pour t'écouter, gratuitement et en toute confidentialité.",
+    items: {
+      '0': 'Fil Santé Jeunes — 0 800 235 236 (gratuit, anonyme)',
+      '1': 'Planning Familial — 0 800 08 11 11 (gratuit)',
+      '2': 'Police / Gendarmerie — 17 (urgences)',
+    } as Record<string, string>,
+  },
+
+  annuaire: {
+    title: 'Sexologues partenaires',
+    subtitle: "Des professionnels référencés pour t'accompagner — en présentiel ou en téléconsultation.",
+    cardCta: 'Prendre rendez-vous',
+  },
+
+  resourcesMinor: {
+    title: 'Ressources jeunes',
+    subtitle: "Des numéros gratuits et anonymes pour parler à quelqu'un en qui tu peux avoir confiance.",
+    item0: { name: 'Fil Santé Jeunes', desc: 'Santé, sexualité, bien-être — anonyme', phone: '0800235236' },
+    item1: { name: 'Net Écoute', desc: 'Cyberharcèlement et problèmes en ligne', phone: '0800200000' },
+    item2: { name: 'Police / Gendarmerie', desc: 'Urgences', phone: '17' },
+  },
+
+  quizHub: {
+    title: 'Quiz Consentement',
+    subtitle: '3 niveaux pour tester tes connaissances, à ton rythme.',
+    levels: {
+      '0': { label: 'Découverte', desc: 'Les bases du consentement — pour commencer' },
+      '1': { label: 'Intermédiaire', desc: 'La loi, les situations complexes, les zones grises' },
+      '2': { label: 'Expert', desc: 'Les nuances avancées — pour les plus curieux·ses' },
+    },
+  },
+
+  quiz: {
+    title: 'Quiz Consentement',
+    result: 'Résultat',
+    score: 'Chaque bonne réponse compte — relis les modules pour progresser.',
+    back: 'Retour',
+    q0:  { question: "Qu'est-ce qui définit un consentement valable ?", opt0: "Il est libre, éclairé, explicite et révocable", opt1: "C'est un accord donné une fois pour toutes", opt2: "Le silence vaut consentement si la personne ne dit pas non", opt3: "Il suffit d'un geste ou d'un sourire" },
+    q1:  { question: "Une personne peut-elle retirer son consentement en cours de rapport ?", opt0: "Non, une fois commencé, on ne peut plus revenir en arrière", opt1: "Oui, à n'importe quel moment", opt2: "Seulement si elle donne une raison valable", opt3: "Oui, mais uniquement avant la pénétration" },
+    q2:  { question: "Une personne ivre peut-elle donner un consentement valable ?", opt0: "Oui, si elle est juste légèrement alcoolisée", opt1: "Non, l'ivresse empêche un consentement libre et éclairé", opt2: "Oui, si elle le demande elle-même", opt3: "C'est subjectif selon le degré d'ivresse" },
+    q3:  { question: "En France, quel est l'âge minimal de consentement sexuel fixé par la loi ?", opt0: "16 ans", opt1: "15 ans", opt2: "18 ans", opt3: "14 ans" },
+    q4:  { question: "\"Si tu ne dis pas non, c'est oui.\" Cette affirmation est-elle correcte ?", opt0: "Oui, c'est la règle par défaut", opt1: "Non, le consentement doit être positif et actif", opt2: "Oui, sauf si la personne dit explicitement non", opt3: "Ça dépend du contexte et de la relation" },
+    q5:  { question: "Ton partenaire a consenti la semaine dernière. Cela vaut-il pour aujourd'hui ?", opt0: "Oui, une relation établie implique un consentement continu", opt1: "Non, le consentement s'exprime à chaque moment", opt2: "Oui, tant que rien n'a changé dans la relation", opt3: "Oui, si vous êtes en couple depuis longtemps" },
+    q6:  { question: "Partager une photo intime de quelqu'un sans son accord, c'est :", opt0: "Acceptable si vous aviez une relation", opt1: "Un délit pénal puni par la loi française", opt2: "Problématique mais pas illégal", opt3: "Ok si la photo a déjà été partagée avec d'autres" },
+    q7:  { question: "Dans une relation BDSM, qu'est-ce qui est indispensable ?", opt0: "Que l'un des deux soit dominant par nature", opt1: "Un accord préalable clair, incluant limites et mot de sécurité", opt2: "Que personne ne soit blessé physiquement", opt3: "Qu'il n'y ait pas de pénétration" },
+    q8:  { question: "\"Tu me fais une scène si je ne veux pas faire ça\" — cette phrase est :", opt0: "Un moyen légitime d'exprimer sa frustration", opt1: "Une pression qui invalide le consentement", opt2: "Normale dans une relation longue", opt3: "Acceptable si le couple a une dynamique forte" },
+    q9:  { question: "Le consentement s'applique-t-il dans le mariage ?", opt0: "Non, le mariage implique un accord tacite permanent", opt1: "Oui, un·e conjoint·e peut toujours refuser un rapport", opt2: "Seulement si l'un des deux le demande expressément", opt3: "Non, ça reste une affaire privée" },
+    q10: { question: "Envoyer un message sexuel non sollicité, c'est :", opt0: "Anodin si tu le fais de façon sympa", opt1: "Une violation du consentement numérique", opt2: "Ok si vous vous connaissiez avant", opt3: "Un compliment qui peut mal passer" },
+    q11: { question: "Une personne endormie peut-elle consentir ?", opt0: "Oui, si elle ne se réveille pas et ne dit rien", opt1: "Non, le consentement exige d'être conscient·e", opt2: "Oui, si elle avait consenti avant de s'endormir", opt3: "Ça dépend de la profondeur du sommeil" },
+    q12: { question: "Un \"non\" hésitant ou incertain doit être interprété comme :", opt0: "Un \"oui\" qui cache une timidité", opt1: "Un refus, à respecter comme tel", opt2: "Une invitation à insister doucement", opt3: "Un signal ambigu à explorer" },
+    q13: { question: "En France, forcer quelqu'un à un acte sexuel est qualifié de :", opt0: "Comportement déplacé", opt1: "Viol ou agression sexuelle — crime ou délit selon les actes", opt2: "Abus de faiblesse", opt3: "Voies de fait" },
+    q14: { question: "Quel est le rôle d'un mot de sécurité ?", opt0: "Pimenter un jeu de rôle", opt1: "Signaler immédiatement l'arrêt d'une pratique, sans discussion", opt2: "Indiquer à l'autre qu'on veut changer de position", opt3: "C'est purement symbolique" },
+  },
 };
 
 export type FrTranslations = typeof fr;

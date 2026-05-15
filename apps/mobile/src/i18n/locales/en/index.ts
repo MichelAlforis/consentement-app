@@ -340,6 +340,28 @@ export const en = {
     errorExpired: 'This session has expired',
     errorNetwork: 'Connection failed. Check your connection.',
   },
+
+  quiz: {
+    title: 'Consent Quiz',
+    result: 'Result',
+    score: 'Every right answer counts — revisit the modules to improve.',
+    back: 'Back',
+    q0:  { question: "What defines valid consent?", opt0: "It is free, informed, explicit and revocable", opt1: "It is an agreement given once and for all", opt2: "Silence counts as consent if the person doesn't say no", opt3: "A gesture or a smile is enough" },
+    q1:  { question: "Can a person withdraw consent during sex?", opt0: "No, once started, you can't go back", opt1: "Yes, at any point in time", opt2: "Only if they give a valid reason", opt3: "Yes, but only before penetration" },
+    q2:  { question: "Can a drunk person give valid consent?", opt0: "Yes, if they're only slightly drunk", opt1: "No, intoxication prevents free and informed consent", opt2: "Yes, if they initiate themselves", opt3: "It's subjective depending on the level of intoxication" },
+    q3:  { question: "In France, what is the minimum age of sexual consent set by law?", opt0: "16 years old", opt1: "15 years old", opt2: "18 years old", opt3: "14 years old" },
+    q4:  { question: "\"If you don't say no, it's yes.\" Is this correct?", opt0: "Yes, that's the default rule", opt1: "No, consent must be positive and active", opt2: "Yes, unless the person explicitly says no", opt3: "It depends on the context and the relationship" },
+    q5:  { question: "Your partner consented last week. Does that apply today?", opt0: "Yes, an established relationship implies ongoing consent", opt1: "No, consent is expressed at every moment", opt2: "Yes, as long as nothing has changed in the relationship", opt3: "Yes, if you've been together for a long time" },
+    q6:  { question: "Sharing an intimate photo of someone without their consent is:", opt0: "Acceptable if you were in a relationship", opt1: "A criminal offence under French law", opt2: "Problematic but not illegal", opt3: "Fine if the photo was already shared with others" },
+    q7:  { question: "In a BDSM relationship, what is essential?", opt0: "That one of the two is naturally dominant", opt1: "A clear prior agreement including limits and a safe word", opt2: "That nobody gets physically hurt", opt3: "That there is no penetration" },
+    q8:  { question: "\"You're making a scene just because I don't want to do this\" — this is:", opt0: "A legitimate way to express frustration", opt1: "Pressure that invalidates consent", opt2: "Normal in a long relationship", opt3: "Acceptable if the couple has a strong dynamic" },
+    q9:  { question: "Does consent apply in marriage?", opt0: "No, marriage implies a permanent tacit agreement", opt1: "Yes, a spouse can always refuse a sexual encounter", opt2: "Only if one of them explicitly asks for it", opt3: "No, it's a private matter" },
+    q10: { question: "Sending an unsolicited sexual message is:", opt0: "Harmless if done in a nice way", opt1: "A violation of digital consent", opt2: "Fine if you knew each other before", opt3: "A compliment that can be misread" },
+    q11: { question: "Can a sleeping person consent?", opt0: "Yes, if they don't wake up and say nothing", opt1: "No, consent requires being conscious", opt2: "Yes, if they consented before falling asleep", opt3: "It depends on how deeply they're sleeping" },
+    q12: { question: "A hesitant or uncertain \"no\" should be interpreted as:", opt0: "A \"yes\" hiding shyness", opt1: "A refusal, to be respected as such", opt2: "An invitation to gently insist", opt3: "An ambiguous signal to explore" },
+    q13: { question: "In France, forcing someone into a sexual act is classified as:", opt0: "Inappropriate behaviour", opt1: "Rape or sexual assault — a crime or offence depending on the acts", opt2: "Abuse of weakness", opt3: "Physical assault" },
+    q14: { question: "What is the role of a safe word?", opt0: "To spice up a role play", opt1: "To immediately signal stopping a practice, without discussion", opt2: "To tell the other person you want to change position", opt3: "It is purely symbolic" },
+  },
 };
 
 export type EnTranslations = typeof en;
