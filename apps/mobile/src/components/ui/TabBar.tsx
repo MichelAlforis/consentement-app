@@ -11,10 +11,10 @@ import { useNavigationStore, type TabId } from '@ouiclair/core';
 type TabIconId = 'home' | 'learn' | 'play' | 'me';
 
 const TAB_CONFIG: { id: TabId; icon: TabIconId; labelKey: string }[] = [
-  { id: 'home',      icon: 'home',  labelKey: 'tab.home'     },
-  { id: 'apprendre', icon: 'learn', labelKey: 'tab.apprendre'},
-  { id: 'jeux',      icon: 'play',  labelKey: 'tab.jeux'     },
-  { id: 'moi',       icon: 'me',    labelKey: 'tab.moi'      },
+  { id: 'home',      icon: 'home',  labelKey: 'tabs.home'  },
+  { id: 'apprendre', icon: 'learn', labelKey: 'tabs.learn' },
+  { id: 'jeux',      icon: 'play',  labelKey: 'tabs.games' },
+  { id: 'moi',       icon: 'me',    labelKey: 'tabs.me'    },
 ];
 
 function TabIcon({ id, active, color }: { id: TabIconId; active: boolean; color: string }) {
