@@ -342,6 +342,18 @@ export const es = {
     errorInvalidCode: 'Código inválido o no encontrado',
     errorExpired: 'Esta sesión ha expirado',
     errorNetwork: 'Conexión fallida. Comprueba tu conexión.',
+    bump: {
+      title: 'Acercad los teléfonos',
+      desc: 'Sincronización automática — sin código que escribir',
+      tag: 'Recomendado',
+      instruction: 'Permaneced en esta pantalla',
+      sub: 'La conexión empieza automáticamente cuando tu pareja abre la misma pantalla',
+      searching: 'Buscando…',
+      useQr: 'Usar código QR',
+      retry: 'Reintentar',
+      timeoutTitle: 'No se ha encontrado pareja',
+      timeoutSub: 'No pasa nada, probad con el código QR.',
+    },
   },
 
   quiz: {

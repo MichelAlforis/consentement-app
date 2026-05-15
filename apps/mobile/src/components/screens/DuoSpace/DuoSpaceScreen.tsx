@@ -23,8 +23,10 @@ import {
   createDuoSession,
   joinDuoSession,
   subscribeToSession,
-  getBumpCodes,
-  createBumpSession,
+  generateBumpCode,
+  uploadBumpSignal,
+  findBumpSession,
+  getSessionCode,
 } from '@ouiclair/core';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
@@ -78,12 +80,18 @@ export function DuoSpaceScreen() {
     if (view !== 'bump') return;
 
     let cancelled = false;
-    let hasCreatedSession = false;
+    let createdSession: { code: string; sessionId: string } | null = null;
     let activeUnsub: (() => void) | null = null;
     let attempts = 0;
-    const MAX_POLLS = 9;
+    const MAX_POLLS = 3;
 
     setBumpStatus('searching');
+
+    const stopBumpPolling = () => {
+      cancelled = true;
+      activeUnsub?.();
+      activeUnsub = null;
+    };
 
     const poll = async () => {
       if (cancelled || attempts >= MAX_POLLS) {
@@ -102,34 +110,45 @@ export function DuoSpaceScreen() {
 
       const prefs = Object.fromEntries(Object.entries(answers).map(([k, v]) => [k, String(v)]));
       const prefsArg = Object.keys(prefs).length > 0 ? prefs : undefined;
-      const codes = getBumpCodes();
 
-      for (const code of codes) {
-        if (cancelled) return;
+      if (!createdSession && !cancelled) {
         try {
-          const { sessionId: sid, initiatorProfile } = await joinDuoSession(code, personalProfile, uid, prefsArg);
+          const session = await createDuoSession(personalProfile, uid, prefsArg);
           if (cancelled) return;
-          setPartnerProfile(initiatorProfile, sid);
-          return;
-        } catch { /* session introuvable, essayer suivant */ }
-      }
+          createdSession = session;
+          await uploadBumpSignal(session.sessionId, generateBumpCode());
 
-      if (!hasCreatedSession && !cancelled) {
-        hasCreatedSession = true;
-        try {
-          const { code, sessionId: sid } = await createBumpSession(codes[0], personalProfile, uid, prefsArg);
-          if (cancelled) return;
-          activeUnsub = subscribeToSession(sid, code, (record) => {
+          activeUnsub = subscribeToSession(session.sessionId, session.code, (record) => {
             if (record.partner_profile && !cancelled) {
-              setPartnerProfile(record.partner_profile, sid);
+              setPartnerProfile(record.partner_profile, session.sessionId);
+              stopBumpPolling();
             }
           });
         } catch {
-          hasCreatedSession = false;
+          createdSession = null;
+          setError(t('duo.errorNetwork'));
         }
       }
 
-      if (!cancelled) setTimeout(poll, 5000);
+      if (!cancelled) {
+        try {
+          const sessionId = await findBumpSession(createdSession?.sessionId);
+          if (cancelled) return;
+          if (sessionId) {
+            const code = await getSessionCode(sessionId);
+            if (cancelled) return;
+            const { sessionId: sid, initiatorProfile } = await joinDuoSession(code, personalProfile, uid, prefsArg);
+            if (cancelled) return;
+            setPartnerProfile(initiatorProfile, sid);
+            stopBumpPolling();
+            return;
+          }
+        } catch {
+          setError(t('duo.errorNetwork'));
+        }
+      }
+
+      if (!cancelled) setTimeout(poll, 2000);
     };
 
     poll();

@@ -34,33 +34,58 @@ function snapshot(
   };
 }
 
-const BUMP_SLOT_MS = 5000;
+const BUMP_SLOT_MS = 30_000;
 
-export function getBumpCodes(): string[] {
+interface BumpSignalRecord {
+  id: string;
+  session_id: string;
+  bump_code: string;
+  created: string;
+}
+
+export function generateBumpCode(): string {
+  return Math.floor(Date.now() / BUMP_SLOT_MS).toString(36).toUpperCase().padStart(6, '0').slice(-6);
+}
+
+function getBumpCodes(): string[] {
   const current = Math.floor(Date.now() / BUMP_SLOT_MS);
-  return [current, current - 1, current + 1].map(
-    (s) => 'B' + s.toString(36).toUpperCase(),
+  return [current, current - 1, current + 1].map((slot) =>
+    slot.toString(36).toUpperCase().padStart(6, '0').slice(-6),
   );
 }
 
-export async function createBumpSession(
-  slotCode: string,
-  profile: PersonalProfile,
-  pbUserId: string,
-  preferences?: Record<string, string>,
-): Promise<{ code: string; sessionId: string }> {
-  const key = await deriveDuoKey(slotCode);
-  const expiresAt = new Date(Date.now() + 30_000).toISOString();
-
-  const record = await pb.collection('duo_sessions').create({
-    code:              slotCode,
-    initiator:         pbUserId,
-    initiator_profile: { _enc: await encryptJSON(snapshot(profile, preferences), key) },
-    step:              'waiting_partner',
-    expires_at:        expiresAt,
+export async function uploadBumpSignal(sessionId: string, bumpCode: string): Promise<void> {
+  await pb.collection('bump_signals').create({
+    session_id: sessionId,
+    bump_code:  bumpCode,
   });
+}
 
-  return { code: slotCode, sessionId: record.id };
+export async function findBumpSession(excludeSessionId?: string): Promise<string | null> {
+  const cutoff = new Date(Date.now() - 60_000).toISOString();
+
+  for (const bumpCode of getBumpCodes()) {
+    const signals = await pb.collection('bump_signals').getList<BumpSignalRecord>(1, 10, {
+      filter: `bump_code="${bumpCode}" && created >= "${cutoff}"`,
+      sort:   '-created',
+    });
+
+    for (const signal of signals.items) {
+      if (signal.session_id === excludeSessionId) continue;
+
+      const session = await pb.collection('duo_sessions').getOne<EncryptedDuoRecord>(signal.session_id);
+      if (!session.partner && new Date(session.expires_at).getTime() > Date.now()) {
+        return signal.session_id;
+      }
+    }
+  }
+
+  return null;
+}
+
+export async function getSessionCode(sessionId: string): Promise<string> {
+  const session = await pb.collection('duo_sessions').getOne<EncryptedDuoRecord>(sessionId);
+  return session.code;
 }
 
 export async function createDuoSession(

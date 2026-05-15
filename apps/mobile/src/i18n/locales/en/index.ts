@@ -339,6 +339,18 @@ export const en = {
     errorInvalidCode: 'Invalid or unfound code',
     errorExpired: 'This session has expired',
     errorNetwork: 'Connection failed. Check your connection.',
+    bump: {
+      title: 'Bring your phones together',
+      desc: 'Automatic sync — no code to type',
+      tag: 'Recommended',
+      instruction: 'Stay on this screen',
+      sub: 'Connection starts automatically when your partner opens the same screen',
+      searching: 'Searching…',
+      useQr: 'Use QR code',
+      retry: 'Try again',
+      timeoutTitle: 'Partner not found',
+      timeoutSub: 'No problem, try the QR code.',
+    },
   },
 
   quiz: {

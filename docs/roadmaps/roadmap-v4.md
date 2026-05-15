@@ -850,6 +850,36 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 > Audit placeholders effectué le 2026-05-15 — aucun placeholder non-listé trouvé dans `packages/core/` ni `apps/vitrine/`. Sentry, PocketBase et variables d'env sont configurés pour la prod. ✅
 
+**Config EAS (2026-05-15)**
+
+| # | Tâche | Détail | État |
+|---|-------|--------|------|
+| EAS-A | `eas-cli@18.13.0` installé | `apps/mobile/package.json` devDeps — `pnpm exec eas` fonctionnel | ✅ |
+| EAS-B | `projectId` configuré | `app.json` extra.eas.projectId = `c76ebde9-e454-4b76-a8ec-79dc51f94ea4` (compte lordenargent) | ✅ |
+| EAS-C | `eas login` | À lancer en CLI interactif : `cd apps/mobile && pnpm exec eas login` | ⏳ |
+| EAS-D | App Store Connect — créer l'app OuiClair | Voir procédure ci-dessous | ⏳ |
+| EAS-E | Remplir `eas.json` — `appleId` + `ascAppId` | Après EAS-D : remplacer les 2 placeholders dans `apps/mobile/eas.json` | ⏳ |
+| EAS-F | Google Play Console — créer l'app OuiClair | Voir procédure ci-dessous | ⏳ |
+| EAS-G | Déposer `google-service-account.json` | `apps/mobile/google-service-account.json` — déjà dans `.gitignore` root + mobile ✅ | ⏳ |
+| EAS-H | 4 profils build vérifiés | `development` / `device` / `preview` / `production` — tous présents | ✅ |
+| EAS-I | Build development iOS validé | `cd apps/mobile && pnpm exec eas build --platform ios --profile development` | ⏳ |
+
+**Procédure EAS-D — Créer l'app sur App Store Connect**
+
+1. → https://appstoreconnect.apple.com → "Mes apps" → "+"
+2. Nom : **OuiClair** · Bundle ID : **fr.consentement.app** (créer dans developer.apple.com si absent)
+3. SKU : `ouiclair-app` · Langue principale : Français
+4. Après création, noter :
+   - **Apple ID** du compte Apple (email) → remplacer `APPLE_ID_PLACEHOLDER` dans `eas.json`
+   - **App Store Connect App ID** (numéro 10 chiffres dans l'URL de l'app) → remplacer `APP_STORE_CONNECT_APP_ID_PLACEHOLDER`
+
+**Procédure EAS-F — Créer l'app sur Google Play Console**
+
+1. → https://play.google.com/console → "Créer une application"
+2. Package : **fr.consentement.app** · Catégorie : Éducation · 18+
+3. Créer un compte de service Google (IAM) → rôle "Gestionnaire de version" → télécharger le JSON
+4. Déposer : `apps/mobile/google-service-account.json` **(ne jamais committer)**
+
 **Config & clés API**
 
 | # | Tâche | Fichier | État |
@@ -858,8 +888,8 @@ Pas de `detect-gpu`. Stratégie V4 :
 | 2 | Remplacer `REVENUECAT_ANDROID_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` | ⏳ |
 | 3 | Remplacer `ouiclair_premium_monthly` (ID produit IAP réel) | `src/iap/iapService.ts` + App Store Connect + Play Console | ⏳ |
 | 4 | ~~Remplacer `SENTRY_DSN_PLACEHOLDER`~~ | `App.tsx` | ✅ DSN réel configuré (commit 793c12f) |
-| 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` | ⏳ |
-| 6 | Déposer `google-service-account.json` | racine `apps/mobile/` (ne pas committer — déjà dans .gitignore) | ⏳ |
+| 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` | ⏳ voir EAS-D/E |
+| 6 | Déposer `google-service-account.json` | `apps/mobile/` (`.gitignore` root + mobile ✅) | ⏳ voir EAS-F/G |
 
 **Contenu stub à remplacer avant soumission**
 

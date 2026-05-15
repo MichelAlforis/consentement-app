@@ -30,6 +30,10 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# secrets Google Play — ne jamais committer
+google-service-account.json
+apps/mobile/google-service-account.json
+
 # vercel
 .vercel
 
