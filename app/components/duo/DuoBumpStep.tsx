@@ -1,40 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Wifi, WifiOff, QrCode, Check } from 'lucide-react';
 import { Button, Card } from '../ui';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from '../../i18n';
+import { useBumpPolling } from './useBumpPolling';
+import type { PartnerProfile } from '../../types';
 
 interface DuoBumpStepProps {
-  onBumpSuccess: () => void;
+  onBumpSuccess: (partnerProfile: PartnerProfile, sessionId: string) => void;
   onFallbackQR: () => void;
 }
-
-type BumpState = 'waiting' | 'detecting' | 'connecting' | 'failed';
 
 export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [bumpState, setBumpState] = useState<BumpState>('waiting');
 
-  const handleSimulateBump = () => {
-    setBumpState('detecting');
-    setTimeout(() => {
-      setBumpState('connecting');
-      setTimeout(() => {
-        onBumpSuccess();
-      }, 1500);
-    }, 1000);
-  };
-
-  const handleSimulateFail = () => {
-    setBumpState('detecting');
-    setTimeout(() => {
-      setBumpState('failed');
-    }, 2000);
-  };
+  const { bumpState, retry, isOffline } = useBumpPolling(onBumpSuccess, () => {});
 
   return (
     <motion.div
@@ -44,9 +27,33 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
       className="flex flex-col items-center justify-center flex-1 px-6"
     >
       <AnimatePresence mode="wait">
-        {bumpState === 'waiting' && (
+        {isOffline && (
           <motion.div
-            key="waiting"
+            key="offline"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="text-center"
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-100 flex items-center justify-center">
+              <WifiOff size={36} className="text-amber-500" />
+            </div>
+            <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
+              {t('duo.bump.offline.title')}
+            </h2>
+            <p className="mb-6" style={{ color: colors.textMuted }}>
+              {t('duo.bump.offline.sub')}
+            </p>
+            <Button onClick={onFallbackQR} fullWidth variant="primary">
+              <QrCode size={18} />
+              {t('duo.bump.failed.useQr')}
+            </Button>
+          </motion.div>
+        )}
+
+        {!isOffline && bumpState === 'searching' && (
+          <motion.div
+            key="searching"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -108,43 +115,18 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               {t('duo.bump.waiting.searching')}
             </motion.p>
 
-            <div className="mt-8 space-y-3 w-full max-w-xs">
-              <Button onClick={handleSimulateBump} fullWidth variant="primary">
-                <Wifi size={18} />
-                {t('duo.bump.waiting.simBump')}
-              </Button>
-              <Button onClick={handleSimulateFail} fullWidth variant="ghost" className="opacity-50">
-                {t('duo.bump.waiting.simFail')}
+            <div className="mt-8 w-full max-w-xs">
+              <Button onClick={onFallbackQR} fullWidth variant="ghost">
+                <QrCode size={16} />
+                {t('duo.bump.failed.useQr')}
               </Button>
             </div>
           </motion.div>
         )}
 
-        {bumpState === 'detecting' && (
+        {!isOffline && bumpState === 'detected' && (
           <motion.div
-            key="detecting"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="text-center"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              className="w-20 h-20 mx-auto mb-6 rounded-full border-4 border-purple-200 border-t-purple-500"
-            />
-            <h2 className="text-xl font-bold mb-2" style={{ color: colors.textPrimary }}>
-              {t('duo.bump.detecting.title')}
-            </h2>
-            <p style={{ color: colors.textMuted }}>
-              {t('duo.bump.detecting.sub')}
-            </p>
-          </motion.div>
-        )}
-
-        {bumpState === 'connecting' && (
-          <motion.div
-            key="connecting"
+            key="detected"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -156,11 +138,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
               transition={{ duration: 0.5 }}
               className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center"
             >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
-              >
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3 }}>
                 <Check size={40} color="white" strokeWidth={3} />
               </motion.div>
             </motion.div>
@@ -170,9 +148,9 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
           </motion.div>
         )}
 
-        {bumpState === 'failed' && (
+        {!isOffline && bumpState === 'timeout' && (
           <motion.div
-            key="failed"
+            key="timeout"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
@@ -211,7 +189,7 @@ export function DuoBumpStep({ onBumpSuccess, onFallbackQR }: DuoBumpStepProps) {
                 <QrCode size={18} />
                 {t('duo.bump.failed.useQr')}
               </Button>
-              <Button onClick={() => setBumpState('waiting')} fullWidth variant="ghost">
+              <Button onClick={retry} fullWidth variant="ghost">
                 {t('duo.bump.failed.retry')}
               </Button>
             </div>

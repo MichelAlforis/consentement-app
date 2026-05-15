@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { DuoStep, PartnerProfile } from '../../../../types';
+import type { DuoStep, PartnerProfile } from '../../../../types';
 import { PARTNER_NAMES, PARTNER_SAFEWORDS } from '../utils';
 import { useProfileStore } from '../../../../stores/profileStore';
 import { useAuthStore } from '../../../../stores/authStore';
@@ -26,7 +26,7 @@ interface DuoSession {
   setIsScanning: (v: boolean) => void;
   setCopied: (v: boolean) => void;
   handleConnect: () => void;
-  handleBumpSuccess: () => void;
+  handleBumpSuccess: (partnerProfile: PartnerProfile, sessionId: string) => void;
   handleFallbackQR: () => void;
   handleConnectionComplete: () => void;
   handlePactAccepted: () => void;
@@ -117,11 +117,11 @@ export function useDuoSession(): DuoSession {
     });
   }, [inputCode, personalProfile, pbUserId, preferencesAnswers, storeDuoPartner]);
 
-  const handleBumpSuccess = useCallback(() => {
-    // Bump = même flow que connexion manuelle mais code vient du NFC/BLE
-    // Pour l'instant on redirige vers la saisie manuelle si pas de code
-    if (inputCode.length === 6) handleConnect();
-  }, [inputCode, handleConnect]);
+  const handleBumpSuccess = useCallback((partnerProfile: PartnerProfile, sessionId: string) => {
+    setPartnerProfile(partnerProfile);
+    storeDuoPartner(partnerProfile, sessionId);
+    setDuoStep('connected');
+  }, [storeDuoPartner]);
 
   const handleFallbackQR = useCallback(() => {
     setDuoStep('qr-fallback');

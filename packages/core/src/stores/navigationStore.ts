@@ -35,12 +35,9 @@ interface NavigationStore {
 }
 
 export const useNavigationStore = create<NavigationStore>((set, _get) => ({
-  // En dev : atterrir directement sur le dé pour éviter le flow onboarding à chaque reload
   fullscreenStack: __DEV__ ? [] : ['onboarding'],
-  activeTab: __DEV__ ? 'jeux' : 'home',
-  tabStacks: __DEV__
-    ? { ...INITIAL_TAB_STACKS, jeux: ['jeux', 'jeu-des'] }
-    : { ...INITIAL_TAB_STACKS },
+  activeTab: 'home',
+  tabStacks: { ...INITIAL_TAB_STACKS },
   modalStack: [],
 
   switchTab: (tab) => set((state) => {

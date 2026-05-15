@@ -34,6 +34,35 @@ function snapshot(
   };
 }
 
+const BUMP_SLOT_MS = 5000;
+
+export function getBumpCodes(): string[] {
+  const current = Math.floor(Date.now() / BUMP_SLOT_MS);
+  return [current, current - 1, current + 1].map(
+    (s) => 'B' + s.toString(36).toUpperCase(),
+  );
+}
+
+export async function createBumpSession(
+  slotCode: string,
+  profile: PersonalProfile,
+  pbUserId: string,
+  preferences?: Record<string, string>,
+): Promise<{ code: string; sessionId: string }> {
+  const key = await deriveDuoKey(slotCode);
+  const expiresAt = new Date(Date.now() + 30_000).toISOString();
+
+  const record = await pb.collection('duo_sessions').create({
+    code:              slotCode,
+    initiator:         pbUserId,
+    initiator_profile: { _enc: await encryptJSON(snapshot(profile, preferences), key) },
+    step:              'waiting_partner',
+    expires_at:        expiresAt,
+  });
+
+  return { code: slotCode, sessionId: record.id };
+}
+
 export async function createDuoSession(
   profile: PersonalProfile,
   pbUserId: string,

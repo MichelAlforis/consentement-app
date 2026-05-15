@@ -187,7 +187,7 @@ export function MoiScreen({ isAdult: propAdult, onNavigate: propNavigate }: MoiS
   const isAdult = propAdult ?? authAdult;
   const navigateTo = useNavigationStore((s) => s.navigateTo);
   const onNavigate = propNavigate ?? navigateTo;
-  const { isPremium } = usePremiumStore();
+  const { isPremium, activatePremium, deactivatePremium } = usePremiumStore();
   const { points, level: heatLevel, breakdown } = useHeat();
   let cardIndex = 0;
   const personalProfile = useModuleProgressStore((s) => s.completedModules);
@@ -318,6 +318,16 @@ export function MoiScreen({ isAdult: propAdult, onNavigate: propNavigate }: MoiS
             onPress={() => onNavigate('premium')}
             index={++cardIndex}
           />
+        )}
+        {__DEV__ && (
+          <Pressable
+            onPress={isPremium ? deactivatePremium : activatePremium}
+            style={{ marginTop: 24, padding: 12, borderRadius: 12, backgroundColor: isPremium ? '#dc2626' : '#16a34a', alignItems: 'center' }}
+          >
+            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>
+              {isPremium ? '🔓 DEV — Désactiver premium' : '🔑 DEV — Activer premium'}
+            </Text>
+          </Pressable>
         )}
       </View>
     </ScrollView>
