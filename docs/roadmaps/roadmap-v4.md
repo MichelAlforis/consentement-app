@@ -151,6 +151,9 @@ ouiclair-monorepo/
 | 7C | GooseGame | — | **✅ Fait** — GooseGameScreen + insets sur 7 branches | — | BoardRenderer.native + GooseGame screen |
 | 8 | Polish + ATT + Sentry + IAP | 4–6 j | **✅ Fait** — safe areas, ATT, Sentry DSN réel, RevenueCat, SecureStore | — | app prête stores |
 | 9 | Tests + Publication | 8–12 j | **✅ Fait** — Maestro 3 flows, EAS Build, store metadata, deep links | — | EAS build, soumission |
+| 10 | i18n — locales complètes FR/EN/ES | 1 j | **✅ Fait** (commits 6c101d1, fix(i18n)) | — | EN games.ts traduit, ES locale câblée, FR title stub corrigé |
+| 11 | DuoSpace — connexion réelle PocketBase | 2 j | **✅ Fait** (commit 14cfe6e) | — | createDuoSession + joinDuoSession + subscribeToSession + QR scan (expo-camera) |
+| 11B | DuoSpace — Bump TOTP | 1 j | **🔲 À faire** — agent en attente | — | code temporel synchronisé iOS + Android |
 | 🔴 | **Sprint R3F** | — | **En cours** — animation dé statique sur device, décision FlatTile/Skia/R3F | — | dé animé validé device |
 | **Total** | | **102–145 j** | | | **6–10 mois calendaires** (+30% buffer imprévus) |
 
@@ -291,6 +294,138 @@ Features natives critiques complétées :
 **9C — Store metadata :** `docs/store/` — App Store FR/EN + Google Play FR/EN + screenshots-spec.md.
 
 **9D — i18n onboarding (commit cfc722c) :** 380 lignes ajoutées dans locales FR/EN — `welcome`, `ageCheck`, `themeSelect`, `auth`, `language`, `tabs`, `headers`, `settings`, `moi`, `homeAdult`, `homeMinor`, `homeV3`, `apprendre`, `heat`. Plus aucune clé brute visible dans les screens principaux.
+
+---
+
+### Phase 10 — ✅ Fait (2026-05-15)
+
+**i18n — locales complètes FR/EN/ES** (commits `6c101d1` + `fix(i18n)`)
+
+- `en/games.ts` : 111 marqueurs `[EN]` remplacés par traductions complètes (DiceGame + GooseGame)
+- `fr/moduleDeBase.ts` : title stub `'// CONTENU CRÉÉ Phase 5D…'` → `'Module de base'`
+- `es/` locale : câblée dans `i18n/index.ts` (`LOCALES = { fr, en, es }`)
+- `duoStore.updateDuoCode` : regex corrigée — accepte alphanumérique (`/[^A-Z0-9]/gi` au lieu de `/\D/g`)
+
+**État locales :** FR ✅ complet · EN ✅ complet · ES ✅ complet (validation juridique ES à faire : textes légaux adaptés au code pénal espagnol vs français)
+
+---
+
+### Phase 11 — ✅ Fait (2026-05-15)
+
+**DuoSpace — connexion réelle PocketBase + QR scan** (commit `14cfe6e`)
+
+**Remplace le stub simulé** de Phase 6B par de vraies connexions PocketBase.
+
+**Flow créateur :**
+1. `authenticateWithPocketBase()` si `pbUserId` null
+2. `createDuoSession(personalProfile, uid, answers)` → `{ code, sessionId }`
+3. `subscribeToSession(sessionId, code, onChange)` — realtime via react-native-sse (déjà injecté)
+4. QR code + code alphanum affichés — attente partenaire
+5. Dès `record.partner_profile` reçu → `setPartnerProfile()` → vue Connecté
+
+**Flow partenaire :**
+1. `CameraView` (expo-camera) — scan QR → code auto-rempli
+2. Fallback : saisie manuelle 6 chars
+3. `joinDuoSession(code, personalProfile, uid, answers)` → `setPartnerProfile(initiatorProfile)`
+
+**Nouveautés techniques :**
+- `expo-camera ~17.0.10` installé — `CameraView` + `useCameraPermissions` + `onBarcodeScanned`
+- `app.json` : plugin `expo-camera` ajouté (permissions iOS/Android déjà présentes)
+- `mapError()` : 404 → `errorInvalidCode`, expired → `errorExpired`, réseau → `errorNetwork`
+- Cleanup `unsubRef.current?.()` à l'unmount et au cancel
+- i18n : 22 clés `duo.*` ajoutées FR/EN/ES
+
+**⚠️ Reste Phase 11B :** mécanisme Bump (voir ci-dessous)
+
+---
+
+### Phase 11B — 🔲 À faire (agent)
+
+**DuoSpace — Bump TOTP (code temporel synchronisé)**
+
+**Objectif :** permettre la connexion "rapproche-toi de ton partenaire" sans saisie manuelle ni QR scan — juste deux personnes qui tapent "Bump" en même temps.
+
+**Décision technique :** après analyse des alternatives (NFC, BLE fingerprint, mDNS), le **code TOTP-style** est retenu :
+- NFC iPhone→iPhone : impossible (Apple bloque l'émulation)
+- BLE fingerprint : cassé iOS → iOS (les device IDs sont locaux à chaque observer, pas partagés)
+- **TOTP** : fonctionne iOS + Android, aucune permission hardware supplémentaire
+
+**Principe :**
+```
+bumpCode = floor(Date.now() / 30_000).toString(36).toUpperCase().padStart(6, '0').slice(-6)
+```
+Les deux phones dans la même fenêtre de 30 secondes génèrent le même code. Probabilité de collision avec un autre couple = 1/2 milliards par fenêtre.
+
+**PocketBase — collection à créer manuellement dans pb.ouiclair.com/_/ :**
+```
+Collection : bump_signals
+Champs :
+  session_id  → text (required)
+  devices     → json (non requis — réservé futur BLE Android)
+```
+
+**Fichiers à créer :**
+- `apps/mobile/src/duo/bumpService.ts` — `uploadBumpSignal()`, `findBumpSession()`, `claimBumpSession()`
+- Logique : créateur crée session avec `bumpCode`, partenaire cherche session par `bumpCode` dans `bump_signals` (last 60s)
+
+**Fichiers à modifier :**
+- `DuoSpaceScreen.tsx` — nouvelle vue `'bumping'` avec :
+  - Animation radar (cercles concentriques Moti, pulsation)
+  - Countdown 5 secondes
+  - Texte : "Rapproche ton téléphone de celui de ton partenaire"
+  - États : `scanning` / `found` / `notfound`
+  - Bouton "Réessayer" + lien "Utiliser le QR code"
+- i18n FR/EN/ES — clés `duo.bump.*`
+
+**UX :**
+```
+Écran Choix
+  ├── [🔵 Bump — Rapproche vos téléphones]   ← PRIMAIRE
+  ├── [Créer avec QR code]
+  └── [Rejoindre — scanner QR ou entrer code]
+
+Vue Bumping (même écran pour créateur et partenaire)
+  ┌─────────────────────────────────────┐
+  │  ○○○  (radar animé)                 │
+  │  Rapproche ton téléphone            │
+  │  de celui de ton partenaire         │
+  │  [●●●●●] 5 secondes...             │
+  │  [Annuler]  [Utiliser le QR →]      │
+  └─────────────────────────────────────┘
+```
+
+**Prompt agent (à copier-coller) :**
+
+> CONVENTIONS : tsc 0 erreur · ESLint 0 warning · barrel exports nominatifs uniquement (R7) · périmètre = apps/mobile + packages/core uniquement · tsc avant commit.
+>
+> **Objectif :** implémenter le mécanisme Bump TOTP dans DuoSpaceScreen.
+>
+> **1. Créer `apps/mobile/src/duo/bumpService.ts`** avec :
+> - `generateBumpCode(): string` — `floor(Date.now() / 30_000).toString(36).toUpperCase().padStart(6, '0').slice(-6)`
+> - `uploadBumpSignal(sessionId: string, bumpCode: string): Promise<void>` — crée un enregistrement dans `pb.collection('bump_signals')` avec `{ session_id: sessionId, bump_code: bumpCode }`  
+> - `findBumpSession(bumpCode: string): Promise<string | null>` — cherche dans `bump_signals` un enregistrement avec `bump_code = bumpCode` créé dans les 60 dernières secondes, retourne le `session_id` ou null
+> - `getSessionCode(sessionId: string): Promise<string>` — lit `pb.collection('duo_sessions').getOne(sessionId)` et retourne le champ `code`
+>
+> **2. Modifier `apps/mobile/src/components/screens/DuoSpace/DuoSpaceScreen.tsx`** :
+> - Ajouter `'bumping'` à `DuoView` et `bumpRole: 'create' | 'join'` en state local
+> - Dans la vue `'choice'` : ajouter une carte principale "Bump" au-dessus des cartes existantes (icône `Zap`, couleur `colors.accent`, label traduit `t('duo.bumpCta')`)
+> - `handleBump(role)` : crée session si `role === 'create'` → `uploadBumpSignal` → `subscribeToSession` ; si `role === 'join'` → `findBumpSession` avec 3 retries/2s → `getSessionCode` → `joinDuoSession`
+> - Vue `'bumping'` : animation radar (3 cercles Moti `loop: true`, delay 0/650/1300ms, scale 0.5→2, opacity 0.7→0), countdown 5→0 via setInterval, textes i18n, bouton Annuler + lien "Utiliser le QR"
+>
+> **3. Ajouter les clés i18n** dans `fr/en/es index.ts` sous `duo` :
+> ```
+> bumpCta: 'Bump — Rapproche vos téléphones' / 'Bump — Bring your phones together' / 'Bump — Acercad los teléfonos'
+> bumpSub: 'Gardez vos téléphones à moins de 30 cm' / 'Keep your phones within 30 cm' / 'Mantened los teléfonos a menos de 30 cm'
+> bumpScanning: 'Détection en cours…' / 'Detecting…' / 'Detectando…'
+> bumpFound: 'Partenaire trouvé !' / 'Partner found!' / '¡Pareja encontrada!'
+> bumpNotFound: 'Aucun partenaire détecté' / 'No partner detected' / 'No se detectó pareja'
+> bumpRetry: 'Réessayer' / 'Try again' / 'Reintentar'
+> bumpFallback: 'Utiliser le QR code →' / 'Use QR code →' / 'Usar código QR →'
+> ```
+>
+> **4. Note PocketBase :** la collection `bump_signals` doit exister avec les champs `session_id` (text) et `bump_code` (text). Si elle n'existe pas, `uploadBumpSignal` lèvera une erreur réseau → `mapError()` affichera `duo.errorNetwork` → flow dégradé gracieux vers QR.
+>
+> tsc 0 erreur · ESLint 0 warning · NE PAS committer.
 
 ## Phase 0 — Monorepo étendu
 **Durée : 2–3 jours**
