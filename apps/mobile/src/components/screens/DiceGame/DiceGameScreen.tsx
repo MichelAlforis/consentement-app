@@ -126,6 +126,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
   const { currentFace, currentItem, isRolling, roll, onRollComplete } = useDiceEngine(DICE_CONFIG, diceItems);
   const currentCat = currentItem ? DICE_CATEGORIES[currentItem.faceId] : null;
   const currentCatName = currentItem ? t(`diceCategories.${currentItem.faceId}`) : '';
+  const currentCatColor = currentFace?.gradient.match(/#[0-9a-fA-F]{6}/)?.[0] ?? currentCat?.border;
   const bothYes = p1Answer === 'yes' && p2Answer === 'yes';
   const showDice = mode === 'pick' || mode === 'rolling' || mode === 'practice';
 
@@ -184,8 +185,8 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
       >
         {/* Header */}
         <View style={styles.header}>
-          <View style={[styles.headerIcon, { backgroundColor: '#fef3c7' }]}>
-            <Dices size={22} color="#d97706" />
+          <View style={[styles.headerIcon, { backgroundColor: colors.uniqueBg }]}>
+            <Dices size={22} color={colors.unique} />
           </View>
           <View>
             <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t('diceGame.title')}</Text>
@@ -224,7 +225,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                   from={{ opacity: 0, translateY: -40, scale: 1.2 }}
                   animate={{ opacity: 1, translateY: 0, scale: 1 }}
                   transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 50 }}
-                  style={styles.categoryBadge}
+                  style={[styles.categoryBadge, { backgroundColor: currentCatColor }]}
                 >
                   <DiceCategoryIcon faceId={currentItem?.faceId ?? 1} size={24} />
                   <Text style={styles.categoryBadgeText}>{currentCatName}</Text>
@@ -359,17 +360,17 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                   onPress={() => { setP1Answer('no'); setMode('duo-hidden'); }}
                   style={[styles.voteBtn, styles.voteBtnNo]}
                 >
-                  <X size={24} color="#ef4444" />
-                  <Text style={styles.voteNo}>{t('diceGame.no')}</Text>
-                  <Text style={styles.voteNoNote}>{t('diceGame.noNote')}</Text>
+                  <X size={24} color={colors.danger} />
+                  <Text style={[styles.voteNo, { color: colors.danger }]}>{t('diceGame.no')}</Text>
+                  <Text style={[styles.voteNoNote, { color: colors.error }]}>{t('diceGame.noNote')}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => { setP1Answer('yes'); setMode('duo-hidden'); }}
                   style={[styles.voteBtn, styles.voteBtnYes]}
                 >
-                  <Check size={24} color="#22c55e" />
-                  <Text style={styles.voteYes}>{t('diceGame.yes')}</Text>
-                  <Text style={styles.voteYesNote}>{t('diceGame.yesNote')}</Text>
+                  <Check size={24} color={colors.success} />
+                  <Text style={[styles.voteYes, { color: colors.success }]}>{t('diceGame.yes')}</Text>
+                  <Text style={[styles.voteYesNote, { color: colors.success }]}>{t('diceGame.yesNote')}</Text>
                 </Pressable>
               </View>
             </MotiView>
@@ -463,8 +464,8 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                   style={styles.revealIcon}
                 >
                   {bothYes
-                    ? <PartyPopper size={52} color="#4ade80" />
-                    : <Handshake size={52} color="#94a3b8" />
+                    ? <PartyPopper size={52} color={colors.success} />
+                    : <Handshake size={52} color={colors.textMuted} />
                   }
                 </MotiView>
 
@@ -480,9 +481,9 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
                     from={{ opacity: 0, translateY: 8 }}
                     animate={{ opacity: 1, translateY: 0 }}
                     transition={{ delay: 400 }}
-                    style={styles.anonymityBox}
+                    style={[styles.anonymityBox, { backgroundColor: colors.bgSecondary, borderColor: colors.border }]}
                   >
-                    <Text style={styles.anonymityText}>{t('diceGame.anonymity')}</Text>
+                    <Text style={[styles.anonymityText, { color: colors.accent }]}>{t('diceGame.anonymity')}</Text>
                   </MotiView>
                 )}
 
@@ -623,7 +624,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(245,158,11,0.9)',
   },
   categoryBadgeText: {
     color: '#fff',
@@ -776,21 +776,17 @@ const styles = StyleSheet.create({
   },
   voteNo: {
     fontWeight: '700',
-    color: '#dc2626',
     fontSize: 14,
   },
   voteNoNote: {
     fontSize: 12,
-    color: '#f87171',
   },
   voteYes: {
     fontWeight: '700',
-    color: '#16a34a',
     fontSize: 14,
   },
   voteYesNote: {
     fontSize: 12,
-    color: '#4ade80',
   },
   hiddenScreen: {
     flex: 1,
@@ -848,14 +844,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 12,
     borderRadius: 16,
-    backgroundColor: '#eff6ff',
     borderWidth: 1,
-    borderColor: '#dbeafe',
     maxWidth: 280,
   },
   anonymityText: {
     fontSize: 12,
-    color: '#1d4ed8',
     textAlign: 'center',
   },
   revealActions: {
