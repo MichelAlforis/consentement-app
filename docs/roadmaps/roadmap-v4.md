@@ -848,6 +848,10 @@ Pas de `detect-gpu`. Stratégie V4 :
 
 ### 🔴 Checklist avant soumission — tâches manuelles
 
+> Audit placeholders effectué le 2026-05-15 — aucun placeholder non-listé trouvé dans `packages/core/` ni `apps/vitrine/`. Sentry, PocketBase et variables d'env sont configurés pour la prod. ✅
+
+**Config & clés API**
+
 | # | Tâche | Fichier | État |
 |---|-------|---------|------|
 | 1 | Remplacer `REVENUECAT_IOS_API_KEY_PLACEHOLDER` | `src/iap/iapService.ts` | ⏳ |
@@ -856,8 +860,20 @@ Pas de `detect-gpu`. Stratégie V4 :
 | 4 | ~~Remplacer `SENTRY_DSN_PLACEHOLDER`~~ | `App.tsx` | ✅ DSN réel configuré (commit 793c12f) |
 | 5 | Remplacer `APPLE_ID_PLACEHOLDER` + `APP_STORE_CONNECT_APP_ID_PLACEHOLDER` | `eas.json` | ⏳ |
 | 6 | Déposer `google-service-account.json` | racine `apps/mobile/` (ne pas committer — déjà dans .gitignore) | ⏳ |
-| 7 | Screenshots device (iPhone 16 Pro Max 1320×2868 + 6.7" 1290×2796 + Pixel 8) | Xcode Simulator + Android Studio | ⏳ |
-| 8 | **Sprint R3F** : décider FlatTile / Skia / continuer R3F | voir section Phase 7 — en cours | 🔄 |
+
+**Contenu stub à remplacer avant soumission**
+
+| # | Tâche | Fichier | État |
+|---|-------|---------|------|
+| 7 | Remplacer les 3 questions stub par 15+ questions réelles | `src/data/quizConsentement.ts` | ⏳ |
+| 8 | Remplacer les 3 sexologues fictifs (`Dr. Exemple`, etc.) par l'annuaire réel | `src/data/sexologues.ts` | ⏳ |
+
+**Stores & publication**
+
+| # | Tâche | Fichier | État |
+|---|-------|---------|------|
+| 9 | Screenshots device (iPhone 16 Pro Max 1320×2868 + 6.7" 1290×2796 + Pixel 8) | Xcode Simulator + Android Studio | ⏳ |
+| 10 | **Sprint R3F** : décider FlatTile / Skia / continuer R3F | voir section Phase 7 — en cours | 🔄 |
 
 ### Publication (à faire après checklist)
 
