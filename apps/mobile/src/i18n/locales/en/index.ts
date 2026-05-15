@@ -251,7 +251,19 @@ export const en = {
   },
   help: {
     title: 'Help & Emergencies',
-    subtitle: 'Free, anonymous numbers, available 24/7',
+    subtitle: 'Free, confidential numbers, available 24/7',
+    resources: {
+      domestic:    { name: 'National Domestic Abuse Helpline', desc: 'Domestic and sexual violence — 24/7, free, confidential' },
+      samaritans:  { name: 'Samaritans',                       desc: 'Emotional support and crisis — 24/7, free' },
+      'rape-crisis':{ name: 'Rape Crisis',                     desc: 'Sexual violence support — free helpline' },
+      childline:   { name: 'Childline',                        desc: 'For children and young people — free, 24/7' },
+    },
+    emergency: {
+      title: 'Emergency numbers',
+      police: 'Police',
+      samu: 'Ambulance',
+      sms: 'Textphone',
+    },
     faq: [
       {
         question: 'What is consent?',
@@ -259,11 +271,11 @@ export const en = {
       },
       {
         question: 'What if I feel uncomfortable?',
-        answer: 'You can say no at any time, even if you said yes before. Your comfort always comes first. If you are in danger, call emergency services.',
+        answer: 'You can say no at any time, even if you said yes before. Your comfort always comes first. If you are in danger, call 999.',
       },
       {
         question: 'Where can I find help?',
-        answer: 'Sexual or domestic violence: contact local helplines. Psychological distress: mental health crisis lines. Emergencies: 911 or local emergency number.',
+        answer: 'Domestic or sexual violence: 0808 2000 247 · Emotional crisis: 116 123 (Samaritans) · Emergencies: 999. All numbers are free.',
       },
     ],
   },

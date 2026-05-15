@@ -258,6 +258,19 @@ export const fr = {
   help: {
     title: 'Aide & Urgences',
     subtitle: 'Numéros gratuits, anonymes, disponibles 24h/24',
+    resources: {
+      violences:  { name: 'Violences Femmes Info',           desc: 'Violences conjugales et sexuelles — 24h/24, anonyme' },
+      suicide:    { name: 'Prévention Suicide',              desc: 'Détresse psychologique — 24h/24, 7j/7' },
+      'fil-sante':{ name: 'Fil Santé Jeunes',               desc: 'Santé, sexualité, bien-être — gratuit, anonyme' },
+      planning:   { name: 'Planning Familial',               desc: 'Sexualité, contraception, écoute' },
+      enfance:    { name: 'Enfance en Danger',               desc: 'Enfants et adolescents — gratuit, 7j/7' },
+    },
+    emergency: {
+      title: 'Numéros d\'urgence',
+      police: 'Police',
+      samu: 'SAMU',
+      sms: 'SMS urgence',
+    },
     faq: [
       {
         question: "Qu'est-ce que le consentement ?",

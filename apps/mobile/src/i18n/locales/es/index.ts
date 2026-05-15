@@ -255,6 +255,18 @@ export const es = {
   help: {
     title: 'Ayuda y Urgencias',
     subtitle: 'Números gratuitos, anónimos, disponibles 24h/24',
+    resources: {
+      genero:  { name: 'Violencia de Género',          desc: 'Violencia de género y sexual — 24h, gratuito, anónimo' },
+      suicidio:{ name: 'Atención Conducta Suicida',    desc: 'Crisis psicológica y suicidio — 24h, gratuito' },
+      anar:    { name: 'Fundación ANAR',               desc: 'Niños y adolescentes en peligro — 24h, gratuito' },
+      sexual:  { name: 'Violencia Sexual',             desc: 'Víctimas de violencia sexual — gratuito, confidencial' },
+    },
+    emergency: {
+      title: 'Números de emergencia',
+      police: 'Policía / Emergencias',
+      samu: 'Violencia de género',
+      sms: 'Crisis suicida',
+    },
     faq: [
       {
         question: '¿Qué es el consentimiento?',
@@ -262,11 +274,11 @@ export const es = {
       },
       {
         question: '¿Qué hago si me siento incómodo/a?',
-        answer: 'Puedes decir no en cualquier momento, aunque hayas dicho sí antes. Tu bienestar es lo primero. En caso de peligro, llama a los servicios de emergencia.',
+        answer: 'Puedes decir no en cualquier momento, aunque hayas dicho sí antes. Tu bienestar es lo primero. En caso de peligro, llama al 112.',
       },
       {
         question: '¿Dónde puedo encontrar ayuda?',
-        answer: 'Violencia sexual o doméstica: líneas de ayuda locales. Urgencias: 112 o el número de emergencia local.',
+        answer: 'Violencia de género: 016 · Crisis psicológica: 024 · Emergencias: 112. Todos los números son gratuitos y anónimos.',
       },
     ],
   },
