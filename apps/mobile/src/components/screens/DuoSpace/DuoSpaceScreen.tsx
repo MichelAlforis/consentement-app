@@ -11,7 +11,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
 import * as Haptics from 'expo-haptics';
-import { AlertCircle, Camera, ChevronLeft, LogOut, QrCode, Smartphone, UserCheck, Wifi, WifiOff, X } from 'lucide-react-native';
+import { AlertCircle, Camera, LogOut, QrCode, Smartphone, UserCheck, Wifi, WifiOff, X } from 'lucide-react-native';
+import { BackButton } from '../../ui/BackButton';
 import QRCode from 'react-native-qrcode-svg';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import {
@@ -288,9 +289,7 @@ export function DuoSpaceScreen() {
         animate={{ opacity: 1, translateY: 0 }}
         style={styles.header}
       >
-        <Pressable onPress={view === 'bump' ? handleCancelBump : goBack} hitSlop={12}>
-          <ChevronLeft size={24} color={colors.textPrimary} />
-        </Pressable>
+        <BackButton onPress={view === 'bump' ? handleCancelBump : goBack} />
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
           {t('duo.title')}
         </Text>

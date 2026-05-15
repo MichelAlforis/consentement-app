@@ -1,11 +1,12 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
-import { BookOpen, Brain, ChevronLeft, Zap } from 'lucide-react-native';
+import { BookOpen, Brain, Zap } from 'lucide-react-native';
 import type { LucideIcon } from 'lucide-react-native';
 import { useNavigationStore } from '@ouiclair/core';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
+import { BackButton } from '../../ui/BackButton';
 
 const LEVELS: { labelKey: string; descKey: string; Icon: LucideIcon; color: string }[] = [
   { labelKey: 'quizHub.levels.0.label', descKey: 'quizHub.levels.0.desc', Icon: BookOpen, color: '#64B5F6' },
@@ -24,11 +25,9 @@ export function QuizHubScreen() {
       <MotiView
         from={{ opacity: 0, translateY: -8 }}
         animate={{ opacity: 1, translateY: 0 }}
-        style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12 }}
       >
-        <Pressable onPress={goBack} style={{ marginRight: 12 }} hitSlop={8}>
-          <ChevronLeft size={24} color={colors.textPrimary} />
-        </Pressable>
+        <BackButton onPress={goBack} />
         <Text style={{ fontSize: 20, fontWeight: '700', color: colors.textPrimary }}>
           {t('quizHub.title')}
         </Text>

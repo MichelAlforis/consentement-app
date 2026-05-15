@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
-import { ChevronLeft, User } from 'lucide-react-native';
+import { User } from 'lucide-react-native';
+import { BackButton } from '../../ui/BackButton';
 import {
   useProfileStore,
   useAuthStore,
@@ -73,9 +74,7 @@ export function PersonalSpaceScreen() {
           gap: 12,
         }}
       >
-        <Pressable onPress={goBack} hitSlop={8}>
-          <ChevronLeft size={24} color={colors.textPrimary} />
-        </Pressable>
+        <BackButton onPress={goBack} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 20, fontWeight: '700', color: colors.textPrimary }}>
             {t('personalSpace.title')}

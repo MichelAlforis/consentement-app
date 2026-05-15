@@ -40,6 +40,7 @@ import {
 import { useTheme } from '../../../theme/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { Button } from '../../ui/Button';
+import { BackButton } from '../../ui/BackButton';
 import { CardFullscreenOverlay } from '../../ui/CardFullscreenOverlay';
 import { useDiceEngine } from '../../../game-engine/dice/useDiceEngine';
 import { DiceRenderer } from '../../../game-engine/dice/DiceRenderer';
@@ -185,6 +186,7 @@ export function DiceGameScreen({ isPremium, isAdult, onNavigate }: DiceGameScree
       >
         {/* Header */}
         <View style={styles.header}>
+          <BackButton onPress={handleQuit} />
           <View style={[styles.headerIcon, { backgroundColor: colors.uniqueBg }]}>
             <Dices size={22} color={colors.unique} />
           </View>

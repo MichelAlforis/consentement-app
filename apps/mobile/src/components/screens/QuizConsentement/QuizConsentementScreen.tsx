@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
-import { ChevronLeft } from 'lucide-react-native';
 import { useNavigationStore } from '@ouiclair/core';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
+import { BackButton } from '../../ui/BackButton';
 import { QUIZ_QUESTIONS } from '../../../data/quizConsentement';
 
 export function QuizConsentementScreen() {
@@ -70,11 +70,9 @@ export function QuizConsentementScreen() {
       <MotiView
         from={{ opacity: 0, translateY: -8 }}
         animate={{ opacity: 1, translateY: 0 }}
-        style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12 }}
       >
-        <Pressable onPress={goBack} style={{ marginRight: 12 }} hitSlop={8}>
-          <ChevronLeft size={24} color={colors.textPrimary} />
-        </Pressable>
+        <BackButton onPress={goBack} />
         <Text style={{ fontSize: 20, fontWeight: '700', color: colors.textPrimary }}>
           {t('quiz.title')}
         </Text>

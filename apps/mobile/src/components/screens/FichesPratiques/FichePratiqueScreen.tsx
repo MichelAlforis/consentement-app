@@ -25,6 +25,7 @@ import {
 } from '@ouiclair/core';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
+import { BackButton } from '../../ui/BackButton';
 import type { FichePratiqueItem, FichePratiqueScreenProps } from '../../../types/fiches-pratiques';
 
 // TODO: une fois tous les consommateurs migrés vers types/, supprimer ce re-export.
@@ -95,41 +96,49 @@ export function FichePratiqueScreen({
 
   if (isPremiumGated && !isPremium) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.bgPrimary, alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-        <Lock size={48} color={colors.textMuted} />
-        <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: '600', marginTop: 16, textAlign: 'center' }}>
-          {t('premium.gateMessage')}
-        </Text>
-        <Pressable
-          onPress={() => navigateTo('premium' as Screen)}
-          style={{ marginTop: 24, backgroundColor: colors.accent, borderRadius: 12, paddingHorizontal: 28, paddingVertical: 14 }}
-        >
-          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>
-            {t('premium.unlockCta')}
+      <View style={{ flex: 1, backgroundColor: colors.bgPrimary, paddingTop: insets.top }}>
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <BackButton onPress={() => navigateTo('apprendre' as Screen)} />
+        </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+          <Lock size={48} color={colors.textMuted} />
+          <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: '600', textAlign: 'center' }}>
+            {t('premium.gateMessage')}
           </Text>
-        </Pressable>
+          <Pressable
+            onPress={() => navigateTo('premium' as Screen)}
+            style={{ marginTop: 8, backgroundColor: colors.accent, borderRadius: 12, paddingHorizontal: 28, paddingVertical: 14 }}
+          >
+            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>
+              {t('premium.unlockCta')}
+            </Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bgPrimary, paddingTop: insets.top }}>
-      {/* Progress pills */}
-      <View style={{ flexDirection: 'row', gap: 6, paddingHorizontal: 20, paddingVertical: 16 }}>
-        {items.map((item, index) => (
-          <Pressable
-            key={item.id}
-            onPress={() => goTo(index)}
-            style={{
-              flex: 1,
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: visited.has(index) ? colors.accent : 'transparent',
-              borderWidth: visited.has(index) ? 0 : 1,
-              borderColor: colors.textMuted,
-            }}
-          />
-        ))}
+      {/* Back + Progress pills */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 }}>
+        <BackButton onPress={() => navigateTo('apprendre' as Screen)} />
+        <View style={{ flex: 1, flexDirection: 'row', gap: 6 }}>
+          {items.map((item, index) => (
+            <Pressable
+              key={item.id}
+              onPress={() => goTo(index)}
+              style={{
+                flex: 1,
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: visited.has(index) ? colors.accent : 'transparent',
+                borderWidth: visited.has(index) ? 0 : 1,
+                borderColor: colors.textMuted,
+              }}
+            />
+          ))}
+        </View>
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>

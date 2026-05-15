@@ -22,6 +22,7 @@ import {
   type GainedCard,
   type Screen,
 } from '@ouiclair/core';
+import { BackButton } from '../../ui/BackButton';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
 import { GameEndCinematic } from '../../../game-engine/shared/GameEndCinematic';
@@ -205,7 +206,8 @@ export function CardGameScreen() {
                 <>
                   {/* Header */}
                   <View style={styles.headerRow}>
-                    <View>
+                    <BackButton onPress={() => navigateTo('jeux' as Screen)} style={{ marginRight: 4 }} />
+                    <View style={{ flex: 1 }}>
                       <Text style={[styles.title, { color: colors.textPrimary }]}>
                         {t('cardGame.title')}
                       </Text>

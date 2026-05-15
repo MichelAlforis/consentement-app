@@ -37,6 +37,7 @@ import {
 } from '@ouiclair/core';
 import { FlipRevealOverlay } from '../../ui/FlipRevealOverlay';
 import { CardFullscreenOverlay } from '../../ui/CardFullscreenOverlay';
+import { BackButton } from '../../ui/BackButton';
 import { collectorCards } from '../../../data/cards-collector';
 import { useTranslation } from '../../../i18n';
 import { useTheme } from '../../../theme/ThemeContext';
@@ -242,18 +243,20 @@ export function HallOfCardsScreen() {
 
   if (gainedCards.length === 0) {
     return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.bgPrimary,
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: insets.top + 32,
-          paddingHorizontal: 32,
-          paddingBottom: insets.bottom + 32,
-          gap: 16,
-        }}
-      >
+      <View style={{ flex: 1, backgroundColor: colors.bgPrimary, paddingTop: insets.top }}>
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <BackButton onPress={() => navigateTo('jeux')} />
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 32,
+            paddingBottom: insets.bottom + 32,
+            gap: 16,
+          }}
+        >
         <Lock size={48} color={colors.textMuted} />
         <Text
           style={{
@@ -289,6 +292,7 @@ export function HallOfCardsScreen() {
             {t('hallOfCards.emptyCta')}
           </Text>
         </Pressable>
+        </View>
       </View>
     );
   }
@@ -298,27 +302,32 @@ export function HallOfCardsScreen() {
       {/* Header */}
       <View
         style={{
-          paddingHorizontal: 20,
-          paddingTop: insets.top + 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 12,
+          paddingHorizontal: 16,
+          paddingTop: insets.top + 8,
           paddingBottom: 12,
-          gap: 4,
         }}
       >
-        <Text
-          style={{
-            color: colors.textPrimary,
-            fontSize: 22,
-            fontWeight: '900',
-          }}
-        >
-          {t('hallOfCards.title')}
-        </Text>
-        <Text style={{ color: colors.textMuted, fontSize: 13 }}>
-          {t('hallOfCards.count', {
-            owned: gainedCards.length,
-            total: deckATotal,
-          })}
-        </Text>
+        <BackButton onPress={() => navigateTo('jeux')} />
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              color: colors.textPrimary,
+              fontSize: 22,
+              fontWeight: '900',
+            }}
+          >
+            {t('hallOfCards.title')}
+          </Text>
+          <Text style={{ color: colors.textMuted, fontSize: 13 }}>
+            {t('hallOfCards.count', {
+              owned: gainedCards.length,
+              total: deckATotal,
+            })}
+          </Text>
+        </View>
       </View>
 
       {/* Carousel */}

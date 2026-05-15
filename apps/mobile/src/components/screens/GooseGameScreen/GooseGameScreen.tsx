@@ -7,6 +7,7 @@ import { Zap, Leaf, Wind, Moon, Star, Dices } from 'lucide-react-native';
 import type { ComponentType } from 'react';
 import { useNavigationStore, usePremiumStore } from '@ouiclair/core';
 import { useUnlockStore } from '@ouiclair/core';
+import { BackButton } from '../../ui/BackButton';
 import { useGooseGame } from './hooks/useGooseGame';
 import { GooseBoard } from './components/GooseBoard';
 import { ConfettiParticles } from './components/ConfettiParticles';
@@ -40,16 +41,21 @@ export function GooseGameScreen({ isAdult }: GooseGameScreenProps) {
 
   if (!isPremium) {
     return (
-      <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} style={[styles.gateContainer, { paddingTop: insets.top }]}>
-        <Lock size={48} color="rgba(255,255,255,0.6)" />
-        <View>
-          <Text style={styles.gateTitle}>{t('gooseGame.premium')}</Text>
-          <Text style={styles.gateSub}>{t('gooseGame.premiumSub')}</Text>
+      <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} style={[styles.gateWrapper, { paddingTop: insets.top }]}>
+        <View style={styles.gateTopBar}>
+          <BackButton onPress={() => navigateTo('jeux')} />
         </View>
-        <Pressable onPress={() => navigateTo('premium')} style={styles.unlockBtn}>
-          <Sparkles size={16} color="white" />
-          <Text style={styles.unlockBtnText}>{t('gooseGame.unlockPremium')}</Text>
-        </Pressable>
+        <View style={styles.gateContent}>
+          <Lock size={48} color="rgba(255,255,255,0.6)" />
+          <View>
+            <Text style={styles.gateTitle}>{t('gooseGame.premium')}</Text>
+            <Text style={styles.gateSub}>{t('gooseGame.premiumSub')}</Text>
+          </View>
+          <Pressable onPress={() => navigateTo('premium')} style={styles.unlockBtn}>
+            <Sparkles size={16} color="white" />
+            <Text style={styles.unlockBtnText}>{t('gooseGame.unlockPremium')}</Text>
+          </Pressable>
+        </View>
       </MotiView>
     );
   }
@@ -98,6 +104,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'intro') {
     return (
       <View style={{ flex: 1, paddingTop: insets.top }}>
+        <View style={styles.phaseTopBar}>
+          <BackButton onPress={() => navigateTo('jeux')} />
+        </View>
         <IntroScreen
           savedGame={savedGame}
           onNew={() => { setSavedGame(null); setPhase('setup-p1'); }}
@@ -110,6 +119,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'setup-p1') {
     return (
       <View style={[styles.phaseWrapper, { backgroundColor: '#7c3aed', paddingTop: insets.top }]}>
+        <View style={styles.phaseTopBar}>
+          <BackButton onPress={() => setPhase('intro')} />
+        </View>
         <SetupPlayer playerIndex={0} otherPawn={undefined} onConfirm={handleP1Confirm} />
       </View>
     );
@@ -118,6 +130,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'setup-p2') {
     return (
       <View style={[styles.phaseWrapper, { backgroundColor: '#0369a1', paddingTop: insets.top }]}>
+        <View style={styles.phaseTopBar}>
+          <BackButton onPress={() => setPhase('setup-p1')} />
+        </View>
         <SetupPlayer playerIndex={1} otherPawn={p1?.pawn} onConfirm={handleP2Confirm} />
       </View>
     );
@@ -126,6 +141,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
   if (phase === 'pacte') {
     return (
       <View style={[styles.phaseWrapper, { backgroundColor: '#0f172a', paddingTop: insets.top }]}>
+        <View style={styles.phaseTopBar}>
+          <BackButton onPress={() => setPhase('setup-p2')} />
+        </View>
         <PacteScreen player1={player1} player2={player2} onStart={startNewGame} />
       </View>
     );
@@ -227,6 +245,9 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
               </Text>
             </View>
           )}
+          <Pressable onPress={handleQuit} style={styles.quitBtn}>
+            <Text style={styles.quitBtnText}>{t('gooseGame.end.quit')}</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -273,13 +294,20 @@ function GooseGameInner({ isAdult }: { isAdult: boolean }) {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  gateContainer: {
+  gateWrapper: {
+    flex: 1,
+    backgroundColor: '#0f172a',
+  },
+  gateTopBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  gateContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
     gap: 20,
-    backgroundColor: '#0f172a',
   },
   gateTitle: {
     color: 'white',
@@ -311,6 +339,10 @@ const styles = StyleSheet.create({
   },
   phaseWrapper: {
     flex: 1,
+  },
+  phaseTopBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   playContainer: {
     flex: 1,
@@ -392,5 +424,14 @@ const styles = StyleSheet.create({
     color: '#93c5fd',
     fontSize: 14,
     fontWeight: '600',
+  },
+  quitBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+  },
+  quitBtnText: {
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: 13,
+    fontWeight: '500',
   },
 });

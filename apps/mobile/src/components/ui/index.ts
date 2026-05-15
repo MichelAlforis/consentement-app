@@ -33,3 +33,4 @@ export { FlipRevealOverlay } from './FlipRevealOverlay';
 export { PalierUpOverlay } from './PalierUpOverlay';
 export { CardFullscreenOverlay } from './CardFullscreenOverlay';
 export type { CardFullscreenOverlayProps } from './CardFullscreenOverlay';
+export { BackButton } from './BackButton';
