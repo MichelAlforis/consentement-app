@@ -1,0 +1,82 @@
+# docker-compose.ouiclair.yml
+# Services Ouiclair — HORS SCOPE CRM Alforis
+# Déploiement sur i7 : /srv/ouiclair/ (repo consentement-app)
+# Cloudflare Tunnel routes:
+#   ouiclair.com, www.ouiclair.com → localhost:3002
+#   pb.ouiclair.com                → localhost:8092
+
+services:
+  ouiclair-vitrine:
+    build:
+      context: ./apps/vitrine
+      dockerfile: Dockerfile
+    container_name: ouiclair-vitrine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3002:80"
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - ouiclair
+
+  ouiclair-pocketbase:
+    build:
+      context: ./infra/pocketbase
+      dockerfile: Dockerfile
+    container_name: ouiclair-pocketbase
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8092:8090"
+    volumes:
+      - ouiclair-pb-data:/pb/pb_data
+      - ./pb_migrations:/pb/pb_migrations:ro
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8090/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - ouiclair
+
+volumes:
+  ouiclair-pb-data:
+    driver: local
+
+networks:
+  ouiclair:
+    driver: bridge
