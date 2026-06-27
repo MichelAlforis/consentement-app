@@ -6,9 +6,8 @@ module.exports = {
   apps: [
     {
       name: 'ouiclair-vitrine',
-      script: '/usr/bin/serve',
-      interpreter: 'node',
-      args: '-s apps/vitrine/out -p 3002',
+      script: '/srv/ouiclair/scripts/start-vitrine.sh',
+      interpreter: '/bin/bash',
       cwd: '/srv/ouiclair',
       restart_delay: 3000,
       max_restarts: 10,
