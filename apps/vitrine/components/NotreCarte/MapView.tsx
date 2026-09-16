@@ -196,7 +196,7 @@ export default function MapView({ nc }: { nc: Nc }) {
           accent="pink"
           markerColor="#f472b6"
           markerBg="rgba(236,72,153,.14)"
-          marker="×"
+          marker="—"
           items={nc.listItems('rouges', false)}
           onAdd={() => nc.addListItem('rouges')}
         />
