@@ -22,6 +22,9 @@ build
 .expo/
 *.pem
 
+# design drafts (peuvent contenir des données personnelles)
+*.dc.html
+
 # debug
 npm-debug.log*
 yarn-debug.log*
