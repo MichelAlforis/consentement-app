@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { COLORS } from './constants';
 import AutoGrowTextarea from './AutoGrowTextarea';
+import { useBufferedField } from './useBufferedField';
 import type { useNotreCarte } from './useNotreCarte';
 import type { CarteNode } from './types';
 
@@ -48,6 +49,8 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
 
   const nodeHistory = nc.history((l) => l.n === node.id);
 
+  const titleField = useBufferedField(node.title, (v) => nc.patchNode(node.id, { title: v }, 'titre'));
+
   const [sentChanged, setSentChanged] = useState(false);
   useEffect(() => {
     if (iAmOwner && node.sentSeen === false) {
@@ -71,8 +74,9 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
       </div>
 
       <input
-        value={node.title}
-        onChange={(e) => iAmOwner && nc.patchNode(node.id, { title: e.target.value }, 'titre')}
+        value={titleField.local}
+        onChange={(e) => iAmOwner && titleField.onLocalChange(e.target.value)}
+        onBlur={titleField.onBlur}
         readOnly={!iAmOwner}
         className="nc-fiche-h1"
         style={{ width: '100%', background: 'none', border: 'none', borderBottom: '1px solid #2e1f46', padding: '0 0 10px', color: '#f8fafc', fontWeight: 900, letterSpacing: '-.02em', lineHeight: 1.15 }}

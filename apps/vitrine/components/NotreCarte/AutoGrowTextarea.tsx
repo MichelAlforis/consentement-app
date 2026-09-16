@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { useBufferedField } from './useBufferedField';
 
 interface Props {
   value: string;
@@ -18,22 +19,24 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, Props>(function AutoGro
 ) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
   useImperativeHandle(forwardedRef, () => ref.current as HTMLTextAreaElement, []);
+  const { local, onLocalChange, onBlur } = useBufferedField(value, onChange);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
-  }, [value]);
+  }, [local]);
 
   return (
     <textarea
       ref={ref}
       rows={rows}
-      value={value}
+      value={local}
       readOnly={readOnly}
       placeholder={placeholder}
-      onChange={(e) => onChange?.(e.target.value)}
+      onChange={(e) => onLocalChange(e.target.value)}
+      onBlur={onBlur}
       className={className}
       style={{ overflow: 'hidden', resize: 'vertical', ...style }}
     />

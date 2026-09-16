@@ -37,11 +37,14 @@ function CurrentView({ nc }: { nc: ReturnType<typeof useNotreCarte> }) {
 
   if (view.kind === 'node') {
     const node = state.nodes.find((n) => n.id === view.id);
-    return node ? <NodeSheetPage nc={nc} node={node} /> : <MapView nc={nc} />;
+    // key={node.id} : un remontage propre à chaque changement de besoin, pour qu'un texte
+    // en cours de frappe (mise en tampon locale) ne se retrouve jamais affiché sur la fiche
+    // suivante si on navigue juste avant la fin de la courte pause qui l'envoie au global.
+    return node ? <NodeSheetPage key={node.id} nc={nc} node={node} /> : <MapView nc={nc} />;
   }
 
   if (view.kind === 'edge') {
-    return state.edges.some((e) => e.id === view.id) ? <EdgeSheetPage nc={nc} edgeId={view.id} /> : <MapView nc={nc} />;
+    return state.edges.some((e) => e.id === view.id) ? <EdgeSheetPage key={view.id} nc={nc} edgeId={view.id} /> : <MapView nc={nc} />;
   }
 
   if (view.kind === 'person') {
