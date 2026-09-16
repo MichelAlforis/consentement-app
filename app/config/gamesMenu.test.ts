@@ -3,11 +3,10 @@ import { getGameDescriptionKey, getVisibleGameMenuItems } from './gamesMenu';
 
 describe('gamesMenu', () => {
   it('orders games declaratively by section', () => {
-    expect(getVisibleGameMenuItems(true, 'free').map((item) => item.id)).toEqual(['dice']);
+    expect(getVisibleGameMenuItems(true, 'free').map((item) => item.id)).toEqual(['dice', 'scenarios']);
     expect(getVisibleGameMenuItems(true, 'premium').map((item) => item.id)).toEqual([
       'goose',
       'cards',
-      'scenarios',
     ]);
     expect(getVisibleGameMenuItems(true, 'collection').map((item) => item.id)).toEqual(['collection']);
   });
