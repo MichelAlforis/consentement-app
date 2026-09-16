@@ -18,7 +18,9 @@ module.exports = {
     {
       name: 'ouiclair-pocketbase',
       script: '/srv/ouiclair/pocketbase',
-      args: 'serve --http=127.0.0.1:8092 --dir=/srv/ouiclair/pb-data --migrationsDir=/srv/ouiclair/pb_migrations',
+      // 0.0.0.0 : accessible depuis le LAN (téléphones à la maison), pas juste localhost.
+      // Les collections carte_users / notre_carte_docs ont leurs propres règles d'accès.
+      args: 'serve --http=0.0.0.0:8092 --dir=/srv/ouiclair/pb-data --migrationsDir=/srv/ouiclair/pb_migrations',
       cwd: '/srv/ouiclair',
       interpreter: 'none',
       restart_delay: 3000,
