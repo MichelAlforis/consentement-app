@@ -88,7 +88,7 @@ export default function MapView({ nc }: { nc: Nc }) {
         </div>
 
         <div ref={nc.frameRef} className="nc-frame" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch', border: '1px solid #2e1f46', borderRadius: 18, background: '#0d0714', backgroundImage: 'radial-gradient(circle,rgba(139,92,246,.12) 1px,transparent 1px)', backgroundSize: '32px 32px' }}>
-          <div ref={nc.scalerRef} style={{ width: CANVAS_W, height: CANVAS_H, transformOrigin: 'top left' }}>
+          <div ref={nc.scalerRef} className="nc-scaler" style={{ width: CANVAS_W, height: CANVAS_H, transformOrigin: 'top left' }}>
             <div
               ref={nc.canvasRef}
               onClick={(e) => {

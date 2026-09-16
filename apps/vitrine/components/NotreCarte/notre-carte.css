@@ -10,6 +10,9 @@ details[open] .nc-chev { transform: rotate(90deg); }
 .nc-chev { transition: transform .25s cubic-bezier(.2, 1.4, .4, 1); display: inline-block; }
 .nc-toolbar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .nc-toolbar::-webkit-scrollbar { display: none; }
+/* --nc-k (calculée en JS) pilote le zoom "ajusté" : sans cette règle, la carte
+   reste toujours à sa taille pleine et déborde du cadre sur petit écran. */
+.nc-scaler { transform: scale(var(--nc-k, 1)); }
 
 @keyframes nc-flow { to { stroke-dashoffset: -200; } }
 @keyframes nc-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }

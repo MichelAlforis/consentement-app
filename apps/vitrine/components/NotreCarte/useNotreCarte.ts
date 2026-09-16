@@ -285,7 +285,10 @@ export function useNotreCarte() {
     const st = stateRef.current;
     if (st.zoom === 'full') return 1;
     const w = st.frameW || CANVAS_W;
-    return Math.min(1, Math.max(0.42, w / CANVAS_W));
+    // Plancher relevé à 0,6 : en dessous, les titres et les pastilles "lire" deviennent
+    // illisibles/impossibles à toucher. Sur les tout petits écrans la boucle peut alors
+    // légèrement dépasser le cadre (défilement résiduel), préférable à un aperçu inutilisable.
+    return Math.min(1, Math.max(0.6, w / CANVAS_W));
   }, []);
 
   useEffect(() => {
@@ -355,6 +358,10 @@ export function useNotreCarte() {
   );
 
   // ── Mesure du cadre (zoom "ajusté") ──────────────────────────────────────
+  // Le cadre (.nc-frame) n'existe que sous CurrentView, monté seulement une fois
+  // l'identité choisie ET le document chargé (`loaded`) — avant ça, frameRef.current
+  // est encore null et cet effet ne mesurait jamais rien. Il se ré-attache donc à
+  // chaque passage à `loaded`, et à chaque retour sur la vue carte.
   useEffect(() => {
     const measure = () => {
       const w = frameRef.current ? frameRef.current.clientWidth : 0;
@@ -371,7 +378,7 @@ export function useNotreCarte() {
       window.removeEventListener('resize', measure);
       ro?.disconnect();
     };
-  }, [set]);
+  }, [set, loaded, state.view.kind]);
 
   useEffect(() => {
     const el = scalerRef.current;
