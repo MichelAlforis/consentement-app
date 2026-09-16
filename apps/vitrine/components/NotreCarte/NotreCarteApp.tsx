@@ -26,7 +26,7 @@ export default function NotreCarteApp() {
 
       {state.me && loaded && <CurrentView nc={nc} />}
 
-      {state.me && loaded && <SyncStatus syncStatus={state.syncStatus} fx={state.fx} saveMsg={state.saveMsg} />}
+      {state.me && loaded && <SyncStatus syncStatus={state.syncStatus} fx={state.fx} saveMsg={state.saveMsg} onSave={nc.saveNow} />}
     </div>
   );
 }

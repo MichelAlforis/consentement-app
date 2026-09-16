@@ -71,7 +71,6 @@ export function useNotreCarte() {
   const [loaded, setLoaded] = useState(false);
   const docIdRef = useRef<string | null>(null);
   const stateRef = useRef(state);
-  const skipNextSaveRef = useRef(false);
   // Dernière version confirmée en commun avec le serveur : la base à partir
   // de laquelle on détecte "qu'est-ce que j'ai changé localement" pour fusionner
   // proprement avec ce que l'autre a pu écrire entre-temps.
@@ -114,7 +113,7 @@ export function useNotreCarte() {
 
   const setLogged = useCallback(
     (patch: Partial<CarteState>, target: string, field: string, value: string | number) => {
-      set(logged(patch, target, field, value));
+      set({ ...logged(patch, target, field, value), syncStatus: 'dirty' });
     },
     [logged, set]
   );
@@ -142,7 +141,6 @@ export function useNotreCarte() {
       if (found) {
         docIdRef.current = found.id;
         baselineRef.current = found.doc;
-        skipNextSaveRef.current = true;
         set(found.doc);
       }
       setLoaded(true);
@@ -152,62 +150,42 @@ export function useNotreCarte() {
     };
   }, [state.me, loaded, set]);
 
-  useEffect(() => {
-    if (!loaded || !docIdRef.current) return;
-    if (skipNextSaveRef.current) {
-      skipNextSaveRef.current = false;
-      return;
+  // ── Sauvegarde manuelle ─────────────────────────────────────────────────
+  // Volontairement pas d'auto-save en tapant : plus simple, plus prévisible, et ça
+  // supprime toute course entre la frappe et un aller-retour réseau. On sauvegarde
+  // seulement quand on clique sur le bouton, ou en quittant le champ n'a plus d'effet
+  // réseau du tout — juste le passage à l'état "dirty" plus haut dans setLogged.
+  const savingRef = useRef(false);
+  const saveNow = useCallback(async () => {
+    const id = docIdRef.current;
+    const baseline = baselineRef.current;
+    if (!id || !baseline || savingRef.current) return;
+    savingRef.current = true;
+    clearTimeout(syncIdleTimerRef.current);
+    set({ syncStatus: 'saving' });
+    const localDoc = docFromState(stateRef.current);
+    let toSave = localDoc;
+    let ok = true;
+    try {
+      const fresh = await fetchDoc();
+      if (fresh) toSave = mergeDocs(baseline, localDoc, fresh.doc);
+    } catch {
+      // hors-ligne ou requête échouée : on sauvegarde quand même notre version locale
     }
-    const timer = setTimeout(async () => {
-      const id = docIdRef.current;
-      const baseline = baselineRef.current;
-      if (!id || !baseline) return;
-      clearTimeout(syncIdleTimerRef.current);
-      set({ syncStatus: 'saving' });
-      const localDoc = docFromState(stateRef.current);
-      let toSave = localDoc;
-      let ok = true;
-      try {
-        const fresh = await fetchDoc();
-        if (fresh) toSave = mergeDocs(baseline, localDoc, fresh.doc);
-      } catch {
-        // hors-ligne ou requête échouée : on sauvegarde quand même notre version locale
-      }
-      lastSavedJsonRef.current = JSON.stringify(toSave);
-      await saveDoc(id, toSave).catch(() => {
-        ok = false;
-      });
-      // Ce qui a pu être tapé pendant l'aller-retour réseau ne doit jamais être
-      // écrasé par le résultat (devenu entre-temps périmé) qu'on s'apprêtait à écrire.
-      const finalLocal = docFromState(stateRef.current);
-      const finalMerged = mergeDocs(baseline, finalLocal, toSave);
-      baselineRef.current = toSave;
-      const stillDirty = JSON.stringify(finalMerged) !== JSON.stringify(toSave);
-      skipNextSaveRef.current = !stillDirty;
-      set({ ...finalMerged, syncStatus: ok ? 'synced' : 'idle' });
-      if (ok) syncIdleTimerRef.current = setTimeout(() => set({ syncStatus: 'idle' }), 1800);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [
-    loaded,
-    state.nodes,
-    state.edges,
-    state.swapped,
-    state.preambule,
-    state.engA,
-    state.engB,
-    state.signA,
-    state.signB,
-    state.profilA,
-    state.profilB,
-    state.travailA,
-    state.travailB,
-    state.alertes,
-    state.rouges,
-    state.manques,
-    state.log,
-    set,
-  ]);
+    lastSavedJsonRef.current = JSON.stringify(toSave);
+    await saveDoc(id, toSave).catch(() => {
+      ok = false;
+    });
+    // Ce qui a pu être tapé pendant l'aller-retour réseau ne doit jamais être
+    // écrasé par le résultat (devenu entre-temps périmé) qu'on s'apprêtait à écrire.
+    const finalLocal = docFromState(stateRef.current);
+    const finalMerged = mergeDocs(baseline, finalLocal, toSave);
+    baselineRef.current = toSave;
+    const stillDirty = JSON.stringify(finalMerged) !== JSON.stringify(toSave);
+    savingRef.current = false;
+    set({ ...finalMerged, syncStatus: ok ? (stillDirty ? 'dirty' : 'synced') : 'dirty' });
+    if (ok && !stillDirty) syncIdleTimerRef.current = setTimeout(() => set({ syncStatus: 'idle' }), 1800);
+  }, [set]);
 
   // ── Synchro temps réel (l'autre a modifié la carte) ────────────────────
   useEffect(() => {
@@ -222,7 +200,6 @@ export function useNotreCarte() {
         const baseline = baselineRef.current;
         const merged = baseline ? mergeDocs(baseline, docFromState(stateRef.current), server) : server;
         baselineRef.current = merged;
-        skipNextSaveRef.current = true;
         set(merged);
       })
       .then((fn) => {
@@ -233,6 +210,17 @@ export function useNotreCarte() {
       unsub?.();
     };
   }, [loaded, set]);
+
+  // ── Avertit avant de fermer/quitter s'il reste des changements non enregistrés ──
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (stateRef.current.syncStatus !== 'dirty') return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
   // ── Routage par hash ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -302,7 +290,7 @@ export function useNotreCarte() {
           ? { ...n, x: Math.max(0, Math.min(CANVAS_W - NODE_W, (e.clientX - d.dx) / k)), y: Math.max(0, Math.min(CANVAS_H - NODE_H, (e.clientY - d.dy) / k)) }
           : n
       );
-      set({ nodes });
+      set({ nodes, syncStatus: 'dirty' });
     };
     const onUp = () => {
       if (stateRef.current.drag) set({ drag: null });
@@ -352,7 +340,7 @@ export function useNotreCarte() {
       const x = Math.max(0, Math.min(CANVAS_W - NODE_W, (clientX - rect.left) / k - NODE_W / 2));
       const y = Math.max(0, Math.min(CANVAS_H - NODE_H, (clientY - rect.top) / k - NODE_H / 2));
       const nodes = st.nodes.map((n) => (n.id === st.moveSource ? { ...n, x, y } : n));
-      set({ nodes, moveSource: null });
+      set({ nodes, moveSource: null, syncStatus: 'dirty' });
     },
     [scale, set]
   );
@@ -724,6 +712,7 @@ export function useNotreCarte() {
     addNode,
     patchNode,
     ackSent,
+    saveNow,
     patchManque,
     deleteNode,
     startLinking,
