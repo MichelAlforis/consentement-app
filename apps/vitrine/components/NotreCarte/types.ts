@@ -68,6 +68,8 @@ export interface CarteState extends CarteDoc {
   linking: string | null;
   pickSource: boolean;
   drag: { id: string; dx: number; dy: number; sx: number; sy: number } | null;
+  arranging: boolean;
+  moveSource: string | null;
   zoom: 'fit' | 'full';
   drafts: Record<string, string>;
   lastAdded: string | null;

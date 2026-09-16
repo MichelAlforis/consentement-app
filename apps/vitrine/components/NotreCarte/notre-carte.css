@@ -3,7 +3,7 @@
 .nc-root textarea, .nc-root input { font-family: Inter, system-ui, sans-serif; }
 .nc-root textarea:focus, .nc-root input:focus { outline: none; border-color: rgba(139, 92, 246, .55); }
 .nc-root button { min-height: 44px; }
-.nc-root .nc-icon-btn { min-width: 34px; min-height: 34px; width: 34px; height: 34px; }
+.nc-root .nc-icon-btn { min-width: 44px; min-height: 44px; width: 44px; height: 44px; }
 .nc-summary { list-style: none; cursor: pointer; }
 .nc-summary::-webkit-details-marker { display: none; }
 details[open] .nc-chev { transform: rotate(90deg); }
@@ -86,6 +86,7 @@ details[open] .nc-chev { transform: rotate(90deg); }
 
 /* ── Mobile-first (par défaut) → desktop à partir de 768px ───────────────── */
 .nc-page { padding: 20px 14px 128px; }
+.nc-page { padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px)); }
 .nc-gap { gap: 22px; }
 .nc-h1 { font-size: 2.05rem; }
 .nc-h2 { font-size: 1.4rem; }
@@ -94,7 +95,9 @@ details[open] .nc-chev { transform: rotate(90deg); }
 .nc-stack { display: grid; grid-template-columns: 1fr; gap: 14px; }
 .nc-duo { display: grid; grid-template-columns: 1fr; gap: 18px; }
 .nc-savebar { position: fixed; left: 14px; right: 14px; bottom: 14px; }
+.nc-savebar { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
 .nc-frame { max-height: 58vh; }
+.nc-frame { max-height: 58dvh; }
 
 @media (min-width: 768px) {
   .nc-page { padding: 48px 24px 96px !important; }
@@ -108,4 +111,12 @@ details[open] .nc-chev { transform: rotate(90deg); }
   .nc-toolbar { overflow: visible; flex-wrap: wrap; }
   .nc-savebar { position: sticky !important; left: auto !important; right: auto !important; bottom: 18px !important; }
   .nc-frame { max-height: none !important; }
+}
+
+/* ── Petits écrans (iPhone SE et plus étroits) ────────────────────────────── */
+@media (max-width: 379px) {
+  .nc-page { padding-left: 12px !important; padding-right: 12px !important; }
+  .nc-h1 { font-size: 1.7rem; }
+  .nc-card { padding: 13px; }
+  .nc-gap { gap: 18px; }
 }

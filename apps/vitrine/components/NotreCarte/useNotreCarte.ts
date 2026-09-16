@@ -53,6 +53,8 @@ function initialState(): CarteState {
     linking: null,
     pickSource: false,
     drag: null,
+    arranging: false,
+    moveSource: null,
     zoom: typeof window !== 'undefined' && window.innerWidth < 768 ? 'full' : 'fit',
     drafts: {},
     lastAdded: null,
@@ -77,6 +79,7 @@ export function useNotreCarte() {
   const draggedRef = useRef(false);
   const frameRef = useRef<HTMLDivElement | null>(null);
   const scalerRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
   const focusEdgeRef = useRef<string | null>(null);
   const syncIdleTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Le realtime nous renvoie aussi nos propres écritures : sans ce garde-fou, cet écho
@@ -312,10 +315,41 @@ export function useNotreCarte() {
   const startDrag = useCallback(
     (node: CarteNode, e: React.PointerEvent) => {
       const st = stateRef.current;
-      if (st.linking || st.pickSource) return;
+      if (st.linking || st.pickSource || st.arranging) return;
       draggedRef.current = false;
       const k = scale();
       set({ drag: { id: node.id, dx: e.clientX - node.x * k, dy: e.clientY - node.y * k, sx: e.clientX, sy: e.clientY } });
+    },
+    [scale, set]
+  );
+
+  // ── Réorganiser au doigt (alternative au glisser-déposer, pour les nœuds
+  // trop petits à saisir précisément une fois la carte réduite) ─────────────
+  const toggleArrange = useCallback(() => {
+    const st = stateRef.current;
+    set({ arranging: !st.arranging, moveSource: null, linking: null, pickSource: false });
+  }, [set]);
+
+  const pickMoveTarget = useCallback(
+    (nodeId: string) => {
+      const st = stateRef.current;
+      set({ moveSource: st.moveSource === nodeId ? null : nodeId });
+    },
+    [set]
+  );
+
+  const placeMoveTarget = useCallback(
+    (clientX: number, clientY: number) => {
+      const st = stateRef.current;
+      if (!st.arranging || !st.moveSource) return;
+      const el = canvasRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const k = scale();
+      const x = Math.max(0, Math.min(CANVAS_W - NODE_W, (clientX - rect.left) / k - NODE_W / 2));
+      const y = Math.max(0, Math.min(CANVAS_H - NODE_H, (clientY - rect.top) / k - NODE_H / 2));
+      const nodes = st.nodes.map((n) => (n.id === st.moveSource ? { ...n, x, y } : n));
+      set({ nodes, moveSource: null });
     },
     [scale, set]
   );
@@ -505,6 +539,10 @@ export function useNotreCarte() {
         return;
       }
       const st = stateRef.current;
+      if (st.arranging) {
+        pickMoveTarget(node.id);
+        return;
+      }
       if (st.pickSource) {
         if (st.me !== node.owner) {
           burst('Pars d’un de tes besoins');
@@ -530,7 +568,7 @@ export function useNotreCarte() {
       }
       goNode(node.id);
     },
-    [burst, goEdge, goNode, set, setLogged]
+    [burst, goEdge, goNode, pickMoveTarget, set, setLogged]
   );
 
   const removeEdge = useCallback(
@@ -653,6 +691,7 @@ export function useNotreCarte() {
     loaded,
     frameRef,
     scalerRef,
+    canvasRef,
     focusEdgeRef,
     name,
     satHidden,
@@ -672,6 +711,9 @@ export function useNotreCarte() {
     burst,
     flashWig,
     startDrag,
+    toggleArrange,
+    pickMoveTarget,
+    placeMoveTarget,
     addNode,
     patchNode,
     ackSent,

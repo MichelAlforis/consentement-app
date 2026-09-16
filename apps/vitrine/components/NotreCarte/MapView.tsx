@@ -11,13 +11,17 @@ export default function MapView({ nc }: { nc: Nc }) {
   const { state, name, levels, nodeGeoms, scale } = nc;
   const k = scale();
 
-  const hint = state.pickSource
-    ? 'Touche un de tes besoins : le départ doit être à toi.'
-    : state.linking
-      ? "Touche le nœud d'arrivée."
-      : k < 0.99
-        ? 'Touche un nœud pour ouvrir sa page'
-        : 'Fais glisser la carte pour te déplacer · touche un nœud pour sa page';
+  const hint = state.arranging
+    ? state.moveSource
+      ? 'Touche l’endroit où poser ce besoin · touche-le à nouveau pour annuler.'
+      : 'Touche un besoin à déplacer, puis touche l’endroit où le poser.'
+    : state.pickSource
+      ? 'Touche un de tes besoins : le départ doit être à toi.'
+      : state.linking
+        ? "Touche le nœud d'arrivée."
+        : k < 0.99
+          ? 'Touche un nœud pour ouvrir sa page'
+          : 'Fais glisser la carte pour te déplacer · touche un nœud pour sa page';
 
   const cardLine = (owner: Owner) => {
     const engKey = owner === 'A' ? 'engA' : 'engB';
@@ -78,11 +82,20 @@ export default function MapView({ nc }: { nc: Nc }) {
           <ToolbarBtn onClick={() => { nc.set({ zoom: state.zoom === 'full' ? 'fit' : 'full' }); nc.flashWig(); }}>
             {state.zoom === 'full' ? "Vue d'ensemble" : 'Zoom 1:1'}
           </ToolbarBtn>
+          <ToolbarBtn onClick={nc.toggleArrange} accent={state.arranging ? 'violet' : undefined}>
+            {state.arranging ? 'Terminer' : 'Réorganiser au doigt'}
+          </ToolbarBtn>
         </div>
 
         <div ref={nc.frameRef} className="nc-frame" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch', border: '1px solid #2e1f46', borderRadius: 18, background: '#0d0714', backgroundImage: 'radial-gradient(circle,rgba(139,92,246,.12) 1px,transparent 1px)', backgroundSize: '32px 32px' }}>
           <div ref={nc.scalerRef} style={{ width: CANVAS_W, height: CANVAS_H, transformOrigin: 'top left' }}>
-            <div style={{ position: 'relative', width: CANVAS_W, height: CANVAS_H }}>
+            <div
+              ref={nc.canvasRef}
+              onClick={(e) => {
+                if (e.target === e.currentTarget) nc.placeMoveTarget(e.clientX, e.clientY);
+              }}
+              style={{ position: 'relative', width: CANVAS_W, height: CANVAS_H, cursor: state.moveSource ? 'crosshair' : undefined }}
+            >
               <div aria-hidden="true" style={{ position: 'absolute', left: 60, top: 80, width: 320, height: 320, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle,rgba(139,92,246,.16) 0%,transparent 70%)', animation: 'nc-drift-a 19s ease-in-out infinite' }} />
               <div aria-hidden="true" style={{ position: 'absolute', right: 20, bottom: 40, width: 300, height: 300, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle,rgba(236,72,153,.14) 0%,transparent 70%)', animation: 'nc-drift-b 23s ease-in-out infinite', animationDelay: '-9s' }} />
               <svg width={CANVAS_W} height={CANVAS_H} style={{ position: 'absolute', inset: 0 }}>
@@ -141,8 +154,9 @@ export default function MapView({ nc }: { nc: Nc }) {
                   idx={idx}
                   level={levels[n.id] ?? 0}
                   owner={name(n.owner)}
-                  hot={state.linking === n.id || (state.pickSource && state.me === n.owner)}
+                  hot={state.linking === n.id || (state.pickSource && state.me === n.owner) || state.moveSource === n.id}
                   dim={state.pickSource && state.me !== n.owner}
+                  pickable={state.arranging}
                   lastAdded={state.lastAdded === n.id}
                   wig={state.wig}
                   hidden={nc.satHidden(n)}
@@ -306,9 +320,9 @@ const rowStyle: React.CSSProperties = {
 };
 
 function NodeCard({
-  node, idx, level, owner, hot, dim, lastAdded, wig, hidden, onDown, onClick,
+  node, idx, level, owner, hot, dim, lastAdded, wig, hidden, pickable, onDown, onClick,
 }: {
-  node: CarteNode; idx: number; level: number; owner: string; hot: boolean; dim: boolean; lastAdded: boolean; wig: boolean; hidden: boolean;
+  node: CarteNode; idx: number; level: number; owner: string; hot: boolean; dim: boolean; lastAdded: boolean; wig: boolean; hidden: boolean; pickable: boolean;
   onDown: (e: React.PointerEvent) => void; onClick: () => void;
 }) {
   const c = COLORS[node.owner];
@@ -321,7 +335,7 @@ function NodeCard({
       className={`nc-node ${animClass}`}
       style={{
         position: 'absolute', left: node.x, top: node.y, width: NODE_W, height: NODE_H,
-        padding: '10px 12px', borderRadius: 12, cursor: 'grab', userSelect: 'none', touchAction: 'none',
+        padding: '10px 12px', borderRadius: 12, cursor: pickable ? 'pointer' : 'grab', userSelect: 'none', touchAction: 'none',
         display: 'flex', flexDirection: 'column',
         background: `linear-gradient(145deg, ${c}${Math.round(glow * 40).toString(16).padStart(2, '0')}, #1a1128 70%)`,
         border: `1px solid ${hot ? c : `rgba(255,255,255,${(0.07 + level * 0.2).toFixed(2)})`}`,
