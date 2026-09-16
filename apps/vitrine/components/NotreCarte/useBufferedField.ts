@@ -1,23 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const FLUSH_DELAY = 200;
 
 /**
- * Écrire directement dans l'état global à chaque caractère force tout l'app à se
- * re-rendre à chaque frappe (historique, tendance, géométrie des flèches...) — invisible
- * sur desktop, mais ça se sent sur le clavier virtuel d'un iPhone. On tape dans un état
- * local instantané, et on ne répercute vers le global (et donc la sauvegarde) qu'après
- * une courte pause, ou immédiatement en quittant le champ.
+ * Un champ contrôlé par React (value + onChange) réécrit sa valeur sur le DOM à
+ * chaque rendu. Sur iOS Safari, cette réécriture entre en conflit avec la
+ * correction automatique et les suggestions du clavier : une lettre tapée
+ * s'affiche puis disparaît, un mot suggéré ne s'insère pas. La solution, c'est
+ * de laisser le DOM posséder sa propre valeur (champ non contrôlé) et de ne la
+ * resynchroniser depuis l'extérieur (sauvegarde, fusion temps réel) que de façon
+ * impérative, jamais via `value=`.
  */
-export function useBufferedField(value: string, onChange?: (v: string) => void) {
-  const [local, setLocal] = useState(value);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+export function useUncontrolledField<T extends HTMLInputElement | HTMLTextAreaElement>(
+  value: string,
+  onChange?: (v: string) => void,
+  onSync?: () => void
+) {
+  const ref = useRef<T | null>(null);
   const pending = useRef(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  // Une frappe en cours ne doit jamais être écrasée par ce qui vient de l'extérieur.
   useEffect(() => {
-    // Une frappe en cours ne doit jamais être écrasée par ce qui vient de l'extérieur
-    // (sauvegarde, fusion temps réel) : on ne resynchronise que si rien n'est en attente.
-    if (!pending.current) setLocal(value);
+    const el = ref.current;
+    if (!el || pending.current) return;
+    if (el.value !== value) {
+      el.value = value;
+      onSync?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -28,14 +39,18 @@ export function useBufferedField(value: string, onChange?: (v: string) => void) 
     onChange?.(v);
   };
 
-  const onLocalChange = (v: string) => {
-    setLocal(v);
+  const onInput = (e: React.FormEvent<T>) => {
+    const v = e.currentTarget.value;
     pending.current = true;
     clearTimeout(timer.current);
     timer.current = setTimeout(() => flush(v), FLUSH_DELAY);
+    onSync?.();
   };
 
-  const onBlur = () => flush(local);
+  const onBlur = () => {
+    const el = ref.current;
+    if (el) flush(el.value);
+  };
 
-  return { local, onLocalChange, onBlur };
+  return { ref, onInput, onBlur };
 }

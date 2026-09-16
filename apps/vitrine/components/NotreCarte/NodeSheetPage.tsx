@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { COLORS } from './constants';
 import AutoGrowTextarea from './AutoGrowTextarea';
-import { useBufferedField } from './useBufferedField';
+import { useUncontrolledField } from './useBufferedField';
 import type { useNotreCarte } from './useNotreCarte';
 import type { CarteNode } from './types';
 
@@ -49,7 +49,7 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
 
   const nodeHistory = nc.history((l) => l.n === node.id);
 
-  const titleField = useBufferedField(node.title, (v) => nc.patchNode(node.id, { title: v }, 'titre'));
+  const titleField = useUncontrolledField<HTMLInputElement>(node.title, (v) => nc.patchNode(node.id, { title: v }, 'titre'));
 
   const [sentChanged, setSentChanged] = useState(false);
   useEffect(() => {
@@ -74,8 +74,9 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
       </div>
 
       <input
-        value={titleField.local}
-        onChange={(e) => iAmOwner && titleField.onLocalChange(e.target.value)}
+        ref={titleField.ref}
+        defaultValue={node.title}
+        onInput={iAmOwner ? titleField.onInput : undefined}
         onBlur={titleField.onBlur}
         readOnly={!iAmOwner}
         className="nc-fiche-h1"
