@@ -5,6 +5,8 @@ import IdentityGate from './IdentityGate';
 import MapView from './MapView';
 import NodeSheetPage from './NodeSheetPage';
 import EdgeSheetPage from './EdgeSheetPage';
+import PersonPage from './PersonPage';
+import HelpPage from './HelpPage';
 import SaveBar from './SaveBar';
 import { useNotreCarte } from './useNotreCarte';
 
@@ -43,7 +45,15 @@ function CurrentView({ nc }: { nc: ReturnType<typeof useNotreCarte> }) {
   }
 
   if (view.kind === 'edge') {
-    return state.edges[view.i] ? <EdgeSheetPage nc={nc} index={view.i} /> : <MapView nc={nc} />;
+    return state.edges.some((e) => e.id === view.id) ? <EdgeSheetPage nc={nc} edgeId={view.id} /> : <MapView nc={nc} />;
+  }
+
+  if (view.kind === 'person') {
+    return <PersonPage nc={nc} who={view.who} />;
+  }
+
+  if (view.kind === 'help') {
+    return <HelpPage nc={nc} />;
   }
 
   return <MapView nc={nc} />;

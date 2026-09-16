@@ -1,45 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { COLORS, KINDS } from './constants';
+import { COLORS } from './constants';
 import AutoGrowTextarea from './AutoGrowTextarea';
 import type { useNotreCarte } from './useNotreCarte';
 import type { CarteNode } from './types';
 
 type Nc = ReturnType<typeof useNotreCarte>;
 
-const startsWithVowel = (s: string) => /^[aeiouyéèêAEIOUYÉÈÊ]/.test(s);
-const elide = (name: string) => (startsWithVowel(name) ? `d'${name}` : `de ${name}`);
-
 export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode }) {
-  const { state, name } = nc;
+  const { state, name, elide, startsWithVowel } = nc;
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const who = name(node.owner);
   const other = name(node.owner === 'A' ? 'B' : 'A');
   const iAmOwner = state.me === node.owner;
-  const besoinNodes = state.nodes.filter((n) => n.kind === 'besoin');
-  const bIdx = besoinNodes.findIndex((n) => n.id === node.id);
-  const prev = bIdx > 0 ? besoinNodes[bIdx - 1] : besoinNodes[besoinNodes.length - 1];
-  const next = bIdx >= 0 && bIdx < besoinNodes.length - 1 ? besoinNodes[bIdx + 1] : besoinNodes[0];
 
   const idx = state.nodes.findIndex((n) => n.id === node.id);
-  const chain: { num: string; kindLabel: string; title: string; note: string; onOpen: () => void }[] = [];
-  for (let j = idx + 1; j < Math.min(idx + 3, state.nodes.length); j++) {
-    const c = state.nodes[j];
-    if (c.kind === 'besoin') break;
-    chain.push({ num: KINDS[c.kind].num, kindLabel: KINDS[c.kind].label, title: c.title, note: c.note, onOpen: () => nc.goNode(c.id) });
-  }
+  const prev = idx > 0 ? state.nodes[idx - 1] : state.nodes[state.nodes.length - 1];
+  const next = idx >= 0 && idx < state.nodes.length - 1 ? state.nodes[idx + 1] : state.nodes[0];
 
-  const received = Math.round((nc.incoming[node.id] || 0) * 100);
   const manque = state.manques[node.id] || { casse: '', plus: '' };
   const draft = state.drafts[node.id] || '';
   const sentSet = node.sent != null;
   const sent = sentSet ? node.sent! : 0;
   const gap = sent - (node.sat || 0);
-
-  const kicker = KINDS[node.kind].label;
-  const sheetOwner =
-    node.kind === 'besoin' ? `Besoin ${elide(who)}` : node.kind === 'capacite' ? `Chez ${who}, ce que ça rend possible` : `Ce que ${who} peut alors donner`;
 
   const gapText =
     gap > 30
@@ -50,14 +34,11 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
           ? `${who} perçoit plus que ce que ${other} croit envoyer. Autant le dire à voix haute : ça se sait rarement tout seul.`
           : "Ce qui est envoyé et ce qui est perçu concordent. C'est là que la chaîne tient.";
 
-  const chainText = received >= 12 ? `La chaîne alimente ce besoin à ${received} %.` : "La chaîne n'alimente presque plus ce besoin.";
-
   const sheetEdges = state.edges
-    .map((e, i) => ({ e, i }))
-    .filter((x) => x.e.from === node.id)
-    .map((x) => {
-      const target = state.nodes.find((n) => n.id === x.e.to);
-      return { label: target ? target.title : '?', onOpen: () => nc.goEdge(x.i), onRemove: () => nc.removeEdgeAt(x.i, node.id, target ? target.title : '') };
+    .filter((e) => e.from === node.id)
+    .map((e) => {
+      const target = state.nodes.find((n) => n.id === e.to);
+      return { id: e.id, label: target ? target.title : '?', onOpen: () => nc.goEdge(e.id), onRemove: () => nc.removeEdge(e.id, node.id, target ? target.title : '') };
     });
 
   const nodeHistory = nc.history((l) => l.n === node.id);
@@ -69,8 +50,8 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
       </button>
 
       <div>
-        <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: COLORS[node.owner] }}>{kicker}</span>
-        <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 5 }}>{sheetOwner}</span>
+        <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: COLORS[node.owner] }}>Besoin</span>
+        <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 5 }}>Besoin {elide(who)}</span>
       </div>
 
       <input
@@ -91,84 +72,61 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
 
       {!iAmOwner && (
         <p style={{ margin: 0, padding: '9px 11px', borderRadius: 9, background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)', fontSize: 11, color: '#64748b', lineHeight: 1.55 }}>
-          Seul{startsWithVowel(who) ? 'e' : ''} {who} peut reformuler ce besoin. À toi de dire ce que tu crois envoyer, et ce que tu en penses plus bas.
+          {who} est la seule personne à pouvoir reformuler ce besoin. À toi de dire ce que tu crois envoyer, et ce que tu en penses plus bas.
         </p>
       )}
 
-      {node.kind === 'besoin' && (
-        <div style={{ padding: 16, borderRadius: 16, background: 'rgba(139,92,246,.07)', border: '1px solid rgba(139,92,246,.2)', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc' }}>{startsWithVowel(who) ? `Ce qu'${who}` : `Ce que ${who}`} perçoit</span>
-              <span style={{ fontSize: 26, fontWeight: 900, color: '#f8fafc', lineHeight: 1 }}>{node.sat}%</span>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={node.sat}
-              onChange={(e) => iAmOwner && nc.patchNode(node.id, { sat: Number(e.target.value) }, 'sat')}
-              disabled={!iAmOwner}
-              style={{ width: '100%', accentColor: '#8b5cf6' }}
-            />
-            <span style={{ display: 'block', fontSize: 11, color: '#a78bfa', marginTop: 6, lineHeight: 1.5 }}>C&apos;est la seule mesure qui compte : le besoin est validé par celui qui le porte.</span>
-            {iAmOwner === false && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {who} de régler cette barre.</span>}
-          </div>
-          <div style={{ paddingTop: 14, borderTop: '1px solid rgba(255,255,255,.08)', opacity: 0.85 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
-              <span style={{ fontSize: 12, color: '#94a3b8' }}>{other} pense envoyer (indicatif)</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#94a3b8' }}>{sentSet ? sent + '%' : '—'}</span>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={sent}
-              onChange={(e) => !iAmOwner && nc.patchNode(node.id, { sent: Number(e.target.value) }, 'sent')}
-              disabled={iAmOwner}
-              style={{ width: '100%', accentColor: '#ec4899' }}
-            />
-            <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 6, lineHeight: 1.5 }}>Indicatif. Ça ne valide rien — ça sert seulement à voir l&apos;écart.</span>
-            {iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {other} de régler cette barre.</span>}
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
-            {sentSet ? (
-              <>
-                <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a78bfa' }}>
-                  {gap > 0 ? gap + ' points d’écart' : gap < 0 ? Math.abs(gap) + ' points d’écart' : 'Aucun écart'}
-                </span>
-                <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>{gapText}</p>
-              </>
-            ) : (
-              <>
-                <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b' }}>Écart inconnu</span>
-                <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
-                  {other} n&apos;a pas encore répondu. Tant que cette barre est vide, il n&apos;y a pas d&apos;écart à lire : il n&apos;y a qu&apos;une moitié de la réponse.
-                </p>
-              </>
-            )}
-            <p style={{ margin: '7px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.55 }}>{chainText}</p>
-          </div>
-        </div>
-      )}
-
-      {chain.length > 0 && (
+      <div style={{ padding: 16, borderRadius: 16, background: 'rgba(139,92,246,.07)', border: '1px solid rgba(139,92,246,.2)', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
-          <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#94a3b8' }}>La chaîne</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 10 }}>
-            {chain.map((c, i) => (
-              <button key={i} type="button" onClick={c.onOpen} className="nc-hover-row" style={{ width: '100%', textAlign: 'left', display: 'flex', gap: 11, alignItems: 'flex-start', padding: 14, borderRadius: 14, background: 'rgba(26,17,40,.55)', border: '1px solid rgba(255,255,255,.07)', cursor: 'pointer' }}>
-                <span style={{ width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(139,92,246,.18)', color: '#a78bfa', fontSize: 11, fontWeight: 800 }}>{c.num}</span>
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b' }}>{c.kindLabel}</span>
-                  <span style={{ display: 'block', fontSize: 15, fontWeight: 700, color: '#f8fafc', marginTop: 4, lineHeight: 1.3 }}>{c.title}</span>
-                  <span style={{ display: 'block', fontSize: 13, color: '#94a3b8', marginTop: 5, lineHeight: 1.55 }}>{c.note}</span>
-                </span>
-              </button>
-            ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc' }}>{startsWithVowel(who) ? `Ce qu'${who}` : `Ce que ${who}`} perçoit</span>
+            <span style={{ fontSize: 26, fontWeight: 900, color: '#f8fafc', lineHeight: 1 }}>{node.sat}%</span>
           </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={node.sat}
+            onChange={(e) => iAmOwner && nc.patchNode(node.id, { sat: Number(e.target.value) }, 'sat')}
+            disabled={!iAmOwner}
+            style={{ width: '100%', accentColor: '#8b5cf6' }}
+          />
+          {!iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {who} de régler cette barre.</span>}
         </div>
-      )}
+        <div style={{ paddingTop: 14, borderTop: '1px solid rgba(255,255,255,.08)', opacity: 0.85 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
+            <span style={{ fontSize: 12, color: '#94a3b8' }}>{other} pense envoyer (indicatif)</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#94a3b8' }}>{sentSet ? sent + '%' : '—'}</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={sent}
+            onChange={(e) => !iAmOwner && nc.patchNode(node.id, { sent: Number(e.target.value) }, 'sent')}
+            disabled={iAmOwner}
+            style={{ width: '100%', accentColor: '#ec4899' }}
+          />
+          {iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {other} de régler cette barre.</span>}
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
+          {sentSet ? (
+            <>
+              <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a78bfa' }}>
+                {gap > 0 ? gap + ' points d’écart' : gap < 0 ? Math.abs(gap) + ' points d’écart' : 'Aucun écart'}
+              </span>
+              <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>{gapText}</p>
+            </>
+          ) : (
+            <>
+              <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b' }}>Écart inconnu</span>
+              <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
+                {other} n&apos;a pas encore répondu. Tant que cette barre est vide, il n&apos;y a pas d&apos;écart à lire : il n&apos;y a qu&apos;une moitié de la réponse.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
 
       <div style={{ padding: 16, borderRadius: 16, background: 'rgba(244,63,94,.05)', border: '1px solid rgba(244,63,94,.2)' }}>
         <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#fb7185' }}>Quand il manque</span>
@@ -220,8 +178,8 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
       <div>
         <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#94a3b8' }}>Ce qui part de là</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
-          {sheetEdges.map((x, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {sheetEdges.map((x) => (
+            <div key={x.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button type="button" onClick={x.onOpen} className="nc-hover-right" style={{ flex: 1, textAlign: 'left', background: 'rgba(26,17,40,.55)', border: '1px solid rgba(255,255,255,.07)', borderRadius: 11, padding: '13px 14px', color: '#94a3b8', fontSize: 14, cursor: 'pointer' }}>
                 → {x.label}
               </button>
@@ -232,9 +190,11 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 14 }}>
-          <button type="button" onClick={() => { nc.set({ linking: node.id }); nc.goMap(); }} className="nc-hover-scale" style={actionBtnStyle}>
-            Tirer une flèche depuis ce nœud
-          </button>
+          {iAmOwner && (
+            <button type="button" onClick={() => { nc.goMap(); nc.set({ linking: node.id }); nc.burst("Touche le nœud d'arrivée"); }} className="nc-hover-scale" style={actionBtnStyle}>
+              Tirer une flèche depuis ce nœud
+            </button>
+          )}
           <button type="button" onClick={() => nc.patchNode(node.id, { owner: node.owner === 'A' ? 'B' : 'A' }, 'owner')} className="nc-hover-scale" style={actionBtnStyle}>
             Basculer sur l&apos;autre
           </button>
@@ -288,12 +248,6 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
 }
 
 const actionBtnStyle: React.CSSProperties = {
-  background: 'rgba(255,255,255,.04)',
-  border: '1px solid rgba(255,255,255,.1)',
-  color: '#94a3b8',
-  borderRadius: 11,
-  padding: '12px 15px',
-  fontSize: 12,
-  fontWeight: 600,
-  cursor: 'pointer',
+  background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)', color: '#94a3b8',
+  borderRadius: 11, padding: '12px 15px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
 };
