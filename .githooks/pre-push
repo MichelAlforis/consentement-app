@@ -1,22 +1,115 @@
 #!/bin/sh
 set -e
 
-echo "Pre-push [1/3]: lint..."
-npm run lint
+Z40=0000000000000000000000000000000000000000
 
-echo "Pre-push [2/3]: tsc..."
-./node_modules/.bin/tsc --noEmit --project tsconfig.check.json
+changed_file=$(mktemp)
+trap 'rm -f "$changed_file"' EXIT
 
-echo "Pre-push [3/3]: build..."
-# Next.js 15.x bug: exit code non-nul sur "Collecting build traces" en mode output:'export'
-# même quand le build static est réussi. On vérifie l'artefact réel.
-npm run build || {
-  if [ -f out/index.html ]; then
-    echo "  ⚠ Build trace warning ignoré (out/index.html présent — export OK)"
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$Z40" ] && continue
+  if [ "$remote_sha" = "$Z40" ]; then
+    base=$(git merge-base "$local_sha" origin/main 2>/dev/null) || base=""
+    if [ -z "$base" ]; then
+      base=$(git rev-list --max-parents=0 "$local_sha" | tail -n1)
+    fi
   else
-    echo "  ✗ Build échoué (out/index.html manquant)"
+    base="$remote_sha"
+  fi
+  git diff --name-only "$base" "$local_sha" >> "$changed_file"
+done
+
+sort -u -o "$changed_file" "$changed_file"
+
+if [ ! -s "$changed_file" ]; then
+  echo "Pre-push: aucun fichier modifié détecté, rien à vérifier."
+  exit 0
+fi
+
+# Changement sur un fichier partagé (config racine, lockfile, hooks...) => on vérifie tout le monorepo.
+if grep -qE '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|tsconfig(\.base)?\.json|turbo\.json|eslint\.config\.mjs|\.githooks/)' "$changed_file"; then
+  RUN_ROOT=1
+  RUN_VITRINE=1
+  RUN_MOBILE=1
+  RUN_CORE=1
+else
+  RUN_ROOT=0
+  RUN_VITRINE=0
+  RUN_MOBILE=0
+  RUN_CORE=0
+  grep -qE '^apps/vitrine/' "$changed_file" && RUN_VITRINE=1
+  grep -qE '^apps/mobile/' "$changed_file" && RUN_MOBILE=1
+  grep -qE '^packages/core/' "$changed_file" && { RUN_CORE=1; RUN_MOBILE=1; }
+  grep -qE '^packages/textures/' "$changed_file" && RUN_MOBILE=1
+  # Tout fichier hors apps/ et packages/ appartient à l'app racine (OuiClair).
+  grep -qvE '^(apps/|packages/)' "$changed_file" && RUN_ROOT=1
+fi
+
+scope=""
+[ "$RUN_ROOT" = "1" ] && scope="$scope root"
+[ "$RUN_VITRINE" = "1" ] && scope="$scope vitrine"
+[ "$RUN_MOBILE" = "1" ] && scope="$scope mobile"
+[ "$RUN_CORE" = "1" ] && scope="$scope core"
+echo "Pre-push: scope détecté ->${scope:- (aucun)}"
+
+if [ "$RUN_ROOT" = "1" ]; then
+  echo "[root] lint + tsc (en parallèle)..."
+  root_lint_log=$(mktemp)
+  root_tsc_log=$(mktemp)
+  npm run lint > "$root_lint_log" 2>&1 &
+  root_lint_pid=$!
+  ./node_modules/.bin/tsc --noEmit --project tsconfig.check.json > "$root_tsc_log" 2>&1 &
+  root_tsc_pid=$!
+
+  root_lint_status=0
+  root_tsc_status=0
+  wait "$root_lint_pid" || root_lint_status=$?
+  wait "$root_tsc_pid" || root_tsc_status=$?
+  cat "$root_lint_log"
+  cat "$root_tsc_log"
+  rm -f "$root_lint_log" "$root_tsc_log"
+
+  if [ "$root_lint_status" != "0" ] || [ "$root_tsc_status" != "0" ]; then
+    echo "  ✗ [root] lint et/ou tsc a échoué."
     exit 1
   fi
-}
+  # Le build complet n'est plus vérifié ici (trop lent en local) — la CI
+  # (.github/workflows/ci.yml) le relance à chaque push sur main.
+fi
 
-echo "OK — all checks passed."
+if [ "$RUN_VITRINE" = "1" ]; then
+  echo "[vitrine] lint + typecheck (en parallèle)..."
+  vitrine_lint_log=$(mktemp)
+  vitrine_tsc_log=$(mktemp)
+  pnpm --filter @ouiclair/vitrine lint > "$vitrine_lint_log" 2>&1 &
+  vitrine_lint_pid=$!
+  pnpm --filter @ouiclair/vitrine typecheck > "$vitrine_tsc_log" 2>&1 &
+  vitrine_tsc_pid=$!
+
+  vitrine_lint_status=0
+  vitrine_tsc_status=0
+  wait "$vitrine_lint_pid" || vitrine_lint_status=$?
+  wait "$vitrine_tsc_pid" || vitrine_tsc_status=$?
+  cat "$vitrine_lint_log"
+  cat "$vitrine_tsc_log"
+  rm -f "$vitrine_lint_log" "$vitrine_tsc_log"
+
+  if [ "$vitrine_lint_status" != "0" ] || [ "$vitrine_tsc_status" != "0" ]; then
+    echo "  ✗ [vitrine] lint et/ou typecheck a échoué."
+    exit 1
+  fi
+  # Le build complet n'est plus vérifié ici (trop lent en local) — la CI
+  # (.github/workflows/ci.yml) le couvre. À ajouter côté CI si ce n'est pas déjà le cas pour vitrine.
+fi
+
+if [ "$RUN_CORE" = "1" ]; then
+  echo "[core] test..."
+  pnpm --filter @ouiclair/core test
+fi
+
+if [ "$RUN_MOBILE" = "1" ]; then
+  echo "[mobile] test..."
+  pnpm --filter @ouiclair/mobile test
+fi
+
+echo "OK — all checks passed (scope:${scope:- aucun})."

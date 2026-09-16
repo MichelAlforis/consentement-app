@@ -46,7 +46,9 @@ const INITIAL_DOC = buildSeedDoc();
 function initialState(): CarteState {
   return {
     ...INITIAL_DOC,
-    me: null,
+    // Lecture synchrone : le composant n'est jamais rendu côté serveur
+    // (chargé via un import dynamique ssr:false), donc pas de risque d'hydratation.
+    me: pb.authStore.isValid ? currentOwner() : null,
     view: parseHash(),
     linking: null,
     pickSource: false,
@@ -58,13 +60,13 @@ function initialState(): CarteState {
     fx: false,
     saveMsg: '',
     frameW: 0,
+    syncStatus: 'idle',
   };
 }
 
 export function useNotreCarte() {
   const [state, setState] = useState<CarteState>(initialState);
   const [loaded, setLoaded] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
   const docIdRef = useRef<string | null>(null);
   const stateRef = useRef(state);
   const skipNextSaveRef = useRef(false);
@@ -76,8 +78,11 @@ export function useNotreCarte() {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const scalerRef = useRef<HTMLDivElement | null>(null);
   const focusEdgeRef = useRef<string | null>(null);
+  const syncIdleTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  });
 
   const set = useCallback((patch: Partial<CarteState>) => {
     setState((s) => ({ ...s, ...patch }));
@@ -108,13 +113,6 @@ export function useNotreCarte() {
   );
 
   // ── Identité ────────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (pb.authStore.isValid) {
-      set({ me: currentOwner() });
-    }
-    setAuthChecked(true);
-  }, [set]);
-
   const pickIdentity = useCallback(
     async (owner: Owner) => {
       await loginAs(owner);
@@ -157,18 +155,29 @@ export function useNotreCarte() {
       const id = docIdRef.current;
       const baseline = baselineRef.current;
       if (!id || !baseline) return;
+      clearTimeout(syncIdleTimerRef.current);
+      set({ syncStatus: 'saving' });
       const localDoc = docFromState(stateRef.current);
       let toSave = localDoc;
+      let ok = true;
       try {
         const fresh = await fetchDoc();
         if (fresh) toSave = mergeDocs(baseline, localDoc, fresh.doc);
       } catch {
         // hors-ligne ou requête échouée : on sauvegarde quand même notre version locale
       }
-      await saveDoc(id, toSave).catch(() => {});
+      await saveDoc(id, toSave).catch(() => {
+        ok = false;
+      });
+      // Ce qui a pu être tapé pendant l'aller-retour réseau ne doit jamais être
+      // écrasé par le résultat (devenu entre-temps périmé) qu'on s'apprêtait à écrire.
+      const finalLocal = docFromState(stateRef.current);
+      const finalMerged = mergeDocs(baseline, finalLocal, toSave);
       baselineRef.current = toSave;
-      skipNextSaveRef.current = true;
-      set(toSave);
+      const stillDirty = JSON.stringify(finalMerged) !== JSON.stringify(toSave);
+      skipNextSaveRef.current = !stillDirty;
+      set({ ...finalMerged, syncStatus: ok ? 'synced' : 'idle' });
+      if (ok) syncIdleTimerRef.current = setTimeout(() => set({ syncStatus: 'idle' }), 1800);
     }, 500);
     return () => clearTimeout(timer);
   }, [
@@ -339,6 +348,15 @@ export function useNotreCarte() {
     const other = ownerName(owner === 'A' ? 'B' : 'A');
     return swap ? other : base;
   }, []);
+
+  /**
+   * Tant que l'autre n'a pas donné son « envoi déclaré », il ne voit pas ce
+   * que le porteur perçoit — pour répondre sans se caler sur son chiffre.
+   */
+  const satHidden = useCallback(
+    (node: { owner: Owner; sent?: number | null }) => state.me !== node.owner && node.sent == null,
+    [state.me]
+  );
 
   // Un besoin porte directement son propre niveau : plus de propagation
   // multi-sauts depuis la simplification "capacité/don" → contenu du lien.
@@ -605,12 +623,12 @@ export function useNotreCarte() {
 
   return {
     state,
-    authChecked,
     loaded,
     frameRef,
     scalerRef,
     focusEdgeRef,
     name,
+    satHidden,
     levels,
     incoming,
     trendFor,

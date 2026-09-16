@@ -144,6 +144,7 @@ export default function MapView({ nc }: { nc: Nc }) {
                   dim={state.pickSource && state.me !== n.owner}
                   lastAdded={state.lastAdded === n.id}
                   wig={state.wig}
+                  hidden={nc.satHidden(n)}
                   onDown={(e) => nc.startDrag(n, e)}
                   onClick={() => nc.onNodeClick(n)}
                 />
@@ -248,8 +249,11 @@ function SynthesisSection({ nc }: { nc: Nc }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginTop: 9 }}>
           {state.nodes.map((n) => {
             const sentSet = n.sent != null;
+            const hiddenRow = nc.satHidden(n);
             const gap = sentSet ? n.sent! - (n.sat || 0) : null;
-            const gapText = gap == null ? 'envoi pas encore donné' : gap > 12 ? gap + ' points d’écart — à reprendre' : gap < -12 ? Math.abs(gap) + ' points d’écart' : 'envoi et perception alignés';
+            const gapText = hiddenRow
+              ? 'à ton tour de répondre'
+              : gap == null ? 'envoi pas encore donné' : gap > 12 ? gap + ' points d’écart — à reprendre' : gap < -12 ? Math.abs(gap) + ' points d’écart' : 'envoi et perception alignés';
             return (
               <button key={n.id} type="button" onClick={() => nc.goNode(n.id)} className="nc-hover-right" style={rowStyle}>
                 <span style={{ flex: 1, minWidth: 0 }}>
@@ -257,7 +261,7 @@ function SynthesisSection({ nc }: { nc: Nc }) {
                   <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 3 }}>{name(n.owner)} · {gapText}</span>
                 </span>
                 <span style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <span style={{ display: 'block', fontSize: 15, fontWeight: 800, color: '#f8fafc', lineHeight: 1 }}>{n.sat}%</span>
+                  <span style={{ display: 'block', fontSize: 15, fontWeight: 800, color: '#f8fafc', lineHeight: 1 }}>{hiddenRow ? '••' : n.sat + '%'}</span>
                   <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 3 }}>envoi {sentSet ? n.sent + '%' : '—'}</span>
                 </span>
               </button>
@@ -298,9 +302,9 @@ const rowStyle: React.CSSProperties = {
 };
 
 function NodeCard({
-  node, idx, level, owner, hot, dim, lastAdded, wig, onDown, onClick,
+  node, idx, level, owner, hot, dim, lastAdded, wig, hidden, onDown, onClick,
 }: {
-  node: CarteNode; idx: number; level: number; owner: string; hot: boolean; dim: boolean; lastAdded: boolean; wig: boolean;
+  node: CarteNode; idx: number; level: number; owner: string; hot: boolean; dim: boolean; lastAdded: boolean; wig: boolean; hidden: boolean;
   onDown: (e: React.PointerEvent) => void; onClick: () => void;
 }) {
   const c = COLORS[node.owner];
@@ -338,9 +342,9 @@ function NodeCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ fontSize: 9, fontWeight: 700, color: '#cbd5e1', width: 28, flexShrink: 0 }}>perçu</span>
           <div style={{ flex: 1, height: 6, borderRadius: 9999, background: 'rgba(255,255,255,.1)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', borderRadius: 9999, background: c, width: `${node.sat || 0}%` }} />
+            {!hidden && <div style={{ height: '100%', borderRadius: 9999, background: c, width: `${node.sat || 0}%` }} />}
           </div>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#f8fafc', whiteSpace: 'nowrap', width: 22, textAlign: 'right' }}>{node.sat}%</span>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#f8fafc', whiteSpace: 'nowrap', width: 22, textAlign: 'right' }}>{hidden ? '••' : node.sat + '%'}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ fontSize: 9, color: '#94a3b8', width: 28, flexShrink: 0 }}>envoi</span>

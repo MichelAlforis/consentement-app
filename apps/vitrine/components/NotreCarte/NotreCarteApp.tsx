@@ -7,16 +7,12 @@ import NodeSheetPage from './NodeSheetPage';
 import EdgeSheetPage from './EdgeSheetPage';
 import PersonPage from './PersonPage';
 import HelpPage from './HelpPage';
-import SaveBar from './SaveBar';
+import SyncStatus from './SyncStatus';
 import { useNotreCarte } from './useNotreCarte';
 
 export default function NotreCarteApp() {
   const nc = useNotreCarte();
-  const { state, authChecked, loaded } = nc;
-
-  if (!authChecked) {
-    return <div className="nc-root" style={{ minHeight: '100vh' }} />;
-  }
+  const { state, loaded } = nc;
 
   return (
     <div className="nc-root nc-page">
@@ -30,7 +26,7 @@ export default function NotreCarteApp() {
 
       {state.me && loaded && <CurrentView nc={nc} />}
 
-      {state.me && loaded && <SaveBar fx={state.fx} saveMsg={state.saveMsg} />}
+      {state.me && loaded && <SyncStatus syncStatus={state.syncStatus} fx={state.fx} saveMsg={state.saveMsg} />}
     </div>
   );
 }

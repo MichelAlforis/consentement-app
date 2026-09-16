@@ -22,17 +22,7 @@ const config = [
     },
   },
   {
-    ignores: [
-      '.next/**',
-      '**/.next/**',
-      'out/**',
-      '**/out/**',
-      'node_modules/**',
-      'android/**',
-      'ios/**',
-      'apps/**',
-      'packages/**',
-    ],
+    ignores: ['.next/**', 'out/**', 'node_modules/**'],
   },
 ];
 

@@ -50,7 +50,9 @@ export default function PersonPage({ nc, who }: { nc: Nc; who: Owner }) {
               <button key={n.id} type="button" onClick={() => nc.goNode(n.id)} className="nc-hover-row" style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 12, background: 'rgba(26,17,40,.55)', border: '1px solid rgba(255,255,255,.07)', cursor: 'pointer' }}>
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ display: 'block', fontSize: 15, fontWeight: 700, color: '#f8fafc', lineHeight: 1.3 }}>{n.title}</span>
-                  <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 3 }}>perçu {n.sat || 0}% · envoi déclaré {n.sent == null ? '—' : n.sent + '%'}</span>
+                  <span style={{ display: 'block', fontSize: 11, color: '#64748b', marginTop: 3 }}>
+                    perçu {nc.satHidden(n) ? '••' : (n.sat || 0) + '%'} · envoi déclaré {n.sent == null ? '—' : n.sent + '%'}
+                  </span>
                 </span>
                 <span style={{ fontSize: 11, color: '#8b5cf6' }}>▶</span>
               </button>

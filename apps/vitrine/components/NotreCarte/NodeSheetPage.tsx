@@ -9,7 +9,7 @@ import type { CarteNode } from './types';
 type Nc = ReturnType<typeof useNotreCarte>;
 
 export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode }) {
-  const { state, name, elide, startsWithVowel, incoming, trendFor } = nc;
+  const { state, name, elide, startsWithVowel, incoming, trendFor, satHidden } = nc;
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const who = name(node.owner);
   const other = name(node.owner === 'A' ? 'B' : 'A');
@@ -24,6 +24,7 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
   const sentSet = node.sent != null;
   const sent = sentSet ? node.sent! : 0;
   const gap = sent - (node.sat || 0);
+  const hidden = satHidden(node);
 
   const gapText =
     gap > 30
@@ -84,18 +85,26 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc' }}>{startsWithVowel(who) ? `Ce qu'${who}` : `Ce que ${who}`} perçoit</span>
-            <span style={{ fontSize: 26, fontWeight: 900, color: '#f8fafc', lineHeight: 1 }}>{node.sat}%</span>
+            <span style={{ fontSize: 26, fontWeight: 900, color: '#f8fafc', lineHeight: 1 }}>{hidden ? '••' : node.sat + '%'}</span>
           </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={node.sat}
-            onChange={(e) => iAmOwner && nc.patchNode(node.id, { sat: Number(e.target.value) }, 'sat')}
-            disabled={!iAmOwner}
-            style={{ width: '100%', accentColor: '#8b5cf6' }}
-          />
-          {!iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {who} de régler cette barre.</span>}
+          {hidden ? (
+            <p style={{ margin: 0, fontSize: 12, color: '#a78bfa', lineHeight: 1.6 }}>
+              Caché pour l&apos;instant — réponds d&apos;abord ce que tu penses envoyer, sans voir son score. Tu le découvriras juste après.
+            </p>
+          ) : (
+            <>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={node.sat}
+                onChange={(e) => iAmOwner && nc.patchNode(node.id, { sat: Number(e.target.value) }, 'sat')}
+                disabled={!iAmOwner}
+                style={{ width: '100%', accentColor: '#8b5cf6' }}
+              />
+              {!iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {who} de régler cette barre.</span>}
+            </>
+          )}
         </div>
         <div style={{ paddingTop: 14, borderTop: '1px solid rgba(255,255,255,.08)', opacity: 0.85 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>

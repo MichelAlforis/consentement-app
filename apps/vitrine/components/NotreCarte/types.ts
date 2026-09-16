@@ -74,4 +74,5 @@ export interface CarteState extends CarteDoc {
   fx: boolean;
   saveMsg: string;
   frameW: number;
+  syncStatus: 'idle' | 'saving' | 'synced';
 }
