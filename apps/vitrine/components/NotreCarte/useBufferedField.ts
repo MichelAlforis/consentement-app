@@ -20,10 +20,13 @@ export function useUncontrolledField<T extends HTMLInputElement | HTMLTextAreaEl
   const pending = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Une frappe en cours ne doit jamais être écrasée par ce qui vient de l'extérieur.
+  // Tant que le champ a le focus, rien venant de l'extérieur (sauvegarde, écho
+  // temps réel) ne doit pouvoir toucher sa valeur — sinon une réponse arrivée
+  // après la fin d'une pause de frappe (mais pendant qu'on retape déjà) peut
+  // écraser une lettre en cours, donnant l'impression qu'elle a été effacée.
   useEffect(() => {
     const el = ref.current;
-    if (!el || pending.current) return;
+    if (!el || pending.current || document.activeElement === el) return;
     if (el.value !== value) {
       el.value = value;
       onSync?.();
