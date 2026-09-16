@@ -250,10 +250,13 @@ function SynthesisSection({ nc }: { nc: Nc }) {
           {state.nodes.map((n) => {
             const sentSet = n.sent != null;
             const hiddenRow = nc.satHidden(n);
+            const changed = state.me === n.owner && n.sentSeen === false;
             const gap = sentSet ? n.sent! - (n.sat || 0) : null;
             const gapText = hiddenRow
               ? 'à ton tour de répondre'
-              : gap == null ? 'envoi pas encore donné' : gap > 12 ? gap + ' points d’écart — à reprendre' : gap < -12 ? Math.abs(gap) + ' points d’écart' : 'envoi et perception alignés';
+              : changed
+                ? 'réponse changée depuis ta dernière visite'
+                : gap == null ? 'envoi pas encore donné' : gap > 12 ? gap + ' points d’écart — à reprendre' : gap < -12 ? Math.abs(gap) + ' points d’écart' : 'envoi et perception alignés';
             return (
               <button key={n.id} type="button" onClick={() => nc.goNode(n.id)} className="nc-hover-right" style={rowStyle}>
                 <span style={{ flex: 1, minWidth: 0 }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { COLORS } from './constants';
 import AutoGrowTextarea from './AutoGrowTextarea';
 import type { useNotreCarte } from './useNotreCarte';
@@ -47,6 +47,17 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
     });
 
   const nodeHistory = nc.history((l) => l.n === node.id);
+
+  const [sentChanged, setSentChanged] = useState(false);
+  useEffect(() => {
+    if (iAmOwner && node.sentSeen === false) {
+      setSentChanged(true);
+      nc.ackSent(node.id);
+    } else {
+      setSentChanged(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node.id]);
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 18, animation: 'nc-enter .3s cubic-bezier(.2,1.1,.4,1) both' }}>
@@ -121,6 +132,11 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
             style={{ width: '100%', accentColor: '#ec4899' }}
           />
           {iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {other} de régler cette barre.</span>}
+          {sentChanged && (
+            <p style={{ margin: '8px 0 0', fontSize: 11, color: '#f472b6', lineHeight: 1.5 }}>
+              {other} a changé sa réponse depuis ta dernière visite ici.
+            </p>
+          )}
         </div>
         {sentSet ? (
           <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>

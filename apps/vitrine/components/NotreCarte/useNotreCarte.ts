@@ -79,6 +79,10 @@ export function useNotreCarte() {
   const scalerRef = useRef<HTMLDivElement | null>(null);
   const focusEdgeRef = useRef<string | null>(null);
   const syncIdleTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Le realtime nous renvoie aussi nos propres écritures : sans ce garde-fou, cet écho
+  // relance une fusion contre un instantané local déjà dépassé par la frappe en cours,
+  // et peut effacer des lettres tapées entre-temps.
+  const lastSavedJsonRef = useRef<string | null>(null);
 
   useEffect(() => {
     stateRef.current = state;
@@ -166,6 +170,7 @@ export function useNotreCarte() {
       } catch {
         // hors-ligne ou requête échouée : on sauvegarde quand même notre version locale
       }
+      lastSavedJsonRef.current = JSON.stringify(toSave);
       await saveDoc(id, toSave).catch(() => {
         ok = false;
       });
@@ -210,6 +215,7 @@ export function useNotreCarte() {
       .subscribe(id, (e) => {
         if (e.action !== 'update') return;
         const server = e.record.doc as CarteDoc;
+        if (JSON.stringify(server) === lastSavedJsonRef.current) return; // écho de notre propre écriture
         const baseline = baselineRef.current;
         const merged = baseline ? mergeDocs(baseline, docFromState(stateRef.current), server) : server;
         baselineRef.current = merged;
@@ -424,12 +430,16 @@ export function useNotreCarte() {
 
   const patchNode = useCallback(
     (id: string, patch: Partial<CarteNode>, field?: string) => {
-      // Le score perçu vient de changer : la réponse à l'aveugle de l'autre porte sur
-      // une situation qui n'existe plus, elle redevient masquée le temps qu'il/elle réponde à nouveau.
+      const current = stateRef.current.nodes.find((m) => m.id === id);
       let fullPatch: Partial<CarteNode> = patch;
       if (field === 'sat') {
-        const current = stateRef.current.nodes.find((m) => m.id === id);
+        // Le score perçu vient de changer : la réponse à l'aveugle de l'autre porte sur
+        // une situation qui n'existe plus, elle redevient masquée le temps qu'il/elle réponde à nouveau.
         if (current?.sent != null) fullPatch = { ...patch, sent: null };
+      } else if (field === 'sent') {
+        // Une réponse déjà donnée qu'on révise : le propriétaire, qui la voit sans filtre,
+        // doit être prévenu que ce n'est plus la valeur qu'il a lue la dernière fois.
+        if (current?.sent != null && patch.sent !== current.sent) fullPatch = { ...patch, sentSeen: false };
       }
       const next = { nodes: stateRef.current.nodes.map((m) => (m.id === id ? { ...m, ...fullPatch } : m)) };
       if (field) {
@@ -440,6 +450,16 @@ export function useNotreCarte() {
       }
     },
     [set, setLogged]
+  );
+
+  /** Acquitte silencieusement l'avertissement « réponse modifiée » une fois que le propriétaire l'a vu. */
+  const ackSent = useCallback(
+    (id: string) => {
+      const current = stateRef.current.nodes.find((m) => m.id === id);
+      if (!current || current.sentSeen !== false) return;
+      set({ nodes: stateRef.current.nodes.map((m) => (m.id === id ? { ...m, sentSeen: true } : m)) });
+    },
+    [set]
   );
 
   const patchManque = useCallback(
@@ -654,6 +674,7 @@ export function useNotreCarte() {
     startDrag,
     addNode,
     patchNode,
+    ackSent,
     patchManque,
     deleteNode,
     startLinking,

@@ -7,6 +7,7 @@ export interface CarteNode {
   note: string;
   sat: number;
   sent?: number | null;
+  sentSeen?: boolean;
   x: number;
   y: number;
 }
