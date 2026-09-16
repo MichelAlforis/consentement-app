@@ -5,14 +5,19 @@ import { CANVAS_H, CANVAS_W, FIELD_LABELS, NODE_H, NODE_W } from './constants';
 import { edgeGeom } from './geometry';
 import { currentOwner, fetchDoc, loginAs, ownerName, pb, saveDoc } from './pb';
 import { buildSeedDoc } from './seed';
-import type { CarteDoc, CarteNode, CarteState, LogEntry, Manque, NodeKind, Owner, View } from './types';
+import type { CarteDoc, CarteNode, CarteState, LogEntry, Manque, Owner, View } from './types';
 
 function parseHash(): View {
   const h = (typeof window !== 'undefined' ? window.location.hash || '' : '').replace(/^#/, '');
   if (h.indexOf('besoin-') === 0) return { kind: 'node', id: h.slice(7) };
-  if (h.indexOf('lien-') === 0) return { kind: 'edge', i: Number(h.slice(5)) };
+  if (h.indexOf('lien-') === 0) return { kind: 'edge', id: h.slice(5) };
+  if (h === 'moi-A' || h === 'moi-B') return { kind: 'person', who: h.slice(4) as Owner };
+  if (h === 'aide') return { kind: 'help' };
   return { kind: 'map' };
 }
+
+const startsWithVowel = (s: string) => /^[aeiouyéèêAEIOUYÉÈÊ]/.test(s);
+const elide = (name: string) => (startsWithVowel(name) ? `d'${name}` : `de ${name}`);
 
 const INITIAL_DOC = buildSeedDoc();
 
@@ -44,6 +49,7 @@ export function useNotreCarte() {
   const draggedRef = useRef(false);
   const frameRef = useRef<HTMLDivElement | null>(null);
   const scalerRef = useRef<HTMLDivElement | null>(null);
+  const focusEdgeRef = useRef<string | null>(null);
 
   stateRef.current = state;
 
@@ -53,6 +59,8 @@ export function useNotreCarte() {
 
   const logged = useCallback((patch: Partial<CarteState>, target: string, field: string, value: string | number): Partial<CarteState> => {
     const st = stateRef.current;
+    // Un champ vidé ne produit pas de ligne d'historique vide.
+    if (typeof value === 'string' && !value.trim() && field !== 'lien' && field !== 'signe') return patch;
     const log = (st.log || []).slice();
     const now = Date.now();
     const last = log[log.length - 1];
@@ -202,7 +210,9 @@ export function useNotreCarte() {
   }, [set]);
 
   const goNode = useCallback((id: string) => go({ kind: 'node', id }, 'besoin-' + id), [go]);
-  const goEdge = useCallback((i: number) => go({ kind: 'edge', i }, 'lien-' + i), [go]);
+  const goEdge = useCallback((id: string) => go({ kind: 'edge', id }, 'lien-' + id), [go]);
+  const goPerson = useCallback((who: Owner) => go({ kind: 'person', who }, 'moi-' + who), [go]);
+  const goHelp = useCallback(() => go({ kind: 'help' }, 'aide'), [go]);
   const goMap = useCallback(() => go({ kind: 'map' }, ''), [go]);
 
   // ── Petites animations de feedback ──────────────────────────────────────
@@ -295,71 +305,45 @@ export function useNotreCarte() {
     el.style.marginRight = (CANVAS_W * k - CANVAS_W).toFixed(0) + 'px';
   });
 
-  // ── Noms & propagation ("plus l'un est comblé, plus l'autre peut donner") ─
-  const name = useCallback(
-    (owner: Owner) => {
-      const swap = stateRef.current.swapped;
-      const base = ownerName(owner);
-      const other = ownerName(owner === 'A' ? 'B' : 'A');
-      return swap ? other : base;
-    },
-    []
-  );
+  const name = useCallback((owner: Owner) => {
+    const swap = stateRef.current.swapped;
+    const base = ownerName(owner);
+    const other = ownerName(owner === 'A' ? 'B' : 'A');
+    return swap ? other : base;
+  }, []);
 
+  // Un besoin porte directement son propre niveau : plus de propagation
+  // multi-sauts depuis la simplification "capacité/don" → contenu du lien.
   const levels = useMemo(() => {
+    const lvl: Record<string, number> = {};
+    state.nodes.forEach((n) => { lvl[n.id] = (n.sat || 0) / 100; });
+    return lvl;
+  }, [state.nodes]);
+
+  const nodeGeoms = useMemo(() => {
     const byId: Record<string, CarteNode> = {};
     state.nodes.forEach((n) => (byId[n.id] = n));
-    const lvl: Record<string, number> = {};
-    state.nodes.forEach((n) => {
-      if (n.kind === 'besoin') lvl[n.id] = (n.sat || 0) / 100;
+    return state.edges.map((e) => {
+      const a = byId[e.from];
+      const b = byId[e.to];
+      if (!a || !b) return null;
+      const g = edgeGeom(a, b);
+      const twin = state.edges.some((y) => y.from === e.to && y.to === e.from) ? 18 : 0;
+      const filled = !!(e.possible.trim() || e.donne.trim());
+      return { ...g, a, b, level: levels[e.from] ?? 0, filled, twin };
     });
-    for (let pass = 0; pass < 4; pass++) {
-      state.edges.forEach((e) => {
-        const dst = byId[e.to];
-        if (!byId[e.from] || !dst || dst.kind === 'besoin') return;
-        const v = lvl[e.from] == null ? 0 : lvl[e.from];
-        if (lvl[e.to] == null || v > lvl[e.to]) lvl[e.to] = v;
-      });
-    }
-    return lvl;
-  }, [state.nodes, state.edges]);
-
-  const incoming = useMemo(() => {
-    const inc: Record<string, number> = {};
-    state.edges.forEach((e) => {
-      const v = levels[e.from] == null ? 0 : levels[e.from];
-      if (inc[e.to] == null || v > inc[e.to]) inc[e.to] = v;
-    });
-    return inc;
-  }, [state.edges, levels]);
-
-  const nodeGeoms = useMemo(
-    () =>
-      state.edges.map((e) => {
-        const byId: Record<string, CarteNode> = {};
-        state.nodes.forEach((n) => (byId[n.id] = n));
-        const a = byId[e.from];
-        const b = byId[e.to];
-        if (!a || !b) return null;
-        return { ...edgeGeom(a, b), a, b, level: levels[e.from] ?? 0 };
-      }),
-    [state.edges, state.nodes, levels]
-  );
+  }, [state.edges, state.nodes, levels]);
 
   // ── Actions sur les nœuds ────────────────────────────────────────────────
-  const addNode = useCallback(
-    (kind: NodeKind) => {
-      const id = 'n' + Date.now();
-      const titles: Record<NodeKind, string> = { besoin: 'Nouveau besoin', capacite: 'Ce que ça rend possible', reponse: 'Ce que je peux donner' };
-      const n: CarteNode = { id, owner: 'A', kind, title: titles[kind], note: '', sat: 50, sent: null, x: 252, y: 276 };
-      setLogged({ nodes: stateRef.current.nodes.concat([n]) }, id, 'ajout', titles[kind]);
-      set({ lastAdded: id });
-      setTimeout(() => set({ lastAdded: null }), 760);
-      burst('Nœud ajouté ✓');
-      goNode(id);
-    },
-    [burst, goNode, set, setLogged]
-  );
+  const addNode = useCallback(() => {
+    const id = 'n' + Date.now();
+    const n: CarteNode = { id, owner: stateRef.current.me ?? 'A', title: 'Nouveau besoin', note: '', sat: 50, sent: null, x: 252, y: 276 };
+    setLogged({ nodes: stateRef.current.nodes.concat([n]) }, id, 'ajout', n.title);
+    set({ lastAdded: id });
+    setTimeout(() => set({ lastAdded: null }), 760);
+    burst('Nœud ajouté ✓');
+    goNode(id);
+  }, [burst, goNode, set, setLogged]);
 
   const patchNode = useCallback(
     (id: string, patch: Partial<CarteNode>, field?: string) => {
@@ -399,7 +383,7 @@ export function useNotreCarte() {
     [goMap, setLogged]
   );
 
-  // ── Tirer un lien ────────────────────────────────────────────────────────
+  // ── Tirer un lien : uniquement depuis un de ses propres besoins ─────────
   const startLinking = useCallback(() => {
     const st = stateRef.current;
     if (st.pickSource || st.linking) {
@@ -418,6 +402,10 @@ export function useNotreCarte() {
       }
       const st = stateRef.current;
       if (st.pickSource) {
+        if (st.me !== node.owner) {
+          burst('Pars d’un de tes besoins');
+          return;
+        }
         set({ pickSource: false, linking: node.id });
         burst("Touche l'arrivée");
         return;
@@ -425,20 +413,25 @@ export function useNotreCarte() {
       if (st.linking && st.linking !== node.id) {
         const exists = st.edges.some((x) => x.from === st.linking && x.to === node.id);
         if (!exists) {
-          setLogged({ edges: st.edges.concat([{ from: st.linking, to: node.id }]) }, st.linking, 'lien', '→ ' + node.title);
+          const eid = 'e' + Date.now();
+          setLogged({ edges: st.edges.concat([{ id: eid, from: st.linking, to: node.id, possible: '', donne: '' }]) }, st.linking, 'lien', '→ ' + node.title);
           burst('Flèche tirée ✓');
+          focusEdgeRef.current = eid;
+          set({ linking: null });
+          goEdge(eid);
+          return;
         }
         set({ linking: null });
         return;
       }
       goNode(node.id);
     },
-    [burst, goNode, set, setLogged]
+    [burst, goEdge, goNode, set, setLogged]
   );
 
-  const removeEdgeAt = useCallback(
-    (index: number, fromId: string, toTitle: string) => {
-      setLogged({ edges: stateRef.current.edges.filter((_, j) => j !== index) }, fromId, 'lien', '− ' + toTitle);
+  const removeEdge = useCallback(
+    (id: string, fromId: string, toTitle: string) => {
+      setLogged({ edges: stateRef.current.edges.filter((e) => e.id !== id) }, fromId, 'lien', '− ' + toTitle);
     },
     [setLogged]
   );
@@ -543,15 +536,23 @@ export function useNotreCarte() {
     [burst, name, setLogged]
   );
 
+  const updateEdgeText = useCallback(
+    (id: string, field: 'possible' | 'donne', value: string, canWrite: boolean) => {
+      if (!canWrite) return;
+      setLogged({ edges: stateRef.current.edges.map((y) => (y.id === id ? { ...y, [field]: value } : y)) }, id, field, value);
+    },
+    [setLogged]
+  );
+
   return {
     state,
     authChecked,
     loaded,
     frameRef,
     scalerRef,
+    focusEdgeRef,
     name,
     levels,
-    incoming,
     nodeGeoms,
     scale,
     set,
@@ -559,6 +560,8 @@ export function useNotreCarte() {
     switchIdentity,
     goNode,
     goEdge,
+    goPerson,
+    goHelp,
     goMap,
     burst,
     flashWig,
@@ -569,7 +572,7 @@ export function useNotreCarte() {
     deleteNode,
     startLinking,
     onNodeClick,
-    removeEdgeAt,
+    removeEdge,
     listItems,
     addListItem,
     sign,
@@ -577,5 +580,8 @@ export function useNotreCarte() {
     resetToSeed,
     setDraft,
     lockDit,
+    updateEdgeText,
+    elide,
+    startsWithVowel,
   };
 }

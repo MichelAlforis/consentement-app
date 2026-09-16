@@ -1,10 +1,8 @@
 export type Owner = 'A' | 'B';
-export type NodeKind = 'besoin' | 'capacite' | 'reponse';
 
 export interface CarteNode {
   id: string;
   owner: Owner;
-  kind: NodeKind;
   title: string;
   note: string;
   sat: number;
@@ -14,8 +12,11 @@ export interface CarteNode {
 }
 
 export interface CarteEdge {
+  id: string;
   from: string;
   to: string;
+  possible: string;
+  donne: string;
 }
 
 export interface Manque {
@@ -34,7 +35,12 @@ export interface LogEntry {
   v: string | number;
 }
 
-export type View = { kind: 'map' } | { kind: 'node'; id: string } | { kind: 'edge'; i: number };
+export type View =
+  | { kind: 'map' }
+  | { kind: 'node'; id: string }
+  | { kind: 'edge'; id: string }
+  | { kind: 'person'; who: Owner }
+  | { kind: 'help' };
 
 export interface CarteDoc {
   nodes: CarteNode[];

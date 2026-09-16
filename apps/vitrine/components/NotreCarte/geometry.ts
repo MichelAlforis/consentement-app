@@ -4,6 +4,10 @@ import type { CarteNode } from './types';
 export interface EdgeGeom {
   d: string;
   head: string;
+  mx: number;
+  my: number;
+  nx: number;
+  ny: number;
 }
 
 export function edgeGeom(a: CarteNode, b: CarteNode): EdgeGeom {
@@ -45,5 +49,9 @@ export function edgeGeom(a: CarteNode, b: CarteNode): EdgeGeom {
   return {
     d: `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`,
     head,
+    mx: 0.25 * p0[0] + 0.5 * cx + 0.25 * p1[0],
+    my: 0.25 * p0[1] + 0.5 * cy + 0.25 * p1[1],
+    nx: nx / len,
+    ny: ny / len,
   };
 }

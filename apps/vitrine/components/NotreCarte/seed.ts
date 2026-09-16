@@ -1,108 +1,89 @@
-import type { CarteDoc, CarteNode, NodeKind, Owner } from './types';
+import { RING_POSITIONS } from './constants';
+import type { CarteDoc, CarteNode, CarteEdge, Owner } from './types';
 
-const ROWS = [10, 143, 276, 409, 542];
-const XS = [10, 252, 494];
-
-interface SeedChainNode {
-  kind: NodeKind;
+interface SeedNode {
+  owner: Owner;
   title: string;
   note: string;
-  sat?: number;
-  sent?: number;
-}
-
-interface SeedChain {
-  owner: Owner;
-  row: number;
-  dir: 1 | -1;
-  nodes: SeedChainNode[];
+  sat: number;
+  sent: number;
+  possible: string;
+  donne: string;
 }
 
 /**
  * Contenu d'exemple générique — à remplacer entièrement par vos propres
  * besoins dans l'app. Rien de personnel ne doit être codé en dur ici :
- * ce fichier est publié dans un repo public.
+ * ce fichier est publié dans un repo public. `possible`/`donne` décrivent
+ * le lien qui part de CE besoin vers le suivant de l'anneau.
  */
-const CHAINS: SeedChain[] = [
+const SEED: SeedNode[] = [
   {
     owner: 'A',
-    row: 0,
-    dir: 1,
-    nodes: [
-      { kind: 'besoin', title: 'Sécurité', note: 'se sentir en confiance, sans avoir à vérifier', sat: 55, sent: 60 },
-      { kind: 'capacite', title: "Je n'ai plus besoin de contrôler", note: "Quand je sais où j'en suis, mon attention se libère au lieu de tourner en boucle." },
-      { kind: 'reponse', title: 'Je peux être pleinement présent·e pour toi', note: "L'attention que je passais à vérifier, je peux la mettre sur nous." },
-    ],
+    title: 'Sécurité',
+    note: 'se sentir en confiance, sans avoir à vérifier',
+    sat: 55,
+    sent: 60,
+    possible: "Quand je sais où j'en suis, mon attention se libère au lieu de tourner en boucle.",
+    donne: "Je peux être pleinement présent·e pour toi, l'attention que je passais à vérifier, je peux la mettre sur nous.",
   },
   {
     owner: 'B',
-    row: 1,
-    dir: -1,
-    nodes: [
-      { kind: 'besoin', title: 'Reconnaissance', note: 'être vu·e pour ce que je fais, pas seulement pour ce qui coince', sat: 40, sent: 45 },
-      { kind: 'capacite', title: "J'existe autrement que dans le problème", note: 'Si on me voit, je ne suis plus réduit·e à ce qui ne va pas entre nous.' },
-      { kind: 'reponse', title: 'Je reviens vers toi plus facilement', note: 'Quand je me sens vu·e, le contact redevient naturel.' },
-    ],
+    title: 'Reconnaissance',
+    note: 'être vu·e pour ce que je fais, pas seulement pour ce qui coince',
+    sat: 40,
+    sent: 45,
+    possible: "Si on me voit, je ne suis plus réduit·e à ce qui ne va pas entre nous.",
+    donne: 'Je reviens vers toi plus facilement, le contact redevient naturel.',
   },
   {
     owner: 'A',
-    row: 2,
-    dir: 1,
-    nodes: [
-      { kind: 'besoin', title: 'Intimité', note: 'calins, proximité, tactilité', sat: 45, sent: 50 },
-      { kind: 'capacite', title: 'Je me sens voulu·e, pas toléré·e', note: "Quand le contact revient, je n'ai plus besoin de tester si je compte encore." },
-      { kind: 'reponse', title: 'Je deviens un allié, pas un adversaire', note: 'Je suis de ton côté, même quand le sujet me met en tort.' },
-    ],
+    title: 'Intimité',
+    note: 'calins, proximité, tactilité',
+    sat: 45,
+    sent: 50,
+    possible: "Quand le contact revient, je n'ai plus besoin de tester si je compte encore.",
+    donne: 'Je deviens un allié, pas un adversaire — je suis de ton côté, même quand le sujet me met en tort.',
   },
   {
     owner: 'B',
-    row: 3,
-    dir: -1,
-    nodes: [
-      { kind: 'besoin', title: 'Complicité', note: "quelqu'un à qui parler sans calculer", sat: 35, sent: 40 },
-      { kind: 'capacite', title: 'Je baisse la garde', note: "Je n'anticipe pas la réaction avant de parler." },
-      { kind: 'reponse', title: "Je t'écoute sans me braquer", note: "Je peux entendre ce que tu dis sans y lire un reproche." },
-    ],
+    title: 'Complicité',
+    note: "quelqu'un à qui parler sans calculer",
+    sat: 35,
+    sent: 40,
+    possible: "Je baisse la garde, je n'anticipe pas la réaction avant de parler.",
+    donne: "Je t'écoute sans me braquer, je peux entendre ce que tu dis sans y lire un reproche.",
   },
   {
     owner: 'A',
-    row: 4,
-    dir: 1,
-    nodes: [
-      { kind: 'besoin', title: 'Écoute', note: "essayer de comprendre, donner de l'importance à ce que je ressens", sat: 50, sent: 55 },
-      { kind: 'capacite', title: 'Je me sens en sécurité avec toi', note: "Si ce que je dis compte, je n'ai plus besoin de trier avant de parler." },
-      { kind: 'reponse', title: 'Je te dis tout, même ce qui fâche', note: 'Le jour même, pas quand tu le découvres.' },
-    ],
+    title: 'Écoute',
+    note: "essayer de comprendre, donner de l'importance à ce que je ressens",
+    sat: 50,
+    sent: 55,
+    possible: "Si ce que je dis compte, je n'ai plus besoin de trier avant de parler.",
+    donne: 'Je te dis tout, même ce qui fâche — le jour même, pas quand tu le découvres.',
   },
 ];
 
-function buildSeedNodes(): CarteNode[] {
-  const nodes: CarteNode[] = [];
-  CHAINS.forEach((chain) => {
-    chain.nodes.forEach((n, i) => {
-      const col = chain.dir === 1 ? i : 2 - i;
-      nodes.push({
-        id: 'n' + (nodes.length + 1),
-        owner: chain.owner,
-        kind: n.kind,
-        title: n.title,
-        note: n.note,
-        sat: n.sat ?? 60,
-        sent: n.sent ?? 60,
-        x: XS[col],
-        y: ROWS[chain.row],
-      });
-    });
-  });
-  return nodes;
-}
-
 export function buildSeedDoc(): CarteDoc {
-  const nodes = buildSeedNodes();
-  const edges = [];
-  for (let i = 0; i < nodes.length - 1; i++) edges.push({ from: nodes[i].id, to: nodes[i + 1].id });
-  edges.push({ from: nodes[14].id, to: nodes[9].id });
-  edges.push({ from: nodes[11].id, to: nodes[0].id });
+  const nodes: CarteNode[] = SEED.map((s, i) => ({
+    id: 'n' + (i + 1),
+    owner: s.owner,
+    title: s.title,
+    note: s.note,
+    sat: s.sat,
+    sent: s.sent,
+    x: RING_POSITIONS[i][0],
+    y: RING_POSITIONS[i][1],
+  }));
+
+  const edges: CarteEdge[] = SEED.map((s, i) => ({
+    id: 'e' + (i + 1),
+    from: nodes[i].id,
+    to: nodes[(i + 1) % nodes.length].id,
+    possible: s.possible,
+    donne: s.donne,
+  }));
 
   return {
     nodes,
@@ -118,7 +99,7 @@ export function buildSeedDoc(): CarteDoc {
     profilB: "Exemple : le contact et la vérité sont vécus comme des risques, donc je m'en éloigne.",
     travailA: ['Exemple : le besoin de fuir dès que ça devient douloureux.'],
     travailB: ['Exemple : le retrait au moment où ça devient intime.'],
-    alertes: ["On se répond par messages alors qu'on est dans la même pièce.", "Plusieurs jours sans aucun contact physique."],
+    alertes: ["On se répond par messages alors qu'on est dans la même pièce.", 'Plusieurs jours sans aucun contact physique.'],
     rouges: ['Pas de mensonge, même par omission.', "Ce qui est dit ici ne sort pas d'ici."],
     manques: {},
     log: [],
