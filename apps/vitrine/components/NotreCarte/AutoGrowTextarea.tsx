@@ -21,12 +21,22 @@ const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, Props>(function AutoGro
   useImperativeHandle(forwardedRef, () => ref.current as HTMLTextAreaElement, []);
   const { local, onLocalChange, onBlur } = useBufferedField(value, onChange);
 
-  useEffect(() => {
+  const resize = () => {
     const el = ref.current;
     if (!el) return;
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
-  }, [local]);
+  };
+
+  useEffect(resize, [local]);
+
+  useEffect(() => {
+    // La police (Inter) charge de façon asynchrone : la toute première mesure peut
+    // se faire avec une police de repli, sur moins de lignes que le texte final une
+    // fois Inter en place. On recalcule une fois le chargement des polices terminé.
+    if (typeof document === 'undefined' || !document.fonts) return;
+    document.fonts.ready.then(resize);
+  }, []);
 
   return (
     <textarea
