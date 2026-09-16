@@ -154,6 +154,12 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .reveal-item { opacity: 1; transform: none; }
   .features-revealed .reveal-item { animation: none; }
+  .react-flow__edge-path { animation: none !important; }
+}
+
+/* ── Carte des besoins — flux le long des liens ──────────────────────────────── */
+@keyframes needs-edge-dash {
+  to { stroke-dashoffset: -28; }
 }
 
 /* ── Lexique badge pulse ─────────────────────────────────────────────────────── */
