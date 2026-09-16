@@ -424,7 +424,14 @@ export function useNotreCarte() {
 
   const patchNode = useCallback(
     (id: string, patch: Partial<CarteNode>, field?: string) => {
-      const next = { nodes: stateRef.current.nodes.map((m) => (m.id === id ? { ...m, ...patch } : m)) };
+      // Le score perçu vient de changer : la réponse à l'aveugle de l'autre porte sur
+      // une situation qui n'existe plus, elle redevient masquée le temps qu'il/elle réponde à nouveau.
+      let fullPatch: Partial<CarteNode> = patch;
+      if (field === 'sat') {
+        const current = stateRef.current.nodes.find((m) => m.id === id);
+        if (current?.sent != null) fullPatch = { ...patch, sent: null };
+      }
+      const next = { nodes: stateRef.current.nodes.map((m) => (m.id === id ? { ...m, ...fullPatch } : m)) };
       if (field) {
         const value = (patch as Record<string, string | number>)[field];
         setLogged(next, id, field, value);
