@@ -28,7 +28,7 @@ migrate((app) => {
         "hidden": true,
         "id": "password901924565",
         "max": 0,
-        "min": 3,
+        "min": 8,
         "name": "password",
         "pattern": "",
         "presentable": false,
