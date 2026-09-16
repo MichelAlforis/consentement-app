@@ -9,7 +9,7 @@ import type { CarteNode } from './types';
 type Nc = ReturnType<typeof useNotreCarte>;
 
 export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode }) {
-  const { state, name, elide, startsWithVowel } = nc;
+  const { state, name, elide, startsWithVowel, incoming, trendFor } = nc;
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const who = name(node.owner);
   const other = name(node.owner === 'A' ? 'B' : 'A');
@@ -33,6 +33,10 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
         : gap < -12
           ? `${who} perçoit plus que ce que ${other} croit envoyer. Autant le dire à voix haute : ça se sait rarement tout seul.`
           : "Ce qui est envoyé et ce qui est perçu concordent. C'est là que la chaîne tient.";
+
+  const received = Math.round((incoming[node.id] || 0) * 100);
+  const chainText = received >= 12 ? `La chaîne alimente ce besoin à ${received} %.` : "La chaîne n'alimente presque plus ce besoin.";
+  const trend = trendFor(node.id, node.sat || 0);
 
   const sheetEdges = state.edges
     .filter((e) => e.from === node.id)
@@ -109,23 +113,32 @@ export default function NodeSheetPage({ nc, node }: { nc: Nc; node: CarteNode })
           />
           {iAmOwner && <span style={{ display: 'block', fontSize: 10, color: '#64748b', marginTop: 4 }}>C&apos;est à {other} de régler cette barre.</span>}
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
-          {sentSet ? (
-            <>
-              <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a78bfa' }}>
-                {gap > 0 ? gap + ' points d’écart' : gap < 0 ? Math.abs(gap) + ' points d’écart' : 'Aucun écart'}
-              </span>
-              <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>{gapText}</p>
-            </>
-          ) : (
-            <>
-              <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b' }}>Écart inconnu</span>
-              <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
-                {other} n&apos;a pas encore répondu. Tant que cette barre est vide, il n&apos;y a pas d&apos;écart à lire : il n&apos;y a qu&apos;une moitié de la réponse.
-              </p>
-            </>
-          )}
-        </div>
+        {sentSet ? (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
+            <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a78bfa' }}>
+              {gap > 0 ? gap + ' points d’écart' : gap < 0 ? Math.abs(gap) + ' points d’écart' : 'Aucun écart'}
+            </span>
+            <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>{gapText}</p>
+            <p style={{ margin: '7px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.55 }}>{chainText}</p>
+          </div>
+        ) : (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
+            <span style={{ display: 'block', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', color: '#64748b' }}>Écart inconnu</span>
+            <p style={{ margin: '7px 0 0', fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
+              {other} n&apos;a pas encore répondu. Tant que cette barre est vide, il n&apos;y a pas d&apos;écart à lire : il n&apos;y a qu&apos;une moitié de la réponse.
+            </p>
+            <p style={{ margin: '7px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.55 }}>{chainText}</p>
+          </div>
+        )}
+        {trend.has && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: 12 }}>
+            <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#a78bfa' }}>Comment ça évolue</span>
+            <svg viewBox="0 0 100 40" preserveAspectRatio="none" style={{ width: '100%', height: 54, marginTop: 10, overflow: 'visible' }}>
+              <polyline points={trend.curve} fill="none" stroke="#a78bfa" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            </svg>
+            <p style={{ margin: '8px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.55 }}>{trend.line}</p>
+          </div>
+        )}
       </div>
 
       <div style={{ padding: 16, borderRadius: 16, background: 'rgba(244,63,94,.05)', border: '1px solid rgba(244,63,94,.2)' }}>

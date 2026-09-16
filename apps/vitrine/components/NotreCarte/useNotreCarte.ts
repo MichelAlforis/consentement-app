@@ -3,9 +3,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CANVAS_H, CANVAS_W, FIELD_LABELS, NODE_H, NODE_W } from './constants';
 import { edgeGeom } from './geometry';
+import { mergeDocs } from './merge';
 import { currentOwner, fetchDoc, loginAs, ownerName, pb, saveDoc } from './pb';
 import { buildSeedDoc } from './seed';
 import type { CarteDoc, CarteNode, CarteState, LogEntry, Manque, Owner, View } from './types';
+
+function docFromState(s: CarteState): CarteDoc {
+  return {
+    nodes: s.nodes,
+    edges: s.edges,
+    swapped: s.swapped,
+    preambule: s.preambule,
+    engA: s.engA,
+    engB: s.engB,
+    signA: s.signA,
+    signB: s.signB,
+    profilA: s.profilA,
+    profilB: s.profilB,
+    travailA: s.travailA,
+    travailB: s.travailB,
+    alertes: s.alertes,
+    rouges: s.rouges,
+    manques: s.manques,
+    log: s.log,
+  };
+}
 
 function parseHash(): View {
   const h = (typeof window !== 'undefined' ? window.location.hash || '' : '').replace(/^#/, '');
@@ -46,6 +68,10 @@ export function useNotreCarte() {
   const docIdRef = useRef<string | null>(null);
   const stateRef = useRef(state);
   const skipNextSaveRef = useRef(false);
+  // Dernière version confirmée en commun avec le serveur : la base à partir
+  // de laquelle on détecte "qu'est-ce que j'ai changé localement" pour fusionner
+  // proprement avec ce que l'autre a pu écrire entre-temps.
+  const baselineRef = useRef<CarteDoc | null>(null);
   const draggedRef = useRef(false);
   const frameRef = useRef<HTMLDivElement | null>(null);
   const scalerRef = useRef<HTMLDivElement | null>(null);
@@ -110,6 +136,7 @@ export function useNotreCarte() {
       if (cancelled) return;
       if (found) {
         docIdRef.current = found.id;
+        baselineRef.current = found.doc;
         skipNextSaveRef.current = true;
         set(found.doc);
       }
@@ -126,26 +153,22 @@ export function useNotreCarte() {
       skipNextSaveRef.current = false;
       return;
     }
-    const doc: CarteDoc = {
-      nodes: state.nodes,
-      edges: state.edges,
-      swapped: state.swapped,
-      preambule: state.preambule,
-      engA: state.engA,
-      engB: state.engB,
-      signA: state.signA,
-      signB: state.signB,
-      profilA: state.profilA,
-      profilB: state.profilB,
-      travailA: state.travailA,
-      travailB: state.travailB,
-      alertes: state.alertes,
-      rouges: state.rouges,
-      manques: state.manques,
-      log: state.log,
-    };
-    const timer = setTimeout(() => {
-      if (docIdRef.current) saveDoc(docIdRef.current, doc).catch(() => {});
+    const timer = setTimeout(async () => {
+      const id = docIdRef.current;
+      const baseline = baselineRef.current;
+      if (!id || !baseline) return;
+      const localDoc = docFromState(stateRef.current);
+      let toSave = localDoc;
+      try {
+        const fresh = await fetchDoc();
+        if (fresh) toSave = mergeDocs(baseline, localDoc, fresh.doc);
+      } catch {
+        // hors-ligne ou requête échouée : on sauvegarde quand même notre version locale
+      }
+      await saveDoc(id, toSave).catch(() => {});
+      baselineRef.current = toSave;
+      skipNextSaveRef.current = true;
+      set(toSave);
     }, 500);
     return () => clearTimeout(timer);
   }, [
@@ -166,6 +189,7 @@ export function useNotreCarte() {
     state.rouges,
     state.manques,
     state.log,
+    set,
   ]);
 
   // ── Synchro temps réel (l'autre a modifié la carte) ────────────────────
@@ -176,8 +200,12 @@ export function useNotreCarte() {
     pb.collection('notre_carte_docs')
       .subscribe(id, (e) => {
         if (e.action !== 'update') return;
+        const server = e.record.doc as CarteDoc;
+        const baseline = baselineRef.current;
+        const merged = baseline ? mergeDocs(baseline, docFromState(stateRef.current), server) : server;
+        baselineRef.current = merged;
         skipNextSaveRef.current = true;
-        set(e.record.doc as CarteDoc);
+        set(merged);
       })
       .then((fn) => {
         unsub = fn;
@@ -319,6 +347,37 @@ export function useNotreCarte() {
     state.nodes.forEach((n) => { lvl[n.id] = (n.sat || 0) / 100; });
     return lvl;
   }, [state.nodes]);
+
+  // Ce qu'apporte le lien entrant le mieux nourri, en direct (plus de relais).
+  const incoming = useMemo(() => {
+    const inc: Record<string, number> = {};
+    state.edges.forEach((e) => {
+      const v = levels[e.from] == null ? 0 : levels[e.from];
+      if (inc[e.to] == null || v > inc[e.to]) inc[e.to] = v;
+    });
+    return inc;
+  }, [state.edges, levels]);
+
+  const trendFor = useCallback(
+    (nodeId: string, currentSat: number) => {
+      const points = (state.log || [])
+        .filter((l) => l.n === nodeId && l.f === 'sat' && typeof l.v === 'number')
+        .map((l) => ({ t: l.t, v: l.v as number }));
+      if (!points.length || points[points.length - 1].v !== currentSat) points.push({ t: Date.now(), v: currentSat });
+      if (points.length < 2) return { has: false, curve: '', line: '' };
+      const t0 = points[0].t;
+      const span = points[points.length - 1].t - t0;
+      const curve = points
+        .map((p, i) => {
+          const x = span > 0 ? ((p.t - t0) / span) * 100 : i * (100 / (points.length - 1));
+          return x.toFixed(1) + ',' + (38 - (p.v / 100) * 34).toFixed(1);
+        })
+        .join(' ');
+      const line = `${points[0].v}% → ${points[points.length - 1].v}% · ${points.length} relevés depuis le ${new Date(points[0].t).toLocaleDateString('fr-FR')}`;
+      return { has: true, curve, line };
+    },
+    [state.log]
+  );
 
   const nodeGeoms = useMemo(() => {
     const byId: Record<string, CarteNode> = {};
@@ -553,6 +612,8 @@ export function useNotreCarte() {
     focusEdgeRef,
     name,
     levels,
+    incoming,
+    trendFor,
     nodeGeoms,
     scale,
     set,
