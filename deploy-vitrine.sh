@@ -5,20 +5,17 @@ cd "$(dirname "$0")"
 echo "→ Push vers GitHub..."
 git push origin main
 
-echo "→ Déploiement sur le serveur..."
-ssh -i ~/.ssh/id_rsa_hetzner root@159.69.108.234 << 'EOF'
+echo "→ Déploiement sur le serveur (i7)..."
+ssh -i ~/.ssh/id_ed25519_hetzner_v2 michel@192.168.1.200 << 'EOF'
 set -e
-cd /srv/ouiclair/src
+cd /srv/ouiclair
 
 git pull origin main
 
-npm install --silent
+pnpm install --silent
 
 cd apps/vitrine
-/srv/ouiclair/src/node_modules/.bin/next build
-cd /srv/ouiclair/src
+pnpm exec next build
 
-cp -r apps/vitrine/out/. /srv/ouiclair/vitrine/
-
-echo "✓ ouiclair.com mis à jour"
+echo "✓ ouiclair.com mis à jour (servi en place par PM2 depuis apps/vitrine/out)"
 EOF
