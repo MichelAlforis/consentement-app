@@ -3,7 +3,7 @@
 .nc-root textarea, .nc-root input { font-family: Inter, system-ui, sans-serif; }
 .nc-root textarea:focus, .nc-root input:focus { outline: none; border-color: rgba(139, 92, 246, .55); }
 .nc-root button { min-height: 44px; }
-.nc-icon-btn { min-width: 44px; min-height: 44px; }
+.nc-root .nc-icon-btn { min-width: 34px; min-height: 34px; width: 34px; height: 34px; }
 .nc-summary { list-style: none; cursor: pointer; }
 .nc-summary::-webkit-details-marker { display: none; }
 details[open] .nc-chev { transform: rotate(90deg); }

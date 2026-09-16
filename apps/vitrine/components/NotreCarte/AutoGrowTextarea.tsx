@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 interface Props {
   value: string;
@@ -12,8 +12,12 @@ interface Props {
   className?: string;
 }
 
-export default function AutoGrowTextarea({ value, onChange, readOnly, placeholder, rows = 2, style, className }: Props) {
+const AutoGrowTextarea = forwardRef<HTMLTextAreaElement, Props>(function AutoGrowTextarea(
+  { value, onChange, readOnly, placeholder, rows = 2, style, className },
+  forwardedRef
+) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
+  useImperativeHandle(forwardedRef, () => ref.current as HTMLTextAreaElement, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -34,4 +38,6 @@ export default function AutoGrowTextarea({ value, onChange, readOnly, placeholde
       style={{ overflow: 'hidden', resize: 'vertical', ...style }}
     />
   );
-}
+});
+
+export default AutoGrowTextarea;

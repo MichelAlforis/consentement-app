@@ -1,5 +1,6 @@
 'use client';
 
+import AutoGrowTextarea from './AutoGrowTextarea';
 import { CANVAS_H, CANVAS_W, COLORS, NODE_H, NODE_W } from './constants';
 import type { useNotreCarte } from './useNotreCarte';
 import type { CarteNode, Owner } from './types';
@@ -410,11 +411,11 @@ export function RemovableRow({ value, onChange, onRemove }: { value: string; onC
 
 function TextareaAuto({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <textarea
+    <AutoGrowTextarea
       rows={2}
       value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{ flex: 1, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 8, padding: 8, color: '#94a3b8', fontSize: 16, lineHeight: 1.5, resize: 'vertical' }}
+      onChange={onChange}
+      style={{ flex: 1, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 8, padding: 8, color: '#94a3b8', fontSize: 16, lineHeight: 1.5 }}
     />
   );
 }

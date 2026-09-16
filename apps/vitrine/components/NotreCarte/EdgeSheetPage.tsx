@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import AutoGrowTextarea from './AutoGrowTextarea';
 import type { useNotreCarte } from './useNotreCarte';
 
 type Nc = ReturnType<typeof useNotreCarte>;
@@ -64,26 +65,26 @@ export default function EdgeSheetPage({ nc, edgeId }: { nc: Nc; edgeId: string }
 
       <div style={{ padding: 16, borderRadius: 16, background: 'rgba(139,92,246,.07)', border: '1px solid rgba(139,92,246,.22)' }}>
         <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#a78bfa' }}>Ce que ça rend possible</span>
-        <textarea
+        <AutoGrowTextarea
           ref={possibleRef}
           rows={3}
           value={edge.possible}
-          onChange={(e) => nc.updateEdgeText(edge.id, 'possible', e.target.value, canWrite)}
+          onChange={(v) => nc.updateEdgeText(edge.id, 'possible', v, canWrite)}
           readOnly={!canWrite}
           placeholder="ex. je peux arrêter de surveiller, mon attention se libère"
-          style={{ width: '100%', marginTop: 10, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(139,92,246,.22)', borderRadius: 11, padding: 11, color: '#ddd6fe', fontSize: 16, lineHeight: 1.55, resize: 'vertical' }}
+          style={{ width: '100%', marginTop: 10, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(139,92,246,.22)', borderRadius: 11, padding: 11, color: '#ddd6fe', fontSize: 16, lineHeight: 1.55 }}
         />
       </div>
 
       <div style={{ padding: 16, borderRadius: 16, background: 'rgba(236,72,153,.06)', border: '1px solid rgba(236,72,153,.22)' }}>
         <span style={{ display: 'block', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: '#f472b6' }}>Ce que ça peut donner</span>
-        <textarea
+        <AutoGrowTextarea
           rows={3}
           value={edge.donne}
-          onChange={(e) => nc.updateEdgeText(edge.id, 'donne', e.target.value, canWrite)}
+          onChange={(v) => nc.updateEdgeText(edge.id, 'donne', v, canWrite)}
           readOnly={!canWrite}
           placeholder="ex. je te demande ta journée, et j'écoute la réponse en entier"
-          style={{ width: '100%', marginTop: 10, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(236,72,153,.22)', borderRadius: 11, padding: 11, color: '#fbcfe8', fontSize: 16, lineHeight: 1.55, resize: 'vertical' }}
+          style={{ width: '100%', marginTop: 10, background: 'rgba(13,7,20,.5)', border: '1px solid rgba(236,72,153,.22)', borderRadius: 11, padding: 11, color: '#fbcfe8', fontSize: 16, lineHeight: 1.55 }}
         />
       </div>
 
