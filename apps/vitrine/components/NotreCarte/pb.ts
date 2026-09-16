@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import type { CarteDoc, Owner } from './types';
 
-const PB_URL = process.env.NEXT_PUBLIC_PB_URL ?? 'https://pb.ouiclair.com';
+const PB_URL = process.env.NEXT_PUBLIC_PB_URL ?? 'https://carte-api.ouiclair.com';
 
 export const pb = new PocketBase(PB_URL);
 
